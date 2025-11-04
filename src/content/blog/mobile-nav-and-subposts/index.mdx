@@ -1,82 +1,280 @@
 ---
-title: 'v1.6.0: "Mobile Navigation & Subposts"'
-description: 'This new version introduces improved mobile navigation (via sticky table of contents) and the concept of "subposts."'
-date: 2025-05-21
-tags: ['v1.6.0']
-image: './banner.png'
-authors: ['enscribe']
+title: "Migrating Longhorn Backup from MinIO to Garage After Docker Image Discontinuation"
+description: "A step-by-step guide to migrating Longhorn backup storage from MinIO to Garage after MinIO discontinued their Docker images. Learn how to set up Garage as an S3-compatible backup target for your Kubernetes cluster."
+date: 2025-10-27
+tags: ["storage", "kubernetes", "docker", "homelab", "s3", "backup"]
+published: true
 ---
 
-## Two major improvements to the reading experience
+When MinIO recently announced they're discontinuing Docker images and moving to a source-only distribution model, many homelab users were left scrambling for alternatives. With hundreds of thousands of installations potentially running outdated versions with known CVEs, it was time to find a more reliable solution.
 
-astro-erudite's v1.6.0 brings about two significant enhancements that I've been wanting to implement for quite some time! The first addresses a longstanding mobile <abbr title="User Experience">UX</abbr> issue, while the second introduces a content organization paradigm that I find interesting.
+Enter Garage - a self-hosted, S3-compatible, distributed object storage service that's perfect for Kubernetes backup storage.
 
-### Mobile navigation
+> **ℹ️ Note:** If you're looking for information on how to restore from Longhorn backups after migrating to Garage, check out my previous guide on [Restoring from Longhorn Backups](/blog/longhorn-backup-restore/). The restoration process remains identical regardless of whether you're using MinIO or Garage as your S3 backend.
 
-The original table of contents implementation was frankly inadequate for mobile users. While desktop users enjoyed a beautiful sticky sidebar with scroll-aware highlighting, mobile users were stuck with a basic collapsible `<details>{:html}` element that provided no indication of reading progress or current location within the post:
+## Why Garage?
 
-<div class="max-w-xs mx-auto">
-![Old TOC implementation](assets/old-toc.png)
-</div>
+After MinIO's controversial decision to drop Docker support (Issue #21647), I needed a drop-in S3-compatible replacement that:
+- Has active Docker image support
+- Is lightweight enough for homelab use
+- Provides reliable S3 API compatibility
+- Works seamlessly with Longhorn backups
 
-The new mobile navigation system introduces a sticky header that sits just below the main site navigation, featuring a circular progress indicator and dynamic section display. As you scroll through a post, the progress circle fills to show how far you've read, while the text updates to reflect which section you're currently viewing. Tapping on this header expands a comprehensive table of contents that mirrors the desktop experience but in a mobile-friendly format:
+Garage checked all these boxes.
 
-<div class="flex gap-4 flex-wrap justify-center [&_img,p]:m-0">
-  <div class="max-w-xs">
-    ![New TOC implementation (closed)](assets/new-toc-closed.png)
-  </div>
-  <div class="max-w-xs">
-    ![New TOC implementation (open)](assets/new-toc-open.png)
-  </div>
-</div>
+## Prerequisites
 
-This gives users the same level of navigation control as if they were on desktop, in a very intuitive and mobile-friendly format.
+- Ubuntu server with Docker and Docker Compose
+- Kubernetes cluster with Longhorn installed
+- Flux CD for GitOps (optional, but recommended)
 
-### Subposts for hierarchical content organization
+## Setting Up Garage
 
-The second major feature is something I'm calling "subposts," a way to organize related content in a parent-child hierarchy within your blog. This concept came from when I was writing [this](https://enscribe.dev/blog/japan-retrospective) travel blog post on my personal site, where I essentially wanted a "subpost" for each day of the trip since it was way too long to fit into a single post.
+### 1. Directory Structure
 
-Instead of creating separate blog posts in a "series" (and thus clogging up your blog post listings with a bunch of smaller, tangentially-related posts), you can now automatically establish a parent-child relationship between posts by creating a folder for your main topic with an `index.mdx` file as your parent post, then adding additional `.mdx` files in the same folder as subposts. For example, this very post demonstrates the feature by containing two subposts that explore the technical implementation details of each feature. On desktop, we display a `<SubpostsSidebar>{:tsx}` component on the right-hand side of the page that shows a list of all the subposts alongside the parent post:
-
-<div class="flex gap-4 flex-wrap justify-center [&_img,p,.expressive-code]:m-0">
-  <div class="max-w-3xs border">
-    ![Subposts listing](assets/subposts-listing.png)
-  </div>
-  <div class="max-w-3xs">
-
-```bash showLineNumbers={false}
-src/
-  content/
-    blog/
-      mobile-nav-and-subposts/
-        index.mdx
-        mobile-navigation.mdx
-        subposts.mdx
+```bash
+sudo mkdir -p /srv/docker/garage/{meta,data}
+cd /srv/docker/garage
 ```
 
-  </div>
-</div>
+### 2. Generate Secrets
 
-The file structure is intuitive: create a folder for your main topic with an `index.mdx` file as your parent post, then add additional `.mdx` files in the same folder as subposts. Astro's file-based routing handles the URL structure automatically, creating paths like `/blog/subposts` for the parent post and `/blog/subposts/mobile-navigation` and `/blog/subposts/subposts` for the subposts.
+```bash
+# Generate RPC secret for internal communication
+openssl rand -hex 32
 
-#### Enhanced navigation patterns
+# Generate admin token for WebUI
+openssl rand -hex 32
+```
 
-Of course, we need to adjust our `<PostNavigation>{:tsx}` component to support this new feature. Now, whenever we're reading a subpost, we now have the option to traverse between subposts or even upwards to the parent post:
+### 3. Create Configuration
 
-<div class="border [&_img,p]:m-0">
-![Subposts navigation](assets/subpost-navigation.png)
-</div>
+Create `/srv/docker/garage/garage.toml`:
 
-This is contextually aware, meaning that if you're reading a parent post (or a post with no children), then this component will only show adjacent parent-level posts.
+```toml
+metadata_dir = "/var/lib/garage/meta"
+data_dir = "/var/lib/garage/data"
+db_engine = "lmdb"
 
-#### Hint: this is great for technical content
+replication_factor = 1
 
-The subposts feature particularly shines for technical content which is meant to educate. In a similar manner to a tutorial or a textbook, we can now fragment our content into more digestible and informative subposts which are easily traversable between each other and from the parent post, and the reader is now free to jump around to whichever subpost they're interested in.
+rpc_bind_addr = "0.0.0.0:3901"
+rpc_public_addr = "127.0.0.1:3901"
+rpc_secret = "YOUR_RPC_SECRET_HERE"
 
-This post itself serves as an example, since you're currently reading the parent post (which I've called the "Index" post in the `<Breadcrumb>{:tsx}` component) and the subposts are the two posts that I've written about the technical implementation details of each feature.
+[s3_api]
+s3_region = "us-east-1"
+api_bind_addr = "0.0.0.0:3900"
+root_domain = ".s3.garage"
 
-What's great about the way I engineered subposts is that it's fully backwards-compatible with blog posts written before this, so there's no need to define extra frontmatter metadata or manually establish the parent-child relationships between posts. It serves lovely on the <abbr title="Developer Experience">DX</abbr> side as well!
+[admin]
+api_bind_addr = "0.0.0.0:3903"
+admin_token = "YOUR_ADMIN_TOKEN_HERE"
+```
 
-## Go ahead and read the subposts
+> **💡 Tip:** For single-node deployments, `replication_factor = 1` is sufficient. Multi-node clusters should use 3 for redundancy.
 
-On desktop, the `<SubpostsSidebar>{:tsx}` sticks to the right column on your screen, and you can click on any of the subposts to read them. On mobile, it will turn into a `<SubpostsHeader>{:tsx}` component that will appear underneath the sticky header, above the sticky table of contents we just added.
+### 4. Docker Compose Setup
+
+Create `/srv/docker/garage/docker-compose.yml`:
+
+```yaml
+version: "3"
+services:
+  garage:
+    image: dxflrs/garage:v2.1.0
+    container_name: garage
+    network_mode: "host"
+    restart: unless-stopped
+    volumes:
+      - ./garage.toml:/etc/garage.toml
+      - ./meta:/var/lib/garage/meta
+      - ./data:/var/lib/garage/data
+
+  webui:
+    image: khairul169/garage-webui:latest
+    container_name: garage-webui
+    restart: unless-stopped
+    volumes:
+      - ./garage.toml:/etc/garage.toml:ro
+    environment:
+      API_BASE_URL: "http://127.0.0.1:3903"
+      S3_ENDPOINT_URL: "http://127.0.0.1:3900"
+    network_mode: "host"
+```
+
+### 5. Start Services
+
+```bash
+docker-compose up -d
+```
+
+## Configuring Garage Storage
+
+### 1. Initialize Node Layout
+
+```bash
+# Create alias for easier command execution
+alias garage="docker exec -ti garage /garage"
+
+# Get node ID
+garage node id
+
+# Assign storage capacity (adjust based on your available space)
+garage layout assign <node-id> -z default -c 100G
+
+# Apply layout
+garage layout show
+garage layout apply --version 1
+```
+
+### 2. Create Bucket and Credentials
+
+```bash
+# Create bucket for Longhorn backups
+garage bucket create longhorn
+
+# Create access key
+garage key create longhorn-key
+
+# Grant permissions
+garage bucket allow longhorn --read --write --owner --key longhorn-key
+
+# View credentials (note the Key ID and Secret key)
+garage key info longhorn-key --show-secret
+```
+
+## Integrating with Longhorn
+
+### 1. Create Kubernetes Secret
+
+Update your SOPS-encrypted secret or create a new one:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: minio-secret
+  namespace: longhorn-system
+type: Opaque
+stringData:
+  AWS_ACCESS_KEY_ID: <Key-ID-from-garage>
+  AWS_SECRET_ACCESS_KEY: <Secret-Key-from-garage>
+  AWS_ENDPOINTS: http://<GARAGE_SERVER_IP>:3900
+  AWS_REGION: us-east-1
+```
+
+Apply the secret:
+
+```bash
+kubectl apply -f minio-secret.yaml
+```
+
+### 2. Update Longhorn HelmRelease
+
+```yaml
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: longhorn
+  namespace: longhorn-system
+spec:
+  interval: 1h
+  url: https://charts.longhorn.io
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: longhorn
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: longhorn
+      version: 1.10.0
+      sourceRef:
+        kind: HelmRepository
+        name: longhorn
+        namespace: longhorn-system
+  values:
+    defaultSettings:
+      backupTarget: "s3://longhorn@us-east-1/"
+      backupTargetCredentialSecret: "minio-secret"
+      backupstorePollInterval: "300"
+      # ... other settings
+```
+
+> **⚠️ Warning:** In Longhorn 1.10.0+, backup settings are under `defaultSettings`, not a separate `defaultBackupStore` section.
+
+## Testing the Setup
+
+### 1. Verify Connectivity
+
+Access the Garage WebUI at `http://<SERVER_IP>:3909` to verify the node is connected and healthy.
+
+### 2. Test Backup from Longhorn
+
+1. Navigate to Longhorn UI → Volume
+2. Select a volume → Create Backup
+3. Monitor the backup progress
+4. Verify the backup appears in Garage WebUI under the `longhorn` bucket
+
+### 3. CLI Verification
+
+```bash
+# List buckets
+garage bucket list
+
+# View bucket info
+garage bucket info longhorn
+```
+
+## Troubleshooting
+
+### WebUI Shows "Unknown Error"
+
+Ensure the `[admin]` section is present in `garage.toml` and the container is restarted:
+
+```bash
+docker-compose restart
+docker logs garage
+```
+
+### Connection Refused on Port 3903
+
+Check if the admin API is listening:
+
+```bash
+netstat -tlnp | grep 3903
+```
+
+### Longhorn Can't Connect to Garage
+
+Verify network connectivity from Kubernetes cluster:
+
+```bash
+kubectl run -it --rm debug --image=amazon/aws-cli --restart=Never -- \
+  s3 ls s3://longhorn --endpoint-url http://<GARAGE_IP>:3900
+```
+
+## Benefits of This Migration
+
+- **Active maintenance**: Garage continues to provide Docker images and updates
+- **Lightweight**: Lower resource footprint compared to MinIO
+- **S3 compatible**: Drop-in replacement for most S3 workloads
+- **Security**: Regular updates without the concern of discontinued support
+- **Community-driven**: Open-source project with transparent development
+
+## Conclusion
+
+Migrating from MinIO to Garage was straightforward and took less than an hour. With MinIO's shift to source-only distribution leaving many installations vulnerable, Garage provides a reliable, actively-maintained alternative that integrates seamlessly with Longhorn.
+
+The WebUI makes management simple, and the S3 compatibility ensures that existing backup workflows continue working without modification. If you're running MinIO in a homelab environment, now is the time to consider alternatives before the next CVE drops.
+
+## Resources
+
+- [Garage Documentation](https://garagehq.deuxfleurs.fr/)
+- [Garage WebUI Project](https://github.com/khairul169/garage-webui)
+- [Longhorn Documentation](https://longhorn.io/docs/)
+- [MinIO Docker Discontinuation Issue](https://github.com/minio/minio/issues/21647)
