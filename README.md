@@ -114,7 +114,7 @@ Edit the `src/consts.ts` file to update your site's metadata, navigation links, 
 export const SITE: Site = {
   title: 'astro-erudite',
   description: // ...
-  href: 'https://astro-erudite.vercel.app',
+  href: 'https://merox.dev',
   featuredPostCount: 2,
   postsPerPage: 3,
 }
