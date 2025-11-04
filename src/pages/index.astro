@@ -25,8 +25,8 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
           <p class="text-muted-foreground text-sm mt-1">
             HPC Sysadmin <span class="font-medium">@ Forvia</span>
           </p>
-          <p class="mt-2">
-            <span class="gradient-text text-sm font-semibold">
+          <p class="mt-2 relative inline-block">
+            <span class="highlight-text text-sm font-semibold relative z-10">
               Geek. Curious. Thinker.
             </span>
           </p>
@@ -65,27 +65,31 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
 </Layout>
 
 <style>
-  .gradient-text {
-    background: linear-gradient(
-      90deg,
-      hsl(var(--primary)),
-      hsl(var(--chart-2)),
-      hsl(var(--chart-3)),
-      hsl(var(--primary))
-    );
-    background-size: 200% auto;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: gradient-shift 3s ease infinite;
+  .highlight-text {
+    position: relative;
+    display: inline-block;
   }
-
-  @keyframes gradient-shift {
+  
+  .highlight-text::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    right: -4px;
+    bottom: 2px;
+    height: 40%;
+    background: linear-gradient(120deg, #4facfe 0%, #00f2fe 100%);
+    opacity: 0.4;
+    z-index: -1;
+    transform: skewX(-12deg);
+    animation: highlight-pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes highlight-pulse {
     0%, 100% {
-      background-position: 0% center;
+      opacity: 0.4;
     }
     50% {
-      background-position: 100% center;
+      opacity: 0.6;
     }
   }
 </style>
