@@ -1,9 +1,9 @@
 ---
 name: 'Merox'
 pronouns: 'he/him'
-avatar: 'https://gravatar.com/avatar/9bfdc4ec972793cf05cb91efce5f4aaaec2a0da1bf4ec34dad0913f1d845faf6.webp?size=256'
-bio: 'Sysadmin'
-website: 'https://enscribe.dev'
+avatar: 'https://merox.dev/reworkedmeroxdc1.png'
+bio: 'HPC Sysadmin'
+website: 'https://merox.dev'
 twitter: 'https://twitter.com/enscry'
 github: 'https://github.com/jktrn'
 mail: 'hello@merox.dev'
