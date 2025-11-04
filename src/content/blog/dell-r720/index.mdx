@@ -1,0 +1,193 @@
+---
+title: "Setting Up Dell R720 Server in the Home Lab"
+description: "Discover how to set up the Dell PowerEdge R720 server in your home lab with this detailed guide. Learn about technical specifications, cooling configurations using IPMItool, firmware updates, Proxmox cluster migration, and storage setup with RAID."
+date: 2024-07-13
+tags: ["infrastructure", "homelab", "server", "tutorial", "dell", "proxmox"]
+image: './dellr720.svg'
+---
+
+import Callout from '@/components/Callout.astro'
+
+![Tailscale pfSense Configuration](assets/dell-r720-server.webp)
+
+I recently stumbled upon an incredible deal for the Dell PowerEdge R720 server. This powerhouse boasts impressive specifications that make it perfect for a home lab environment.
+
+## Technical Specifications
+
+- **Server Model**: Dell PowerEdge R720
+- **RAM**: 192GB
+- **Processors**: Dual 6-core CPUs with Hyper-Threading (24 threads)
+- **iDRAC Controller**: iDRAC7 Enterprise
+- **Storage**: 2 x 2TB SSD & 6 x 300GB SAS drives at 6Gb/s
+
+*This article covers my journey of integrating this powerhouse into my home lab setup.*
+
+## Delivery and Initial Setup
+
+The server arrived in good condition, but I encountered an issue where the front backplane wasn't connected because the included mini SAS cable was too short. I had to search online to find a 59cm mini SAS cable long enough to connect the backplane to the motherboard.
+
+I was lucky and found this cable pretty quickly thanks to this company in Romania:  
+[i-Service - MiniSAS Cable](https://i-service.ro/cablu-server-dell-poweredge-r720-dell-sas-ab-8-x-sff%C2%A02.5in-dpn-mjcp4-coms000692a)
+
+## Configuring the Cooling System with IPMItool
+
+Managing server cooling effectively is crucial for optimal performance and longevity. Using IPMItool, I was able to configure the fans to balance between cooling efficiency and noise levels. Below are the steps and commands I used:
+
+### Install IPMItool
+```bash
+sudo apt-get install ipmitool
+```
+
+### Enable/Disable Manual Fan Control
+
+#### Enable Manual Control
+```bash
+ipmitool -I lanplus -H ip_addr -U username -P password raw 0x30 0x30 0x01 0x00
+```
+
+#### Disable Manual Control
+```bash
+ipmitool -I lanplus -H ip_addr -U username -P password raw 0x30 0x30 0x01 0x01
+```
+
+### Set Fan Speed
+```bash
+ipmitool -I lanplus -H ip_addr -U username -P password raw 0x30 0x30 0x02 0xff 0x14
+```
+
+#### Fan Speed Reference Table
+
+| Percent | Hexadecimal | RPM         |
+|:--------|:------------|:------------|
+| 10%     | 0xA         | ~3,300 RPM  |
+| 16%     | 0x10        | ~3,900 RPM  |
+| 20%     | 0x14        | ~4,000 RPM  |
+| 25%     | 0x19        | ~4,700 RPM  |
+| 30%     | 0x1E        | ~5,400 RPM  |
+| 40%     | 0x28        | ~7,300 RPM  |
+| 50%     | 0x32        | ~8,000 RPM  |
+| 60%     | 0x3C        | ~9,400 RPM  |
+| 70%     | 0x46        | ~10,800 RPM |
+| 80%     | 0x50        | ~12,100 RPM |
+| 90%     | 0x5A        | ~13,300 RPM |
+| 100%    | 0x64        | 15,000 RPM  |
+
+### Monitor Fan Status
+```bash
+ipmitool sensor | grep -i fan
+```
+
+<Callout variant="tip">
+Fine-tuning the fan speeds can drastically reduce the noise levels in a homelab environment, which is often a crucial consideration compared to a data center where noise is less of an issue.
+</Callout>
+
+## Upgrading Firmware via UpdateYODell.net
+
+Keeping firmware up-to-date is essential for security and performance. I upgraded my R720's firmware using the resources available on UpdateYODell.net. Here's a step-by-step guide:
+
+### 1. Identify Your Server's Generation
+
+Visit [Wikipedia's Dell PowerEdge](https://en.wikipedia.org/wiki/List_of_PowerEdge_servers) page to find your server model and its generation.
+
+### 2. Configure iDRAC for FTP Update
+
+1. Access the iDRAC web interface
+2. Navigate to **Maintenance > System Update**
+3. Select **FTP** as the update method and use these settings:
+   - **Address**: ftp.updateyodell.net
+   - **User Name**: dell
+   - **Password**: calvin
+   - **Path**: g11, g12 (dell r720), g13, or g14
+4. Click **Check for Updates** and proceed with the upgrade
+
+<Callout variant="warning">
+Updating the firmware ensures that the server runs smoothly and is protected against known vulnerabilities. It can also bring new features and improvements to your system, which is particularly beneficial in a home lab setting where experimentation and learning are key.
+</Callout>
+
+## Migrating Proxmox Cluster
+
+Migrating my Proxmox cluster to the new server was simplified by utilizing an NFS share on my Synology DS223 in the homelab. Here's how I did it:
+
+### Mount NFS Share on New Proxmox Server
+```bash
+mount -t nfs <synology_ip>:/path/to/nfs /mnt/pve/nfs
+```
+
+### Restore VMs from NFS
+```bash
+pct restore <vmid> /mnt/pve/nfs/dump/dump.tar
+```
+
+### Benefits of Using NFS with Proxmox
+
+Using an NFS share for backups and migrations offers several advantages:
+
+- **Simplicity**: Easy to set up and manage
+- **Efficiency**: Fast transfer speeds, especially with a dedicated network
+- **Flexibility**: Can easily expand storage as needed
+
+## Storage Configuration
+
+In the Dell R720, I configured the storage with two 2TB SSDs in RAID 1 for the operating system and primary applications, and six 300GB SAS drives in RAID 10 for data storage. This setup offers a great balance between performance, redundancy, and storage capacity.
+
+### Benefits of This Storage Setup
+
+- **RAID 1 for SSDs**: Provides redundancy, ensuring that the OS and critical applications are safe even if one SSD fails
+- **RAID 10 for SAS Drives**: Combines the speed benefits of RAID 0 with the redundancy of RAID 1, offering fast read/write speeds and protection against drive failures
+
+## Integrating with UPS Using PowerPanel
+
+To protect the server from power outages, integrating it with a UPS (Uninterruptible Power Supply) was crucial. Instead of using NUT, I opted for PowerPanel:
+
+### Install PowerPanel
+
+Download and install the PowerPanel software from the CyberPower website.
+
+#### Download
+```bash
+curl -o cyberpowerpowerpanel.deb https://www.cyberpower.com/tw/en/File/GetFileSampleByType?fileId=SU-18070001-06&fileType=Download%20Center&fileSubType=FileOriginal
+```
+
+#### Install
+```bash
+dpkg -i cyberpowerpowerpanel.deb
+```
+
+### Configure PowerPanel
+
+I configured PowerPanel in my environment with the following command:
+```bash
+pwrstat -lowbatt -runtime 300 -capacity 35 -active on -cmd /etc/pwrstatd-lowbatt.sh -duration 1 -shutdown on
+```
+
+#### Explanation of the Command
+
+- `-lowbatt`: Triggers the action when the battery is low
+- `-runtime 300`: Triggers the action when the UPS runtime drops below 300 seconds
+- `-capacity 35`: Triggers the action when the battery capacity drops below 35%
+- `-active on`: Enables the action
+- `-cmd /etc/pwrstatd-lowbatt.sh`: Executes the specified script when the condition is met
+- `-duration 1`: Specifies the duration in minutes to wait before executing the shutdown
+- `-shutdown on`: Initiates a system shutdown when the condition is met
+
+This configuration ensures that my server shuts down gracefully in the event of a power outage, protecting data integrity and preventing hardware damage.
+
+## Monitoring and Management
+
+For monitoring the server's performance and health, I use a combination of Prometheus and Grafana. These tools provide detailed metrics and visualizations, allowing me to keep an eye on resource usage, temperatures, and potential issues.
+
+## Backup Strategy
+
+Having a robust backup strategy is crucial in any lab environment. I use Proxmox's built-in backup tools to create regular snapshots of my VMs, which are then stored on the NFS share. This ensures that I can quickly recover from any data loss or corruption.
+
+## Conclusion
+
+Setting up the Dell R720 in my home lab has been an exciting journey. From configuring cooling and upgrading firmware to migrating my Proxmox cluster and integrating with a UPS, every step has enhanced my lab's performance and reliability. Additionally, the advanced network and storage configurations have made my setup more robust and efficient. I hope this guide helps you in your home lab endeavors.
+
+Stay tuned for more updates and experiments in my home lab!
+
+## Credits
+
+- [Dell & HP Server Manual Fan Control](https://www.youtube.com/watch?v=KamY5zMpXKI&list=LL&index=13) - YouTube Tutorial
+- [Kenneth Finnegan](https://github.com/phirephly) - Update your old ass Dell servers
+- [NOiSEA](https://forum.proxmox.com/threads/cyberpower-power-panel.120376/) - Cyberpower power panel on Proxmox Forum
