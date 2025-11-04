@@ -14,13 +14,13 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
   <PageHead slot="head" title="Home" />
   <section class="rounded-lg border">
     <div class="flex flex-col space-y-1.5 p-6">
-      <div class="flex items-center gap-4">
+      <div class="flex items-start gap-4">
         <img 
           src="https://merox.dev/assets/reworkedmeroxdc1.png" 
           alt="Robert's profile"
-          class="w-20 h-20 rounded-full object-cover border-2 border-border"
+          class="w-20 h-20 rounded-full object-cover border-2 border-border flex-shrink-0"
         />
-        <div>
+        <div class="flex-1 min-w-0">
           <h3 class="text-3xl leading-none font-medium">Hey, I'm Robert</h3>
           <p class="text-muted-foreground text-sm mt-1">
             HPC Sysadmin <span class="font-medium">@ Forvia</span>
@@ -35,7 +35,7 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     </div>
     <div class="p-6 pt-0">
       <p class="text-muted-foreground mb-2 text-sm">
-        DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ years). I build secure, scalable infrastructures using automation, cloud, and containerization.
+DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ years). I build secure, scalable infrastructures using automation, cloud, and containerization.
       </p>
     </div>
   </section>
