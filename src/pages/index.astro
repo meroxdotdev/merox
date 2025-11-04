@@ -14,16 +14,28 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
   <PageHead slot="head" title="Home" />
   <section class="rounded-lg border">
     <div class="flex flex-col space-y-1.5 p-6">
-      <h3 class="text-3xl leading-none font-medium">Hey, I'm Robert</h3>
-      <p class="text-muted-foreground text-sm">
-        HPC Sysadmin <span class="font-medium">@ Forvia</span>
-      </p>
+      <div class="flex items-center gap-4">
+        <img 
+          src="https://merox.dev/assets/reworkedmeroxdc1.png" 
+          alt="Robert's profile"
+          class="w-20 h-20 rounded-full object-cover border-2 border-border"
+        />
+        <div>
+          <h3 class="text-3xl leading-none font-medium">Hey, I'm Robert</h3>
+          <p class="text-muted-foreground text-sm mt-1">
+            HPC Sysadmin <span class="font-medium">@ Forvia</span>
+          </p>
+          <p class="mt-2 relative inline-block">
+            <span class="highlight-text text-sm font-semibold relative z-10">
+              Geek. Curious. Thinker.
+            </span>
+          </p>
+        </div>
+      </div>
     </div>
     <div class="p-6 pt-0">
       <p class="text-muted-foreground mb-2 text-sm">
-DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ years). I build secure, scalable infrastructures using automation, cloud, and containerization.
-
-
+        DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ years). I build secure, scalable infrastructures using automation, cloud, and containerization.
       </p>
     </div>
   </section>
@@ -51,3 +63,33 @@ DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ year
     </div>
   </section>
 </Layout>
+
+<style>
+  .highlight-text {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .highlight-text::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    right: -4px;
+    bottom: 2px;
+    height: 40%;
+    background: linear-gradient(120deg, #4facfe 0%, #00f2fe 100%);
+    opacity: 0.4;
+    z-index: -1;
+    transform: skewX(-12deg);
+    animation: highlight-pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes highlight-pulse {
+    0%, 100% {
+      opacity: 0.4;
+    }
+    50% {
+      opacity: 0.6;
+    }
+  }
+</style>
