@@ -1,16 +1,20 @@
 ---
 title: "Migrating Longhorn Backup from MinIO to Garage After Docker Image Discontinuation"
-description: "A step-by-step guide to migrating Longhorn backup storage from MinIO to Garage after MinIO discontinued their Docker images. Learn how to set up Garage as an S3-compatible backup target for your Kubernetes cluster."
+description: "A step-by-step guide to migrating Longhorn backup storage from MinIO to Garage after MinIO discontinued their Docker images."
 date: 2025-10-27
-tags: ["storage", "kubernetes", "docker", "homelab", "s3", "backup"]
-published: true
+tags: ["storage", "docker", "homelab", "backup"]
+image: './banner.svg'
 ---
+
+import Callout from '@/components/Callout.astro'
 
 When MinIO recently announced they're discontinuing Docker images and moving to a source-only distribution model, many homelab users were left scrambling for alternatives. With hundreds of thousands of installations potentially running outdated versions with known CVEs, it was time to find a more reliable solution.
 
 Enter Garage - a self-hosted, S3-compatible, distributed object storage service that's perfect for Kubernetes backup storage.
 
-> **ℹ️ Note:** If you're looking for information on how to restore from Longhorn backups after migrating to Garage, check out my previous guide on [Restoring from Longhorn Backups](/blog/longhorn-backup-restore/). The restoration process remains identical regardless of whether you're using MinIO or Garage as your S3 backend.
+<Callout variant="note">
+If you're looking for information on how to restore from Longhorn backups after migrating to Garage, check out my previous guide on [Restoring from Longhorn Backups](/blog/longhorn-backup-restore/). The restoration process remains identical regardless of whether you're using MinIO or Garage as your S3 backend.
+</Callout>
 
 ## Why Garage?
 
@@ -31,14 +35,12 @@ Garage checked all these boxes.
 ## Setting Up Garage
 
 ### 1. Directory Structure
-
 ```bash
 sudo mkdir -p /srv/docker/garage/{meta,data}
 cd /srv/docker/garage
 ```
 
 ### 2. Generate Secrets
-
 ```bash
 # Generate RPC secret for internal communication
 openssl rand -hex 32
@@ -50,7 +52,6 @@ openssl rand -hex 32
 ### 3. Create Configuration
 
 Create `/srv/docker/garage/garage.toml`:
-
 ```toml
 metadata_dir = "/var/lib/garage/meta"
 data_dir = "/var/lib/garage/data"
@@ -72,12 +73,13 @@ api_bind_addr = "0.0.0.0:3903"
 admin_token = "YOUR_ADMIN_TOKEN_HERE"
 ```
 
-> **💡 Tip:** For single-node deployments, `replication_factor = 1` is sufficient. Multi-node clusters should use 3 for redundancy.
+<Callout variant="tip">
+For single-node deployments, `replication_factor = 1` is sufficient. Multi-node clusters should use 3 for redundancy.
+</Callout>
 
 ### 4. Docker Compose Setup
 
 Create `/srv/docker/garage/docker-compose.yml`:
-
 ```yaml
 version: "3"
 services:
@@ -104,7 +106,6 @@ services:
 ```
 
 ### 5. Start Services
-
 ```bash
 docker-compose up -d
 ```
@@ -112,7 +113,6 @@ docker-compose up -d
 ## Configuring Garage Storage
 
 ### 1. Initialize Node Layout
-
 ```bash
 # Create alias for easier command execution
 alias garage="docker exec -ti garage /garage"
@@ -129,7 +129,6 @@ garage layout apply --version 1
 ```
 
 ### 2. Create Bucket and Credentials
-
 ```bash
 # Create bucket for Longhorn backups
 garage bucket create longhorn
@@ -149,7 +148,6 @@ garage key info longhorn-key --show-secret
 ### 1. Create Kubernetes Secret
 
 Update your SOPS-encrypted secret or create a new one:
-
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -165,13 +163,11 @@ stringData:
 ```
 
 Apply the secret:
-
 ```bash
 kubectl apply -f minio-secret.yaml
 ```
 
 ### 2. Update Longhorn HelmRelease
-
 ```yaml
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
@@ -205,7 +201,9 @@ spec:
       # ... other settings
 ```
 
-> **⚠️ Warning:** In Longhorn 1.10.0+, backup settings are under `defaultSettings`, not a separate `defaultBackupStore` section.
+<Callout variant="warning">
+In Longhorn 1.10.0+, backup settings are under `defaultSettings`, not a separate `defaultBackupStore` section.
+</Callout>
 
 ## Testing the Setup
 
@@ -221,7 +219,6 @@ Access the Garage WebUI at `http://<SERVER_IP>:3909` to verify the node is conne
 4. Verify the backup appears in Garage WebUI under the `longhorn` bucket
 
 ### 3. CLI Verification
-
 ```bash
 # List buckets
 garage bucket list
@@ -235,7 +232,6 @@ garage bucket info longhorn
 ### WebUI Shows "Unknown Error"
 
 Ensure the `[admin]` section is present in `garage.toml` and the container is restarted:
-
 ```bash
 docker-compose restart
 docker logs garage
@@ -244,7 +240,6 @@ docker logs garage
 ### Connection Refused on Port 3903
 
 Check if the admin API is listening:
-
 ```bash
 netstat -tlnp | grep 3903
 ```
@@ -252,7 +247,6 @@ netstat -tlnp | grep 3903
 ### Longhorn Can't Connect to Garage
 
 Verify network connectivity from Kubernetes cluster:
-
 ```bash
 kubectl run -it --rm debug --image=amazon/aws-cli --restart=Never -- \
   s3 ls s3://longhorn --endpoint-url http://<GARAGE_IP>:3900

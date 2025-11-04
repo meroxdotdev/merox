@@ -2,45 +2,110 @@
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
-import ProjectCard from '@/components/ProjectCard.astro'
 import Layout from '@/layouts/Layout.astro'
-import { getAllProjects } from '@/lib/data-utils'
-
-const projects = await getAllProjects()
 ---
 
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="About" />
-  <Breadcrumbs items={[{ label: 'About', icon: 'lucide:info' }]} />
+  <Breadcrumbs items={[{ label: 'About', icon: 'lucide:user' }]} />
 
   <section>
     <div class="min-w-full">
-      <div class="prose mb-8">
-        <p class="mt-0">
-          astro-erudite is an opinionated, unstyled static blogging template
-          that prioritizes simplicity and performance, built with <Link
-            href="https://astro.build"
-            external
-            underline>Astro</Link
-          >, <Link href="https://tailwindcss.com" external underline
-            >Tailwind</Link
-          >, and <Link href="https://ui.shadcn.com" external underline
-            >shadcn/ui</Link
-          >. It provides a clean foundation for your content while being
-          extremely easy to customize.
+      <div class="prose">
+        <h1 class="text-center">Robert Melcher</h1>
+        <p class="text-center text-muted-foreground mt-0">
+          <strong>HPC System Administrator / DevOps-Focused</strong>
+        </p>
+
+        <hr class="my-8" />
+
+        <h2>👋 Hello, I'm Robert</h2>
+        <p>
+          DevOps-focused <strong>HPC System Administrator</strong> & former <strong>Cybersecurity Engineer</strong> (9+ years). I build secure, scalable infrastructures using <strong>automation</strong>, <strong>cloud</strong>, and <strong>containerization</strong>.
         </p>
         <p>
-          To learn more about the philosophy behind this template, check out the
-          following blog post: <Link
-            href="/blog/the-state-of-static-blogs"
-            underline>The State of Static Blogs in 2024</Link
-          >.
+          <strong>Current role:</strong> HPC SysAdmin @ <strong>Forvia</strong> – managing enterprise HPC clusters, datacenter deployments, and cross-functional IT coordination.
         </p>
-      </div>
 
-      <h2 class="mb-4 text-2xl font-medium">Example Projects Listing</h2>
-      <div class="flex flex-col gap-4">
-        {projects.map((project) => <ProjectCard project={project} />)}
+        <h2>🚀 Core Expertise</h2>
+        <table>
+          <thead>
+            <tr>
+              <th style="text-align: left">Area</th>
+              <th style="text-align: left">Key Skills</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>HPC Ops</strong></td>
+              <td>Datacenter coordination (racking/cabling), InfiniBand (Mellanox), iDRAC provisioning, PBS scheduling, SMB/NFS, app support (<strong>CST</strong>, <strong>Moldflow</strong>, <strong>Altair</strong>)</td>
+            </tr>
+            <tr>
+              <td><strong>Cloud & Virt</strong></td>
+              <td>AWS (EC2/S3), Oracle Cloud (Ampere), Proxmox/XEN, Docker, Kubernetes (K8s/K3s + Rancher)</td>
+            </tr>
+            <tr>
+              <td><strong>DevOps</strong></td>
+              <td>IaC, Puppet/SALT, GitOps, Terraform/Ansible</td>
+            </tr>
+            <tr>
+              <td><strong>Security & Net</strong></td>
+              <td>CCNA, VLAN/firewall design (Cisco/Fortinet/Palo/Juniper), NESSUS, IPsec (StrongSwan), WAF</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2>🛠️ Tech Stack</h2>
+        <p>
+          <strong>HPC:</strong> PBS, InfiniBand, iDRAC, SMB/NFS, CST/Moldflow/Altair<br />
+          <strong>Cloud:</strong> AWS, Oracle Ampere (4vCPU/24GB), K8s/K3s, Docker/Portainer<br />
+          <strong>SysAdmin:</strong> Linux/Windows, Puppet/SALT, AD, BAREOS<br />
+          <strong>Net/Sec:</strong> CCNA, multi-vendor firewalls, StrongSwan, Forescout, CyberArk
+        </p>
+
+        <h2>💡 Key Achievements</h2>
+        <ul>
+          <li><strong>Forvia HPC:</strong> Full datacenter deployments, InfiniBand clusters, PBS + app integration, cross-team VLAN/firewall flows</li>
+          <li><strong>Homelab:</strong> Proxmox + K3s/Rancher on Dell R720, pfSense + VLAN/WAF security</li>
+          <li><strong>Cloud:</strong> AWS/EC2+S3 apps, Oracle Ampere ARM testing</li>
+          <li><strong>Past:</strong> Puppet→K8s migration, BAREOS 99.9% backup, Forescout Windows 10 rollout</li>
+          <li><strong>Dolphost (2022–24):</strong> Secure WordPress hosting with WHMCS/cPanel automation</li>
+        </ul>
+
+        <h2>💼 Experience</h2>
+        <p>
+          <strong>HPC SysAdmin @ Forvia</strong> (2022–Present)<br />
+          <strong>Cybersecurity Engineer @ Atos</strong> (2020–22) – firewall policies, CyberArk, Forescout<br />
+          <strong>SysAdmin @ Netex Romania</strong> (2018–20) – Puppet→K8s, Asterisk VOIP, datacenter ops
+        </p>
+
+        <h2>🎓 Education & Certs</h2>
+        <p>
+          <strong>Computer Science</strong> – West University of Timișoara (2016–18)<br />
+          <strong>CCNA</strong> – ID: NJXWKRFD7D1EQ7C0 (2019–20)
+        </p>
+
+        <h2>🔮 Exploring</h2>
+        <p>
+          HPC optimization, multi-cloud, K8s security, ARM (Ampere), Terraform/Ansible
+        </p>
+
+        <hr class="my-8" />
+
+        <h2>🏷️ Merox = ME(lcher) + RO(bert) + X</h2>
+        <p class="text-sm text-muted-foreground">
+          <em>(ex-mer0x39 → 0x39 = 57 = 5 July birth)</em>
+        </p>
+
+        <p>
+          <strong>Open to infra, or cyber discussions.</strong>
+        </p>
+
+        <p class="mt-6">
+          <Link href="/robert-melcher-cv.pdf" external class="inline-flex ">
+            📄 Download CV
+          </Link>
+        </p>
       </div>
     </div>
   </section>

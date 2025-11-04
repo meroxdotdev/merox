@@ -3,9 +3,9 @@ import type { IconMap, SocialLink, Site } from '@/types'
 export const SITE: Site = {
   title: 'Merox',
   description:
-    'astro-erudite is a opinionated, unstyled blogging template—built with Astro, Tailwind, and shadcn/ui.',
+    'System Administrator with cybersecurity background and expertise in Linux, Networking, and Security. I focus on practical solutions and sharing knowledge gained through hands-on experience in enterprise environments.',
   href: 'https://astro-erudite.vercel.app',
-  author: 'jktrn',
+  author: 'merox',
   locale: 'en-US',
   featuredPostCount: 2,
   postsPerPage: 3,
@@ -17,8 +17,8 @@ export const NAV_LINKS: SocialLink[] = [
     label: 'blog',
   },
   {
-    href: '/authors',
-    label: 'authors',
+    href: 'https://inside.merox.dev',
+    label: 'inside',
   },
   {
     href: '/about',
@@ -28,15 +28,15 @@ export const NAV_LINKS: SocialLink[] = [
 
 export const SOCIAL_LINKS: SocialLink[] = [
   {
-    href: 'https://github.com/jktrn',
+    href: 'https://github.com/meroxdotdev',
     label: 'GitHub',
   },
+  // {
+  //   href: 'https://www.linkedin.com/in/robert-melcher-92a1a9157?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
+  //   label: 'Reddit',
+  // },
   {
-    href: 'https://twitter.com/enscry',
-    label: 'Twitter',
-  },
-  {
-    href: 'mailto:jason@enscribe.dev',
+    href: 'mailto:hello@merox.dev',
     label: 'Email',
   },
   {
