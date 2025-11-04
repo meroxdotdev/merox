@@ -31,10 +31,10 @@ export const SOCIAL_LINKS: SocialLink[] = [
     href: 'https://github.com/meroxdotdev',
     label: 'GitHub',
   },
-  // {
-  //   href: 'https://www.linkedin.com/in/robert-melcher-92a1a9157?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
-  //   label: 'Reddit',
-  // },
+  {
+    href: 'https://www.linkedin.com/in/robert-melcher-92a1a9157?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
+    label: 'LinkedIn',
+  },
   {
     href: 'mailto:hello@merox.dev',
     label: 'Email',
