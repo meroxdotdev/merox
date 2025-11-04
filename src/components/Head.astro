@@ -1,5 +1,5 @@
 ---
-import { SITE } from '@/consts'
+import { SITE, ANALYTICS } from '@/consts'
 import { ClientRouter } from 'astro:transitions'
 import Favicons from './Favicons.astro'
 ---
@@ -43,6 +43,20 @@ import Favicons from './Favicons.astro'
   />
 
   <Favicons />
+  
+  <!-- Google Analytics -->
+  {ANALYTICS.google && (
+    <>
+      <script is:inline define:vars={{ gaId: ANALYTICS.google }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', gaId);
+      </script>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${ANALYTICS.google}`}></script>
+    </>
+  )}
+  
   <ClientRouter />
 
   <slot />

@@ -4,11 +4,16 @@ export const SITE: Site = {
   title: 'Merox',
   description:
     'System Administrator with cybersecurity background and expertise in Linux, Networking, and Security. I focus on practical solutions and sharing knowledge gained through hands-on experience in enterprise environments.',
-  href: 'https://merox.dev',
+  href: 'https://astro-erudite.vercel.app',
   author: 'merox',
   locale: 'en-US',
   featuredPostCount: 3,
   postsPerPage: 4,
+}
+
+// Google Analytics
+export const ANALYTICS = {
+  google: 'G-RXSCNFY5WZ', // 👈 Înlocuiește cu ID-ul tău real de la Google Analytics
 }
 
 export const NAV_LINKS: SocialLink[] = [
