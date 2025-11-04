@@ -7,8 +7,8 @@ export const SITE: Site = {
   href: 'https://astro-erudite.vercel.app',
   author: 'merox',
   locale: 'en-US',
-  featuredPostCount: 2,
-  postsPerPage: 3,
+  featuredPostCount: 3,
+  postsPerPage: 4,
 }
 
 export const NAV_LINKS: SocialLink[] = [
