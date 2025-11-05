@@ -4,7 +4,7 @@ export const SITE: Site = {
   title: 'Merox',
   description:
     'System Administrator with cybersecurity background and expertise in Linux, Networking, and Security. I focus on practical solutions and sharing knowledge gained through hands-on experience in enterprise environments.',
-  href: 'https://astro-erudite.vercel.app',
+  href: 'https://merox.dev',
   author: 'merox',
   locale: 'en-US',
   featuredPostCount: 3,
