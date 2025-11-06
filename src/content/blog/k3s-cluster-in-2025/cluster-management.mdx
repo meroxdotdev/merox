@@ -1,0 +1,160 @@
+---
+title: 'Cluster Management with Rancher and Longhorn'
+description: 'Deploy Rancher for Kubernetes cluster management and Longhorn for distributed block storage'
+date: 2025-02-11
+tags: ["kubernetes", "rancher", "longhorn", "storage"]
+authors: ['merox']
+order: 3
+---
+
+import Callout from '@/components/Callout.astro'
+
+This guide covers deploying Rancher for comprehensive cluster management and Longhorn for cloud-native distributed storage in your K3s cluster.
+
+## Deploying Rancher
+
+### Add Rancher Helm Repository and Create Namespace
+```bash
+helm repo add rancher-latest https://releases.rancher.com/server-charts/stable
+kubectl create namespace cattle-system
+```
+
+Since Traefik is already deployed, Rancher will utilize it for ingress. Deploy Rancher with Helm:
+```bash
+helm install rancher rancher-stable/rancher \
+  --namespace cattle-system \
+  --set hostname=rancher.k3s.your.domain \
+  --set tls=external \
+  --set replicas=3
+```
+
+### Create Ingress for Rancher
+
+Create an `ingress.yml` file with the following configuration:
+```yaml
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: rancher
+  namespace: cattle-system
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`rancher.k3s.your.domain`)
+      kind: Rule
+      services:
+        - name: rancher
+          port: 443
+      middlewares:
+        - name: default-headers
+  tls:
+    secretName: k3s-your-domain-tls
+```
+
+Apply the ingress configuration:
+```bash
+kubectl apply -f ingress.yml
+```
+
+Now, you should be able to manage your cluster from [https://rancher.k3s.your.domain](https://rancher.k3s.your.domain).
+
+![Rancher Dashboard](assets/k3s-rancher-dashboard.png)
+
+## Deploying Longhorn
+
+If you want to use cloud-ready drive shared storage, follow these steps:
+
+### Install Required Packages
+
+Only on the VMs you want to deploy longhorn:
+```bash
+sudo apt update && sudo apt install -y open-iscsi nfs-common
+```
+
+### Enable iSCSI
+```bash
+sudo systemctl enable iscsid
+sudo systemctl start iscsid
+```
+
+### Add Longhorn Label on Nodes
+
+A minimum of three nodes are required for High Availability. In this setup, we will use three worker nodes:
+```bash
+kubectl label node k3s-worker-1 storage.longhorn.io/node=true 
+kubectl label node k3s-worker-2 storage.longhorn.io/node=true 
+kubectl label node k3s-worker-3 storage.longhorn.io/node=true
+```
+
+### Deploy Longhorn
+
+Modified to use `storage.longhorn.io/node=true` label:
+```bash
+kubectl apply -f https://raw.githubusercontent.com/meroxdotdev/merox.docs/refs/heads/master/K3S/cluster-deployment/longhorn.yaml
+```
+
+### Verify Deployment
+```bash
+kubectl get pods --namespace longhorn-system --watch
+```
+
+### Print Confirmation
+```bash
+kubectl get nodes
+kubectl get svc -n longhorn-system
+```
+
+## Exposing Longhorn with Traefik
+
+### Create Middleware Configuration
+
+Create a `middleware.yml` file:
+```yaml
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: longhorn-headers
+  namespace: longhorn-system
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Proto: "https"
+```
+
+### Setup Ingress
+
+Create an `ingress.yml` file:
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: longhorn-ingress
+  namespace: longhorn-system
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: longhorn-system-longhorn-headers@kubernetescrd
+spec:
+  rules:
+  - host: storage.k3s.your.domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: longhorn-frontend
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - storage.k3s.your.domain
+    secretName: k3s-your-domain-tls
+```
+
+![Longhorn Storage Dashboard](assets/k3s-longhorn-dashboard.png)
+
+## Next Steps
+
+Explore the Advanced Resources guide for additional tools including NFS storage, monitoring solutions, ArgoCD for GitOps, and cluster upgrade procedures.

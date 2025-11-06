@@ -1,0 +1,43 @@
+---
+title: 'Advanced Resources and Best Practices'
+description: 'Additional tools and resources for monitoring, storage, continuous deployment, and cluster maintenance'
+date: 2025-02-11
+tags: ["kubernetes", "monitoring", "argocd", "nfs"]
+authors: ['merox']
+order: 4
+---
+
+import Callout from '@/components/Callout.astro'
+
+This guide covers additional tools and resources to enhance your K3s cluster, including NFS storage integration, monitoring solutions, GitOps with ArgoCD, and maintenance procedures.
+
+## Using NFS Storage
+
+If you want to use NFS storage in your cluster, follow this guide: [Merox Docs - NFS Storage Guide](https://docs.merox.dev/operations/containerization/k3s/manifests/nfs-share/?h=nfs)
+
+## Monitoring Your Cluster
+
+A great monitoring tool for your cluster is [Netdata](https://docs.merox.dev/operations/containerization/k3s/manifests/netdata/).
+
+You can also try deploying Prometheus and Grafana from Rancher. However, if you don't fine-tune the setup, you might notice a high resource usage due to the large number of queries processed by Prometheus.
+
+## Continuous Deployment with ArgoCD
+
+ArgoCD is an excellent tool for continuous deployment. You can find more details [here](https://docs.merox.dev/operations/containerization/k3s/manifests/argocd).
+
+## Upgrading Your Cluster
+
+If you need to upgrade your cluster, I put some notes here: [How to Upgrade K3s](https://docs.merox.dev/operations/containerization/k3s/upgrade/).
+
+## Final Thoughts
+
+When I first deployed a K3s/RKE2 cluster (about a year ago), I struggled to find a single source of documentation that covered everything needed for at least a homelab, if not even for production use. Unfortunately, I couldn't find anything comprehensive, so I decided to write this article to consolidate all the necessary information in one place.
+
+If this guide helped you and you'd like to see more information added, please leave a comment, and I will do my best to update this post.
+
+### How Have You Deployed Your Clusters?
+Let me know in the comments!
+
+### Special Thanks
+- [TechnoTim](https://technotim.live/)
+- [James Turland](https://github.com/JamesTurland/)

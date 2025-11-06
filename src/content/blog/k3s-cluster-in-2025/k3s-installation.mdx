@@ -1,0 +1,108 @@
+---
+title: 'Installing K3s with Ansible'
+description: 'Automated K3s cluster deployment using Ansible playbooks with HA configuration across multiple nodes'
+date: 2025-02-11
+tags: ["kubernetes", "k3s", "ansible", "automation"]
+authors: ['merox']
+order: 1
+---
+
+import Callout from '@/components/Callout.astro'
+
+This guide walks you through setting up **K3s** using **Ansible** on your Proxmox-based VMs. Ansible helps automate the process across multiple nodes, making the deployment faster and more reliable.
+
+## Prerequisites
+
+1. **Ensure Ansible is installed on your management machine** (Debian/Ubuntu or macOS):
+
+   **Debian/Ubuntu**:
+```bash
+   sudo apt update && sudo apt install -y ansible
+```
+   
+   **macOS**:
+```bash
+   brew install ansible
+```
+
+2. **Clone the k3s-ansible repository**
+
+   We will use Techno Tim's [k3s-ansible repository](https://github.com/techno-tim/k3s-ansible), but in this guide, we'll use a forked version:
+```bash
+   git clone https://github.com/meroxdotdev/k3s-ansible
+```
+
+## Pre-Deployment Configuration
+
+1. **Set up the Ansible environment**:
+```bash
+   cd k3s-ansible
+   cp ansible.example.cfg ansible.cfg
+   ansible-galaxy install -r ./collections/requirements.yml
+   cp -R inventory/sample inventory/my-cluster
+```
+
+2. **Edit `inventory/my-cluster/hosts.ini`**
+
+   Modify this file to match your cluster's IP addresses. Example:
+```ini
+   [master]
+   10.57.57.30
+   10.57.57.31
+   10.57.57.32
+
+   [node]
+   10.57.57.33
+   10.57.57.34
+   10.57.57.35
+
+   [k3s_cluster:children]
+   master
+   node
+```
+
+3. **Edit `inventory/my-cluster/group_vars/all.yml`**
+
+   Some critical fields to modify:
+   
+   **ansible_user**: Default VM user is `ubuntu` with sudo privileges.
+   
+   **system_timezone**: Set to your local timezone (e.g., `Europe/Bucharest`).
+   
+   **Networking** (`Calico` vs. `Flannel`): Comment out `#flannel_iface: eth0` and use `calico_iface: "eth0"` for better network policies. Flannel is the simpler alternative if you prefer an easier setup.
+   
+   **apiserver_endpoint**: `10.57.57.100` - Ensure this is an unused IP in your local network. It serves as the VIP (Virtual IP) for the k3s control plane.
+   
+   **k3s_token**: Use any alphanumeric string.
+   
+   **metal_lb_ip_range**: `10.57.57.80-10.57.57.90` - The IP belongs to your local network (LAN), is not already in use by other network services, and is outside your DHCP pool range to avoid conflicts. This setup enables exposing K3s container services to your network, similar to how Docker ports are exposed to their host IP.
+
+<Callout variant="note">
+Before running the next command, ensure SSH key authentication is set up between your management machine and all deployed VMs.
+</Callout>
+
+## Deploy the Cluster
+
+Run the following command to deploy the cluster:
+```bash
+ansible-playbook ./site.yml -i ./inventory/my-cluster/hosts.ini
+```
+
+Once the playbook execution completes, you can verify the cluster's status:
+```bash
+# Copy the kubeconfig file from the first master node
+scp ubuntu@10.57.57.30:~/.kube/config .
+
+# Move it to the correct location
+mkdir -p ~/.kube
+mv config ~/.kube/
+
+# Check if the cluster nodes are properly registered
+kubectl get nodes
+```
+
+If the setup was successful, `kubectl get nodes` should display the cluster's nodes and their statuses.
+
+## Next Steps
+
+With K3s deployed, proceed to the Traefik Setup guide to configure ingress and SSL certificates for your cluster.
