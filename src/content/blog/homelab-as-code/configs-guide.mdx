@@ -1,0 +1,75 @@
+---
+title: 'Services Configuration Guide'
+description: 'Detailed configuration for getHomepage, Media Stack, and Traefik with SSL certificate management'
+date: 2024-12-17
+tags: ["infrastructure", "docker", "traefik", "homelab"]
+authors: ['enscribe']
+order: 2
+---
+
+import Callout from '@/components/Callout.astro'
+
+This section focuses on configuring the Docker services that will run in your homelab: getHomepage for your dashboard, Media Stack for streaming services, and Traefik for reverse proxy and SSL management.
+
+## getHomepage Configuration
+
+### `/docker/homepage/`
+No edits are needed in the `homepage` folder. If you'd like to use an existing configuration, you can extract the archive, add your files, and re-archive it. Alternatively, after deployment, configurations will be available in the VM under `/home/homepage/`.
+
+## Media Stack Configuration
+
+### `/docker/media-stack/`
+To ensure the Media Stack services are accessible within your network, update the DNS values in the `labels` section of the `media_stack` configuration. Focus on the `"rule=Host"` entries, where you need to replace the example DNS values with your own domain or DNS configuration from your local DNS server (e.g., Pi-hole, Unbound, Technitium). 
+
+For example:
+```yaml
+- "traefik.http.routers.jellyseer-media.rule=Host(`jellyseer.local`)"
+```
+
+Replace `jellyseer.local` with your custom domain:
+```yaml
+- "traefik.http.routers.jellyseer-media.rule=Host(`jellyseer.merox.cloud`)"
+```
+
+This ensures the services are accessible at `jellyseer.merox.cloud` or any domain configured in your environment.
+
+## Traefik Configuration
+
+**V1**: Return to this step after deployment is complete (config will be in `/home/traefik` on the deployed machine).  
+**V2**: Extract the archive, edit as shown below, and re-archive.
+
+### `docker-compose.yaml`
+Update all instances of `yourdomain.com` to your actual domain. Ensure this change is made in all four occurrences.  
+**Provider used**: Cloudflare.
+
+### `.env`
+This hidden file contains credentials for the Traefik dashboard. Default credentials:
+- **Username**: `user`
+- **Password**: `password`
+
+Edit these if needed.
+
+### `data/config.yml`
+Optional file for adding services outside Docker (e.g., your Proxmox IP for SSL access at `proxmox.mydomain.com`).
+
+### `data/traefik.yml`
+Replace `your-cloudflare@email.com` with your Cloudflare email.
+
+## Post-Configuration Step
+
+<Callout variant="danger">
+After deployment, create a file named `cf_api_token.txt` in `/home/traefik/` with your Cloudflare API token. This step is crucial for starting the Traefik container.
+</Callout>
+
+Start the container manually:
+```bash
+/usr/local/bin/docker-compose up &
+```
+
+## Additional Resources
+
+For more on Traefik, check out this [detailed guide](https://technotim.live/posts/traefik-3-docker-certificates/).
+
+## Next Steps
+
+Proceed to the Infrastructure Setup guide to configure Packer and Terraform for automated VM deployment.

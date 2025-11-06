@@ -1,0 +1,70 @@
+---
+title: 'Ansible Configuration and Setup'
+description: 'Complete guide to configuring Ansible inventory, roles, and optional NFS mounts for your homelab automation'
+date: 2024-12-17
+tags: ["infrastructure", "automation", "ansible", "homelab"]
+authors: ['enscribe']
+order: 1
+---
+
+import Callout from '@/components/Callout.astro'
+
+This guide covers the Ansible configuration necessary for automated deployment of Docker services, Portainer, and optional NFS storage integration in your homelab environment.
+
+## Inventory Folder
+
+The `inventory` folder is essential for Terraform and Ansible integration, as it holds the dynamically generated `inventory.ini` file. This file maps the VM IP address and SSH credentials for Ansible to use.
+
+Here's how it's created in the Terraform configuration:
+```terraform
+resource "local_file" "ansible_inventory" {
+  depends_on = [time_sleep.wait_1_minute]
+
+  content = <<EOT
+[docker]
+docker-01 ansible_host=IP_DEPLOYMENT ansible_user=root ansible_ssh_private_key_file=~/.ssh/id_rsa
+EOT
+
+  filename = "../ansible/inventory/inventory.ini"
+}
+```
+
+You don't need to edit anything in this folder manually, as it is automatically generated during deployment.
+
+## Roles Folder
+
+The `roles/docker` folder contains all the necessary playbooks for setting up:
+- **Docker**
+- **Docker Compose**
+- **Portainer**
+- **getHomepage**
+- **Traefik**
+
+Each service has a specific `.yml` file that automates its installation and configuration.
+
+## Configuring NFS Mount (Optional)
+
+If you plan to use an external NFS share, update the `roles/nfs_mount` file with your specific configuration:
+
+**Step 1**: Replace the placeholder with your NFS server's IP or FQDN:
+```bash
+REPLACE_this_with_your_nfs_server_ip_address
+```
+
+**Step 2**: Update the path to the shared directory on your NFS server:
+```bash
+REPLACE_this_with_your_nfs_path
+```
+
+In the end, your line should look like this:
+```bash
+172.20.0.254:/volume1/Server/Data/media_nas/ /media nfs rw,hard,intr 0 0
+```
+
+<Callout variant="warning">
+**Note**: If you decide not to use an NFS share, follow the steps for disabling this feature in your deployment by commenting out the NFS mount block in Terraform (covered in the Infrastructure Setup subpost).
+</Callout>
+
+## Next Steps
+
+With Ansible configured, proceed to the Services Configuration guide to set up Homepage, Media Stack, and Traefik for your homelab environment.
