@@ -16,7 +16,10 @@ const {
 } = Astro.props
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site).href
-const ogImage = image || new URL(`/og${Astro.url.pathname}.png`, Astro.site).href
+
+// Elimină slash-ul final din pathname
+const cleanPathname = Astro.url.pathname.replace(/\/$/, '')
+const ogImage = image || new URL(`/og${cleanPathname}.png`, Astro.site).href
 ---
 
 <head>
@@ -40,6 +43,8 @@ const ogImage = image || new URL(`/og${Astro.url.pathname}.png`, Astro.site).hre
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
