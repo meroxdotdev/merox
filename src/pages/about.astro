@@ -1,111 +1,211 @@
 ---
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
-import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
+import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
+import { Icon } from 'astro-icon/components'
+
+const techStack = {
+  hpc: [
+    { name: 'PBS Pro', icon: 'lucide:server', color: 'text-blue-500' },
+    { name: 'InfiniBand', icon: 'lucide:network', color: 'text-red-500' },
+    { name: 'iDRAC', icon: 'lucide:hard-drive', color: 'text-blue-600' },
+    { name: 'CST Studio', icon: 'lucide:radio', color: 'text-orange-500' },
+    { name: 'Moldflow', icon: 'lucide:waves', color: 'text-cyan-500' },
+    { name: 'Altair', icon: 'lucide:cpu', color: 'text-purple-500' },
+  ],
+  cloud: [
+    { name: 'AWS', icon: 'simple-icons:amazonwebservices', color: 'text-[#FF9900]' },
+    { name: 'Oracle Cloud', icon: 'simple-icons:oracle', color: 'text-[#F80000]' },
+    { name: 'Docker', icon: 'simple-icons:docker', color: 'text-[#2496ED]' },
+    { name: 'Kubernetes', icon: 'simple-icons:kubernetes', color: 'text-[#326CE5]' },
+    { name: 'Proxmox', icon: 'lucide:server-cog', color: 'text-[#E57000]' },
+    { name: 'Rancher', icon: 'simple-icons:rancher', color: 'text-[#0075A8]' },
+  ],
+  devops: [
+    { name: 'Terraform', icon: 'simple-icons:terraform', color: 'text-[#7B42BC]' },
+    { name: 'Ansible', icon: 'simple-icons:ansible', color: 'text-[#EE0000]' },
+    { name: 'Puppet', icon: 'simple-icons:puppet', color: 'text-[#FFAE1A]' },
+    { name: 'Salt', icon: 'simple-icons:saltproject', color: 'text-[#57BCAD]' },
+    { name: 'GitOps', icon: 'simple-icons:git', color: 'text-[#F05032]' },
+    { name: 'Flux', icon: 'simple-icons:flux', color: 'text-[#5468FF]' },
+  ],
+  security: [
+    { name: 'CCNA', icon: 'simple-icons:cisco', color: 'text-[#1BA0D7]' },
+    { name: 'Fortinet', icon: 'simple-icons:fortinet', color: 'text-[#EE3124]' },
+    { name: 'Palo Alto', icon: 'lucide:shield', color: 'text-[#FA582D]' },
+    { name: 'Nessus', icon: 'lucide:scan', color: 'text-[#00C176]' },
+    { name: 'StrongSwan', icon: 'lucide:lock', color: 'text-[#3B82F6]' },
+    { name: 'CyberArk', icon: 'lucide:key-round', color: 'text-[#0085CA]' },
+  ]
+}
 ---
 
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="About" />
   <Breadcrumbs items={[{ label: 'About', icon: 'lucide:user' }]} />
 
-  <section>
-    <div class="min-w-full">
-      <div class="prose">
-        <h1 class="text-center">Robert Melcher</h1>
-        <p class="text-center text-muted-foreground mt-0">
-          <strong>HPC System Administrator / DevOps-Focused</strong>
-        </p>
+  <section class="space-y-8">
+    <!-- Simple Header -->
+    <div class="space-y-2">
+      <h1 class="text-4xl font-bold">Robert Melcher</h1>
+      <p class="text-xl text-muted-foreground">HPC System Administrator & DevOps Engineer</p>
+    </div>
 
-        <hr class="my-8" />
+    <!-- Tech Stack -->
+    <div class="space-y-4">
+      <h2 class="text-2xl font-semibold">Tech Stack</h2>
+      
+      <div class="grid gap-4">
+        <div>
+          <h3 class="text-sm font-medium text-muted-foreground mb-2">HPC & Infrastructure</h3>
+          <div class="flex flex-wrap gap-2">
+            {techStack.hpc.map((tech) => (
+              <span class="px-3 py-1 text-sm rounded-md border bg-card inline-flex items-center gap-1.5">
+                <Icon name={tech.icon} class={`size-4 ${tech.color}`} />
+                {tech.name}
+              </span>
+            ))}
+          </div>
+        </div>
 
-        <h2>👋 Hello, I'm Robert</h2>
-        <p>
-          DevOps-focused <strong>HPC System Administrator</strong> & former <strong>Cybersecurity Engineer</strong> (9+ years). I build secure, scalable infrastructures using <strong>automation</strong>, <strong>cloud</strong>, and <strong>containerization</strong>.
-        </p>
-        <p>
-          <strong>Current role:</strong> HPC SysAdmin @ <strong>Forvia</strong> – managing enterprise HPC clusters, datacenter deployments, and cross-functional IT coordination.
-        </p>
+        <div>
+          <h3 class="text-sm font-medium text-muted-foreground mb-2">Cloud & Virtualization</h3>
+          <div class="flex flex-wrap gap-2">
+            {techStack.cloud.map((tech) => (
+              <span class="px-3 py-1 text-sm rounded-md border bg-card inline-flex items-center gap-1.5">
+                <Icon name={tech.icon} class={`size-4 ${tech.color}`} />
+                {tech.name}
+              </span>
+            ))}
+          </div>
+        </div>
 
-        <h2>🚀 Core Expertise</h2>
-        <table>
-          <thead>
-            <tr>
-              <th style="text-align: left">Area</th>
-              <th style="text-align: left">Key Skills</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>HPC Ops</strong></td>
-              <td>Datacenter coordination (racking/cabling), InfiniBand (Mellanox), iDRAC provisioning, PBS scheduling, SMB/NFS, app support (<strong>CST</strong>, <strong>Moldflow</strong>, <strong>Altair</strong>)</td>
-            </tr>
-            <tr>
-              <td><strong>Cloud & Virt</strong></td>
-              <td>AWS (EC2/S3), Oracle Cloud (Ampere), Proxmox/XEN, Docker, Kubernetes (K8s/K3s + Rancher)</td>
-            </tr>
-            <tr>
-              <td><strong>DevOps</strong></td>
-              <td>IaC, Puppet/SALT, GitOps, Terraform/Ansible</td>
-            </tr>
-            <tr>
-              <td><strong>Security & Net</strong></td>
-              <td>CCNA, VLAN/firewall design (Cisco/Fortinet/Palo/Juniper), NESSUS, IPsec (StrongSwan), WAF</td>
-            </tr>
-          </tbody>
-        </table>
+        <div>
+          <h3 class="text-sm font-medium text-muted-foreground mb-2">DevOps & Automation</h3>
+          <div class="flex flex-wrap gap-2">
+            {techStack.devops.map((tech) => (
+              <span class="px-3 py-1 text-sm rounded-md border bg-card inline-flex items-center gap-1.5">
+                <Icon name={tech.icon} class={`size-4 ${tech.color}`} />
+                {tech.name}
+              </span>
+            ))}
+          </div>
+        </div>
 
-        <h2>🛠️ Tech Stack</h2>
-        <p>
-          <strong>HPC:</strong> PBS, InfiniBand, iDRAC, SMB/NFS, CST/Moldflow/Altair<br />
-          <strong>Cloud:</strong> AWS, Oracle Ampere (4vCPU/24GB), K8s/K3s, Docker/Portainer<br />
-          <strong>SysAdmin:</strong> Linux/Windows, Puppet/SALT, AD, BAREOS<br />
-          <strong>Net/Sec:</strong> CCNA, multi-vendor firewalls, StrongSwan, Forescout, CyberArk
-        </p>
+        <div>
+          <h3 class="text-sm font-medium text-muted-foreground mb-2">Security & Networking</h3>
+          <div class="flex flex-wrap gap-2">
+            {techStack.security.map((tech) => (
+              <span class="px-3 py-1 text-sm rounded-md border bg-card inline-flex items-center gap-1.5">
+                <Icon name={tech.icon} class={`size-4 ${tech.color}`} />
+                {tech.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
 
-        <h2>💡 Key Achievements</h2>
-        <ul>
-          <li><strong>Forvia HPC:</strong> Full datacenter deployments, InfiniBand clusters, PBS + app integration, cross-team VLAN/firewall flows</li>
-          <li><strong>Homelab:</strong> Proxmox + K3s/Rancher on Dell R720, pfSense + VLAN/WAF security</li>
-          <li><strong>Cloud:</strong> AWS/EC2+S3 apps, Oracle Ampere ARM testing</li>
-          <li><strong>Past:</strong> Puppet→K8s migration, BAREOS 99.9% backup, Forescout Windows 10 rollout</li>
-          <li><strong>Dolphost (2022–24):</strong> Secure WordPress hosting with WHMCS/cPanel automation</li>
-        </ul>
+    <!-- Experience -->
+    <div class="space-y-4">
+      <h2 class="text-2xl font-semibold">Experience</h2>
+      
+      <div class="space-y-4">
+        <div class="border-l-2 border-primary pl-4">
+          <h3 class="font-semibold">HPC System Administrator</h3>
+          <p class="text-sm text-muted-foreground">Forvia • 2022 – Present</p>
+          <p class="text-sm mt-1">
+            Enterprise HPC cluster management, datacenter deployments, InfiniBand networking, PBS scheduling
+          </p>
+        </div>
 
-        <h2>💼 Experience</h2>
-        <p>
-          <strong>HPC SysAdmin @ Forvia</strong> (2022–Present)<br />
-          <strong>Cybersecurity Engineer @ Atos</strong> (2020–22) – firewall policies, CyberArk, Forescout<br />
-          <strong>SysAdmin @ Netex Romania</strong> (2018–20) – Puppet→K8s, Asterisk VOIP, datacenter ops
-        </p>
+        <div class="border-l-2 border-muted pl-4">
+          <h3 class="font-semibold">Cybersecurity Engineer</h3>
+          <p class="text-sm text-muted-foreground">Atos • 2020 – 2022</p>
+          <p class="text-sm mt-1">
+            Firewall policy management, CyberArk PAM, Forescout NAC
+          </p>
+        </div>
 
-        <h2>🎓 Education & Certs</h2>
-        <p>
-          <strong>Computer Science</strong> – West University of Timișoara (2016–18)<br />
-          <strong>CCNA</strong> – ID: NJXWKRFD7D1EQ7C0 (2019–20)
-        </p>
+        <div class="border-l-2 border-muted pl-4">
+          <h3 class="font-semibold">System Administrator</h3>
+          <p class="text-sm text-muted-foreground">Netex Romania • 2018 – 2020</p>
+          <p class="text-sm mt-1">
+            Puppet to K8s migration, Asterisk VOIP, datacenter operations
+          </p>
+        </div>
+      </div>
+    </div>
 
-        <h2>🔮 Exploring</h2>
-        <p>
-          HPC optimization, multi-cloud, K8s security, ARM (Ampere), Terraform/Ansible
-        </p>
+    <!-- Education -->
+    <div class="space-y-3">
+      <h2 class="text-2xl font-semibold">Education</h2>
+      
+      <div>
+        <h3 class="font-semibold">Computer Science</h3>
+        <p class="text-sm text-muted-foreground">West University of Timișoara • 2016–2018</p>
+      </div>
 
-        <hr class="my-8" />
+      <div>
+        <h3 class="font-semibold">CCNA Certification</h3>
+        <p class="text-sm text-muted-foreground">Cisco • 2019–2020</p>
+      </div>
+    </div>
 
-        <h2>🏷️ Merox = ME(lcher) + RO(bert) + X</h2>
+    <!-- Highlights -->
+    <div class="space-y-3">
+      <h2 class="text-2xl font-semibold">Key Projects</h2>
+      
+      <ul class="space-y-2 text-sm">
+        <li class="flex gap-2">
+          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
+          <span>Full datacenter deployments with InfiniBand clusters at Forvia</span>
+        </li>
+        <li class="flex gap-2">
+          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
+          <span>Homelab Kubernetes cluster with Talos Linux, Flux GitOps, and Cilium CNI</span>
+        </li>
+        <li class="flex gap-2">
+          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
+          <span>Proxmox virtualization with automated deployments on Dell R720</span>
+        </li>
+        <li class="flex gap-2">
+          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
+          <span>pfSense firewall with VLAN segmentation and WAF security</span>
+        </li>
+        <li class="flex gap-2">
+          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
+          <span>AWS/EC2 applications and Oracle Ampere ARM testing</span>
+        </li>
+        <li class="flex gap-2">
+          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
+          <span>Infrastructure automation with cert-manager, external-dns, and SOPS secrets</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- About Merox -->
+    <div class="space-y-2">
+      <h2 class="text-2xl font-semibold">Why "Merox"?</h2>
+      <p class="text-sm text-muted-foreground">
+        <strong>Merox</strong> = <strong>ME</strong>(lcher) + <strong>RO</strong>(bert) + <strong>X</strong>
+      </p>
+      <p class="text-xs text-muted-foreground italic">
+        (formerly mer0x39 → 0x39 = 57 = July 5th birthday)
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="pt-4 border-t">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
         <p class="text-sm text-muted-foreground">
-          <em>(ex-mer0x39 → 0x39 = 57 = 5 July birth)</em>
+          Open to infrastructure and cybersecurity discussions
         </p>
-
-        <p>
-          <strong>Open to infra, or cyber discussions.</strong>
-        </p>
-
-        <p class="mt-6">
-          <Link href="/robert-melcher-cv.pdf" external class="inline-flex ">
-            📄 Download CV
-          </Link>
-        </p>
+        <Link href="/robert-melcher-cv.pdf" external class="inline-flex items-center gap-2">
+          <Icon name="lucide:download" class="size-4" />
+          <span>Download CV</span>
+        </Link>
       </div>
     </div>
   </section>
