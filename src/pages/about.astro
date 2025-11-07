@@ -48,8 +48,16 @@ const techStack = {
   <section class="space-y-8">
     <!-- Simple Header -->
     <div class="space-y-2">
-      <h1 class="text-4xl font-bold">Robert Melcher</h1>
-      <p class="text-xl text-muted-foreground">HPC System Administrator & DevOps Engineer</p>
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 class="text-4xl font-bold">Robert Melcher</h1>
+          <p class="text-xl text-muted-foreground">HPC System Administrator & DevOps Engineer</p>
+        </div>
+        <Link href="/robert-melcher-cv.pdf" external class="inline-flex items-center gap-2 px-4 py-2 rounded-md border bg-card hover:bg-accent transition-colors shrink-0">
+          <Icon name="lucide:download" class="size-4" />
+          <span>Download CV</span>
+        </Link>
+      </div>
     </div>
 
     <!-- Tech Stack -->
@@ -198,15 +206,9 @@ const techStack = {
 
     <!-- Footer -->
     <div class="pt-4 border-t">
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p class="text-sm text-muted-foreground">
-          Open to infrastructure and cybersecurity discussions
-        </p>
-        <Link href="/robert-melcher-cv.pdf" external class="inline-flex items-center gap-2">
-          <Icon name="lucide:download" class="size-4" />
-          <span>Download CV</span>
-        </Link>
-      </div>
+      <p class="text-sm text-muted-foreground text-center">
+        Open to infrastructure and cybersecurity discussions
+      </p>
     </div>
   </section>
 </Layout>
