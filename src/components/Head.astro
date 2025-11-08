@@ -1,5 +1,4 @@
 ---
-// Head.astro
 import { SITE, ANALYTICS } from '@/consts'
 import { ClientRouter } from 'astro:transitions'
 import Favicons from './Favicons.astro'
@@ -30,9 +29,6 @@ const ogImage = image || (cleanPathname ? new URL(`/og${cleanPathname}.png`, Ast
   />
   <meta name="generator" content={Astro.generator} />
 
-  <!-- ❌ ȘTERGE ASTA -->
-  <!-- <title>{title}</title> -->
-  
   <!-- Primary Meta Tags -->
   <meta name="title" content={title} />
   <meta name="description" content={description} />
@@ -54,7 +50,51 @@ const ogImage = image || (cleanPathname ? new URL(`/og${cleanPathname}.png`, Ast
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={ogImage} />
 
-  <!-- restul codului... -->
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta
+    name="format-detection"
+    content="telephone=no,date=no,address=no,email=no,url=no"
+  />
+
+  <meta
+    name="theme-color"
+    content="#121212"
+    media="(prefers-color-scheme: dark)"
+  />
+  <meta
+    name="theme-color"
+    content="#121212"
+    media="(prefers-color-scheme: light)"
+  />
+
+  <link rel="sitemap" href="/sitemap-index.xml" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    title={SITE.title}
+    href={new URL('rss.xml', Astro.site)}
+  />
+
+  <Favicons />
   
-  <slot />  <!-- 👈 Title-ul vine prin slot -->
+  <!-- Google Analytics -->
+  {ANALYTICS.google && (
+    <>
+      <script is:inline define:vars={{ gaId: ANALYTICS.google }}>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', gaId);
+      </script>
+      <script async src={`https://www.googletagmanager.com/gtag/js?id=${ANALYTICS.google}`}></script>
+    </>
+  )}
+  
+  <ClientRouter />
+
+  <slot />
 </head>
