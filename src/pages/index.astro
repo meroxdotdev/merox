@@ -12,10 +12,10 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
 
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="Home" />
-  <section class="rounded-lg border relative overflow-hidden bg-card terminal-card">
+  <section class="rounded-lg border relative overflow-hidden bg-card">
     <!-- Terminal header bar - clean version -->
     <div class="absolute top-0 left-0 right-0 h-8 border-b flex items-center px-4 bg-muted/20">
-      <span class="text-[10px] font-mono text-muted-foreground">merox@hpc:~$</span>
+      <span class="text-[10px] font-mono text-muted-foreground">merox@localhost:~$</span>
       <div class="ml-auto flex items-center gap-1.5">
         <div class="w-1.5 h-1.5 rounded-full bg-green-500/70"></div>
       </div>
@@ -64,10 +64,14 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     
     <!-- Terminal prompt at bottom -->
     <div class="px-6 pb-4 relative z-10">
-      <div class="font-mono text-xs text-muted-foreground/60 flex items-center gap-2">
-        <span class="text-green-500">$</span>
-        <span class="terminal-text"></span>
-        <span class="terminal-cursor">▊</span>
+      <div class="font-mono text-xs text-muted-foreground/60 cursor-pointer select-none group transition-colors hover:text-muted-foreground/80" id="terminal-prompt">
+        <div class="flex items-start gap-2">
+          <span class="text-green-500 flex-shrink-0">$</span>
+          <div class="flex-1 min-w-0">
+            <span class="terminal-text inline-block"></span>
+            <span class="terminal-cursor inline-block">▊</span>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -112,8 +116,12 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     }
   }
 
-  .terminal-card:hover .terminal-cursor {
-    animation: blink 0.3s step-end infinite;
+  #terminal-prompt:hover .terminal-cursor {
+    animation: blink 0.5s step-end infinite;
+  }
+
+  #terminal-prompt:active {
+    transform: scale(0.99);
   }
 </style>
 
@@ -130,48 +138,35 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
     'htop',
     'tail -f /var/log/syslog',
     'git status',
-    'helm list --all-namespaces'
+    'helm list --all-namespaces',
+    'cat /proc/cpuinfo',
+    'free -h',
+    'nvidia-smi'
   ];
 
   let currentIndex = 0;
-  let currentText = '';
-  let currentCommand = commands[0];
-  let charIndex = 0;
-  let isDeleting = false;
-  let isPaused = false;
-
   const terminalText = document.querySelector('.terminal-text');
+  const terminalPrompt = document.getElementById('terminal-prompt');
 
-  function type() {
-    if (isPaused) {
-      setTimeout(type, 2000);
-      isPaused = false;
-      return;
-    }
+  // Set initial command
+  if (terminalText) {
+    terminalText.textContent = commands[currentIndex];
+  }
 
-    if (!isDeleting && charIndex < currentCommand.length) {
-      currentText = currentCommand.substring(0, charIndex + 1);
-      charIndex++;
-      if (terminalText) terminalText.textContent = currentText;
-      setTimeout(type, 80 + Math.random() * 120);
-    } else if (isDeleting && charIndex > 0) {
-      currentText = currentCommand.substring(0, charIndex - 1);
-      charIndex--;
-      if (terminalText) terminalText.textContent = currentText;
-      setTimeout(type, 40 + Math.random() * 40);
-    } else if (!isDeleting && charIndex === currentCommand.length) {
-      isPaused = true;
-      isDeleting = true;
-      setTimeout(type, 2500);
-    } else if (isDeleting && charIndex === 0) {
-      isDeleting = false;
-      currentIndex = (currentIndex + 1) % commands.length;
-      currentCommand = commands[currentIndex];
-      setTimeout(type, 500);
+  function nextCommand() {
+    currentIndex = (currentIndex + 1) % commands.length;
+    
+    if (terminalText) {
+      terminalText.textContent = commands[currentIndex];
     }
   }
 
-  if (terminalText) {
-    setTimeout(type, 1000);
+  // Click/touch handler
+  if (terminalPrompt) {
+    terminalPrompt.addEventListener('click', nextCommand);
+    terminalPrompt.addEventListener('touchend', (e) => {
+      e.preventDefault();
+      nextCommand();
+    });
   }
 </script>
