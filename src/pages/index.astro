@@ -12,8 +12,16 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
 
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="Home" />
-  <section class="rounded-lg border">
-    <div class="flex flex-col space-y-1.5 p-6">
+  <section class="rounded-lg border relative overflow-hidden bg-card terminal-card">
+    <!-- Terminal header bar - clean version -->
+    <div class="absolute top-0 left-0 right-0 h-8 border-b flex items-center px-4 bg-muted/20">
+      <span class="text-[10px] font-mono text-muted-foreground">merox@hpc:~$</span>
+      <div class="ml-auto flex items-center gap-1.5">
+        <div class="w-1.5 h-1.5 rounded-full bg-green-500/70"></div>
+      </div>
+    </div>
+    
+    <div class="flex flex-col space-y-1.5 p-6 pt-12 relative z-10">
       <div class="flex items-start gap-4">
         <img 
           src="https://merox.dev/reworkedmeroxdc1.webp" 
@@ -25,18 +33,42 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
           <p class="text-muted-foreground text-sm mt-1">
             HPC Sysadmin <span class="font-medium">@ Forvia</span>
           </p>
-          <p class="mt-2 relative inline-block">
-            <span class="highlight-text text-sm font-semibold relative z-10">
-              Geek. Curious. Thinker.
+          <div class="mt-3 flex flex-wrap gap-2">
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-md bg-muted/50 border border-border/50">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              Geek
             </span>
-          </p>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-md bg-muted/50 border border-border/50">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              Curious
+            </span>
+            <span class="inline-flex items-center gap-1.5 text-xs font-medium px-2.5 py-1 rounded-md bg-muted/50 border border-border/50">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+              </svg>
+              Thinker
+            </span>
+          </div>
         </div>
       </div>
     </div>
-    <div class="p-6 pt-0">
+    <div class="p-6 pt-0 relative z-10">
       <p class="text-muted-foreground mb-2 text-sm">
-DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ years). I build secure, scalable infrastructures using automation, cloud, and containerization.
+        DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ years). I build secure, scalable infrastructures using automation, cloud, and containerization.
       </p>
+    </div>
+    
+    <!-- Terminal prompt at bottom -->
+    <div class="px-6 pb-4 relative z-10">
+      <div class="font-mono text-xs text-muted-foreground/60 flex items-center gap-2">
+        <span class="text-green-500">$</span>
+        <span class="terminal-text"></span>
+        <span class="terminal-cursor">▊</span>
+      </div>
     </div>
   </section>
   <section class="flex flex-col gap-y-4">
@@ -65,31 +97,81 @@ DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ year
 </Layout>
 
 <style>
-  .highlight-text {
-    position: relative;
-    display: inline-block;
+  .terminal-cursor {
+    animation: blink 1s step-end infinite;
+    color: currentColor;
+    opacity: 0.6;
   }
-  
-  .highlight-text::before {
-    content: '';
-    position: absolute;
-    left: -4px;
-    right: -4px;
-    bottom: 2px;
-    height: 40%;
-    background: linear-gradient(120deg, #4facfe 0%, #00f2fe 100%);
-    opacity: 0.4;
-    z-index: -1;
-    transform: skewX(-12deg);
-    animation: highlight-pulse 2s ease-in-out infinite;
-  }
-  
-  @keyframes highlight-pulse {
-    0%, 100% {
-      opacity: 0.4;
-    }
-    50% {
+
+  @keyframes blink {
+    0%, 50% {
       opacity: 0.6;
     }
+    51%, 100% {
+      opacity: 0;
+    }
+  }
+
+  .terminal-card:hover .terminal-cursor {
+    animation: blink 0.3s step-end infinite;
   }
 </style>
+
+<script>
+  const commands = [
+    'whoami',
+    'kubectl get pods --all-namespaces',
+    'terraform plan',
+    'ansible-playbook site.yml',
+    'docker compose up -d',
+    'systemctl status',
+    'ssh hpc-node-01',
+    'vim /etc/kubernetes/manifests',
+    'htop',
+    'tail -f /var/log/syslog',
+    'git status',
+    'helm list --all-namespaces'
+  ];
+
+  let currentIndex = 0;
+  let currentText = '';
+  let currentCommand = commands[0];
+  let charIndex = 0;
+  let isDeleting = false;
+  let isPaused = false;
+
+  const terminalText = document.querySelector('.terminal-text');
+
+  function type() {
+    if (isPaused) {
+      setTimeout(type, 2000);
+      isPaused = false;
+      return;
+    }
+
+    if (!isDeleting && charIndex < currentCommand.length) {
+      currentText = currentCommand.substring(0, charIndex + 1);
+      charIndex++;
+      if (terminalText) terminalText.textContent = currentText;
+      setTimeout(type, 80 + Math.random() * 120);
+    } else if (isDeleting && charIndex > 0) {
+      currentText = currentCommand.substring(0, charIndex - 1);
+      charIndex--;
+      if (terminalText) terminalText.textContent = currentText;
+      setTimeout(type, 40 + Math.random() * 40);
+    } else if (!isDeleting && charIndex === currentCommand.length) {
+      isPaused = true;
+      isDeleting = true;
+      setTimeout(type, 2500);
+    } else if (isDeleting && charIndex === 0) {
+      isDeleting = false;
+      currentIndex = (currentIndex + 1) % commands.length;
+      currentCommand = commands[currentIndex];
+      setTimeout(type, 500);
+    }
+  }
+
+  if (terminalText) {
+    setTimeout(type, 1000);
+  }
+</script>
