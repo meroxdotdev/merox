@@ -1,0 +1,134 @@
+---
+title: 'Troubleshooting and Best Practices'
+description: 'Common SSH issues, solutions, compliance requirements, and ongoing maintenance for production environments'
+date: 2025-10-06
+tags: ["ssh", "troubleshooting", "compliance", "maintenance"]
+authors: ['merox']
+order: 6
+---
+
+import Callout from '@/components/Callout.astro'
+
+This guide covers troubleshooting common SSH issues, compliance requirements for enterprise environments, and best practices for ongoing maintenance.
+
+## Troubleshooting Common Issues
+
+### Can't Connect After Changes
+
+1. **Check if SSH is running:**
+```bash
+   sudo systemctl status sshd
+```
+
+2. **Verify firewall rules:**
+```bash
+   sudo ufw status  # or firewall-cmd --list-all
+```
+
+3. **Test configuration:**
+```bash
+   sudo sshd -t
+```
+
+4. **Check logs:**
+```bash
+   sudo journalctl -u sshd -n 50
+```
+
+### Permission Denied (publickey)
+
+This usually means SSH keys aren't configured correctly:
+```bash
+# Check permissions
+ls -la ~/.ssh
+
+# Should be:
+# .ssh directory: 700
+# authorized_keys: 600
+# private keys: 600
+
+# Fix permissions
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+```
+
+### Too Many Authentication Failures
+
+If you have multiple keys in your SSH agent:
+```bash
+# Clear agent
+ssh-add -D
+
+# Add only the required key
+ssh-add ~/.ssh/id_prod_server
+
+# Or specify in connection
+ssh -o IdentitiesOnly=yes -i ~/.ssh/id_prod_server user@server
+```
+
+### 2FA Code Not Working
+
+1. Check time synchronization on server:
+```bash
+   timedatectl status
+```
+
+2. If time is off, sync it:
+```bash
+   sudo systemctl restart chrony  # or ntpd
+```
+
+## Compliance and Best Practices
+
+### Regular Security Audits
+
+I run these checks monthly:
+```bash
+# Review authorized_keys
+cat ~/.ssh/authorized_keys
+
+# Check for weak keys
+for key in /etc/ssh/ssh_host_*_key.pub; do ssh-keygen -lf $key; done
+
+# Review SSH logs for anomalies
+sudo grep -i "POSSIBLE BREAK-IN" /var/log/auth.log
+
+# Check for users with empty passwords
+sudo awk -F: '($2 == "") {print $1}' /etc/shadow
+```
+
+### Documentation Requirements
+
+For enterprise environments, document:
+- SSH configuration changes
+- List of authorized users and their keys
+- Justification for any non-standard settings
+- Incident response procedures
+- Key rotation schedule
+
+### Key Rotation Policy
+
+I rotate SSH keys annually:
+
+1. Generate new key pair
+2. Deploy new public key to all servers
+3. Test new key works on all systems
+4. Remove old public key
+5. Update documentation
+
+## Conclusion
+
+SSH hardening isn't optional for production servers. The techniques in this guide have kept my infrastructure secure across multiple companies and thousands of servers. I've prevented countless intrusion attempts simply by following these practices.
+
+The most important takeaways:
+- Never rely on passwords alone
+- Change default configurations
+- Monitor everything
+- Test before you deploy
+- Always have a backup access method
+
+Remember that security is a process, not a destination. Stay updated on new vulnerabilities, regularly audit your configurations, and never get complacent.
+
+If you implement even half of these recommendations, you'll be ahead of 90% of servers on the internet. Start with key-based authentication and work your way through the other sections as time allows.
+
+Have questions about implementing these changes? Found a configuration that works better in your environment? Drop a comment below – I'd love to hear about your experiences with SSH hardening.

@@ -1,0 +1,115 @@
+---
+title: 'SSH Daemon Configuration Hardening'
+description: 'Production-ready sshd_config settings with modern cryptography and security best practices'
+date: 2025-10-06
+tags: ["ssh", "sshd", "security", "hardening"]
+authors: ['merox']
+order: 2
+---
+
+import Callout from '@/components/Callout.astro'
+
+The real hardening happens in `/etc/ssh/sshd_config`. I'll walk you through each critical setting.
+
+## Backup Original Configuration
+
+Always create a backup before making changes:
+```bash
+sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup.$(date +%F)
+```
+
+## Edit SSH Configuration
+```bash
+sudo nano /etc/ssh/sshd_config
+```
+
+## Essential Security Settings
+
+Here's my production-ready configuration:
+```bash
+# Network Settings
+Port 2222  # Change from default port 22
+AddressFamily inet  # IPv4 only (use 'any' for IPv4+IPv6)
+ListenAddress 0.0.0.0  # Or specify exact IP
+
+# Authentication Settings
+PermitRootLogin no  # Never allow direct root login
+PubkeyAuthentication yes
+PasswordAuthentication no  # Disable password auth
+PermitEmptyPasswords no
+ChallengeResponseAuthentication no
+UsePAM yes
+
+# Key Types (ED25519 preferred)
+PubkeyAcceptedKeyTypes ssh-ed25519,rsa-sha2-512,rsa-sha2-256
+
+# Limit user access
+AllowUsers deployer sysadmin  # Only specific users
+# AllowGroups ssh-users  # Or use groups
+
+# Session Settings
+MaxAuthTries 3  # Limit authentication attempts
+MaxSessions 2  # Limit concurrent sessions
+LoginGraceTime 30  # Timeout for authentication
+ClientAliveInterval 300  # Keep-alive messages
+ClientAliveCountMax 2  # Disconnect after 2 missed keep-alives
+
+# Disable Dangerous Features
+X11Forwarding no
+PermitUserEnvironment no
+AllowAgentForwarding no
+AllowTcpForwarding no
+PermitTunnel no
+
+# Logging
+SyslogFacility AUTH
+LogLevel VERBOSE  # Detailed logging for security analysis
+
+# Modern Cryptography (2025 standards)
+KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org
+Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
+MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+
+# Security Headers
+HostbasedAuthentication no
+IgnoreRhosts yes
+```
+
+## Validate Configuration
+
+Before restarting SSH, validate your configuration:
+```bash
+sudo sshd -t
+```
+
+If there are no errors, restart the SSH service:
+```bash
+# SystemD systems
+sudo systemctl restart sshd
+
+# Check status
+sudo systemctl status sshd
+```
+
+<Callout variant="danger">
+**Critical:** Keep your current SSH session open. Open a NEW terminal and test the connection. Only after confirming the new session works should you close the original.
+</Callout>
+
+## Update Firewall Rules
+
+If you changed the SSH port, update your firewall:
+```bash
+# UFW (Ubuntu/Debian)
+sudo ufw allow 2222/tcp
+sudo ufw delete allow 22/tcp
+sudo ufw reload
+
+# firewalld (RHEL/CentOS)
+sudo firewall-cmd --permanent --add-port=2222/tcp
+sudo firewall-cmd --permanent --remove-service=ssh
+sudo firewall-cmd --reload
+```
+
+## Next Steps
+
+With SSH daemon hardened, proceed to the Two-Factor Authentication guide to add an additional security layer beyond SSH keys.

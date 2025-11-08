@@ -1,0 +1,68 @@
+---
+title: 'Two-Factor Authentication with Google Authenticator'
+description: 'Add TOTP-based 2FA to SSH for defense-in-depth security strategy'
+date: 2025-10-06
+tags: ["ssh", "2fa", "totp", "security"]
+authors: ['merox']
+order: 3
+---
+
+import Callout from '@/components/Callout.astro'
+
+Adding 2FA provides an additional security layer. Even if someone steals your private key, they can't access the server without the second factor.
+
+## Install Google Authenticator
+```bash
+# Ubuntu/Debian
+sudo apt install libpam-google-authenticator
+
+# RHEL/CentOS
+sudo yum install google-authenticator
+```
+
+## Configure 2FA for Your User
+```bash
+google-authenticator
+```
+
+Answer the prompts:
+- Do you want time-based tokens? **Yes**
+- Update ~/.google_authenticator? **Yes**
+- Disallow multiple uses? **Yes**
+- Increase time window? **No** (unless you have time sync issues)
+- Enable rate-limiting? **Yes**
+
+Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.).
+
+## Configure PAM
+
+Edit PAM configuration:
+```bash
+sudo nano /etc/pam.d/sshd
+```
+
+Add at the top:
+```bash
+auth required pam_google_authenticator.so nullok
+```
+
+The `nullok` option allows users without 2FA configured to still login. Remove it once all users have 2FA set up.
+
+## Enable 2FA in SSH
+
+Edit `/etc/ssh/sshd_config`:
+```bash
+ChallengeResponseAuthentication yes
+AuthenticationMethods publickey,keyboard-interactive
+```
+
+Restart SSH:
+```bash
+sudo systemctl restart sshd
+```
+
+Now connections require both your SSH key AND the 2FA code.
+
+## Next Steps
+
+For advanced enterprise scenarios, explore the Host-Based Authentication guide to configure automated server-to-server trust relationships.

@@ -1,0 +1,57 @@
+---
+title: 'Key-Based Authentication Setup'
+description: 'Replace password authentication with SSH keys for stronger security and eliminate brute-force attack vectors'
+date: 2025-10-06
+tags: ["ssh", "security", "authentication"]
+authors: ['merox']
+order: 1
+---
+
+import Callout from '@/components/Callout.astro'
+
+Password authentication is fundamentally flawed for SSH. Even strong passwords can be compromised through brute-force attacks, keyloggers, or credential stuffing. Key-based authentication eliminates these risks.
+
+## Generate SSH Key Pair
+
+On your local machine (not the server):
+```bash
+# Generate ED25519 key (recommended in 2025)
+ssh-keygen -t ed25519 -C "your_email@example.com" -f ~/.ssh/id_prod_server
+
+# Alternative: RSA 4096-bit key for older systems
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f ~/.ssh/id_prod_server
+```
+
+Why ED25519? It's faster, more secure, and uses shorter keys than RSA. I've switched all my infrastructure to ED25519 and never looked back.
+
+## Deploy Public Key to Server
+```bash
+# Copy your public key to the server
+ssh-copy-id -i ~/.ssh/id_prod_server.pub username@server_ip
+
+# Manual method if ssh-copy-id isn't available
+cat ~/.ssh/id_prod_server.pub | ssh username@server_ip "mkdir -p ~/.ssh && cat >> ~/.ssh/authorized_keys"
+```
+
+## Test Key Authentication
+
+Before disabling password authentication, verify key-based login works:
+```bash
+ssh -i ~/.ssh/id_prod_server username@server_ip
+```
+
+If you can log in without entering a password, you're good to proceed.
+
+## Set Correct Permissions
+
+SSH is strict about permissions. Incorrect permissions will cause authentication to fail:
+```bash
+# On the server
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+chmod 600 ~/.ssh/id_ed25519  # if private key is on server
+```
+
+## Next Steps
+
+With key-based authentication working, proceed to the SSH Daemon Hardening guide to lock down your sshd_config with production-ready security settings.

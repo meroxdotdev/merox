@@ -1,0 +1,179 @@
+---
+title: 'Security Monitoring and Connection Management'
+description: 'Implement fail2ban protection, optimize SSH connections, and set up comprehensive logging for security analysis'
+date: 2025-10-06
+tags: ["ssh", "fail2ban", "monitoring", "logging"]
+authors: ['merox']
+order: 5
+---
+
+import Callout from '@/components/Callout.astro'
+
+Security is useless without proper monitoring. This guide covers fail2ban protection, connection optimization, and comprehensive log analysis.
+
+## Part 1: Fail2Ban Protection
+
+Fail2ban monitors log files and automatically blocks IP addresses that show malicious behavior.
+
+### Install Fail2Ban
+```bash
+# Ubuntu/Debian
+sudo apt install fail2ban
+
+# RHEL/CentOS
+sudo yum install epel-release
+sudo yum install fail2ban
+```
+
+### Configure Fail2Ban
+
+Create a local configuration file:
+```bash
+sudo nano /etc/fail2ban/jail.local
+```
+```ini
+[DEFAULT]
+# Ban IP for 1 hour after 3 failed attempts within 10 minutes
+bantime = 3600
+findtime = 600
+maxretry = 3
+destemail = your_email@example.com
+sendername = Fail2Ban
+action = %(action_mwl)s
+
+[sshd]
+enabled = true
+port = 2222  # Match your SSH port
+filter = sshd
+logpath = /var/log/auth.log  # Debian/Ubuntu
+# logpath = /var/log/secure  # RHEL/CentOS
+maxretry = 3
+bantime = 3600
+```
+
+### Start Fail2Ban
+```bash
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+```
+
+### Monitor Fail2Ban
+```bash
+# Check status
+sudo fail2ban-client status sshd
+
+# View banned IPs
+sudo fail2ban-client get sshd banned
+
+# Unban an IP
+sudo fail2ban-client set sshd unbanip 192.168.1.100
+```
+
+## Part 2: SSH Connection Management
+
+### Create SSH Config for Easy Access
+
+On your local machine, create `~/.ssh/config`:
+```bash
+Host production-server
+    HostName server_ip
+    Port 2222
+    User deployer
+    IdentityFile ~/.ssh/id_prod_server
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    
+Host staging-server
+    HostName staging_ip
+    Port 2222
+    User deployer
+    IdentityFile ~/.ssh/id_staging_server
+    ProxyJump bastion-host  # Jump through bastion
+```
+
+Now you can connect simply with:
+```bash
+ssh production-server
+```
+
+### SSH Agent for Key Management
+
+Load keys into SSH agent to avoid re-entering passphrases:
+```bash
+# Start agent
+eval "$(ssh-agent -s)"
+
+# Add keys
+ssh-add ~/.ssh/id_prod_server
+
+# List loaded keys
+ssh-add -l
+```
+
+## Part 3: Monitoring and Logging
+
+### Enable Detailed SSH Logging
+
+In `/etc/ssh/sshd_config`:
+```bash
+LogLevel VERBOSE
+```
+
+### Monitor Authentication Logs
+```bash
+# Real-time monitoring (Ubuntu/Debian)
+sudo tail -f /var/log/auth.log
+
+# Real-time monitoring (RHEL/CentOS)
+sudo tail -f /var/log/secure
+
+# Search for failed attempts
+sudo grep "Failed password" /var/log/auth.log | tail -20
+
+# Successful logins
+sudo grep "Accepted publickey" /var/log/auth.log | tail -20
+```
+
+### Create Monitoring Script
+
+Save this as `/usr/local/bin/ssh-monitor.sh`:
+```bash
+#!/bin/bash
+# SSH Security Monitoring Script
+
+LOG_FILE="/var/log/auth.log"  # Change for RHEL: /var/log/secure
+REPORT_FILE="/var/log/ssh-security-report.txt"
+
+echo "SSH Security Report - $(date)" > $REPORT_FILE
+echo "================================" >> $REPORT_FILE
+echo "" >> $REPORT_FILE
+
+echo "Failed Login Attempts:" >> $REPORT_FILE
+grep "Failed password" $LOG_FILE | awk '{print $1, $2, $3, $11}' | sort | uniq -c | sort -nr | head -20 >> $REPORT_FILE
+echo "" >> $REPORT_FILE
+
+echo "Successful Logins:" >> $REPORT_FILE
+grep "Accepted publickey" $LOG_FILE | awk '{print $1, $2, $3, $9, $11}' | tail -20 >> $REPORT_FILE
+echo "" >> $REPORT_FILE
+
+echo "Active SSH Sessions:" >> $REPORT_FILE
+who >> $REPORT_FILE
+echo "" >> $REPORT_FILE
+
+echo "Current Fail2Ban Bans:" >> $REPORT_FILE
+fail2ban-client status sshd 2>/dev/null >> $REPORT_FILE
+
+cat $REPORT_FILE
+```
+
+Make it executable and run daily:
+```bash
+sudo chmod +x /usr/local/bin/ssh-monitor.sh
+
+# Add to crontab
+echo "0 9 * * * /usr/local/bin/ssh-monitor.sh | mail -s 'SSH Security Report' your_email@example.com" | sudo crontab -
+```
+
+## Next Steps
+
+With monitoring in place, review the Troubleshooting guide for common issues, compliance requirements, and ongoing maintenance best practices.
