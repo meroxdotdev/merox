@@ -42,24 +42,26 @@ import logod from '../../public/static/logod.svg'
     </div>
   </div>
 
-  <script>
-    if (typeof window !== 'undefined') {
-      const wrapper = document.getElementById('header-wrapper')
-      let lastScrollY = 0
+<script>
+  if (typeof window !== 'undefined') {
+    const wrapper = document.getElementById('header-wrapper')
+    let lastScrollY = 0
 
-      window.addEventListener('scroll', () => {
-        const currentScroll = window.scrollY
+    window.addEventListener('scroll', () => {
+      const currentScroll = window.scrollY
 
-        if (currentScroll > 40 && lastScrollY <= 40) {
-          wrapper.classList.add('shrink-horizontal')
-        } else if (currentScroll <= 40 && lastScrollY > 40) {
-          wrapper.classList.remove('shrink-horizontal')
-        }
+      if (!wrapper) return // adăugăm protecție
 
-        lastScrollY = currentScroll
-      })
-    }
-  </script>
+      if (currentScroll > 40 && lastScrollY <= 40) {
+        wrapper.classList.add('shrink-horizontal')
+      } else if (currentScroll <= 40 && lastScrollY > 40) {
+        wrapper.classList.remove('shrink-horizontal')
+      }
+
+      lastScrollY = currentScroll
+    })
+  }
+</script>
 
   <style>
     /* Efect de "strângere" orizontală */
