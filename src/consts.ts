@@ -7,8 +7,8 @@ export const SITE: Site = {
   href: 'https://merox.dev',
   author: 'merox',
   locale: 'en-US',
-  featuredPostCount: 3,
-  postsPerPage: 4,
+  featuredPostCount: 2,
+  postsPerPage: 6,
 }
 
 // Google Analytics
