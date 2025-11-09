@@ -35,3 +35,44 @@ export function getHeadingMargin(depth: number): string {
   }
   return margins[depth] || ''
 }
+
+/**
+ * Get the appropriate badge variant, custom classes, and tooltip for a tag
+ * @param tag - The tag name
+ * @returns Object with variant, className, and optional tooltip for styling
+ */
+export function getTagVariant(tag: string): {
+  variant: 'default' | 'muted' | 'destructive' | 'outline'
+  className?: string
+  tooltip?: string
+} {
+  const normalizedTag = tag.toLowerCase().trim()
+
+  switch (normalizedTag) {
+    case 'experimental':
+      return {
+        variant: 'default',
+        // Opțiunea 1: Amber/Gold (recomandat - elegant și profesional)
+        className: 'bg-amber-500/90 hover:bg-amber-500 border-amber-500/50 text-white dark:bg-amber-600/80 dark:hover:bg-amber-600 dark:border-amber-600/50',
+        
+        // Opțiunea 2: Yellow muted (mai subtil, mai puțin vibrant)
+        // className: 'bg-yellow-500/80 hover:bg-yellow-500 border-yellow-500/40 text-white dark:bg-yellow-600/70 dark:hover:bg-yellow-600 dark:border-yellow-600/40',
+        
+        // Opțiunea 3: Orange muted (mai puțin agresiv decât original)
+        // className: 'bg-orange-500/80 hover:bg-orange-500 border-orange-500/40 text-white dark:bg-orange-600/70 dark:hover:bg-orange-600 dark:border-orange-600/40',
+        
+        tooltip: 'This content is experimental and may not follow best practices or require modifications',
+      }
+    // You can add more special tags here in the future
+    // case 'featured':
+    //   return {
+    //     variant: 'default',
+    //     className: 'bg-blue-500/90 hover:bg-blue-500 border-blue-500/50 text-white',
+    //     tooltip: 'Featured content',
+    //   }
+    default:
+      return {
+        variant: 'muted',
+      }
+  }
+}

@@ -23,7 +23,7 @@ import {
   isSubpost,
   parseAuthors,
 } from '@/lib/data-utils'
-import { formatDate } from '@/lib/utils'
+import { formatDate, getTagVariant } from '@/lib/utils'
 import { Icon } from 'astro-icon/components'
 import { Image } from 'astro:assets'
 import { render } from 'astro:content'
@@ -197,15 +197,26 @@ const tocSections = await getTOCSections(currentPostId)
           {
             post.data.tags &&
               post.data.tags.length > 0 &&
-              post.data.tags.map((tag) => (
-                <a
-                  href={`/tags/${tag}`}
-                  class={badgeVariants({ variant: 'muted' })}
-                >
-                  <Icon name="lucide:hash" class="size-3" />
-                  {tag}
-                </a>
-              ))
+              post.data.tags.map((tag) => {
+                const { variant, className, tooltip } = getTagVariant(tag)
+                return (
+                  <div class="group relative">
+                    <a
+                      href={`/tags/${tag}`}
+                      class={`${badgeVariants({ variant })} ${className || ''}`}
+                    >
+                      <Icon name="lucide:hash" class="size-3" />
+                      {tag}
+                    </a>
+                    {tooltip && (
+                      <span class="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-full mb-3 w-max max-w-xs rounded-md bg-gray-900 dark:bg-gray-50 px-3 py-2 text-xs text-white dark:text-gray-900 shadow-xl border border-gray-700 dark:border-gray-200 invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-200 z-[100]">
+                        {tooltip}
+                        <span class="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent border-t-gray-900 dark:border-t-gray-50"></span>
+                      </span>
+                    )}
+                  </div>
+                )
+              })
           }
         </div>
       </div>
