@@ -8,28 +8,27 @@ import logo from '../../public/static/logo.svg'
 import logod from '../../public/static/logod.svg'
 ---
 
-<header class="sticky top-0 z-10 px-4 pt-3 pb-0" transition:persist>
-  <div class="mx-auto max-w-3xl">
-    <div class="bg-background/70 border-border/40 flex flex-wrap items-center justify-between gap-4 rounded-2xl border px-4 py-3 shadow-sm backdrop-blur-xl transition-all duration-300 hover:shadow-md **w-full overflow-hidden**">
-{/* ^ Am adăugat `w-full overflow-hidden` */}
-      <Link href="/" class="flex shrink-0 items-center gap-2 text-xl font-medium transition-opacity duration-200 hover:opacity-80">
-        <Image src={logo} alt="Logo" class="hidden size-8 dark:block" />
-        <Image src={logod} alt="Logo" class="block size-8 dark:hidden" />
-              </Link>
-      <div class="flex items-center gap-2 md:gap-4">
-        <nav class="hidden items-center gap-4 text-sm sm:gap-6 md:flex">
-          {NAV_LINKS.map((item) => (
-            <Link 
-              href={item.href} 
-              class="text-foreground/60 hover:text-foreground relative capitalize transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200 hover:after:w-full"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </nav>
-        <MobileMenu client:load transition:persist />
-        <ThemeToggle transition:persist />
-      </div>
-    </div>
-  </div>
+<header class="sticky top-0 z-10 md:px-4 md:py-3" transition:persist>
+  <div class="md:mx-auto md:max-w-3xl">
+    <div class="bg-background/70 border-border/40 flex flex-wrap items-center justify-between gap-4 border-b px-4 py-3 shadow-sm backdrop-blur-xl transition-all duration-300 md:rounded-2xl md:border md:shadow-sm md:hover:shadow-md">
+      <Link href="/" class="flex shrink-0 items-center gap-2 text-xl font-medium transition-opacity duration-200 hover:opacity-80">
+        <Image src={logo} alt="Logo" class="hidden size-8 dark:block" />
+        <Image src={logod} alt="Logo" class="block size-8 dark:hidden" />
+      </Link>
+      <div class="flex items-center gap-2 md:gap-4">
+        <nav class="hidden items-center gap-4 text-sm sm:gap-6 md:flex">
+          {NAV_LINKS.map((item) => (
+            <Link 
+              href={item.href} 
+              class="text-foreground/60 hover:text-foreground relative capitalize transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200 hover:after:w-full"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
+        <MobileMenu client:load transition:persist />
+        <ThemeToggle transition:persist />
+      </div>
+    </div>
+  </div>
 </header>
