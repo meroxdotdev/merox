@@ -12,34 +12,40 @@ const blog = await getRecentPosts(SITE.featuredPostCount)
 
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="Home" />
+
+  <!-- Profile / Intro Section -->
   <section class="rounded-lg border">
     <div class="flex flex-col space-y-1.5 p-6">
       <div class="flex items-start gap-4">
-        <img 
-          src="https://merox.dev/reworkedmeroxdc1.webp" 
-          alt="Robert's profile"
-          class="w-20 h-20 rounded-full object-cover border-2 border-border flex-shrink-0"
+        <img
+          src="https://merox.dev/reworkedmeroxdc1.webp"
+          alt="Merox profile photo"
+          class="w-20 h-20 rounded-full object-cover border border-border flex-shrink-0"
         />
+
         <div class="flex-1 min-w-0">
           <h1 class="text-3xl leading-none font-medium">Merox</h1>
           <p class="text-muted-foreground text-sm mt-1">
             HPC Sysadmin <span class="font-medium">@ Forvia</span>
           </p>
-          <p class="mt-2 relative inline-block">
-            <span class="highlight-text text-sm font-semibold relative z-10">
-              Geek. Curious. Thinker.
-            </span>
+
+          <p class="mt-2 text-sm font-semibold tracking-wide relative thinker-line">
+            Geek. Curious. Thinker.
           </p>
         </div>
       </div>
     </div>
+
     <div class="p-6 pt-0">
-      <p class="text-muted-foreground mb-2 text-sm">
-DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ years). I build secure, scalable infrastructures using automation, cloud, and containerization.
+      <p class="text-muted-foreground text-sm">
+        DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ years).  
+        Building secure, scalable infrastructures using automation, cloud, and containerization.
       </p>
     </div>
   </section>
-  <section class="flex flex-col gap-y-4">
+
+  <!-- Blog Section -->
+  <section class="flex flex-col gap-y-4 mt-6">
     <h2 class="text-2xl font-medium">Latest posts</h2>
     <ul class="flex flex-col gap-y-4">
       {
@@ -50,46 +56,47 @@ DevOps-focused HPC System Administrator & former Cybersecurity Engineer (9+ year
         ))
       }
     </ul>
+
     <div class="flex justify-center">
       <Link
         href="/blog"
         class={buttonVariants({ variant: 'ghost' }) + ' group'}
       >
-        See all posts <span
-          class="ml-1.5 transition-transform group-hover:translate-x-1"
-          >&rarr;</span
-        >
+        See all posts
+        <span class="ml-1.5 transition-transform group-hover:translate-x-1">&rarr;</span>
       </Link>
     </div>
   </section>
 </Layout>
 
 <style>
-  .highlight-text {
-    position: relative;
+  /* "Geek. Curious. Thinker." subtle animated underline */
+  .thinker-line {
     display: inline-block;
+    position: relative;
+    color: hsl(var(--foreground));
   }
-  
-  .highlight-text::before {
+
+  .thinker-line::after {
     content: '';
     position: absolute;
-    left: -4px;
-    right: -4px;
-    bottom: 2px;
-    height: 40%;
-    background: linear-gradient(120deg, #4facfe 0%, #00f2fe 100%);
-    opacity: 0.4;
-    z-index: -1;
-    transform: skewX(-12deg);
-    animation: highlight-pulse 2s ease-in-out infinite;
+    left: 0;
+    bottom: -2px;
+    height: 2px;
+    width: 100%;
+    background: linear-gradient(90deg, #4facfe, #00f2fe, #4facfe);
+    background-size: 200% 100%;
+    animation: shimmer 3s linear infinite;
+    border-radius: 2px;
+    opacity: 0.6;
   }
-  
-  @keyframes highlight-pulse {
-    0%, 100% {
-      opacity: 0.4;
+
+  @keyframes shimmer {
+    0% {
+      background-position: 0% 50%;
     }
-    50% {
-      opacity: 0.6;
+    100% {
+      background-position: 200% 50%;
     }
   }
 </style>
