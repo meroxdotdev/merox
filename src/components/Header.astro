@@ -2,24 +2,34 @@
 import Link from '@/components/Link.astro'
 import ThemeToggle from '@/components/ThemeToggle.astro'
 import MobileMenu from '@/components/ui/mobile-menu'
-import { NAV_LINKS, SITE } from '@/consts'
+import { NAV_LINKS } from '@/consts'
 import { Image } from 'astro:assets'
 import logo from '../../public/static/logo.svg'
 import logod from '../../public/static/logod.svg'
 ---
 
-<header class="sticky top-0 z-10 md:px-4 md:py-3" transition:persist>
-  <div class="md:mx-auto md:max-w-3xl">
-    <div class="bg-background/70 border-border/40 flex flex-wrap items-center justify-between gap-4 border-b px-4 py-3 shadow-sm backdrop-blur-xl transition-all duration-300 md:rounded-2xl md:border md:shadow-sm md:hover:shadow-md">
-      <Link href="/" class="flex shrink-0 items-center gap-2 text-xl font-medium transition-opacity duration-200 hover:opacity-80">
-        <Image src={logo} alt="Logo" class="hidden size-8 dark:block" />
-        <Image src={logod} alt="Logo" class="block size-8 dark:hidden" />
+<header
+  class="sticky top-0 z-10 transition-all duration-500 md:px-4 md:pt-3"
+  transition:persist
+  id="main-header"
+>
+  <div id="header-wrapper" class="transition-all duration-500 md:mt-1 md:mx-auto md:max-w-3xl">
+    <div
+      id="header-inner"
+      class="bg-background/70 border-border/40 flex flex-wrap items-center justify-between gap-4 border-b px-4 py-3 shadow-sm backdrop-blur-xl transition-all duration-500 md:rounded-2xl md:border md:shadow-sm md:hover:shadow-md"
+    >
+      <Link
+        href="/"
+        class="flex shrink-0 items-center gap-2 text-xl font-medium transition-opacity duration-200 hover:opacity-80"
+      >
+        <Image src={logo} alt="Logo" class="hidden size-8 dark:block transition-all duration-500" />
+        <Image src={logod} alt="Logo" class="block size-8 dark:hidden transition-all duration-500" />
       </Link>
-      <div class="flex items-center gap-2 md:gap-4">
-        <nav class="hidden items-center gap-4 text-sm sm:gap-6 md:flex">
+      <div class="flex items-center gap-2 md:gap-4 transition-all duration-500">
+        <nav class="hidden items-center gap-4 text-sm sm:gap-6 md:flex transition-all duration-500">
           {NAV_LINKS.map((item) => (
-            <Link 
-              href={item.href} 
+            <Link
+              href={item.href}
               class="text-foreground/60 hover:text-foreground relative capitalize transition-colors duration-200 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-current after:transition-all after:duration-200 hover:after:w-full"
             >
               {item.label}
@@ -31,4 +41,45 @@ import logod from '../../public/static/logod.svg'
       </div>
     </div>
   </div>
+
+  <script>
+    if (typeof window !== 'undefined') {
+      const wrapper = document.getElementById('header-wrapper')
+      let lastScrollY = 0
+
+      window.addEventListener('scroll', () => {
+        const currentScroll = window.scrollY
+
+        if (currentScroll > 40 && lastScrollY <= 40) {
+          wrapper.classList.add('shrink-horizontal')
+        } else if (currentScroll <= 40 && lastScrollY > 40) {
+          wrapper.classList.remove('shrink-horizontal')
+        }
+
+        lastScrollY = currentScroll
+      })
+    }
+  </script>
+
+  <style>
+    /* Efect de "strângere" orizontală */
+    #header-wrapper.shrink-horizontal {
+      max-width: 40rem; /* redusă față de 3xl (~48rem) */
+      transform: scaleX(0.96);
+    }
+
+    #header-wrapper.shrink-horizontal #header-inner {
+      padding-left: 1rem;
+      padding-right: 1rem;
+      opacity: 0.96;
+    }
+
+    #header-wrapper.shrink-horizontal img {
+      transform: scale(0.92);
+    }
+
+    #header-wrapper.shrink-horizontal nav {
+      gap: 1.25rem !important;
+    }
+  </style>
 </header>
