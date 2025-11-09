@@ -61,7 +61,7 @@ export function getTagVariant(tag: string): {
         // Opțiunea 3: Orange muted (mai puțin agresiv decât original)
         // className: 'bg-orange-500/80 hover:bg-orange-500 border-orange-500/40 text-white dark:bg-orange-600/70 dark:hover:bg-orange-600 dark:border-orange-600/40',
         
-        tooltip: 'This content is experimental and may not follow best practices or require modifications',
+//        tooltip: 'This content is experimental and may not follow best practices or require modifications',
       }
     // You can add more special tags here in the future
     // case 'featured':
