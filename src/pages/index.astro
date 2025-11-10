@@ -72,60 +72,73 @@ const highlights = [
   <!-- Latest from the blog (2 posts) -->
   {
     latestPosts && latestPosts.length > 0 && (
-      <section class="mt-8">
-        <div class="mb-4 flex items-center justify-between">
-          <h2 class="text-2xl font-semibold">Latest from the blog</h2>
+      <section class="mt-12">
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h2 class="text-3xl font-bold tracking-tight">Latest from the blog</h2>
+          </div>
           <div class="hidden sm:block">
             <Link href="/blog" class={buttonVariants({ variant: 'ghost' }) + ' group'}>
-              See all
+              View all posts
               <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
             </Link>
           </div>
         </div>
-        <div class="grid gap-4 md:grid-cols-2">
+        <div class="grid gap-6 md:grid-cols-2">
           {latestPosts.map((post) => (
             <Link
               href={`/${post.collection}/${post.id}`}
-              class="group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:shadow-md"
+              class="group relative overflow-hidden rounded-xl border bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/20 hover:bg-card"
             >
               {
                 post.data.image && (
-                  <div class="relative">
+                  <div class="relative overflow-hidden">
                     <Image
                       src={post.data.image}
                       alt={post.data.title}
                       width={1200}
                       height={630}
-                      class="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      class="h-48 w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                     />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </div>
                 )
               }
-              <div class="p-4">
-                <h3 class="text-lg font-medium line-clamp-2 group-hover:text-primary transition-colors">
+              <div class="p-6">
+                <div class="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                  <Icon name="lucide:calendar" class="size-3" />
+                  <span>{formatDate(post.data.date)}</span>
+                  {post.data.tags && post.data.tags.length > 0 && (
+                    <>
+                      <span>•</span>
+                      <span class="font-medium">{post.data.tags[0]}</span>
+                    </>
+                  )}
+                </div>
+                <h3 class="text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors duration-300">
                   {post.data.title}
                 </h3>
                 {
                   post.data.description && (
-                    <p class="text-sm text-muted-foreground mt-1.5 line-clamp-3">
+                    <p class="text-muted-foreground mt-3 line-clamp-3 leading-relaxed">
                       {post.data.description}
                     </p>
                   )
                 }
-                <div class="text-xs text-muted-foreground mt-3 flex items-center gap-2">
-                  <Icon name="lucide:calendar" class="size-3" />
-                  <span>{formatDate(post.data.date)}</span>
+                <div class="mt-4 flex items-center text-sm font-medium text-primary group-hover:gap-1 transition-gap duration-300">
+                  <span>Read more</span>
+                  <Icon name="lucide:arrow-right" class="size-4 ml-1 transition-transform duration-300 group-hover:translate-x-1" />
                 </div>
               </div>
             </Link>
           ))}
         </div>
-        <div class="mt-4 flex justify-center sm:hidden">
+        <div class="mt-6 flex justify-center sm:hidden">
           <Link
             href="/blog"
-            class={buttonVariants({ variant: 'ghost' }) + ' group w-full justify-center max-w-xs'}
+            class={buttonVariants({ variant: 'outline' }) + ' group w-full justify-center max-w-xs'}
           >
-            See all
+            View all posts
             <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
