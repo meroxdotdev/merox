@@ -2,7 +2,7 @@
 import Link from '@/components/Link.astro'
 import ThemeToggle from '@/components/ThemeToggle.astro'
 import MobileMenu from '@/components/ui/mobile-menu'
-import { NAV_LINKS, SITE } from '@/consts'
+import { NAV_LINKS } from '@/consts'
 import { Image } from 'astro:assets'
 import logo from '../../public/static/logo.svg'
 import logod from '../../public/static/logod.svg'
@@ -25,7 +25,7 @@ import logod from '../../public/static/logod.svg'
         <Image src={logo} alt="Logo" class="hidden size-8 dark:block transition-all duration-500" />
         <Image src={logod} alt="Logo" class="block size-8 dark:hidden transition-all duration-500" />
         <span class="site-title">
-          {SITE.title}
+     <!--     {SITE.title} -->
         </span>
       </Link>
       <div class="flex items-center gap-2 md:gap-4 transition-all duration-500">
@@ -53,7 +53,8 @@ import logod from '../../public/static/logod.svg'
     window.addEventListener('scroll', () => {
       const currentScroll = window.scrollY
 
-      if (!wrapper) return
+      // Mobile: nu aplica shrink dacă lățimea e sub md (768px)
+      if (!wrapper || window.innerWidth < 768) return
 
       if (currentScroll > 40 && lastScrollY <= 40) {
         wrapper.classList.add('shrink-horizontal')
