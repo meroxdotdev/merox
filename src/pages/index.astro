@@ -1,104 +1,168 @@
 ---
-import BlogCard from '@/components/BlogCard.astro'
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
 import { buttonVariants } from '@/components/ui/button'
-import { SITE } from '@/consts'
 import Layout from '@/layouts/Layout.astro'
+import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
+import { Image } from 'astro:assets'
+import { formatDate } from '@/lib/utils'
 
-const blog = await getRecentPosts(SITE.featuredPostCount)
+const latestPosts = await getRecentPosts(2)
+
+const highlights = [
+  'Full datacenter deployments with InfiniBand clusters at Forvia',
+  'Homelab Kubernetes cluster with Talos Linux, Flux GitOps, and Cilium CNI',
+  'Proxmox virtualization with automated deployments on Dell R720',
+  'pfSense firewall with VLAN segmentation and WAF security',
+  'AWS/EC2 applications and Oracle Ampere ARM testing',
+  'Infrastructure automation with cert-manager, external-dns, and SOPS secrets',
+]
 ---
 
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="Home" />
 
-  <!-- Profile / Intro Section -->
-  <section class="rounded-lg border">
-    <div class="flex flex-col space-y-1.5 p-6">
-      <div class="flex items-start gap-4">
+  <!-- Hero -->
+  <section class="rounded-xl border bg-gradient-to-br from-primary/5 via-primary/3 to-transparent">
+    <div class="p-8 md:p-10">
+      <div class="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <div class="flex-1 min-w-0">
+          <div class="inline-block mb-3">
+            <span class="text-xs font-medium uppercase tracking-wider text-primary px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+              HPC System Administrator
+            </span>
+          </div>
+          <h1 class="text-4xl md:text-5xl leading-tight font-bold tracking-tight">
+            Building infrastructure<br/>that scales.
+          </h1>
+          <p class="text-muted-foreground mt-4 leading-relaxed text-base md:text-lg">
+            DevOps-focused HPC System Administrator with 9+ years in IT, including 2 years as a Cybersecurity Engineer.
+          </p>
+          <div class="mt-6 flex flex-wrap items-center gap-3">
+            <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg' })}>
+              Read the blog
+            </Link>
+            <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg' })}>
+              About me
+            </Link>
+          </div>
+        </div>
         <img
           src="https://merox.dev/reworkedmeroxdc1.webp"
-          alt="Merox profile photo"
-          class="w-20 h-20 rounded-full object-cover border border-border flex-shrink-0"
+          alt="Robert Melcher"
+          class="w-28 h-28 rounded-full object-cover border-4 border-background shadow-xl flex-shrink-0 ring-2 ring-primary/10"
         />
+      </div>
+    </div>
+  </section>
 
-        <div class="flex-1 min-w-0">
-          <h1 class="text-3xl leading-none font-medium">Merox</h1>
-          <p class="text-muted-foreground text-sm mt-1">
-            HPC Sysadmin <span class="font-medium">@ Forvia</span>
-          </p>
+<!-- Latest from the blog (2 posts) -->
+{
+  latestPosts && latestPosts.length > 0 && (
+    <section class="mt-8">
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-2xl font-semibold">Latest from the blog</h2>
+        <div class="hidden sm:block">
+          <Link href="/blog" class={buttonVariants({ variant: 'ghost' }) + ' group'}>
+            See all
+            <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
+          </Link>
+        </div>
+      </div>
+      <div class="grid gap-4 md:grid-cols-2">
+        {latestPosts.map((post) => (
+          <Link
+            href={`/${post.collection}/${post.id}`}
+            class="group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:shadow-md"
+          >
+            {
+              post.data.image && (
+                <div class="relative">
+                  <Image
+                    src={post.data.image}
+                    alt={post.data.title}
+                    width={1200}
+                    height={630}
+                    class="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  />
+                </div>
+              )
+            }
+            <div class="p-4">
+              <h3 class="text-lg font-medium line-clamp-2 group-hover:text-primary transition-colors">
+                {post.data.title}
+              </h3>
+              {
+                post.data.description && (
+                  <p class="text-sm text-muted-foreground mt-1.5 line-clamp-3">
+                    {post.data.description}
+                  </p>
+                )
+              }
+              <div class="text-xs text-muted-foreground mt-3 flex items-center gap-2">
+                <Icon name="lucide:calendar" class="size-3" />
+                <span>{formatDate(post.data.date)}</span>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <div class="mt-4 flex justify-center sm:hidden">
+        <Link
+          href="/blog"
+          class={buttonVariants({ variant: 'ghost' }) + ' group w-full justify-center max-w-xs'}
+        >
+          See all
+          <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
+        </Link>
+      </div>
+    </section>
+  )
+}
 
-          <p class="mt-2 text-sm font-semibold tracking-wide relative thinker-line">
-            Geek. Curious. Thinker.
-          </p>
+  <!-- Highlights -->
+  <section class="mt-8 rounded-xl border">
+    <div class="p-6">
+      <h2 class="text-2xl font-semibold mb-4">Highlights</h2>
+      <div class="space-y-3">
+        {highlights.map((highlight) => (
+          <div class="flex items-start gap-3 text-sm">
+            <span class="text-primary mt-0.5 flex-shrink-0">▸</span>
+            <p class="text-muted-foreground leading-relaxed">{highlight}</p>
+          </div>
+        ))}
+      </div>
+      <div class="mt-6 pt-6 border-t">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div>
+            <p class="font-semibold">Currently @ Forvia</p>
+            <p class="text-sm text-muted-foreground mt-0.5">
+              Previously: Atos (Cybersecurity)
+            </p>
+          </div>
+          <Link href="/about" class={buttonVariants({ variant: 'outline' }) + ' flex-shrink-0'}>
+            Full background
+          </Link>
         </div>
       </div>
     </div>
-
- <div class="p-6 pt-0">
-<p class="text-muted-foreground text-sm leading-relaxed">
-  DevOps-focused <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-md font-medium">HPC System Administrator</span> 
-  with <span class="text-primary font-medium">9+ years in IT</span>, including 
-  <span class="bg-primary/10 text-primary px-2 py-0.5 rounded-md font-medium">2 years as a Cybersecurity Engineer</span>.  
-  Building secure, scalable infrastructures using automation, cloud, and containerization.
-</p>
-</div>
   </section>
 
-  <!-- Blog Section -->
-  <section class="flex flex-col gap-y-4 mt-6">
-    <h2 class="text-2xl font-medium">Latest posts</h2>
-    <ul class="flex flex-col gap-y-4">
-      {
-        blog.map((post) => (
-          <li>
-            <BlogCard entry={post} />
-          </li>
-        ))
-      }
-    </ul>
-
-    <div class="flex justify-center">
-      <Link
-        href="/blog"
-        class={buttonVariants({ variant: 'ghost' }) + ' group'}
-      >
-        See all posts
-        <span class="ml-1.5 transition-transform group-hover:translate-x-1">&rarr;</span>
+  <!-- CTA Section -->
+  <section class="mt-8 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+    <div class="p-8 text-center">
+      <h2 class="text-2xl font-semibold mb-3">
+        Interested in HPC, Kubernetes, or homelab automation?
+      </h2>
+      <p class="text-muted-foreground mb-6 max-w-xl mx-auto">
+        Providing expertise and custom solutions in infrastructure automation, security hardening, and scalable deployments.
+      </p>
+      <Link href="mailto:hello@merox.dev" class={buttonVariants({ variant: 'default', size: 'lg' }) + ' group gap-2'}>
+        <Icon name="lucide:mail" class="size-4" />
+        Get in contact
+        <span class="ml-1 transition-transform group-hover:translate-x-1">→</span>
       </Link>
     </div>
   </section>
 </Layout>
-
-<style>
-  /* "Geek. Curious. Thinker." subtle animated underline */
-  .thinker-line {
-    display: inline-block;
-    position: relative;
-    color: hsl(var(--foreground));
-  }
-
-  .thinker-line::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -2px;
-    height: 2px;
-    width: 100%;
-    background: linear-gradient(90deg, #4facfe, #00f2fe, #4facfe);
-    background-size: 200% 100%;
-    animation: shimmer 3s linear infinite;
-    border-radius: 2px;
-    opacity: 0.6;
-  }
-
-  @keyframes shimmer {
-    0% {
-      background-position: 0% 50%;
-    }
-    100% {
-      background-position: 200% 50%;
-    }
-  }
-</style>
