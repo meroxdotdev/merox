@@ -5,38 +5,7 @@ import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 
-const techStack = {
-  hpc: [
-    { name: 'PBS Pro', icon: 'lucide:server' },
-    { name: 'InfiniBand', icon: 'lucide:network' },
-    { name: 'iDRAC', icon: 'lucide:hard-drive' },
-    { name: 'Altair', icon: 'lucide:cpu' },
-  ],
-  cloud: [
-    { name: 'AWS', icon: 'simple-icons:amazonwebservices' },
-    { name: 'Oracle Cloud', icon: 'simple-icons:oracle' },
-    { name: 'Docker', icon: 'simple-icons:docker' },
-    { name: 'Kubernetes', icon: 'simple-icons:kubernetes' },
-    { name: 'Proxmox', icon: 'lucide:server-cog' },
-    { name: 'Rancher', icon: 'simple-icons:rancher' },
-  ],
-  devops: [
-    { name: 'Terraform', icon: 'simple-icons:terraform' },
-    { name: 'Ansible', icon: 'simple-icons:ansible' },
-    { name: 'Puppet', icon: 'simple-icons:puppet' },
-    { name: 'Salt', icon: 'simple-icons:saltproject' },
-    { name: 'GitOps', icon: 'simple-icons:git' },
-    { name: 'Flux', icon: 'simple-icons:flux' },
-  ],
-  security: [
-    { name: 'CCNA', icon: 'simple-icons:cisco' },
-    { name: 'Fortinet', icon: 'simple-icons:fortinet' },
-    { name: 'Palo Alto', icon: 'lucide:shield' },
-    { name: 'Nessus', icon: 'lucide:scan' },
-    { name: 'StrongSwan', icon: 'lucide:lock' },
-    { name: 'CyberArk', icon: 'lucide:key-round' },
-  ]
-}
+
 
 const experiences = [
   {
@@ -82,7 +51,7 @@ const highlights = [
       <div class="p-6">
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
           <div class="space-y-1">
-            <h1 class="text-3xl font-medium">Robert Melcher</h1>
+            <h1 class="text-3xl font-medium">Melcher Robert</h1>
             <p class="text-sm italic text-muted-foreground">/ˈmɛrɒks/ • noun</p>
           </div>
           <Link 
@@ -110,63 +79,6 @@ const highlights = [
     <!-- Content Grid -->
     <div class="flex flex-col gap-y-6">
       
-      <!-- Tech Stack -->
-      <div class="rounded-lg border">
-        <div class="p-6">
-          <h2 class="text-2xl font-medium mb-4">Tech Stack</h2>
-          
-          <div class="grid sm:grid-cols-2 gap-6">
-            <div class="space-y-2">
-              <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">HPC & Infrastructure</p>
-              <div class="flex flex-wrap gap-1.5">
-                {techStack.hpc.map((tech) => (
-                  <span class="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary inline-flex items-center gap-1">
-                    <Icon name={tech.icon} class="size-3" />
-                    {tech.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Cloud & Virtualization</p>
-              <div class="flex flex-wrap gap-1.5">
-                {techStack.cloud.map((tech) => (
-                  <span class="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary inline-flex items-center gap-1">
-                    <Icon name={tech.icon} class="size-3" />
-                    {tech.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">DevOps & Automation</p>
-              <div class="flex flex-wrap gap-1.5">
-                {techStack.devops.map((tech) => (
-                  <span class="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary inline-flex items-center gap-1">
-                    <Icon name={tech.icon} class="size-3" />
-                    {tech.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Security & Networking</p>
-              <div class="flex flex-wrap gap-1.5">
-                {techStack.security.map((tech) => (
-                  <span class="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary inline-flex items-center gap-1">
-                    <Icon name={tech.icon} class="size-3" />
-                    {tech.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <!-- Experience -->
       <div class="rounded-lg border">
         <div class="p-6">
