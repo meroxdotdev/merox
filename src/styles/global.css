@@ -42,62 +42,42 @@
 
 :root {
   --background: hsl(0 0% 100%);
-  --background-rgb: 255, 255, 255;
   --header-background: hsl(0 0% 89%);
   --foreground: hsl(0 0% 3.9%);
-  --foreground-rgb: 10, 10, 10;
   --primary: hsl(0 0% 9%);
-  --primary-rgb: 23, 23, 23;
   --primary-foreground: hsl(0 0% 98%);
   --secondary: hsl(0 0% 80.1%);
-  --secondary-rgb: 204, 204, 204;
   --secondary-foreground: hsl(0 0% 9%);
   --muted: hsl(0 0% 80.1%);
-  --muted-rgb: 204, 204, 204;
   --muted-foreground: hsl(0 0% 45.1%);
   --accent: hsl(0 0% 80.1%);
-  --accent-rgb: 204, 204, 204;
   --accent-foreground: hsl(0 0% 9%);
   --additive: hsl(112 50% 36%);
-  --additive-rgb: 46, 125, 50;
   --additive-foreground: hsl(0 0% 9%);
   --destructive: hsl(0 84.2% 60.2%);
-  --destructive-rgb: 220, 38, 38;
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(0 0% 89.8%);
-  --border-rgb: 229, 229, 229;
   --ring: hsl(0 0% 3.9%);
-  --ring-rgb: 23, 23, 23;
 }
 
 [data-theme='dark'] {
   --background: hsl(0 0% 11.1%);
-  --background-rgb: 28, 28, 28;
   --header-background: hsl(0 0% 2.2%);
   --foreground: hsl(0 0% 95%);
-  --foreground-rgb: 242, 242, 242;
   --primary: hsl(0 0% 98%);
-  --primary-rgb: 250, 250, 250;
   --primary-foreground: hsl(0 0% 9%);
   --secondary: hsl(0 0% 18.9%);
-  --secondary-rgb: 48, 48, 48;
   --secondary-foreground: hsl(0 0% 98%);
   --muted: hsl(0 0% 18.9%);
-  --muted-rgb: 48, 48, 48;
   --muted-foreground: hsl(0 0% 63.9%);
   --accent: hsl(0 0% 18.9%);
-  --accent-rgb: 48, 48, 48;
   --accent-foreground: hsl(0 0% 98%);
   --additive: hsl(112 50% 36%);
-  --additive-rgb: 46, 125, 50;
   --additive-foreground: hsl(0 0% 9%);
   --destructive: hsl(0 62.8% 30.6%);
-  --destructive-rgb: 124, 29, 29;
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(0 0% 22.9%);
-  --border-rgb: 58, 58, 58;
   --ring: hsl(0 0% 83.1%);
-  --ring-rgb: 212, 212, 212;
 }
 
 @layer base {
@@ -174,4 +154,3 @@
 .tech-badge:nth-child(6) { animation-delay: 0.3s; }
 .tech-badge:nth-child(7) { animation-delay: 0.35s; }
 .tech-badge:nth-child(8) { animation-delay: 0.4s; }
-
