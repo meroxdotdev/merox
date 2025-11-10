@@ -1,6 +1,7 @@
 ---
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
+import Skills from '@/components/react/Skills' // IMPORT NOU
 import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
@@ -57,69 +58,82 @@ const highlights = [
     </div>
   </section>
 
-<!-- Latest from the blog (2 posts) -->
-{
-  latestPosts && latestPosts.length > 0 && (
-    <section class="mt-8">
-      <div class="mb-4 flex items-center justify-between">
-        <h2 class="text-2xl font-semibold">Latest from the blog</h2>
-        <div class="hidden sm:block">
-          <Link href="/blog" class={buttonVariants({ variant: 'ghost' }) + ' group'}>
+  <!-- Skills & Technologies - SECȚIUNE NOUĂ -->
+  <section class="mt-8 rounded-xl border">
+    <div class="p-6 md:p-8">
+      <div class="mb-6">
+        <h2 class="text-2xl font-semibold mb-2">Skills & Technologies</h2>
+        <p class="text-sm text-muted-foreground">
+          Core competencies across systems administration, security, and infrastructure automation
+        </p>
+      </div>
+      <Skills client:load />
+    </div>
+  </section>
+
+  <!-- Latest from the blog (2 posts) -->
+  {
+    latestPosts && latestPosts.length > 0 && (
+      <section class="mt-8">
+        <div class="mb-4 flex items-center justify-between">
+          <h2 class="text-2xl font-semibold">Latest from the blog</h2>
+          <div class="hidden sm:block">
+            <Link href="/blog" class={buttonVariants({ variant: 'ghost' }) + ' group'}>
+              See all
+              <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
+            </Link>
+          </div>
+        </div>
+        <div class="grid gap-4 md:grid-cols-2">
+          {latestPosts.map((post) => (
+            <Link
+              href={`/${post.collection}/${post.id}`}
+              class="group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:shadow-md"
+            >
+              {
+                post.data.image && (
+                  <div class="relative">
+                    <Image
+                      src={post.data.image}
+                      alt={post.data.title}
+                      width={1200}
+                      height={630}
+                      class="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    />
+                  </div>
+                )
+              }
+              <div class="p-4">
+                <h3 class="text-lg font-medium line-clamp-2 group-hover:text-primary transition-colors">
+                  {post.data.title}
+                </h3>
+                {
+                  post.data.description && (
+                    <p class="text-sm text-muted-foreground mt-1.5 line-clamp-3">
+                      {post.data.description}
+                    </p>
+                  )
+                }
+                <div class="text-xs text-muted-foreground mt-3 flex items-center gap-2">
+                  <Icon name="lucide:calendar" class="size-3" />
+                  <span>{formatDate(post.data.date)}</span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+        <div class="mt-4 flex justify-center sm:hidden">
+          <Link
+            href="/blog"
+            class={buttonVariants({ variant: 'ghost' }) + ' group w-full justify-center max-w-xs'}
+          >
             See all
             <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
-      </div>
-      <div class="grid gap-4 md:grid-cols-2">
-        {latestPosts.map((post) => (
-          <Link
-            href={`/${post.collection}/${post.id}`}
-            class="group relative overflow-hidden rounded-xl border bg-card shadow-sm transition-all hover:shadow-md"
-          >
-            {
-              post.data.image && (
-                <div class="relative">
-                  <Image
-                    src={post.data.image}
-                    alt={post.data.title}
-                    width={1200}
-                    height={630}
-                    class="h-40 w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
-                </div>
-              )
-            }
-            <div class="p-4">
-              <h3 class="text-lg font-medium line-clamp-2 group-hover:text-primary transition-colors">
-                {post.data.title}
-              </h3>
-              {
-                post.data.description && (
-                  <p class="text-sm text-muted-foreground mt-1.5 line-clamp-3">
-                    {post.data.description}
-                  </p>
-                )
-              }
-              <div class="text-xs text-muted-foreground mt-3 flex items-center gap-2">
-                <Icon name="lucide:calendar" class="size-3" />
-                <span>{formatDate(post.data.date)}</span>
-              </div>
-            </div>
-          </Link>
-        ))}
-      </div>
-      <div class="mt-4 flex justify-center sm:hidden">
-        <Link
-          href="/blog"
-          class={buttonVariants({ variant: 'ghost' }) + ' group w-full justify-center max-w-xs'}
-        >
-          See all
-          <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
-        </Link>
-      </div>
-    </section>
-  )
-}
+      </section>
+    )
+  }
 
   <!-- Highlights -->
   <section class="mt-8 rounded-xl border">

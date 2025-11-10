@@ -101,3 +101,53 @@
     @apply transition-none!;
   }
 }
+
+
+/* Adaugă în global.css sau într-un fișier CSS separat */
+
+/* Animația pentru infinite scroll */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll linear infinite;
+}
+
+/* Animații pentru badge-uri */
+.tech-badge {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.tech-badge-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Delay animațiilor pentru efect cascadă */
+.tech-badge:nth-child(1) { animation-delay: 0.05s; }
+.tech-badge:nth-child(2) { animation-delay: 0.1s; }
+.tech-badge:nth-child(3) { animation-delay: 0.15s; }
+.tech-badge:nth-child(4) { animation-delay: 0.2s; }
+.tech-badge:nth-child(5) { animation-delay: 0.25s; }
+.tech-badge:nth-child(6) { animation-delay: 0.3s; }
+.tech-badge:nth-child(7) { animation-delay: 0.35s; }
+.tech-badge:nth-child(8) { animation-delay: 0.4s; }

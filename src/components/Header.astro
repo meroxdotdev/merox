@@ -2,7 +2,7 @@
 import Link from '@/components/Link.astro'
 import ThemeToggle from '@/components/ThemeToggle.astro'
 import MobileMenu from '@/components/ui/mobile-menu'
-import { NAV_LINKS } from '@/consts'
+import { NAV_LINKS, SITE } from '@/consts'
 import { Image } from 'astro:assets'
 import logo from '../../public/static/logo.svg'
 import logod from '../../public/static/logod.svg'
@@ -20,10 +20,13 @@ import logod from '../../public/static/logod.svg'
     >
       <Link
         href="/"
-        class="flex shrink-0 items-center gap-2 text-xl font-medium transition-opacity duration-200 hover:opacity-80"
+        class="flex shrink-0 items-center gap-3 transition-opacity duration-200 hover:opacity-80"
       >
         <Image src={logo} alt="Logo" class="hidden size-8 dark:block transition-all duration-500" />
         <Image src={logod} alt="Logo" class="block size-8 dark:hidden transition-all duration-500" />
+        <span class="site-title">
+          {SITE.title}
+        </span>
       </Link>
       <div class="flex items-center gap-2 md:gap-4 transition-all duration-500">
         <nav class="hidden items-center gap-4 text-sm sm:gap-6 md:flex transition-all duration-500">
@@ -50,7 +53,7 @@ import logod from '../../public/static/logod.svg'
     window.addEventListener('scroll', () => {
       const currentScroll = window.scrollY
 
-      if (!wrapper) return // adăugăm protecție
+      if (!wrapper) return
 
       if (currentScroll > 40 && lastScrollY <= 40) {
         wrapper.classList.add('shrink-horizontal')
@@ -64,9 +67,26 @@ import logod from '../../public/static/logod.svg'
 </script>
 
   <style>
+    /* Enhanced site title typography */
+    .site-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: hsl(var(--foreground));
+      transition: all 0.3s ease;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* Responsive sizing */
+    @media (min-width: 640px) {
+      .site-title {
+        font-size: 1.5rem;
+      }
+    }
+
     /* Efect de "strângere" orizontală */
     #header-wrapper.shrink-horizontal {
-      max-width: 40rem; /* redusă față de 3xl (~48rem) */
+      max-width: 40rem;
       transform: scaleX(0.96);
     }
 
@@ -82,6 +102,11 @@ import logod from '../../public/static/logod.svg'
 
     #header-wrapper.shrink-horizontal nav {
       gap: 1.25rem !important;
+    }
+
+    /* Adjust title when shrunk */
+    #header-wrapper.shrink-horizontal .site-title {
+      font-size: 1.25rem;
     }
   </style>
 </header>
