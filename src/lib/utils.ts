@@ -53,7 +53,7 @@ export function getTagVariant(tag: string): {
       return {
         variant: 'default',
         // Opțiunea 1: Amber/Gold (recomandat - elegant și profesional)
-        className: 'bg-amber-500/90 hover:bg-amber-500 border-amber-500/50 text-white dark:bg-amber-600/80 dark:hover:bg-amber-600 dark:border-amber-600/50',
+        className: 'bg-amber-500 border-amber-500/50 text-white hover:!bg-amber-500 hover:!text-white dark:bg-amber-600 dark:border-amber-600/50 dark:hover:!bg-amber-600',
         
         // Opțiunea 2: Yellow muted (mai subtil, mai puțin vibrant)
         // className: 'bg-yellow-500/80 hover:bg-yellow-500 border-yellow-500/40 text-white dark:bg-yellow-600/70 dark:hover:bg-yellow-600 dark:border-yellow-600/40',
