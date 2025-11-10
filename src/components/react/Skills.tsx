@@ -175,7 +175,7 @@ const Skills: React.FC = () => {
       {categoryGroups.map((group, groupIndex) => (
         <InfiniteScroll
           key={groupIndex}
-          duration={50000}
+          duration={80000}
           direction={groupIndex % 2 === 0 ? 'normal' : 'reverse'}
           showFade={true}
           className="flex flex-row"
