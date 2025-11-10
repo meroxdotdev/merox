@@ -7,206 +7,260 @@ import { Icon } from 'astro-icon/components'
 
 const techStack = {
   hpc: [
-    { name: 'PBS Pro', icon: 'lucide:server', color: 'text-blue-500' },
-    { name: 'InfiniBand', icon: 'lucide:network', color: 'text-red-500' },
-    { name: 'iDRAC', icon: 'lucide:hard-drive', color: 'text-blue-600' },
-    { name: 'Altair', icon: 'lucide:cpu', color: 'text-purple-500' },
+    { name: 'PBS Pro', icon: 'lucide:server' },
+    { name: 'InfiniBand', icon: 'lucide:network' },
+    { name: 'iDRAC', icon: 'lucide:hard-drive' },
+    { name: 'Altair', icon: 'lucide:cpu' },
   ],
   cloud: [
-    { name: 'AWS', icon: 'simple-icons:amazonwebservices', color: 'text-[#FF9900]' },
-    { name: 'Oracle Cloud', icon: 'simple-icons:oracle', color: 'text-[#F80000]' },
-    { name: 'Docker', icon: 'simple-icons:docker', color: 'text-[#2496ED]' },
-    { name: 'Kubernetes', icon: 'simple-icons:kubernetes', color: 'text-[#326CE5]' },
-    { name: 'Proxmox', icon: 'lucide:server-cog', color: 'text-[#E57000]' },
-    { name: 'Rancher', icon: 'simple-icons:rancher', color: 'text-[#0075A8]' },
+    { name: 'AWS', icon: 'simple-icons:amazonwebservices' },
+    { name: 'Oracle Cloud', icon: 'simple-icons:oracle' },
+    { name: 'Docker', icon: 'simple-icons:docker' },
+    { name: 'Kubernetes', icon: 'simple-icons:kubernetes' },
+    { name: 'Proxmox', icon: 'lucide:server-cog' },
+    { name: 'Rancher', icon: 'simple-icons:rancher' },
   ],
   devops: [
-    { name: 'Terraform', icon: 'simple-icons:terraform', color: 'text-[#7B42BC]' },
-    { name: 'Ansible', icon: 'simple-icons:ansible', color: 'text-[#EE0000]' },
-    { name: 'Puppet', icon: 'simple-icons:puppet', color: 'text-[#FFAE1A]' },
-    { name: 'Salt', icon: 'simple-icons:saltproject', color: 'text-[#57BCAD]' },
-    { name: 'GitOps', icon: 'simple-icons:git', color: 'text-[#F05032]' },
-    { name: 'Flux', icon: 'simple-icons:flux', color: 'text-[#5468FF]' },
+    { name: 'Terraform', icon: 'simple-icons:terraform' },
+    { name: 'Ansible', icon: 'simple-icons:ansible' },
+    { name: 'Puppet', icon: 'simple-icons:puppet' },
+    { name: 'Salt', icon: 'simple-icons:saltproject' },
+    { name: 'GitOps', icon: 'simple-icons:git' },
+    { name: 'Flux', icon: 'simple-icons:flux' },
   ],
   security: [
-    { name: 'CCNA', icon: 'simple-icons:cisco', color: 'text-[#1BA0D7]' },
-    { name: 'Fortinet', icon: 'simple-icons:fortinet', color: 'text-[#EE3124]' },
-    { name: 'Palo Alto', icon: 'lucide:shield', color: 'text-[#FA582D]' },
-    { name: 'Nessus', icon: 'lucide:scan', color: 'text-[#00C176]' },
-    { name: 'StrongSwan', icon: 'lucide:lock', color: 'text-[#3B82F6]' },
-    { name: 'CyberArk', icon: 'lucide:key-round', color: 'text-[#0085CA]' },
+    { name: 'CCNA', icon: 'simple-icons:cisco' },
+    { name: 'Fortinet', icon: 'simple-icons:fortinet' },
+    { name: 'Palo Alto', icon: 'lucide:shield' },
+    { name: 'Nessus', icon: 'lucide:scan' },
+    { name: 'StrongSwan', icon: 'lucide:lock' },
+    { name: 'CyberArk', icon: 'lucide:key-round' },
   ]
 }
+
+const experiences = [
+  {
+    title: 'HPC System Administrator',
+    company: 'Forvia',
+    period: '2022 – Present',
+    description: 'Enterprise HPC cluster management, datacenter deployments, InfiniBand networking, PBS scheduling',
+    current: true
+  },
+  {
+    title: 'Cybersecurity Engineer',
+    company: 'Atos',
+    period: '2020 – 2022',
+    description: 'Firewall policy management, CyberArk PAM, Forescout NAC',
+    current: false
+  },
+  {
+    title: 'System Administrator',
+    company: 'Netex Romania',
+    period: '2018 – 2020',
+    description: 'Puppet to K8s migration, Asterisk VOIP, datacenter operations',
+    current: false
+  }
+]
+
+const highlights = [
+  'Full datacenter deployments with InfiniBand clusters at Forvia',
+  'Homelab Kubernetes cluster with Talos Linux, Flux GitOps, and Cilium CNI',
+  'Proxmox virtualization with automated deployments on Dell R720',
+  'pfSense firewall with VLAN segmentation and WAF security',
+  'AWS/EC2 applications and Oracle Ampere ARM testing',
+  'Infrastructure automation with cert-manager, external-dns, and SOPS secrets'
+]
 ---
 
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="About" />
   <Breadcrumbs items={[{ label: 'About', icon: 'lucide:user' }]} />
 
-  <section class="space-y-8">
-    <!-- Simple Header -->
-    <div class="space-y-2">
-      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 class="text-4xl font-bold">Robert Melcher</h1>
-          <p class="text-xl text-muted-foreground">HPC System Administrator</p>
-        </div>
-        <Link href="/robert-melcher-cv.pdf" external class="inline-flex items-center gap-2 px-4 py-2 rounded-md border bg-card hover:bg-accent transition-colors shrink-0">
-          <Icon name="lucide:download" class="size-4" />
-          <span>Download CV</span>
-        </Link>
-      </div>
-    </div>
-
-    <!-- Tech Stack -->
-    <div class="space-y-4">
-      <h2 class="text-2xl font-semibold">Tech Stack</h2>
-      
-      <div class="grid gap-4">
-        <div>
-          <h3 class="text-sm font-medium text-muted-foreground mb-2">HPC & Infrastructure</h3>
-          <div class="flex flex-wrap gap-2">
-            {techStack.hpc.map((tech) => (
-              <span class="px-3 py-1 text-sm rounded-md border bg-card inline-flex items-center gap-1.5">
-                <Icon name={tech.icon} class={`size-4 ${tech.color}`} />
-                {tech.name}
-              </span>
-            ))}
+  <section class="flex flex-col gap-y-6">
+    <!-- Profile Header -->
+    <div class="rounded-lg border">
+      <div class="p-6">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div class="space-y-2">
+            <h1 class="text-3xl font-medium">Robert Melcher</h1>
+            <p class="text-muted-foreground">HPC System Administrator @ Forvia</p>
+            <p class="text-sm text-muted-foreground max-w-xl">
+              Building secure, scalable infrastructures with 9+ years of experience in HPC operations, 
+              DevOps automation, and cybersecurity
+            </p>
           </div>
-        </div>
-
-        <div>
-          <h3 class="text-sm font-medium text-muted-foreground mb-2">Cloud & Virtualization</h3>
-          <div class="flex flex-wrap gap-2">
-            {techStack.cloud.map((tech) => (
-              <span class="px-3 py-1 text-sm rounded-md border bg-card inline-flex items-center gap-1.5">
-                <Icon name={tech.icon} class={`size-4 ${tech.color}`} />
-                {tech.name}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 class="text-sm font-medium text-muted-foreground mb-2">DevOps & Automation</h3>
-          <div class="flex flex-wrap gap-2">
-            {techStack.devops.map((tech) => (
-              <span class="px-3 py-1 text-sm rounded-md border bg-card inline-flex items-center gap-1.5">
-                <Icon name={tech.icon} class={`size-4 ${tech.color}`} />
-                {tech.name}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3 class="text-sm font-medium text-muted-foreground mb-2">Security & Networking</h3>
-          <div class="flex flex-wrap gap-2">
-            {techStack.security.map((tech) => (
-              <span class="px-3 py-1 text-sm rounded-md border bg-card inline-flex items-center gap-1.5">
-                <Icon name={tech.icon} class={`size-4 ${tech.color}`} />
-                {tech.name}
-              </span>
-            ))}
-          </div>
+          <Link 
+            href="/robert-melcher-cv.pdf" 
+            external 
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-md border bg-card hover:bg-accent transition-colors shrink-0 text-sm"
+          >
+            <Icon name="lucide:download" class="size-4" />
+            <span>Download CV</span>
+          </Link>
         </div>
       </div>
     </div>
 
-    <!-- Experience -->
-    <div class="space-y-4">
-      <h2 class="text-2xl font-semibold">Experience</h2>
+    <!-- Content Grid -->
+    <div class="flex flex-col gap-y-6">
       
-      <div class="space-y-4">
-        <div class="border-l-2 border-primary pl-4">
-          <h3 class="font-semibold">HPC System Administrator</h3>
-          <p class="text-sm text-muted-foreground">Forvia • 2022 – Present</p>
-          <p class="text-sm mt-1">
-            Enterprise HPC cluster management, datacenter deployments, InfiniBand networking, PBS scheduling
+      <!-- Tech Stack -->
+      <div class="rounded-lg border">
+        <div class="p-6">
+          <h2 class="text-2xl font-medium mb-4">Tech Stack</h2>
+          
+          <div class="grid sm:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">HPC & Infrastructure</p>
+              <div class="flex flex-wrap gap-1.5">
+                {techStack.hpc.map((tech) => (
+                  <span class="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary inline-flex items-center gap-1">
+                    <Icon name={tech.icon} class="size-3" />
+                    {tech.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Cloud & Virtualization</p>
+              <div class="flex flex-wrap gap-1.5">
+                {techStack.cloud.map((tech) => (
+                  <span class="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary inline-flex items-center gap-1">
+                    <Icon name={tech.icon} class="size-3" />
+                    {tech.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">DevOps & Automation</p>
+              <div class="flex flex-wrap gap-1.5">
+                {techStack.devops.map((tech) => (
+                  <span class="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary inline-flex items-center gap-1">
+                    <Icon name={tech.icon} class="size-3" />
+                    {tech.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <p class="text-xs font-medium uppercase tracking-wide text-muted-foreground">Security & Networking</p>
+              <div class="flex flex-wrap gap-1.5">
+                {techStack.security.map((tech) => (
+                  <span class="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary inline-flex items-center gap-1">
+                    <Icon name={tech.icon} class="size-3" />
+                    {tech.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Experience -->
+      <div class="rounded-lg border">
+        <div class="p-6">
+          <h2 class="text-2xl font-medium mb-4">Experience</h2>
+          
+          <div class="space-y-6">
+            {experiences.map((exp, index) => (
+              <div class={`relative pl-6 ${index < experiences.length - 1 ? 'pb-6' : ''}`}>
+                <div class={`absolute left-0 top-1 size-3 rounded-full ${exp.current ? 'bg-primary ring-4 ring-primary/20' : 'bg-muted'}`}></div>
+                {index < experiences.length - 1 && (
+                  <div class="absolute left-[5px] top-4 bottom-0 w-0.5 bg-border"></div>
+                )}
+                <div class="space-y-1">
+                  <h3 class="font-medium">{exp.title}</h3>
+                  <p class="text-sm text-muted-foreground">{exp.company} • {exp.period}</p>
+                  <p class="text-sm text-muted-foreground/80">
+                    {exp.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Projects -->
+      <div class="rounded-lg border">
+        <div class="p-6">
+          <h2 class="text-2xl font-medium mb-4">Key Projects</h2>
+          
+          <ul class="space-y-3">
+            {highlights.map((highlight) => (
+              <li class="flex gap-3 text-sm text-muted-foreground">
+                <Icon name="lucide:check-circle-2" class="size-4 text-primary shrink-0 mt-0.5" />
+                <span>{highlight}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="rounded-lg border">
+        <div class="p-6">
+          <h2 class="text-2xl font-medium mb-4">Education</h2>
+          
+          <div class="space-y-4">
+            <div>
+              <h3 class="font-medium">Computer Science</h3>
+              <p class="text-sm text-muted-foreground">West University of Timișoara • 2016–2018</p>
+            </div>
+
+            <div class="pt-4 border-t">
+              <h3 class="font-medium">CCNA Certification</h3>
+              <p class="text-sm text-muted-foreground">Cisco • 2019–2020</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Merox Origin -->
+      <div class="rounded-lg border">
+        <div class="p-6">
+          <h2 class="text-2xl font-medium mb-3">Why "Merox"?</h2>
+          
+          <p class="text-sm font-mono bg-primary/10 text-primary rounded-md p-3 mb-2">
+            <span class="font-bold">ME</span>(lcher) + <span class="font-bold">RO</span>(bert) + <span class="font-bold">X</span>
+          </p>
+          <p class="text-xs text-muted-foreground italic">
+            formerly mer0x39 → 0x39 = 57 = July 5th birthday
           </p>
         </div>
-
-        <div class="border-l-2 border-muted pl-4">
-          <h3 class="font-semibold">Cybersecurity Engineer</h3>
-          <p class="text-sm text-muted-foreground">Atos • 2020 – 2022</p>
-          <p class="text-sm mt-1">
-            Firewall policy management, CyberArk PAM, Forescout NAC
-          </p>
-        </div>
-
-        <div class="border-l-2 border-muted pl-4">
-          <h3 class="font-semibold">System Administrator</h3>
-          <p class="text-sm text-muted-foreground">Netex Romania • 2018 – 2020</p>
-          <p class="text-sm mt-1">
-            Puppet to K8s migration, Asterisk VOIP, datacenter operations
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Education -->
-    <div class="space-y-3">
-      <h2 class="text-2xl font-semibold">Education</h2>
-      
-      <div>
-        <h3 class="font-semibold">Computer Science</h3>
-        <p class="text-sm text-muted-foreground">West University of Timișoara • 2016–2018</p>
       </div>
 
-      <div>
-        <h3 class="font-semibold">CCNA Certification</h3>
-        <p class="text-sm text-muted-foreground">Cisco • 2019–2020</p>
-      </div>
-    </div>
-
-    <!-- Highlights -->
-    <div class="space-y-3">
-      <h2 class="text-2xl font-semibold">Key Projects</h2>
-      
-      <ul class="space-y-2 text-sm">
-        <li class="flex gap-2">
-          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
-          <span>Full datacenter deployments with InfiniBand clusters at Forvia</span>
-        </li>
-        <li class="flex gap-2">
-          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
-          <span>Homelab Kubernetes cluster with Talos Linux, Flux GitOps, and Cilium CNI</span>
-        </li>
-        <li class="flex gap-2">
-          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
-          <span>Proxmox virtualization with automated deployments on Dell R720</span>
-        </li>
-        <li class="flex gap-2">
-          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
-          <span>pfSense firewall with VLAN segmentation and WAF security</span>
-        </li>
-        <li class="flex gap-2">
-          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
-          <span>AWS/EC2 applications and Oracle Ampere ARM testing</span>
-        </li>
-        <li class="flex gap-2">
-          <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
-          <span>Infrastructure automation with cert-manager, external-dns, and SOPS secrets</span>
-        </li>
-      </ul>
-    </div>
-
-    <!-- About Merox -->
-    <div class="space-y-2">
-      <h2 class="text-2xl font-semibold">Why "Merox"?</h2>
-      <p class="text-sm text-muted-foreground">
-        <strong>Merox</strong> = <strong>ME</strong>(lcher) + <strong>RO</strong>(bert) + <strong>X</strong>
-      </p>
-      <p class="text-xs text-muted-foreground italic">
-        (formerly mer0x39 → 0x39 = 57 = July 5th birthday)
-      </p>
-    </div>
-
-    <!-- Footer -->
-    <div class="pt-4 border-t">
-      <p class="text-sm text-muted-foreground text-center">
-        Open to infrastructure and cybersecurity discussions
-      </p>
     </div>
   </section>
 </Layout>
+
+<style>
+  /* Smooth animations */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  section > div {
+    animation: fadeInUp 0.6s ease-out;
+  }
+
+  /* Stagger children animations */
+  .grid > div:nth-child(1) { animation-delay: 0.1s; }
+  .grid > div:nth-child(2) { animation-delay: 0.2s; }
+  .grid > div:nth-child(3) { animation-delay: 0.3s; }
+  .grid > div:nth-child(4) { animation-delay: 0.4s; }
+  .grid > div:nth-child(5) { animation-delay: 0.5s; }
+  .grid > div:nth-child(6) { animation-delay: 0.6s; }
+</style>
