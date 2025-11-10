@@ -77,17 +77,13 @@ const highlights = [
   <Breadcrumbs items={[{ label: 'About', icon: 'lucide:user' }]} />
 
   <section class="flex flex-col gap-y-6">
-    <!-- Profile Header -->
+    <!-- Why Merox - First Section -->
     <div class="rounded-lg border">
       <div class="p-6">
-        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-          <div class="space-y-2">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+          <div class="space-y-1">
             <h1 class="text-3xl font-medium">Robert Melcher</h1>
-            <p class="text-muted-foreground">HPC System Administrator @ Forvia</p>
-            <p class="text-sm text-muted-foreground max-w-xl">
-              Building secure, scalable infrastructures with 9+ years of experience in HPC operations, 
-              DevOps automation, and cybersecurity
-            </p>
+            <p class="text-sm italic text-muted-foreground">/ˈmɛrɒks/ • noun</p>
           </div>
           <Link 
             href="/robert-melcher-cv.pdf" 
@@ -97,6 +93,16 @@ const highlights = [
             <Icon name="lucide:download" class="size-4" />
             <span>Download CV</span>
           </Link>
+        </div>
+
+        <div class="space-y-3">
+          <h2 class="text-lg font-medium">Why "Merox"?</h2>
+          <p class="text-sm font-mono bg-primary/10 text-primary rounded-md p-3">
+            <span class="font-bold">ME</span>(lcher) + <span class="font-bold">RO</span>(bert) + <span class="font-bold">X</span>
+          </p>
+          <p class="text-xs text-muted-foreground italic">
+            formerly mer0x39 → 0x39 = 57 = July 5th birthday
+          </p>
         </div>
       </div>
     </div>
@@ -221,46 +227,6 @@ const highlights = [
         </div>
       </div>
 
-      <!-- Merox Origin -->
-      <div class="rounded-lg border">
-        <div class="p-6">
-          <h2 class="text-2xl font-medium mb-3">Why "Merox"?</h2>
-          
-          <p class="text-sm font-mono bg-primary/10 text-primary rounded-md p-3 mb-2">
-            <span class="font-bold">ME</span>(lcher) + <span class="font-bold">RO</span>(bert) + <span class="font-bold">X</span>
-          </p>
-          <p class="text-xs text-muted-foreground italic">
-            formerly mer0x39 → 0x39 = 57 = July 5th birthday
-          </p>
-        </div>
-      </div>
-
     </div>
   </section>
 </Layout>
-
-<style>
-  /* Smooth animations */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  section > div {
-    animation: fadeInUp 0.6s ease-out;
-  }
-
-  /* Stagger children animations */
-  .grid > div:nth-child(1) { animation-delay: 0.1s; }
-  .grid > div:nth-child(2) { animation-delay: 0.2s; }
-  .grid > div:nth-child(3) { animation-delay: 0.3s; }
-  .grid > div:nth-child(4) { animation-delay: 0.4s; }
-  .grid > div:nth-child(5) { animation-delay: 0.5s; }
-  .grid > div:nth-child(6) { animation-delay: 0.6s; }
-</style>
