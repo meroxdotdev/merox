@@ -187,7 +187,7 @@ const Skills: React.FC = () => {
                 return (
                   <div
                     key={`${category}-${techIndex}`}
-                    className="tech-badge mr-4 flex items-center gap-3 rounded-full border border-border bg-card px-4 py-3 shadow-sm backdrop-blur-sm transition-all duration-300 hover:shadow-md"
+                    className="tech-badge mr-4 flex items-center gap-3 rounded-full border border-border bg-card px-4 py-3 shadow-sm backdrop-blur-sm transition-shadow duration-300 hover:shadow-md"
                   >
                     <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted p-2 text-lg shadow-inner">
                       <IconComponent className="text-primary" />

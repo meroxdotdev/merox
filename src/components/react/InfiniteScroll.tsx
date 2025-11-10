@@ -24,12 +24,15 @@ export function InfiniteScroll({
         </>
       )}
       <div
-        className="flex w-max animate-scroll items-center"
+        className="flex w-max animate-scroll items-center gap-0"
         style={{
           animationDuration: `${duration}ms`,
           animationDirection: direction,
+          willChange: 'transform',
         }}
       >
+        {/* Duplicăm conținutul de 3 ori pentru loop perfect seamless */}
+        {children}
         {children}
         {children}
       </div>

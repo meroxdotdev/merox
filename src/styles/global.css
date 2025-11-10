@@ -102,21 +102,24 @@
   }
 }
 
+/* INFNINITE SCROLL
 
 /* Adaugă în global.css sau într-un fișier CSS separat */
 
-/* Animația pentru infinite scroll */
+/* Animația pentru infinite scroll - loop perfect cu 3 copii */
 @keyframes scroll {
   0% {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-50%);
+    transform: translateX(calc(-100% / 3));
   }
 }
 
 .animate-scroll {
   animation: scroll linear infinite;
+  /* Previne jump-ul la hover sau interact */
+  will-change: transform;
 }
 
 /* Animații pentru badge-uri */
