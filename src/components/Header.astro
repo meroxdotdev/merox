@@ -1,86 +1,115 @@
 ---
-import Link from '@/components/Link.astro';
-import ThemeToggle from '@/components/ThemeToggle.astro';
-import MobileMenu from '@/components/ui/mobile-menu';
-import { NAV_LINKS } from '@/consts';
-import { Image } from 'astro:assets';
-import logo from '../../public/static/logo.svg';
-import logod from '../../public/static/logod.svg';
+import Link from '@/components/Link.astro'
+import ThemeToggle from '@/components/ThemeToggle.astro'
+import MobileMenu from '@/components/ui/mobile-menu'
+import { NAV_LINKS } from '@/consts'
+import { Image } from 'astro:assets'
+import logo from '../../public/static/logo.svg'
+import logod from '../../public/static/logod.svg'
 ---
 
-<header id="main-header" class="sticky top-0 z-50">
-  <div id="header-wrapper" class="mx-auto max-w-4xl transition-all duration-500">
+<header
+  class="sticky top-0 z-50 transition-all duration-500 md:px-4 md:pt-4"
+  transition:persist
+  id="main-header"
+>
+  <div
+    id="header-wrapper"
+    class="mx-auto transition-all duration-500 ease-out md:max-w-4xl"
+  >
     <div
       id="header-inner"
-      class="flex items-center justify-between gap-4 px-4 py-3 bg-background/70 border-b border-border/40 shadow-sm backdrop-blur-xl rounded-3xl md:px-8 md:py-4 md:shadow-lg md:shadow-black/[0.04] md:hover:shadow-xl md:hover:shadow-black/[0.08] transition-all duration-300 ease-out"
+      class="flex items-center justify-between border-b border-border/40 bg-background/70 px-4 py-3 shadow-sm backdrop-blur-xl md:rounded-3xl md:border md:bg-background/80 md:px-8 md:py-4 md:shadow-lg md:shadow-black/[0.04] md:hover:shadow-xl md:hover:shadow-black/[0.08] md:backdrop-blur-2xl md:transition-all md:duration-400 md:ease-out"
     >
-      <!-- Logo -->
-      <Link href="/" class="flex items-center gap-3.5 transition-opacity duration-300 hover:opacity-90">
-        <Image src={logo} alt="Logo" class="hidden dark:block h-9 w-9 md:h-10 md:w-10" />
-        <Image src={logod} alt="Logo" class="block dark:hidden h-9 w-9 md:h-10 md:w-10" />
+      <!-- Logo + Title -->
+      <Link
+        href="/"
+        class="flex items-center gap-3.5 transition-all duration-300 hover:opacity-90"
+      >
+        <div class="relative">
+          <Image
+            src={logo}
+            alt="Logo"
+            class="hidden size-8 dark:block transition-opacity duration-500 md:size-9"
+          />
+          <Image
+            src={logod}
+            alt="Logo"
+            class="block size-8 dark:hidden transition-opacity duration-500 md:size-9"
+          />
+        </div>
+        <span class="site-title font-semibold tracking-tight">
+          <!-- {SITE.title} -->
+        </span>
       </Link>
 
-      <!-- Right side: Nav + Theme + Mobile -->
-      <div class="flex items-center gap-2 ml-auto">
+      <!-- Right Side Container -->
+      <div class="flex items-center gap-2 md:gap-3 ml-auto">
         <!-- Desktop Nav -->
         <nav class="hidden md:flex items-center gap-1">
           {NAV_LINKS.map((item, index) => (
             <Link
               href={item.href}
-              class="relative px-4 py-2.5 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-300 rounded-2xl overflow-hidden group"
+              class="relative px-4 py-2.5 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-300 rounded-2xl overflow-hidden group/link"
               style={`transition-delay: ${index * 50}ms;`}
             >
               <span class="relative z-10">{item.label}</span>
-              <div class="absolute inset-0 bg-foreground/5 scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out rounded-2xl"></div>
+              <div class="absolute inset-0 bg-foreground/4 scale-x-0 group-hover/link:scale-x-100 origin-left transition-transform duration-300 ease-out rounded-2xl"></div>
             </Link>
           ))}
         </nav>
 
-        <!-- Mobile + Theme -->
-        <MobileMenu client:load />
-        <ThemeToggle class="hidden md:block" />
+        <!-- Mobile Menu + ThemeToggle -->
+        <MobileMenu client:load transition:persist />
+        <ThemeToggle transition:persist class="hidden md:block" />
       </div>
     </div>
   </div>
 
-  <script>
-    if (typeof window !== 'undefined') {
-      const header = document.getElementById('header-inner');
-      const wrapper = document.getElementById('header-wrapper');
-      let ticking = false;
+  <!-- Scroll Shrink Script -->
+<script>
+  if (typeof window !== 'undefined') {
+    const wrapper = document.getElementById('header-wrapper');
+    const inner = document.getElementById('header-inner');
+    let lastScrollY = 0;
+    let ticking = false;
 
-      const handleScroll = () => {
-        const currentScroll = window.scrollY;
-        const shrinkThreshold = 48;
-        const shouldShrink = currentScroll > shrinkThreshold;
+    const update = () => {
+      // Dacă elementele nu există, nu continua
+      if (!wrapper || !inner) return;
 
-        header.classList.toggle('shrink', shouldShrink);
-        wrapper.classList.toggle('shrink', shouldShrink);
+      const currentScroll = window.scrollY;
+      const isScrolled = currentScroll > 48;
+      const wasScrolled = lastScrollY > 48;
 
+      if (window.innerWidth < 768) {
         ticking = false;
-      };
+        return;
+      }
 
-      const onScroll = () => {
-        if (!ticking) {
-          requestAnimationFrame(handleScroll);
-          ticking = true;
-        }
-      };
+      if (isScrolled && !wasScrolled) {
+        wrapper.classList.add('shrink');
+        inner.classList.add('shrink');
+      } else if (!isScrolled && wasScrolled) {
+        wrapper.classList.remove('shrink');
+        inner.classList.remove('shrink');
+      }
 
-      window.addEventListener('scroll', onScroll);
-      window.addEventListener('resize', handleScroll);
-    }
-  </script>
+      lastScrollY = currentScroll;
+      ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    });
+  }
+</script>
 
   <style>
-    /* Desktop spacing */
-    @media (min-width: 768px) {
-      #main-header {
-        padding-top: 1rem; /* spațiu deasupra */
-      }
-    }
-
-    /* Mobile preserved */
+    /* Mobile look preserved */
     @media (max-width: 767px) {
       #header-inner {
         border-radius: 0 !important;
@@ -89,35 +118,62 @@ import logod from '../../public/static/logod.svg';
         border-bottom: 1px solid hsl(var(--border)/0.4) !important;
         padding: 0.75rem 1rem !important;
       }
+      .site-title {
+        font-size: 1.35rem !important;
+        font-weight: 700;
+        color: hsl(var(--foreground));
+      }
+      .dark #header-inner {
+        background: hsl(var(--background)/0.7) !important;
+      }
     }
 
-
-
-    /* Shrink effect */
-    #header-wrapper.shrink {
-      max-width: 42rem;
-      transform: translateY(-4px) scale(0.97);
-      transition: all 0.3s ease;
+    /* Desktop enhancements */
+    .site-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--foreground)/0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
     }
+
+    @media (min-width: 640px) { .site-title { font-size: 1.6rem; } }
+
+    #header-wrapper.shrink { max-width: 42rem; transform: translateY(-4px) scale(0.97); }
     #header-wrapper.shrink #header-inner {
-      padding: 0.875rem 1.5rem;
+      padding-left: 1.5rem !important;
+      padding-right: 1.5rem !important;
+      padding-top: 0.875rem !important;
+      padding-bottom: 0.875rem !important;
       border-radius: 2.5rem;
     }
+    #header-wrapper.shrink .site-title { font-size: 1.35rem; }
     #header-wrapper.shrink img { transform: scale(0.89); }
 
-    /* Glass effect */
-    #header-inner {
-      position: relative;
-      background: hsl(var(--background)/0.7);
-      backdrop-filter: blur(16px);
-      transition: all 0.3s ease;
+    #header-wrapper.shrink nav > * {
+      padding-left: 1.25rem !important;
+      padding-right: 1.25rem !important;
+      font-size: 0.875rem;
     }
+
     #header-inner::before {
       content: '';
       position: absolute;
       inset: 0;
-      border-radius: inherit;
-      background: linear-gradient(135deg, hsl(var(--border)/0.3) 0%, transparent 50%, hsl(var(--border)/0.2) 100%);
+      border-radius: 3rem;
+      padding: 1px;
+      background: linear-gradient(135deg,
+        hsl(var(--border)/0.3) 0%,
+        transparent 50%,
+        hsl(var(--border)/0.2) 100%
+      );
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
       pointer-events: none;
       opacity: 0;
       transition: opacity 0.4s ease;
