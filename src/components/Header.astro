@@ -67,44 +67,46 @@ import logod from '../../public/static/logod.svg'
   </div>
 
   <!-- Scroll Shrink Script -->
-  <script>
-    if (typeof window !== 'undefined') {
-      const wrapper = document.getElementById('header-wrapper');
-      const inner = document.getElementById('header-inner');
-      let lastScrollY = 0;
-      let ticking = false;
+<script>
+  if (typeof window !== 'undefined') {
+    const wrapper = document.getElementById('header-wrapper');
+    const inner = document.getElementById('header-inner');
+    let lastScrollY = 0;
+    let ticking = false;
 
-      const update = () => {
-        const currentScroll = window.scrollY;
-        const isScrolled = currentScroll > 48;
-        const wasScrolled = lastScrollY > 48;
+    const update = () => {
+      // Dacă elementele nu există, nu continua
+      if (!wrapper || !inner) return;
 
-        // ✅ keep mobile unchanged
-        if (window.innerWidth < 768) {
-          ticking = false;
-          return;
-        }
+      const currentScroll = window.scrollY;
+      const isScrolled = currentScroll > 48;
+      const wasScrolled = lastScrollY > 48;
 
-        if (isScrolled && !wasScrolled) {
-          wrapper.classList.add('shrink');
-          inner.classList.add('shrink');
-        } else if (!isScrolled && wasScrolled) {
-          wrapper.classList.remove('shrink');
-          inner.classList.remove('shrink');
-        }
-
-        lastScrollY = currentScroll;
+      if (window.innerWidth < 768) {
         ticking = false;
-      };
+        return;
+      }
 
-      window.addEventListener('scroll', () => {
-        if (!ticking) {
-          window.requestAnimationFrame(update);
-          ticking = true;
-        }
-      });
-    }
-  </script>
+      if (isScrolled && !wasScrolled) {
+        wrapper.classList.add('shrink');
+        inner.classList.add('shrink');
+      } else if (!isScrolled && wasScrolled) {
+        wrapper.classList.remove('shrink');
+        inner.classList.remove('shrink');
+      }
+
+      lastScrollY = currentScroll;
+      ticking = false;
+    };
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(update);
+        ticking = true;
+      }
+    });
+  }
+</script>
 
   <style>
     /* Mobile look preserved */
