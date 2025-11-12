@@ -12,12 +12,10 @@ import { formatDate } from '@/lib/utils'
 const latestPosts = await getRecentPosts(2)
 
 const highlights = [
-  'Full datacenter deployments with InfiniBand clusters at Forvia',
-  'Homelab Kubernetes cluster with Talos Linux, Flux GitOps, and Cilium CNI',
-  'Proxmox virtualization with automated deployments on Dell R720',
-  'pfSense firewall with VLAN segmentation and WAF security',
-  'AWS/EC2 applications and Oracle Ampere ARM testing',
-  'Infrastructure automation with cert-manager, external-dns, and SOPS secrets',
+  'HPC @ Forvia: Full InfiniBand clusters + PBS scheduling',
+  'Dolphost Founder: Secure VPS & WordPress hosting',
+  'Cybersecurity @ Atos: Nessus, Palo Alto/Fortinet, Forescout W10→W11 (4k+ users)',
+  'SysAdmin @ Netex: Migrated bare-metal Puppet to Kubernetes',
 ]
 ---
 
@@ -147,45 +145,42 @@ const highlights = [
   }
 
   <!-- Highlights -->
-  <section class="mt-8 rounded-xl border">
-    <div class="p-6">
-      <h2 class="text-2xl font-semibold mb-4">Highlights</h2>
-      <div class="space-y-3">
-        {highlights.map((highlight) => (
-          <div class="flex items-start gap-3 text-sm">
-            <span class="text-primary mt-0.5 flex-shrink-0">▸</span>
-            <p class="text-muted-foreground leading-relaxed">{highlight}</p>
-          </div>
-        ))}
-      </div>
-      <div class="mt-6 pt-6 border-t">
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <p class="font-semibold">Currently @ Forvia</p>
-            <p class="text-sm text-muted-foreground mt-0.5">
-              Previously: Atos (Cybersecurity)
-            </p>
-          </div>
-          <Link href="/about" class={buttonVariants({ variant: 'outline' }) + ' flex-shrink-0'}>
-            Full background
-          </Link>
+<section class="mt-8 rounded-xl border bg-card/50">
+  <div class="p-6">
+    <h2 class="text-xl font-bold mb-4">Highlights</h2>
+    <div class="space-y-2.5">
+      {highlights.map((h) => (
+        <div class="flex items-start gap-2.5 text-sm">
+          <span class="text-primary mt-0.5">▸</span>
+          <p class="leading-snug">{h}</p>
         </div>
-      </div>
+      ))}
     </div>
-  </section>
+
+    <div class="mt-5 pt-5 border-t flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-sm">
+      <div>
+        <p class="font-medium">Now @ Forvia</p>
+        <p class="text-muted-foreground">ex-Atos (Cybersecurity)</p>
+      </div>
+      <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'sm' })}>
+        Full background
+      </Link>
+    </div>
+  </div>
+</section>
 
   <!-- CTA Section -->
   <section class="mt-8 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
     <div class="p-8 text-center">
       <h2 class="text-2xl font-semibold mb-3">
-        Interested in HPC, Kubernetes, or homelab automation?
+        Let’s talk infrastructure
       </h2>
       <p class="text-muted-foreground mb-6 max-w-xl mx-auto">
-        Providing expertise and custom solutions in infrastructure automation, security hardening, and scalable deployments.
+        Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
       </p>
       <Link href="mailto:hello@merox.dev" class={buttonVariants({ variant: 'default', size: 'lg' }) + ' group gap-2'}>
         <Icon name="lucide:mail" class="size-4" />
-        Get in contact
+        Get in touch
         <span class="ml-1 transition-transform group-hover:translate-x-1">→</span>
       </Link>
     </div>
