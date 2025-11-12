@@ -17,18 +17,21 @@ export const ANALYTICS = {
 }
 
 export const NAV_LINKS: SocialLink[] = [
+
+  {
+    href: '/about',
+    label: 'About',
+  },
+
   {
     href: '/blog',
-    label: 'blog',
+    label: 'Blog',
   },
   {
     href: 'https://inside.merox.dev',
-    label: 'inside',
+    label: 'Inside',
   },
-  {
-    href: '/about',
-    label: 'about',
-  },
+
 ]
 
 export const SOCIAL_LINKS: SocialLink[] = [
