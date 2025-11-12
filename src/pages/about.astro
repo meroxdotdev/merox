@@ -5,39 +5,68 @@ import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 
-
-
 const experiences = [
   {
     title: 'HPC System Administrator',
     company: 'Forvia',
     period: '2022 – Present',
-    description: 'Enterprise HPC cluster management, datacenter deployments, InfiniBand networking, PBS scheduling',
+    responsibilities: [
+      'Maintained Windows and Linux servers ensuring system stability and performance',
+      'Integrated ActiveDirectory and SALT minions on Linux servers',
+      'Managed virtual servers with ManageIQ and network infrastructure with VitalQIP',
+      'Installed and configured PBS (Portable Batch System) on HPC server for effective job scheduling and resource allocation'
+    ],
     current: true
   },
   {
-    title: 'Cybersecurity Engineer',
-    company: 'Atos',
+    title: 'Founder',
+    company: 'Dolphost',
+    period: '2022 – 2024',
+    responsibilities: [
+      'Developed secure WordPress websites with emphasis on security best practices',
+      'Provided maintenance and sales of VPS and web hosting services',
+      'Managed domain registrations and transfers',
+      'Implemented and configured hosting management solutions (WHMCS, cPanel)'
+    ],
+    current: false
+  },
+  {
+    title: 'Cyber Security Engineer',
+    company: 'Atos IT Solutions',
     period: '2020 – 2022',
-    description: 'Firewall policy management, CyberArk PAM, Forescout NAC',
+    responsibilities: [
+      'Conducted risk and vulnerability assessments using NESSUS, providing detailed reports to senior management',
+      'Implemented firewall rules on next-generation firewalls (CISCO, Fortinet, Palo Alto, Juniper)',
+      'Configured and managed proxy rules on McAfee and SQUID systems',
+      'Monitored data access and regulated file use using CyberArk',
+      'Migrated and created policy rules for Windows 10 end users using Forescout'
+    ],
     current: false
   },
   {
     title: 'System Administrator',
     company: 'Netex Romania',
     period: '2018 – 2020',
-    description: 'Puppet to K8s migration, Asterisk VOIP, datacenter operations',
+    responsibilities: [
+      'Managed backup processes using BAREOS, ensuring data integrity and redundancy',
+      'Performed patching and troubleshooting on NetexOS (Debian-based) with Puppet automation',
+      'Installed XEN hypervisors and integrated Docker for development team',
+      'Migrated Puppet from bare metal infrastructure to Kubernetes (K8s) cluster',
+      'Managed VOIP system based on Asterisk and CISCO phones',
+      'Configured networks for routers using StrongSwan for IPsec site-to-site connections',
+      'Maintained server room infrastructure: installed rack-mounted servers, managed network cabling, replaced UPS batteries, and performed hardware maintenance'
+    ],
     current: false
   }
 ]
 
-const highlights = [
-  'Full datacenter deployments with InfiniBand clusters at Forvia',
-  'Homelab Kubernetes cluster with Talos Linux, Flux GitOps, and Cilium CNI',
-  'Proxmox virtualization with automated deployments on Dell R720',
-  'pfSense firewall with VLAN segmentation and WAF security',
-  'AWS/EC2 applications and Oracle Ampere ARM testing',
-  'Infrastructure automation with cert-manager, external-dns, and SOPS secrets'
+
+const homelabProjects = [
+  'Built and maintained Dell PowerEdge R720 server',
+  'Proxmox virtualization running Linux and Windows VMs',
+  'Network security with VLANs, WAF, and pfSense firewall',
+  'Deployed Docker environments managed with Portainer',
+  'Implemented K8S Cluster with FluxCD and Talos'
 ]
 ---
 
@@ -46,99 +75,124 @@ const highlights = [
   <Breadcrumbs items={[{ label: 'About', icon: 'lucide:user' }]} />
 
   <section class="flex flex-col gap-y-6">
-    <!-- Why Merox - First Section -->
-    <div class="rounded-lg border">
+    <!-- Header -->
+    <div class="rounded-lg border bg-gradient-to-br from-primary/5 to-transparent">
       <div class="p-6">
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-          <div class="space-y-1">
-            <h1 class="text-3xl font-medium">Melcher Robert</h1>
-            <p class="text-sm italic text-muted-foreground">/ˈmɛrɒks/ • noun</p>
+          <div class="space-y-2">
+            <h1 class="text-3xl font-bold">Robert Melcher</h1>
+            <p class="text-muted-foreground leading-relaxed">
+              System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security. I specialize in server management, virtualization solutions, and network implementation with a focus on maintaining secure and efficient IT infrastructures.
+            </p>
           </div>
           <Link 
             href="/robert-melcher-cv.pdf" 
             external 
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-md border bg-card hover:bg-accent transition-colors shrink-0 text-sm"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shrink-0 text-sm font-medium"
           >
             <Icon name="lucide:download" class="size-4" />
             <span>Download CV</span>
           </Link>
         </div>
 
-        <div class="space-y-3">
-          <h2 class="text-lg font-medium">Why "Merox"?</h2>
-          <p class="text-sm font-mono bg-primary/10 text-primary rounded-md p-3">
-            <span class="font-bold">ME</span>(lcher) + <span class="font-bold">RO</span>(bert) + <span class="font-bold">X</span>
+        <div class="space-y-3 pt-4 border-t">
+          <h2 class="text-sm font-medium uppercase tracking-wide text-muted-foreground">About the alias</h2>
+          <p class="text-sm font-mono bg-background/50 rounded-md p-3 border">
+            <span class="font-bold text-primary">ME</span>lcher + <span class="font-bold text-primary">RO</span>bert + <span class="font-bold text-primary">X</span>
           </p>
           <p class="text-xs text-muted-foreground italic">
-            formerly mer0x39 → 0x39 = 57 = July 5th birthday
+            Previously mer0x39 (0x39 = 57 = July 5th birthday)
           </p>
         </div>
       </div>
     </div>
 
-    <!-- Content Grid -->
-    <div class="flex flex-col gap-y-6">
-      
-      <!-- Experience -->
-      <div class="rounded-lg border">
-        <div class="p-6">
-          <h2 class="text-2xl font-medium mb-4">Experience</h2>
-          
-          <div class="space-y-6">
-            {experiences.map((exp, index) => (
-              <div class={`relative pl-6 ${index < experiences.length - 1 ? 'pb-6' : ''}`}>
-                <div class={`absolute left-0 top-1 size-3 rounded-full ${exp.current ? 'bg-primary ring-4 ring-primary/20' : 'bg-muted'}`}></div>
-                {index < experiences.length - 1 && (
-                  <div class="absolute left-[5px] top-4 bottom-0 w-0.5 bg-border"></div>
-                )}
-                <div class="space-y-1">
-                  <h3 class="font-medium">{exp.title}</h3>
+    <!-- Professional Experience -->
+    <div class="rounded-lg border">
+      <div class="p-6">
+        <h2 class="text-2xl font-bold mb-6">Work Experience</h2>
+        
+        <div class="space-y-8">
+          {experiences.map((exp, index) => (
+            <div class={`relative pl-6 ${index < experiences.length - 1 ? 'pb-8 border-b' : ''}`}>
+              <div class={`absolute left-0 top-1.5 size-3 rounded-full ${exp.current ? 'bg-primary ring-4 ring-primary/20' : 'bg-muted-foreground/30'}`}></div>
+              
+              <div class="space-y-3">
+                <div>
+                  <h3 class="font-semibold text-lg">{exp.title}</h3>
                   <p class="text-sm text-muted-foreground">{exp.company} • {exp.period}</p>
-                  <p class="text-sm text-muted-foreground/80">
-                    {exp.description}
-                  </p>
                 </div>
+                
+                <ul class="space-y-2">
+                  {exp.responsibilities.map((task) => (
+                    <li class="flex gap-2 text-sm text-muted-foreground">
+                      <Icon name="lucide:chevron-right" class="size-4 text-primary shrink-0 mt-0.5" />
+                      <span>{task}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
+    </div>
 
-      <!-- Key Projects -->
+    <!-- Education & Certifications -->
+    <div class="grid gap-6 md:grid-cols-2">
       <div class="rounded-lg border">
         <div class="p-6">
-          <h2 class="text-2xl font-medium mb-4">Key Projects</h2>
-          
-          <ul class="space-y-3">
-            {highlights.map((highlight) => (
-              <li class="flex gap-3 text-sm text-muted-foreground">
-                <Icon name="lucide:check-circle-2" class="size-4 text-primary shrink-0 mt-0.5" />
-                <span>{highlight}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <!-- Education -->
-      <div class="rounded-lg border">
-        <div class="p-6">
-          <h2 class="text-2xl font-medium mb-4">Education</h2>
+          <h2 class="text-xl font-bold mb-4">Education</h2>
           
           <div class="space-y-4">
             <div>
               <h3 class="font-medium">Computer Science</h3>
-              <p class="text-sm text-muted-foreground">West University of Timișoara • 2016–2018</p>
+              <p class="text-sm text-muted-foreground">West University of Timișoara</p>
+              <p class="text-sm text-muted-foreground">2016–2018</p>
             </div>
 
-            <div class="pt-4 border-t">
-              <h3 class="font-medium">CCNA Certification</h3>
-              <p class="text-sm text-muted-foreground">Cisco • 2019–2020</p>
-            </div>
+
           </div>
         </div>
       </div>
 
+      <div class="rounded-lg border">
+        <div class="p-6">
+          <h2 class="text-xl font-bold mb-4">Certifications</h2>
+          
+          <div>
+            <h3 class="font-medium">Cisco Certified Network Associate (CCNA)</h3>
+            <p class="text-sm text-muted-foreground">Cisco</p>
+            <p class="text-sm text-muted-foreground">2019–2020</p>
+            <p class="text-xs text-muted-foreground/70 mt-2">#NJXWKRFD7D1EQ7C0</p>
+
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Homelab Projects -->
+    <div class="rounded-lg border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
+      <div class="p-6">
+        <h2 class="text-xl font-bold mb-4">Homelab Projects</h2>
+        
+        <ul class="space-y-2">
+          {homelabProjects.map((project) => (
+            <li class="flex gap-3 text-sm">
+              <Icon name="lucide:server" class="size-4 text-primary shrink-0 mt-0.5" />
+              <span>{project}</span>
+            </li>
+          ))}
+        </ul>
+
+        <div class="mt-6 pt-6 border-t">
+          <Link href="/blog" class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+            <span>Read about my homelab setup on the blog</span>
+            <Icon name="lucide:arrow-right" class="size-4" />
+          </Link>
+        </div>
+      </div>
+    </div>
+
   </section>
 </Layout>
