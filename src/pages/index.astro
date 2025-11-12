@@ -1,16 +1,14 @@
 ---
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
-import Skills from '@/components/react/Skills' // IMPORT NOU
+import Skills from '@/components/react/Skills'
 import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
 import { Image } from 'astro:assets'
 import { formatDate } from '@/lib/utils'
-
 const latestPosts = await getRecentPosts(2)
-
 const highlights = [
   'HPC @ Forvia: Full InfiniBand clusters + PBS scheduling',
   'Dolphost Founder: Secure VPS & WordPress hosting',
@@ -18,13 +16,16 @@ const highlights = [
   'SysAdmin @ Netex: Migrated bare-metal Puppet to Kubernetes',
 ]
 ---
-
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="Home" />
 
-  <!-- Hero -->
-  <section class="rounded-xl border bg-gradient-to-br from-primary/5 via-primary/3 to-transparent">
-    <div class="p-8 md:p-10">
+  <!-- Hero cu efect inversat: orbs în stânga-sus și dreapta-jos -->
+  <section class="relative overflow-hidden rounded-xl border bg-gradient-to-br from-primary/5 via-primary/3 to-transparent">
+    <!-- Gradient orbs inversate -->
+    <div class="absolute -top-20 -left-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+
+    <div class="relative z-10 p-8 md:p-10">
       <div class="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex-1 min-w-0">
           <div class="inline-block mb-3">
@@ -67,123 +68,124 @@ const highlights = [
     <Skills client:load />
   </section>
 
-  <!-- Latest from the blog (2 posts) -->
-  {
-    latestPosts && latestPosts.length > 0 && (
-      <section class="mt-12">
-        <div class="mb-6 flex items-center justify-between">
-          <div>
-            <h2 class="text-3xl font-bold tracking-tight">Latest from the blog</h2>
-          </div>
-          <div class="hidden sm:block">
-            <Link href="/blog" class={buttonVariants({ variant: 'ghost' }) + ' group'}>
-              View all posts
-              <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
-            </Link>
-          </div>
+  <!-- Latest from the blog -->
+  {latestPosts && latestPosts.length > 0 && (
+    <section class="mt-12">
+      <div class="mb-6 flex items-center justify-between">
+        <div>
+          <h2 class="text-3xl font-bold tracking-tight">Latest from the blog</h2>
         </div>
-        <div class="grid gap-6 md:grid-cols-2">
-          {latestPosts.map((post) => (
-            <Link
-              href={`/${post.collection}/${post.id}`}
-              class="group relative overflow-hidden rounded-xl border bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/20 hover:bg-card"
-            >
-            {
-  post.data.image && (
-    <div class="relative overflow-hidden">
-      <Image
-        src={post.data.image}
-        alt={post.data.title}
-        width={1200}
-        height={630}
-        class="h-48 w-full object-cover transition-all duration-500 ease-out group-hover:scale-105 grayscale group-hover:grayscale-0"
-      />
-      <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-    </div>
-  )
-}
-
-              <div class="p-6">
-                <div class="flex items-center gap-2 text-xs text-muted-foreground mb-3">
-                  <Icon name="lucide:calendar" class="size-3" />
-                  <span>{formatDate(post.data.date)}</span>
-                  {post.data.tags && post.data.tags.length > 0 && (
-                    <>
-                      <span>•</span>
-                      <span class="font-medium">{post.data.tags[0]}</span>
-                    </>
-                  )}
-                </div>
-                <h3 class="text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors duration-300">
-                  {post.data.title}
-                </h3>
-                {
-                  post.data.description && (
-                    <p class="text-muted-foreground mt-3 line-clamp-3 leading-relaxed">
-                      {post.data.description}
-                    </p>
-                  )
-                }
-                <div class="mt-4 flex items-center text-sm font-medium text-primary group-hover:gap-1 transition-gap duration-300">
-                  <span>Read more</span>
-                  <Icon name="lucide:arrow-right" class="size-4 ml-1 transition-transform duration-300 group-hover:translate-x-1" />
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <div class="mt-6 flex justify-center sm:hidden">
-          <Link
-            href="/blog"
-            class={buttonVariants({ variant: 'outline' }) + ' group w-full justify-center max-w-xs'}
-          >
+        <div class="hidden sm:block">
+          <Link href="/blog" class={buttonVariants({ variant: 'ghost' }) + ' group'}>
             View all posts
             <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
-      </section>
-    )
-  }
+      </div>
+      <div class="grid gap-6 md:grid-cols-2">
+        {latestPosts.map((post) => (
+          <Link
+            href={`/${post.collection}/${post.id}`}
+            class="group relative overflow-hidden rounded-xl border bg-card/50 backdrop-blur-sm shadow-sm transition-all duration-300 hover:shadow-lg hover:border-primary/20 hover:bg-card"
+          >
+            {post.data.image && (
+              <div class="relative overflow-hidden">
+                <Image
+                  src={post.data.image}
+                  alt={post.data.title}
+                  width={1200}
+                  height={630}
+                  class="h-48 w-full object-cover transition-all duration-500 ease-out group-hover:scale-105 grayscale group-hover:grayscale-0"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </div>
+            )}
+            <div class="p-6">
+              <div class="flex items-center gap-2 text-xs text-muted-foreground mb-3">
+                <Icon name="lucide:calendar" class="size-3" />
+                <span>{formatDate(post.data.date)}</span>
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <>
+                    <span>•</span>
+                    <span class="font-medium">{post.data.tags[0]}</span>
+                  </>
+                )}
+              </div>
+              <h3 class="text-xl font-semibold line-clamp-2 group-hover:text-primary transition-colors duration-300">
+                {post.data.title}
+              </h3>
+              {post.data.description && (
+                <p class="text-muted-foreground mt-3 line-clamp-3 leading-relaxed">
+                  {post.data.description}
+                </p>
+              )}
+              <div class="mt-4 flex items-center text-sm font-medium text-primary group-hover:gap-1 transition-gap duration-300">
+                <span>Read more</span>
+                <Icon name="lucide:arrow-right" class="size-4 ml-1 transition-transform duration-300 group-hover:translate-x-1" />
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+      <div class="mt-6 flex justify-center sm:hidden">
+        <Link
+          href="/blog"
+          class={buttonVariants({ variant: 'outline' }) + ' group w-full justify-center max-w-xs'}
+        >
+          View all posts
+          <span class="ml-1.5 transition-transform group-hover:translate-x-1">→</span>
+        </Link>
+      </div>
+    </section>
+  )}
 
   <!-- Highlights -->
-<section class="mt-8 rounded-xl border bg-card/50">
-  <div class="p-6">
-    <h2 class="text-xl font-bold mb-4">Highlights</h2>
-    <div class="space-y-2.5">
-      {highlights.map((h) => (
-        <div class="flex items-start gap-2.5 text-sm">
-          <span class="text-primary mt-0.5">▸</span>
-          <p class="leading-snug">{h}</p>
-        </div>
-      ))}
-    </div>
-
-    <div class="mt-5 pt-5 border-t flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-sm">
-      <div>
-        <p class="font-medium">Now @ Forvia</p>
-        <p class="text-muted-foreground">ex-Atos (Cybersecurity)</p>
+  <section class="mt-8 rounded-xl border bg-card/50">
+    <div class="p-6">
+      <h2 class="text-xl font-bold mb-4">Highlights</h2>
+      <div class="space-y-2.5">
+        {highlights.map((h) => (
+          <div class="flex items-start gap-2.5 text-sm">
+            <span class="text-primary mt-0.5">▸</span>
+            <p class="leading-snug">{h}</p>
+          </div>
+        ))}
       </div>
-      <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'sm' })}>
-        Full background
-      </Link>
+      <div class="mt-5 pt-5 border-t flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-sm">
+        <div>
+          <p class="font-medium">Now @ Forvia</p>
+          <p class="text-muted-foreground">ex-Atos (Cybersecurity)</p>
+        </div>
+        <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'sm' })}>
+          Full background
+        </Link>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
 
-  <!-- CTA Section -->
-  <section class="mt-8 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
-    <div class="p-8 text-center">
-      <h2 class="text-2xl font-semibold mb-3">
-        Let’s talk infrastructure
-      </h2>
-      <p class="text-muted-foreground mb-6 max-w-xl mx-auto">
-        Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
-      </p>
-      <Link href="mailto:hello@merox.dev" class={buttonVariants({ variant: 'default', size: 'lg' }) + ' group gap-2'}>
-        <Icon name="lucide:mail" class="size-4" />
-        Get in touch
-        <span class="ml-1 transition-transform group-hover:translate-x-1">→</span>
-      </Link>
+  <!-- CTA Section - TEXTUL TĂU + EFECT INVERSAT -->
+  <section class="mt-8 mb-8">
+    <div class="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent backdrop-blur-sm">
+      <!-- Gradient orbs: stânga-sus + dreapta-jos (invers față de Hero) -->
+      <div class="absolute -top-20 -left-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+
+      <div class="relative z-10 p-8 text-center">
+        <h2 class="text-2xl font-semibold mb-3">
+          Let’s talk infrastructure
+        </h2>
+        <p class="text-muted-foreground mb-6 max-w-xl mx-auto">
+          Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
+        </p>
+        <Link 
+          href="mailto:hello@merox.dev" 
+          class={buttonVariants({ variant: 'default', size: 'lg' }) + ' group gap-2'}
+        >
+          <Icon name="lucide:mail" class="size-4" />
+          Get in touch
+          <span class="ml-1 transition-transform group-hover:translate-x-1">→</span>
+        </Link>
+      </div>
     </div>
   </section>
 </Layout>
