@@ -96,6 +96,7 @@ import logod from '../../public/static/logod.svg'
           let state = {
             ticking: false,
             lastScrollY: 0,
+            initialized: false,
             elements: {
               wrapper: null,
               inner: null,
@@ -142,20 +143,27 @@ import logod from '../../public/static/logod.svg'
 
             // Reset shrink state on mobile/tablet
             if (!isDesktop()) {
-              wrapper.classList.remove('shrink')
-              inner.classList.remove('shrink')
+              // Only update if state actually changed to prevent unnecessary DOM manipulation
+              if (wrapper.classList.contains('shrink') || inner.classList.contains('shrink')) {
+                wrapper.classList.remove('shrink')
+                inner.classList.remove('shrink')
+              }
               state.ticking = false
               state.lastScrollY = currentScroll
               return
             }
 
-            // Apply shrink effect on desktop
+            // Apply shrink effect on desktop - only update if state changed
             if (isScrolled && !wasScrolled) {
-              wrapper.classList.add('shrink')
-              inner.classList.add('shrink')
+              if (!wrapper.classList.contains('shrink')) {
+                wrapper.classList.add('shrink')
+                inner.classList.add('shrink')
+              }
             } else if (!isScrolled && wasScrolled) {
-              wrapper.classList.remove('shrink')
-              inner.classList.remove('shrink')
+              if (wrapper.classList.contains('shrink')) {
+                wrapper.classList.remove('shrink')
+                inner.classList.remove('shrink')
+              }
             }
 
             state.lastScrollY = currentScroll
@@ -176,13 +184,27 @@ import logod from '../../public/static/logod.svg'
            * Initialize header controller
            */
           const init = () => {
+            // Prevent multiple initializations
+            if (state.initialized) {
+              return
+            }
+
+            // Re-enable transitions if they were disabled
+            const header = document.getElementById('main-header')
+            if (header && header.style.transition === 'none') {
+              header.style.transition = ''
+            }
+
             // Reset state
             state.ticking = false
             state.lastScrollY = window.scrollY
             state.elements = getElements()
 
-            // Initial state update
-            updateHeaderState()
+            // Initial state update - use a small delay to prevent flashing during navigation
+            requestAnimationFrame(() => {
+              updateHeaderState()
+              state.initialized = true
+            })
 
             // Attach scroll listener
             window.addEventListener('scroll', handleScroll, { passive: true })
@@ -195,35 +217,61 @@ import logod from '../../public/static/logod.svg'
             // Remove event listeners
             window.removeEventListener('scroll', handleScroll)
 
-            // Reset shrink state
+            // Reset shrink state only if elements exist
             const elements = getElements()
             if (elements) {
               elements.wrapper.classList.remove('shrink')
               elements.inner.classList.remove('shrink')
             }
 
-            // Reset state
+            // Reset state but keep initialized flag for smoother transitions
             state.ticking = false
-            state.lastScrollY = 0
+            state.lastScrollY = window.scrollY || 0
             state.elements = { wrapper: null, inner: null }
+            state.initialized = false
           }
 
           // Astro navigation event handlers
-          document.addEventListener('astro:page-load', init)
-          document.addEventListener('astro:after-swap', () => {
-            cleanup()
-            // Use requestAnimationFrame instead of setTimeout for better performance
+          document.addEventListener('astro:page-load', () => {
+            // Small delay to ensure DOM is stable
             requestAnimationFrame(() => {
-              requestAnimationFrame(init)
+              init()
             })
           })
-          document.addEventListener('astro:before-swap', cleanup)
+          document.addEventListener('astro:after-swap', () => {
+            cleanup()
+            // Delay re-initialization to prevent flashing during navigation
+            // Use a small timeout to ensure page transition is complete
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                init()
+              })
+            }, 50)
+          })
+          document.addEventListener('astro:before-swap', () => {
+            // Temporarily disable transitions to prevent flashing
+            const header = document.getElementById('main-header')
+            if (header) {
+              header.style.transition = 'none'
+            }
+            // Only cleanup, don't reset scroll position to prevent flashing
+            window.removeEventListener('scroll', handleScroll)
+            state.ticking = false
+            state.initialized = false
+          })
 
-          // Initial load
+          // Initial load - wait for DOM to be fully ready
           if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init)
+            document.addEventListener('DOMContentLoaded', () => {
+              requestAnimationFrame(() => {
+                init()
+              })
+            })
           } else {
-            init()
+            // DOM already loaded, use next frame to ensure stability
+            requestAnimationFrame(() => {
+              init()
+            })
           }
         })()
       }
@@ -231,6 +279,13 @@ import logod from '../../public/static/logod.svg'
   </script>
 
   <style>
+    /* Prevent flashing during navigation */
+    html[data-astro-transition-scope] #main-header,
+    html[data-astro-transition-scope] #header-wrapper,
+    html[data-astro-transition-scope] #header-inner {
+      transition: none !important;
+    }
+
     /* Mobile & Tablet: Clean minimal style */
     @media (max-width: 1279px) {
       #header-inner {
