@@ -8,18 +8,18 @@ import logo from '../../public/static/logo.svg'
 import logod from '../../public/static/logod.svg'
 ---
 
-<header
-  class="sticky top-0 z-50 w-full transition-all duration-300"
-  transition:persist
-  id="main-header"
->
+  <header
+    class="sticky top-0 z-50 w-full transition-all duration-300"
+    transition:persist
+    id="main-header"
+  >
   <div
     id="header-wrapper"
-    class="mx-auto w-full max-w-3xl transition-all duration-300 ease-out px-4 pt-4"
+    class="mx-auto w-full max-w-3xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] px-4 pt-4"
   >
     <div
       id="header-inner"
-      class="relative overflow-hidden flex items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-sm px-4 py-3 xl:rounded-xl xl:border xl:border-primary/20 xl:bg-gradient-to-br xl:from-primary/5 xl:via-primary/3 xl:to-transparent xl:px-8 xl:py-4 xl:backdrop-blur-sm xl:transition-all xl:duration-300 xl:ease-out"
+      class="relative overflow-hidden flex items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-sm px-4 py-3 xl:rounded-xl xl:border xl:border-primary/20 xl:bg-gradient-to-br xl:from-primary/5 xl:via-primary/3 xl:to-transparent xl:px-8 xl:py-4 xl:backdrop-blur-sm xl:transition-all xl:duration-500 xl:ease-[cubic-bezier(0.4,0,0.2,1)]"
     >
       <!-- Subtle gradient orbs (matching footer style) -->
       <div class="absolute -top-10 -left-10 hidden w-24 h-24 bg-primary/10 rounded-full blur-2xl xl:block" aria-hidden="true"></div>
@@ -32,17 +32,17 @@ import logod from '../../public/static/logod.svg'
         aria-label="Home"
       >
         <div class="relative flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
-          <Image
+            <Image
             src={logo}
             alt="Logo"
-            class="hidden size-7 transition-opacity duration-300 dark:block xl:size-8"
+            class="hidden size-7 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] dark:block xl:size-8"
             width={32}
             height={32}
           />
           <Image
             src={logod}
             alt="Logo"
-            class="block size-7 transition-opacity duration-300 dark:hidden xl:size-8"
+            class="block size-7 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] dark:hidden xl:size-8"
             width={32}
             height={32}
           />
@@ -56,7 +56,7 @@ import logod from '../../public/static/logod.svg'
           {NAV_LINKS.map((item) => (
             <Link
               href={item.href}
-              class="nav-link relative px-4 py-2 text-sm font-medium text-foreground/70 transition-all duration-200 rounded-lg hover:text-foreground"
+              class="nav-link relative px-4 py-2 text-sm font-medium text-foreground/70 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] rounded-lg hover:text-foreground"
             >
               <span class="relative z-10">{item.label}</span>
               <span class="nav-link-underline absolute bottom-1.5 left-4 right-4 h-[1.5px] bg-foreground/20 scale-x-0 origin-center transition-transform duration-200 rounded-full" aria-hidden="true"></span>
@@ -262,28 +262,34 @@ import logod from '../../public/static/logod.svg'
         border-radius: 0.5rem;
       }
 
-      /* Scroll shrink effect */
+      /* Scroll shrink effect - Modern 2025 approach: Height reduction only */
+      /* Maintains width consistency with content (max-w-3xl) */
       #header-wrapper.shrink {
-        max-width: 36rem;
-        transform: translateY(-1px) scale(0.99);
+        padding-top: 0.75rem;
       }
 
       #header-wrapper.shrink #header-inner {
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
-        padding-top: 0.875rem;
-        padding-bottom: 0.875rem;
-        border-radius: 0.75rem;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        /* Enhanced glassmorphism on scroll for better visibility */
+        background: hsl(var(--background) / 0.95);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.05),
+                    0 2px 4px -1px hsl(var(--foreground) / 0.03);
       }
 
-      #header-wrapper.shrink img {
-        transform: scale(0.95);
+      .dark #header-wrapper.shrink #header-inner {
+        background: hsl(var(--background) / 0.95);
+        box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.1),
+                    0 2px 4px -1px hsl(var(--foreground) / 0.05);
       }
 
-      #header-wrapper.shrink nav > * {
-        padding-left: 0.875rem;
-        padding-right: 0.875rem;
-        font-size: 0.8125rem;
+      /* Respect user motion preferences */
+      @media (prefers-reduced-motion: reduce) {
+        #header-wrapper,
+        #header-inner {
+          transition: none !important;
+        }
       }
     }
   </style>
