@@ -5,17 +5,23 @@ import Link from './Link.astro'
 import SocialIcons from './SocialIcons.astro'
 ---
 
-<footer
-  class="mx-auto mb-8 flex w-full max-w-3xl flex-col items-center justify-center gap-y-2 px-4 sm:mb-4 sm:flex-row sm:justify-between"
->
-  <div class="flex flex-wrap items-center justify-center gap-x-2 text-center">
-    <span class="text-muted-foreground text-sm">
-      &copy; {new Date().getFullYear()} Robert Melcher.
-    </span>
-    <Separator orientation="vertical" className="hidden h-4! sm:block" />
-    <p class="text-muted-foreground text-sm">
- Some rights reserved
-    </p>
+<footer class="mx-auto mb-8 w-full max-w-3xl px-4 sm:mb-4">
+  <div class="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent backdrop-blur-sm">
+    <!-- Subtle gradient orbs -->
+    <div class="absolute -top-10 -left-10 w-24 h-24 bg-primary/10 rounded-full blur-2xl"></div>
+    <div class="absolute -bottom-10 -right-10 w-24 h-24 bg-primary/5 rounded-full blur-2xl"></div>
+
+    <div class="relative z-10 p-6 flex flex-col items-center justify-center gap-4 sm:flex-row sm:justify-between">
+      <div class="flex flex-wrap items-center justify-center gap-x-3 text-center">
+        <span class="text-muted-foreground text-sm">
+          &copy; {new Date().getFullYear()} Robert Melcher.
+        </span>
+        <Separator orientation="vertical" className="hidden h-4! sm:block" />
+        <p class="text-muted-foreground text-sm">
+          Some rights reserved
+        </p>
+      </div>
+      <SocialIcons links={SOCIAL_LINKS} />
+    </div>
   </div>
-  <SocialIcons links={SOCIAL_LINKS} />
 </footer>
