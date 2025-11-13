@@ -97,6 +97,8 @@ import logod from '../../public/static/logod.svg'
             ticking: false,
             lastScrollY: 0,
             initialized: false,
+            isNavigating: false,
+            navigationTimeout: null,
             elements: {
               wrapper: null,
               inner: null,
@@ -130,6 +132,12 @@ import logod from '../../public/static/logod.svg'
            * Update header shrink state based on scroll position
            */
           const updateHeaderState = () => {
+            // Don't update during navigation to prevent flashing
+            if (state.isNavigating) {
+              state.ticking = false
+              return
+            }
+
             const elements = getElements()
             if (!elements) {
               state.ticking = false
@@ -174,6 +182,10 @@ import logod from '../../public/static/logod.svg'
            * Throttled scroll handler using requestAnimationFrame
            */
           const handleScroll = () => {
+            // Don't handle scroll during navigation
+            if (state.isNavigating) {
+              return
+            }
             if (!state.ticking) {
               window.requestAnimationFrame(updateHeaderState)
               state.ticking = true
@@ -189,10 +201,24 @@ import logod from '../../public/static/logod.svg'
               return
             }
 
+            // Don't initialize if still navigating
+            if (state.isNavigating) {
+              return
+            }
+
             // Re-enable transitions if they were disabled
             const header = document.getElementById('main-header')
+            const wrapper = document.getElementById('header-wrapper')
+            const inner = document.getElementById('header-inner')
+            
             if (header && header.style.transition === 'none') {
               header.style.transition = ''
+            }
+            if (wrapper && wrapper.style.transition === 'none') {
+              wrapper.style.transition = ''
+            }
+            if (inner && inner.style.transition === 'none') {
+              inner.style.transition = ''
             }
 
             // Reset state
@@ -202,12 +228,17 @@ import logod from '../../public/static/logod.svg'
 
             // Initial state update - use a small delay to prevent flashing during navigation
             requestAnimationFrame(() => {
-              updateHeaderState()
-              state.initialized = true
+              // Double check we're not navigating
+              if (!state.isNavigating) {
+                updateHeaderState()
+                state.initialized = true
+              }
             })
 
-            // Attach scroll listener
-            window.addEventListener('scroll', handleScroll, { passive: true })
+            // Only attach scroll listener on desktop (not needed on mobile)
+            if (isDesktop()) {
+              window.addEventListener('scroll', handleScroll, { passive: true })
+            }
           }
 
           /**
@@ -216,6 +247,12 @@ import logod from '../../public/static/logod.svg'
           const cleanup = () => {
             // Remove event listeners
             window.removeEventListener('scroll', handleScroll)
+
+            // Clear any pending navigation timeout
+            if (state.navigationTimeout) {
+              clearTimeout(state.navigationTimeout)
+              state.navigationTimeout = null
+            }
 
             // Reset shrink state only if elements exist
             const elements = getElements()
@@ -233,6 +270,12 @@ import logod from '../../public/static/logod.svg'
 
           // Astro navigation event handlers
           document.addEventListener('astro:page-load', () => {
+            // Mark navigation as complete after a delay
+            state.navigationTimeout = setTimeout(() => {
+              state.isNavigating = false
+              state.navigationTimeout = null
+            }, 300)
+            
             // Small delay to ensure DOM is stable
             requestAnimationFrame(() => {
               init()
@@ -240,24 +283,50 @@ import logod from '../../public/static/logod.svg'
           })
           document.addEventListener('astro:after-swap', () => {
             cleanup()
-            // Delay re-initialization to prevent flashing during navigation
-            // Use a small timeout to ensure page transition is complete
-            setTimeout(() => {
-              requestAnimationFrame(() => {
-                init()
-              })
-            }, 50)
+            // Mark navigation as complete after transition
+            state.navigationTimeout = setTimeout(() => {
+              state.isNavigating = false
+              state.navigationTimeout = null
+              // Delay re-initialization to prevent flashing during navigation
+              // Use a longer timeout on mobile to ensure page transition is fully complete
+              const delay = isDesktop() ? 100 : 300
+              setTimeout(() => {
+                requestAnimationFrame(() => {
+                  init()
+                })
+              }, delay)
+            }, 100)
           })
           document.addEventListener('astro:before-swap', () => {
-            // Temporarily disable transitions to prevent flashing
+            // Mark as navigating to prevent all updates
+            state.isNavigating = true
+            
+            // Temporarily disable all transitions to prevent flashing
             const header = document.getElementById('main-header')
+            const wrapper = document.getElementById('header-wrapper')
+            const inner = document.getElementById('header-inner')
+            
             if (header) {
               header.style.transition = 'none'
+              header.style.willChange = 'auto'
             }
-            // Only cleanup, don't reset scroll position to prevent flashing
+            if (wrapper) {
+              wrapper.style.transition = 'none'
+            }
+            if (inner) {
+              inner.style.transition = 'none'
+            }
+            
+            // Remove scroll listener immediately
             window.removeEventListener('scroll', handleScroll)
             state.ticking = false
             state.initialized = false
+            
+            // Clear any pending timeouts
+            if (state.navigationTimeout) {
+              clearTimeout(state.navigationTimeout)
+              state.navigationTimeout = null
+            }
           })
 
           // Initial load - wait for DOM to be fully ready
@@ -279,11 +348,21 @@ import logod from '../../public/static/logod.svg'
   </script>
 
   <style>
-    /* Prevent flashing during navigation */
+    /* Prevent flashing during navigation - more comprehensive selectors */
     html[data-astro-transition-scope] #main-header,
     html[data-astro-transition-scope] #header-wrapper,
-    html[data-astro-transition-scope] #header-inner {
+    html[data-astro-transition-scope] #header-inner,
+    html[data-astro-transition] #main-header,
+    html[data-astro-transition] #header-wrapper,
+    html[data-astro-transition] #header-inner {
       transition: none !important;
+      will-change: auto !important;
+    }
+    
+    /* Prevent backdrop-filter changes during navigation */
+    html[data-astro-transition-scope] #header-inner,
+    html[data-astro-transition] #header-inner {
+      backdrop-filter: blur(8px) !important;
     }
 
     /* Mobile & Tablet: Clean minimal style */
