@@ -8,182 +8,289 @@ import logo from '../../public/static/logo.svg'
 import logod from '../../public/static/logod.svg'
 ---
 
-<header
-  class="sticky top-0 z-50 transition-all duration-500 md:px-4 md:pt-4"
-  transition:persist
-  id="main-header"
->
+  <header
+    class="sticky top-0 z-50 w-full transition-all duration-300"
+    transition:persist
+    id="main-header"
+  >
   <div
     id="header-wrapper"
-    class="mx-auto transition-all duration-500 ease-out md:max-w-4xl"
+    class="mx-auto w-full max-w-3xl transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] px-4 pt-4"
   >
     <div
       id="header-inner"
-      class="flex items-center justify-between border-b border-border/40 bg-background/70 px-4 py-3 shadow-sm backdrop-blur-xl md:rounded-3xl md:border md:bg-background/80 md:px-8 md:py-4 md:shadow-lg md:shadow-black/[0.04] md:hover:shadow-xl md:hover:shadow-black/[0.08] md:backdrop-blur-2xl md:transition-all md:duration-400 md:ease-out"
+      class="relative overflow-hidden flex items-center justify-between border-b border-border/50 bg-background/80 backdrop-blur-sm px-4 py-3 xl:rounded-xl xl:border xl:border-primary/20 xl:bg-gradient-to-br xl:from-primary/5 xl:via-primary/3 xl:to-transparent xl:px-8 xl:py-4 xl:backdrop-blur-sm xl:transition-all xl:duration-500 xl:ease-[cubic-bezier(0.4,0,0.2,1)]"
     >
-      <!-- Logo + Title -->
+      <!-- Subtle gradient orbs (matching footer style) -->
+      <div class="absolute -top-10 -left-10 hidden w-24 h-24 bg-primary/10 rounded-full blur-2xl xl:block" aria-hidden="true"></div>
+      <div class="absolute -bottom-10 -right-10 hidden w-24 h-24 bg-primary/5 rounded-full blur-2xl xl:block" aria-hidden="true"></div>
+
+      <!-- Logo -->
       <Link
         href="/"
-        class="flex items-center gap-3.5 transition-all duration-300 hover:opacity-90"
+        class="relative z-10 group flex items-center gap-2.5 transition-opacity duration-200 hover:opacity-80"
+        aria-label="Home"
       >
-        <div class="relative">
-          <Image
+        <div class="relative flex-shrink-0 transition-transform duration-300 group-hover:scale-105">
+            <Image
             src={logo}
             alt="Logo"
-            class="hidden size-8 dark:block transition-opacity duration-500 md:size-9"
+            class="hidden size-7 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] dark:block xl:size-8"
+            width={32}
+            height={32}
           />
           <Image
             src={logod}
             alt="Logo"
-            class="block size-8 dark:hidden transition-opacity duration-500 md:size-9"
+            class="block size-7 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] dark:hidden xl:size-8"
+            width={32}
+            height={32}
           />
         </div>
-        <span class="site-title font-semibold tracking-tight">
-          <!-- {SITE.title} -->
-        </span>
       </Link>
 
-      <!-- Right Side Container -->
-      <div class="flex items-center gap-2 md:gap-3 ml-auto">
-        <!-- Desktop Nav -->
-        <nav class="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map((item, index) => (
+      <!-- Navigation & Actions -->
+      <div class="relative z-10 flex items-center gap-1.5 xl:gap-2">
+        <!-- Desktop Navigation (only on extra large screens) -->
+        <nav class="hidden xl:flex items-center gap-1" aria-label="Main navigation">
+          {NAV_LINKS.map((item) => (
             <Link
               href={item.href}
-              class="relative px-4 py-2.5 text-sm font-medium text-foreground/70 hover:text-foreground transition-colors duration-300 rounded-2xl overflow-hidden group/link"
-              style={`transition-delay: ${index * 50}ms;`}
+              class="nav-link relative px-4 py-2 text-sm font-medium text-foreground/70 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] rounded-lg hover:text-foreground"
             >
               <span class="relative z-10">{item.label}</span>
-              <div class="absolute inset-0 bg-foreground/4 scale-x-0 group-hover/link:scale-x-100 origin-left transition-transform duration-300 ease-out rounded-2xl"></div>
+              <span class="nav-link-underline absolute bottom-1.5 left-4 right-4 h-[1.5px] bg-foreground/20 scale-x-0 origin-center transition-transform duration-200 rounded-full" aria-hidden="true"></span>
             </Link>
           ))}
         </nav>
 
-        <!-- Mobile Menu + ThemeToggle -->
-        <MobileMenu client:load transition:persist />
-        <ThemeToggle transition:persist class="hidden md:block" />
+        <!-- Mobile Menu + Theme Toggle -->
+        <div class="flex items-center gap-1.5">
+          <MobileMenu client:load transition:persist />
+          <ThemeToggle transition:persist />
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Scroll Shrink Script -->
-<script>
-  if (typeof window !== 'undefined') {
-    const wrapper = document.getElementById('header-wrapper');
-    const inner = document.getElementById('header-inner');
-    let lastScrollY = 0;
-    let ticking = false;
+  <!-- Header Scroll Controller -->
+  <script define:vars={{ breakpoint: 1280 }}>
+    {
+      if (typeof window !== 'undefined') {
+        /**
+         * Header scroll controller with shrink effect
+         * Follows Astro best practices and modern JavaScript patterns
+         */
+        (() => {
+          'use strict'
 
-    const update = () => {
-      // Dacă elementele nu există, nu continua
-      if (!wrapper || !inner) return;
+          // Constants
+          const SCROLL_THRESHOLD = 32
+          const DESKTOP_BREAKPOINT = breakpoint
+          const HEADER_IDS = {
+            wrapper: 'header-wrapper',
+            inner: 'header-inner',
+          }
 
-      const currentScroll = window.scrollY;
-      const isScrolled = currentScroll > 48;
-      const wasScrolled = lastScrollY > 48;
+          // State management
+          let state = {
+            ticking: false,
+            lastScrollY: 0,
+            elements: {
+              wrapper: null,
+              inner: null,
+            },
+          }
 
-      if (window.innerWidth < 768) {
-        ticking = false;
-        return;
+          /**
+           * Get header elements from DOM
+           * @returns {Object|null} Elements object or null if not found
+           */
+          const getElements = () => {
+            const wrapper = document.getElementById(HEADER_IDS.wrapper)
+            const inner = document.getElementById(HEADER_IDS.inner)
+            
+            if (!wrapper || !inner) {
+              return null
+            }
+
+            return { wrapper, inner }
+          }
+
+          /**
+           * Check if current viewport is desktop size
+           * @returns {boolean}
+           */
+          const isDesktop = () => {
+            return window.innerWidth >= DESKTOP_BREAKPOINT
+          }
+
+          /**
+           * Update header shrink state based on scroll position
+           */
+          const updateHeaderState = () => {
+            const elements = getElements()
+            if (!elements) {
+              state.ticking = false
+              return
+            }
+
+            const { wrapper, inner } = elements
+            const currentScroll = window.scrollY
+            const isScrolled = currentScroll > SCROLL_THRESHOLD
+            const wasScrolled = state.lastScrollY > SCROLL_THRESHOLD
+
+            // Reset shrink state on mobile/tablet
+            if (!isDesktop()) {
+              wrapper.classList.remove('shrink')
+              inner.classList.remove('shrink')
+              state.ticking = false
+              state.lastScrollY = currentScroll
+              return
+            }
+
+            // Apply shrink effect on desktop
+            if (isScrolled && !wasScrolled) {
+              wrapper.classList.add('shrink')
+              inner.classList.add('shrink')
+            } else if (!isScrolled && wasScrolled) {
+              wrapper.classList.remove('shrink')
+              inner.classList.remove('shrink')
+            }
+
+            state.lastScrollY = currentScroll
+            state.ticking = false
+          }
+
+          /**
+           * Throttled scroll handler using requestAnimationFrame
+           */
+          const handleScroll = () => {
+            if (!state.ticking) {
+              window.requestAnimationFrame(updateHeaderState)
+              state.ticking = true
+            }
+          }
+
+          /**
+           * Initialize header controller
+           */
+          const init = () => {
+            // Reset state
+            state.ticking = false
+            state.lastScrollY = window.scrollY
+            state.elements = getElements()
+
+            // Initial state update
+            updateHeaderState()
+
+            // Attach scroll listener
+            window.addEventListener('scroll', handleScroll, { passive: true })
+          }
+
+          /**
+           * Cleanup header controller
+           */
+          const cleanup = () => {
+            // Remove event listeners
+            window.removeEventListener('scroll', handleScroll)
+
+            // Reset shrink state
+            const elements = getElements()
+            if (elements) {
+              elements.wrapper.classList.remove('shrink')
+              elements.inner.classList.remove('shrink')
+            }
+
+            // Reset state
+            state.ticking = false
+            state.lastScrollY = 0
+            state.elements = { wrapper: null, inner: null }
+          }
+
+          // Astro navigation event handlers
+          document.addEventListener('astro:page-load', init)
+          document.addEventListener('astro:after-swap', () => {
+            cleanup()
+            // Use requestAnimationFrame instead of setTimeout for better performance
+            requestAnimationFrame(() => {
+              requestAnimationFrame(init)
+            })
+          })
+          document.addEventListener('astro:before-swap', cleanup)
+
+          // Initial load
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init)
+          } else {
+            init()
+          }
+        })()
       }
-
-      if (isScrolled && !wasScrolled) {
-        wrapper.classList.add('shrink');
-        inner.classList.add('shrink');
-      } else if (!isScrolled && wasScrolled) {
-        wrapper.classList.remove('shrink');
-        inner.classList.remove('shrink');
-      }
-
-      lastScrollY = currentScroll;
-      ticking = false;
-    };
-
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(update);
-        ticking = true;
-      }
-    });
-  }
-</script>
+    }
+  </script>
 
   <style>
-    /* Mobile look preserved */
-    @media (max-width: 767px) {
+    /* Mobile & Tablet: Clean minimal style */
+    @media (max-width: 1279px) {
       #header-inner {
-        border-radius: 0 !important;
-        box-shadow: none !important;
-        background: hsl(var(--background)/0.7) !important;
-        border-bottom: 1px solid hsl(var(--border)/0.4) !important;
-        padding: 0.75rem 1rem !important;
+        border-radius: 0;
+        box-shadow: none;
+        background: hsl(var(--background) / 0.85);
+        backdrop-filter: blur(8px);
+        border-bottom: 1px solid hsl(var(--border) / 0.5);
+        border-top: none;
+        border-left: none;
+        border-right: none;
+        padding: 0.875rem 1rem;
       }
-      .site-title {
-        font-size: 1.35rem !important;
-        font-weight: 700;
-        color: hsl(var(--foreground));
-      }
+
       .dark #header-inner {
-        background: hsl(var(--background)/0.7) !important;
+        background: hsl(var(--background) / 0.85);
       }
     }
 
-    /* Desktop enhancements */
-    .site-title {
-      font-size: 1.45rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, hsl(var(--foreground)) 0%, hsl(var(--foreground)/0.8) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    }
+    /* Desktop: Modern design matching site */
+    @media (min-width: 1280px) {
+      .nav-link:hover .nav-link-underline {
+        transform: scaleX(1);
+      }
 
-    @media (min-width: 640px) { .site-title { font-size: 1.6rem; } }
+      .nav-link:focus-visible {
+        outline: 2px solid hsl(var(--primary));
+        outline-offset: 2px;
+        border-radius: 0.5rem;
+      }
 
-    #header-wrapper.shrink { max-width: 42rem; transform: translateY(-4px) scale(0.97); }
-    #header-wrapper.shrink #header-inner {
-      padding-left: 1.5rem !important;
-      padding-right: 1.5rem !important;
-      padding-top: 0.875rem !important;
-      padding-bottom: 0.875rem !important;
-      border-radius: 2.5rem;
-    }
-    #header-wrapper.shrink .site-title { font-size: 1.35rem; }
-    #header-wrapper.shrink img { transform: scale(0.89); }
+      /* Scroll shrink effect - Modern 2025 approach: Height reduction only */
+      /* Maintains width consistency with content (max-w-3xl) */
+      #header-wrapper.shrink {
+        padding-top: 0.75rem;
+      }
 
-    #header-wrapper.shrink nav > * {
-      padding-left: 1.25rem !important;
-      padding-right: 1.25rem !important;
-      font-size: 0.875rem;
-    }
+      #header-wrapper.shrink #header-inner {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+        /* Enhanced glassmorphism on scroll for better visibility */
+        background: hsl(var(--background) / 0.95);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.05),
+                    0 2px 4px -1px hsl(var(--foreground) / 0.03);
+      }
 
-    #header-inner::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: 3rem;
-      padding: 1px;
-      background: linear-gradient(135deg,
-        hsl(var(--border)/0.3) 0%,
-        transparent 50%,
-        hsl(var(--border)/0.2) 100%
-      );
-      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
-    #header-inner:hover::before { opacity: 1; }
+      .dark #header-wrapper.shrink #header-inner {
+        background: hsl(var(--background) / 0.95);
+        box-shadow: 0 4px 6px -1px hsl(var(--foreground) / 0.1),
+                    0 2px 4px -1px hsl(var(--foreground) / 0.05);
+      }
 
-    nav a:focus-visible {
-      outline: 2px solid hsl(var(--primary));
-      outline-offset: 2px;
-      border-radius: 1.5rem;
+      /* Respect user motion preferences */
+      @media (prefers-reduced-motion: reduce) {
+        #header-wrapper,
+        #header-inner {
+          transition: none !important;
+        }
+      }
     }
   </style>
 </header>
