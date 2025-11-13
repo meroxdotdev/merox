@@ -1,5 +1,4 @@
 ---
-// src/components/Link.astro
 import { cn } from '@/lib/utils'
 
 interface Props {
@@ -11,100 +10,18 @@ interface Props {
 }
 
 const { href, external, class: className, underline, ...rest } = Astro.props
-
-const isExternal = external || href.startsWith('http')
 ---
 
 <a
   href={href}
-  target={isExternal ? '_blank' : '_self'}
-  rel={isExternal ? 'noopener noreferrer' : undefined}
+  target={external ? '_blank' : '_self'}
   class={cn(
     'inline-block transition-colors duration-300 ease-in-out',
     underline &&
       'underline decoration-muted-foreground underline-offset-[3px] hover:decoration-foreground',
-    className
+    className,
   )}
-  data-internal-link={!isExternal ? 'true' : undefined}
   {...rest}
 >
   <slot />
 </a>
-
-{!isExternal && (
-  <script>
-    {
-      if (typeof window !== 'undefined' && !window.__astroLinkHandlerInitialized) {
-        /**
-         * Global handler to prevent same-page navigation for internal links
-         * Initialized once per page to handle all internal links efficiently
-         */
-        (() => {
-          'use strict'
-
-          window.__astroLinkHandlerInitialized = true
-
-          const normalizePath = (path) => {
-            if (!path) return '/'
-            // Remove trailing slash and normalize
-            return path.replace(/\/$/, '') || '/'
-          }
-
-          const handleClick = (e) => {
-            const link = e.target.closest('[data-internal-link="true"]')
-            if (!link) return
-
-            const targetHref = link.getAttribute('href')
-            
-            if (!targetHref || targetHref.startsWith('#')) {
-              return // Allow hash links
-            }
-
-            try {
-              const currentPath = normalizePath(window.location.pathname)
-              const targetUrl = new URL(targetHref, window.location.origin)
-              const targetPath = normalizePath(targetUrl.pathname)
-
-              // Prevent navigation if already on target page
-              if (currentPath === targetPath) {
-                e.preventDefault()
-                e.stopPropagation()
-                return false
-              }
-            } catch (error) {
-              // If URL parsing fails, allow default behavior
-              return
-            }
-          }
-
-          // Use event delegation - single listener for all internal links
-          const initLinkHandler = () => {
-            // Remove old listener if exists (using same function reference)
-            if (window.__astroLinkClickHandler) {
-              document.removeEventListener('click', window.__astroLinkClickHandler, true)
-            }
-            
-            // Create and store handler function
-            window.__astroLinkClickHandler = handleClick
-            
-            // Add listener with capture phase to catch early
-            document.addEventListener('click', window.__astroLinkClickHandler, { capture: true, passive: false })
-          }
-
-          // Initialize on page load
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initLinkHandler)
-          } else {
-            initLinkHandler()
-          }
-
-          // Re-initialize after Astro navigation
-          document.addEventListener('astro:page-load', initLinkHandler)
-          document.addEventListener('astro:after-swap', () => {
-            setTimeout(initLinkHandler, 0)
-          })
-        })()
-      }
-    }
-  </script>
-)}
