@@ -212,10 +212,8 @@ import logod from '../../public/static/logod.svg'
           document.addEventListener('astro:page-load', init)
           document.addEventListener('astro:after-swap', () => {
             cleanup()
-            // Use requestAnimationFrame instead of setTimeout for better performance
-            requestAnimationFrame(() => {
-              requestAnimationFrame(init)
-            })
+            // Use setTimeout with small delay to ensure DOM is ready
+            setTimeout(init, 0)
           })
           document.addEventListener('astro:before-swap', cleanup)
 
