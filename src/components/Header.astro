@@ -4,6 +4,7 @@ import ThemeToggle from '@/components/ThemeToggle.astro'
 import MobileMenu from '@/components/ui/mobile-menu'
 import { NAV_LINKS } from '@/consts'
 import { Image } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
 import logo from '../../public/static/logo.svg'
 import logod from '../../public/static/logod.svg'
 ---
@@ -53,15 +54,21 @@ import logod from '../../public/static/logod.svg'
       <div class="relative z-10 flex items-center gap-1.5 xl:gap-2">
         <!-- Desktop Navigation (only on extra large screens) -->
         <nav class="hidden xl:flex items-center gap-1" aria-label="Main navigation">
-          {NAV_LINKS.map((item) => (
-            <Link
-              href={item.href}
-              class="nav-link relative px-4 py-2 text-sm font-medium text-foreground/70 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] rounded-lg hover:text-foreground"
-            >
-              <span class="relative z-10">{item.label}</span>
-              <span class="nav-link-underline absolute bottom-1.5 left-4 right-4 h-[1.5px] bg-foreground/20 scale-x-0 origin-center transition-transform duration-200 rounded-full" aria-hidden="true"></span>
-            </Link>
-          ))}
+          {NAV_LINKS.map((item) => {
+            const isExternal = item.href.startsWith('http')
+            return (
+              <Link
+                href={item.href}
+                class="nav-link relative px-4 py-2 text-sm font-medium text-foreground/70 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] rounded-lg hover:text-foreground flex items-center gap-1.5"
+              >
+                <span class="relative z-10">{item.label}</span>
+                {isExternal && (
+                  <Icon name="lucide:external-link" class="relative z-10 size-3 opacity-60 flex-shrink-0" aria-hidden="true" />
+                )}
+                <span class="nav-link-underline absolute bottom-1.5 left-4 right-4 h-[1.5px] bg-foreground/20 scale-x-0 origin-center transition-transform duration-200 rounded-full" aria-hidden="true"></span>
+              </Link>
+            )
+          })}
         </nav>
 
         <!-- Mobile Menu + Theme Toggle -->

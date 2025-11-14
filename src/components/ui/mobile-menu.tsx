@@ -7,7 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { NAV_LINKS } from '@/consts'
-import { Menu } from 'lucide-react'
+import { Menu, ExternalLink } from 'lucide-react'
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -22,6 +22,10 @@ const MobileMenu = () => {
     }
   }, [])
 
+  const isExternalLink = (href: string) => {
+    return href.startsWith('http')
+  }
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={(val) => setIsOpen(val)}>
       <DropdownMenuTrigger asChild onClick={() => setIsOpen((val) => !val)}>
@@ -31,13 +35,25 @@ const MobileMenu = () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-background">
-        {NAV_LINKS.map((item) => (
-          <DropdownMenuItem key={item.href} asChild>
-            <a href={item.href} className="w-full text-lg font-medium capitalize" onClick={() => setIsOpen(false)}>
-              {item.label}
-            </a>
-          </DropdownMenuItem>
-        ))}
+        {NAV_LINKS.map((item) => {
+          const isExternal = isExternalLink(item.href)
+          return (
+            <DropdownMenuItem key={item.href} asChild>
+              <a
+                href={item.href}
+                target={isExternal ? '_blank' : '_self'}
+                rel={isExternal ? 'noopener noreferrer' : undefined}
+                className="w-full text-lg font-medium capitalize flex items-center gap-2"
+                onClick={() => setIsOpen(false)}
+              >
+                <span>{item.label}</span>
+                {isExternal && (
+                  <ExternalLink className="h-4 w-4 opacity-60 flex-shrink-0" aria-hidden="true" />
+                )}
+              </a>
+            </DropdownMenuItem>
+          )
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   )
