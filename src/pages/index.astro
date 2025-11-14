@@ -163,8 +163,8 @@ const highlights = [
         Throughout my career, I've focused on building infrastructure that scales across diverse environments—from enterprise cybersecurity deployments to high-performance computing clusters. Each role has reinforced my commitment to automation, security, and operational excellence.
       </p>
       <div class="space-y-2.5">
-        {highlights.map((h, index) => (
-          <div key={`highlight-${index}`} class="flex items-start gap-2.5 text-sm">
+        {highlights.map((h) => (
+          <div class="flex items-start gap-2.5 text-sm">
             <span class="text-primary mt-0.5">▸</span>
             <p class="leading-snug">{h}</p>
           </div>
