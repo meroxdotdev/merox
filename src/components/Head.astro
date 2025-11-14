@@ -106,13 +106,13 @@ const ogImage = image || (cleanPathname ? new URL(`/og${cleanPathname}.png`, Ast
         gtag('js', new Date());
         gtag('config', gaId);
       </script>
-      <script async src={`https://www.googletagmanager.com/gtag/js?id=${ANALYTICS.google}`}></script>
+      <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ANALYTICS.google}`}></script>
     </>
   )}
   
   <ClientRouter />
 <!-- Umami.is -->
-<script defer src="https://cloud.umami.is/script.js" data-website-id="33b2db40-12cc-4e28-97a1-987dfe883d98"></script>
+<script is:inline defer src="https://cloud.umami.is/script.js" data-website-id="33b2db40-12cc-4e28-97a1-987dfe883d98"></script>
 
   <slot />
 </head>

@@ -117,7 +117,8 @@ export function initHeaderScrollController(config: HeaderControllerConfig): void
     // Reset state
     state.ticking = false
     state.lastScrollY = window.scrollY
-    state.elements = getElements()
+    const elements = getElements()
+    state.elements = elements || { wrapper: null, inner: null }
 
     // Initial state update
     updateHeaderState()

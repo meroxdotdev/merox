@@ -1,13 +1,17 @@
 ---
 // src/components/Link.astro
 import { cn } from '@/lib/utils'
-import type { HTMLAnchorAttributes } from 'astro/types'
 
-interface Props extends Omit<HTMLAnchorAttributes, 'href' | 'class'> {
+interface Props {
   href: string
   external?: boolean
   class?: string
   underline?: boolean
+  'aria-label'?: string
+  'data-testid'?: string
+  target?: string
+  rel?: string
+  [key: string]: unknown
 }
 
 const { href, external, class: className, underline, ...rest } = Astro.props

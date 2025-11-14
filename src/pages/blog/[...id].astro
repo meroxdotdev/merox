@@ -64,7 +64,7 @@ try {
 const isCurrentSubpost = isSubpost(currentPostId)
 
 // Error handling for navigation and metadata
-let navigation: Awaited<ReturnType<typeof getAdjacentPosts>> = { newer: null, older: null }
+let navigation: Awaited<ReturnType<typeof getAdjacentPosts>> = { newer: null, older: null, parent: null }
 let parentPost: Awaited<ReturnType<typeof getParentPost>> = null
 let hasChildPosts = false
 let subpostCount = 0
