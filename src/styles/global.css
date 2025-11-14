@@ -102,11 +102,7 @@
   }
 }
 
-/* INFINITE SCROLL
-
-/* Add to global.css or a separate CSS file */
-
-/* Animation for infinite scroll - perfect loop with 3 copies */
+/* Infinite scroll animation - perfect loop with 3 copies */
 @keyframes scroll {
   0% {
     transform: translateX(0);
@@ -118,14 +114,14 @@
 
 .animate-scroll {
   animation: scroll linear infinite;
-  /* Previne jump-ul la hover sau interact */
+  /* Prevent jumps on hover or interaction */
   will-change: transform;
   /* Optimize for performance - force GPU acceleration */
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Animații pentru badge-uri */
+/* Tech badge animations */
 .tech-badge {
   opacity: 0;
   transform: translateY(10px);
@@ -148,7 +144,7 @@
   }
 }
 
-/* Delay animațiilor pentru efect cascadă */
+/* Staggered animation delays for cascade effect */
 .tech-badge:nth-child(1) { animation-delay: 0.05s; }
 .tech-badge:nth-child(2) { animation-delay: 0.1s; }
 .tech-badge:nth-child(3) { animation-delay: 0.15s; }
@@ -157,3 +153,19 @@
 .tech-badge:nth-child(6) { animation-delay: 0.3s; }
 .tech-badge:nth-child(7) { animation-delay: 0.35s; }
 .tech-badge:nth-child(8) { animation-delay: 0.4s; }
+.tech-badge:nth-child(n+9) { animation-delay: 0.45s; }
+
+/* Background effects */
+.parallax-bg {
+  background-size: cover;
+  background-position: center;
+  filter: grayscale(40%) contrast(1.1) brightness(0.85);
+}
+
+
+/* Modern 2025 background effects */
+@supports (backdrop-filter: blur(1px)) {
+  .bg-radial-gradient {
+    background: radial-gradient(ellipse at center, transparent 0%, var(--background) 100%);
+  }
+}

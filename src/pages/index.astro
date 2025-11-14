@@ -27,12 +27,21 @@ const highlights = [
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="Home" />
 
-  <!-- Hero cu efect inversat: orbs în stânga-sus și dreapta-jos -->
-  <section class="relative overflow-hidden rounded-xl border bg-gradient-to-br from-primary/5 via-primary/3 to-transparent">
-    <!-- Gradient orbs inversate -->
-    <div class="absolute -top-20 -left-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
-    <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+  <!-- Hero with homelab background -->
+  <section class="relative overflow-hidden rounded-xl border">
+    <!-- Background Image -->
+    <div 
+      class="absolute inset-0 bg-cover bg-center bg-no-repeat parallax-bg"
+      style="background-image: url('/static/homelab.png');"
+    ></div>
+    
+    <!-- Gradient Overlay for text readability -->
+    <div class="absolute inset-0 bg-gradient-to-br from-background/85 via-background/75 to-background/65 dark:from-background/90 dark:via-background/85 dark:to-background/80"></div>
+    
+    <!-- Edge fade for better visual flow -->
+    <div class="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent"></div>
 
+    <!-- Content Container -->
     <div class="relative z-10 p-8 md:p-10">
       <div class="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex-1 min-w-0">
@@ -56,14 +65,16 @@ const highlights = [
             </Link>
           </div>
         </div>
-        <img
-          src="/reworkedmeroxdc1.webp"
-          alt="Robert Melcher, HPC System Administrator"
-          width="112"
-          height="112"
-          loading="eager"
-          class="w-28 h-28 rounded-full object-cover border-4 border-background shadow-xl flex-shrink-0 ring-2 ring-primary/10"
-        />
+        <div class="relative flex-shrink-0">
+          <img
+            src="/reworkedmeroxdc1.webp"
+            alt="Robert Melcher, HPC System Administrator"
+            width="112"
+            height="112"
+            loading="eager"
+            class="w-28 h-28 rounded-full object-cover border-4 border-background shadow-xl ring-2 ring-primary/10 dark:ring-primary/20"
+          />
+        </div>
       </div>
     </div>
   </section>
@@ -95,6 +106,7 @@ const highlights = [
       <div class="grid gap-6 md:grid-cols-2">
         {latestPosts.map((post) => (
           <Link
+            key={`${post.collection}-${post.id}`}
             href={`/${post.collection}/${post.id}`}
             class="block rounded-xl border bg-card hover:border-primary/50"
           >
@@ -151,8 +163,8 @@ const highlights = [
         Throughout my career, I've focused on building infrastructure that scales across diverse environments—from enterprise cybersecurity deployments to high-performance computing clusters. Each role has reinforced my commitment to automation, security, and operational excellence.
       </p>
       <div class="space-y-2.5">
-        {highlights.map((h) => (
-          <div class="flex items-start gap-2.5 text-sm">
+        {highlights.map((h, index) => (
+          <div key={`highlight-${index}`} class="flex items-start gap-2.5 text-sm">
             <span class="text-primary mt-0.5">▸</span>
             <p class="leading-snug">{h}</p>
           </div>
@@ -174,10 +186,10 @@ const highlights = [
     </div>
   </section>
 
-  <!-- CTA Section - TEXTUL TĂU + EFECT INVERSAT -->
+  <!-- CTA Section -->
   <section class="mt-8 mb-8">
     <div class="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent backdrop-blur-sm">
-      <!-- Gradient orbs: stânga-sus + dreapta-jos (invers față de Hero) -->
+      <!-- Gradient orbs: top-left + bottom-right -->
       <div class="absolute -top-20 -left-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
       <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
 
