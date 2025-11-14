@@ -120,6 +120,9 @@
   animation: scroll linear infinite;
   /* Previne jump-ul la hover sau interact */
   will-change: transform;
+  /* Optimize for performance - force GPU acceleration */
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Animații pentru badge-uri */

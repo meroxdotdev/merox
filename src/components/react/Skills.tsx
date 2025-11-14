@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import React, { useMemo, useEffect, useRef } from 'react'
 import { type IconType } from 'react-icons'
 import { FaQuestionCircle } from 'react-icons/fa'
 import {
@@ -163,47 +163,81 @@ const categoryGroups = [
   categories.slice(groupSize * 2),
 ]
 
-const Skills: React.FC = () => {
+const Skills: React.FC = React.memo(() => {
+  const containerRef = useRef<HTMLDivElement>(null)
+  const hasAnimatedRef = useRef(false)
+
+  // Optimize badge visibility - only run once and use ref to avoid re-queries
   useEffect(() => {
-    document.querySelectorAll('.tech-badge').forEach((badge) => {
-      badge.classList.add('tech-badge-visible')
+    if (hasAnimatedRef.current) return
+    
+    const container = containerRef.current
+    if (!container) return
+
+    // Use requestAnimationFrame to ensure DOM is ready
+    const rafId = requestAnimationFrame(() => {
+      const badges = container.querySelectorAll('.tech-badge')
+      badges.forEach((badge) => {
+        badge.classList.add('tech-badge-visible')
+      })
+      hasAnimatedRef.current = true
     })
+
+    return () => {
+      cancelAnimationFrame(rafId)
+    }
   }, [])
 
+  // Memoize the category groups to prevent recreation
+  const memoizedGroups = useMemo(
+    () =>
+      categoryGroups.map((group, groupIndex) => {
+        const groupItems = group.flatMap((category) =>
+          technologies[category as keyof Technologies].map(
+            (tech: Category, techIndex: number) => {
+              const IconComponent = iconMap[tech.logo] || FaQuestionCircle
+              return (
+                <div
+                  key={`${category}-${techIndex}`}
+                  className="tech-badge mr-4 flex items-center gap-3 rounded-full border border-border bg-card px-4 py-3 shadow-sm backdrop-blur-sm transition-shadow duration-300 hover:shadow-md"
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted p-2 text-lg shadow-inner">
+                    <IconComponent className="text-primary" />
+                  </span>
+                  <span className="text-foreground font-medium whitespace-nowrap">
+                    {tech.text}
+                  </span>
+                </div>
+              )
+            }
+          )
+        )
+
+        return (
+          <InfiniteScroll
+            key={groupIndex}
+            duration={80000}
+            direction={groupIndex % 2 === 0 ? 'normal' : 'reverse'}
+            showFade={true}
+            className="flex flex-row"
+          >
+            {groupItems}
+          </InfiniteScroll>
+        )
+      }),
+    []
+  )
+
   return (
-    <div className="z-30 mt-8 flex w-full flex-col gap-4 max-w-[calc(100vw-5rem)] mx-auto lg:max-w-full">
-      {categoryGroups.map((group, groupIndex) => (
-        <InfiniteScroll
-          key={groupIndex}
-          duration={80000}
-          direction={groupIndex % 2 === 0 ? 'normal' : 'reverse'}
-          showFade={true}
-          className="flex flex-row"
-        >
-          {group.flatMap((category) =>
-            technologies[category as keyof Technologies].map(
-              (tech: Category, techIndex: number) => {
-                const IconComponent = iconMap[tech.logo] || FaQuestionCircle
-                return (
-                  <div
-                    key={`${category}-${techIndex}`}
-                    className="tech-badge mr-4 flex items-center gap-3 rounded-full border border-border bg-card px-4 py-3 shadow-sm backdrop-blur-sm transition-shadow duration-300 hover:shadow-md"
-                  >
-                    <span className="flex h-10 w-10 items-center justify-center rounded-full bg-muted p-2 text-lg shadow-inner">
-                      <IconComponent className="text-primary" />
-                    </span>
-                    <span className="text-foreground font-medium whitespace-nowrap">
-                      {tech.text}
-                    </span>
-                  </div>
-                )
-              }
-            )
-          )}
-        </InfiniteScroll>
-      ))}
+    <div
+      ref={containerRef}
+      className="z-30 mt-8 flex w-full flex-col gap-4 max-w-[calc(100vw-5rem)] mx-auto lg:max-w-full"
+    >
+      {memoizedGroups}
     </div>
   )
-}
+})
+
+Skills.displayName = 'Skills'
 
 export default Skills

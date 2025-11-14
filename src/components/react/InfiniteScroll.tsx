@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 
 interface InfiniteScrollProps {
   children: React.ReactNode
@@ -8,34 +8,56 @@ interface InfiniteScrollProps {
   className?: string
 }
 
-export function InfiniteScroll({
+export const InfiniteScroll = React.memo(function InfiniteScroll({
   children,
   duration = 40000,
   direction = 'normal',
   showFade = true,
   className = '',
 }: InfiniteScrollProps) {
-  return (
-    <div className={`relative overflow-hidden ${className}`}>
-      {showFade && (
+  // Memoize the style object to prevent unnecessary re-renders
+  const scrollStyle = useMemo(
+    () => ({
+      animationDuration: `${duration}ms`,
+      animationDirection: direction,
+      willChange: 'transform' as const,
+    }),
+    [duration, direction]
+  )
+
+  // Memoize fade gradients to prevent re-renders
+  const fadeGradients = useMemo(
+    () =>
+      showFade ? (
         <>
           <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-32 bg-gradient-to-r from-background to-transparent" />
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-32 bg-gradient-to-l from-background to-transparent" />
         </>
-      )}
+      ) : null,
+    [showFade]
+  )
+
+  // Memoize duplicated children to prevent recreation on every render
+  const duplicatedChildren = useMemo(
+    () => (
+      <>
+        {children}
+        {children}
+        {children}
+      </>
+    ),
+    [children]
+  )
+
+  return (
+    <div className={`relative overflow-hidden ${className}`}>
+      {fadeGradients}
       <div
         className="flex w-max animate-scroll items-center gap-0"
-        style={{
-          animationDuration: `${duration}ms`,
-          animationDirection: direction,
-          willChange: 'transform',
-        }}
+        style={scrollStyle}
       >
-        {/* Duplicăm conținutul de 3 ori pentru loop perfect seamless */}
-        {children}
-        {children}
-        {children}
+        {duplicatedChildren}
       </div>
     </div>
   )
-}
+})
