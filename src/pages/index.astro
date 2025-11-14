@@ -77,7 +77,7 @@ const highlights = [
         </div>
         <div class="hidden sm:block">
           <Link href="/blog" class={buttonVariants({ variant: 'ghost' })}>
-            View all posts →
+            Browse all articles →
           </Link>
         </div>
       </div>
@@ -126,7 +126,7 @@ const highlights = [
           href="/blog"
           class={buttonVariants({ variant: 'outline' }) + ' w-full justify-center max-w-xs'}
         >
-          View all posts →
+          See more posts →
         </Link>
       </div>
     </section>
@@ -135,7 +135,10 @@ const highlights = [
   <!-- Highlights -->
   <section class="mt-8 rounded-xl border bg-card/50">
     <div class="p-6">
-      <h2 class="text-xl font-bold mb-4">Highlights</h2>
+      <h2 class="text-xl font-bold mb-4">Professional Highlights</h2>
+      <p class="text-sm text-muted-foreground mb-4">
+        Throughout my career, I've focused on building infrastructure that scales across diverse environments—from enterprise cybersecurity deployments to high-performance computing clusters. Each role has reinforced my commitment to automation, security, and operational excellence.
+      </p>
       <div class="space-y-2.5">
         {highlights.map((h) => (
           <div class="flex items-start gap-2.5 text-sm">
@@ -150,7 +153,7 @@ const highlights = [
           <p class="text-muted-foreground">ex-Atos (Cybersecurity)</p>
         </div>
         <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'sm' })}>
-          Full background
+          Learn more
         </Link>
       </div>
     </div>
