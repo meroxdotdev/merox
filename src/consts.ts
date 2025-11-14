@@ -13,7 +13,7 @@ export const SITE: Site = {
 
 // Google Analytics
 export const ANALYTICS = {
-  google: 'G-RXSCNFY5WZ', // 👈 Înlocuiește cu ID-ul tău real de la Google Analytics
+  google: 'G-RXSCNFY5WZ', // Replace with your actual Google Analytics ID
 }
 
 export const NAV_LINKS: SocialLink[] = [

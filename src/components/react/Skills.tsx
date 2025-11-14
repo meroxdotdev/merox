@@ -44,7 +44,7 @@ import {
 } from 'lucide-react'
 import { InfiniteScroll } from './InfiniteScroll'
 
-// Tipuri pentru tehnologii
+// Types for technologies
 type Category = {
   text: string
   logo: string
@@ -58,7 +58,7 @@ type Technologies = {
   'Monitoring & Tools': Category[]
 }
 
-// Tehnologiile tale bazate pe CV
+// Technologies based on CV
 const technologies: Technologies = {
   'Systems & Virtualization': [
     { text: 'Linux', logo: 'simple-icons:linux' },
@@ -112,7 +112,7 @@ const technologies: Technologies = {
   ],
 }
 
-// Mapare iconițe
+// Icon mapping
 const iconMap: { [key: string]: IconType } = {
   'simple-icons:linux': SiLinux,
   'mdi:ubuntu': SiUbuntu,
@@ -154,9 +154,10 @@ const iconMap: { [key: string]: IconType } = {
   'simple-icons:cpanel': SiCpanel,
 }
 
-// Împărțim tehnologiile în 3 grupuri pentru cele 3 rânduri
+// Split technologies into 3 groups for 3 rows
 const categories = Object.keys(technologies)
-const groupSize = Math.ceil(categories.length / 3)
+const ROWS_COUNT = 3
+const groupSize = Math.ceil(categories.length / ROWS_COUNT)
 const categoryGroups = [
   categories.slice(0, groupSize),
   categories.slice(groupSize, groupSize * 2),

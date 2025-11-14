@@ -38,24 +38,55 @@ export async function getStaticPaths() {
 
 const post = Astro.props
 const currentPostId = Astro.params.id
-const { Content, headings } = await render(post)
-const authors = await parseAuthors(post.data.authors ?? [])
+
+// Error handling for content rendering
+let Content: Awaited<ReturnType<typeof render>>['Content']
+let headings: Awaited<ReturnType<typeof render>>['headings'] = []
+try {
+  const rendered = await render(post)
+  Content = rendered.Content
+  headings = rendered.headings ?? []
+} catch (error) {
+  console.error('Error rendering post content:', error)
+  // Fallback: return 404 or error page
+  return Astro.redirect('/404')
+}
+
+// Error handling for authors parsing
+let authors: Awaited<ReturnType<typeof parseAuthors>> = []
+try {
+  authors = await parseAuthors(post.data.authors ?? [])
+} catch (error) {
+  console.error('Error parsing authors:', error)
+  // Continue with empty authors array
+}
 
 const isCurrentSubpost = isSubpost(currentPostId)
-const navigation = await getAdjacentPosts(currentPostId)
-const parentPost = isCurrentSubpost ? await getParentPost(currentPostId) : null
 
-const hasChildPosts = await hasSubposts(currentPostId)
-const subpostCount = !isCurrentSubpost
-  ? await getSubpostCount(currentPostId)
-  : 0
-const postReadingTime = await getPostReadingTime(currentPostId)
-const combinedReadingTime =
-  hasChildPosts && !isCurrentSubpost
-    ? await getCombinedReadingTime(currentPostId)
-    : null
+// Error handling for navigation and metadata
+let navigation: Awaited<ReturnType<typeof getAdjacentPosts>> = { newer: null, older: null }
+let parentPost: Awaited<ReturnType<typeof getParentPost>> = null
+let hasChildPosts = false
+let subpostCount = 0
+let postReadingTime = '0 min read'
+let combinedReadingTime: string | null = null
+let tocSections: Awaited<ReturnType<typeof getTOCSections>> = []
 
-const tocSections = await getTOCSections(currentPostId)
+try {
+  navigation = await getAdjacentPosts(currentPostId)
+  parentPost = isCurrentSubpost ? await getParentPost(currentPostId) : null
+  hasChildPosts = await hasSubposts(currentPostId)
+  subpostCount = !isCurrentSubpost ? await getSubpostCount(currentPostId) : 0
+  postReadingTime = await getPostReadingTime(currentPostId)
+  combinedReadingTime =
+    hasChildPosts && !isCurrentSubpost
+      ? await getCombinedReadingTime(currentPostId)
+      : null
+  tocSections = await getTOCSections(currentPostId)
+} catch (error) {
+  console.error('Error fetching post metadata:', error)
+  // Continue with default values - page will still render
+}
 ---
 
 <Layout>

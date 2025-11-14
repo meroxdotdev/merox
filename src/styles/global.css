@@ -102,11 +102,11 @@
   }
 }
 
-/* INFNINITE SCROLL
+/* INFINITE SCROLL
 
-/* Adaugă în global.css sau într-un fișier CSS separat */
+/* Add to global.css or a separate CSS file */
 
-/* Animația pentru infinite scroll - loop perfect cu 3 copii */
+/* Animation for infinite scroll - perfect loop with 3 copies */
 @keyframes scroll {
   0% {
     transform: translateX(0);

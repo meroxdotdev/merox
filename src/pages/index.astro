@@ -8,7 +8,16 @@ import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
 import { Image } from 'astro:assets'
 import { formatDate } from '@/lib/utils'
-const latestPosts = await getRecentPosts(2)
+import profileImage from '../../public/reworkedmeroxdc1.webp'
+
+// Error handling for fetching recent posts
+let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
+try {
+  latestPosts = await getRecentPosts(2)
+} catch (error) {
+  console.error('Error fetching recent posts:', error)
+  // Continue with empty array - page will still render
+}
 const highlights = [
   'HPC @ Forvia: Full InfiniBand clusters + PBS scheduling',
   'Dolphost Founder: Secure VPS & WordPress hosting',
@@ -48,9 +57,11 @@ const highlights = [
             </Link>
           </div>
         </div>
-        <img
-          src="https://merox.dev/reworkedmeroxdc1.webp"
-          alt="Robert Melcher"
+        <Image
+          src={profileImage}
+          alt="Robert Melcher, HPC System Administrator"
+          width={112}
+          height={112}
           class="w-28 h-28 rounded-full object-cover border-4 border-background shadow-xl flex-shrink-0 ring-2 ring-primary/10"
         />
       </div>
