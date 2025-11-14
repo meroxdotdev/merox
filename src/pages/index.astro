@@ -26,20 +26,31 @@ const highlights = [
 ---
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="Home" />
+  
+  <!-- Preload LCP image for faster loading -->
+  <link rel="preload" as="image" href="/static/homelab.webp" type="image/webp" fetchpriority="high" />
+  <link rel="preload" as="image" href="/static/homelab.png" type="image/png" fetchpriority="high" />
 
   <!-- Hero with homelab background -->
   <section class="relative overflow-hidden rounded-xl border">
-    <!-- Background Image -->
-    <div 
-      class="absolute inset-0 bg-cover bg-center bg-no-repeat parallax-bg"
-      style="background-image: url('/static/homelab.png');"
-    ></div>
+    <!-- Optimized Background Image with WebP support -->
+    <picture class="absolute inset-0 z-0 pointer-events-none">
+      <source type="image/webp" srcset="/static/homelab.webp" />
+      <img
+        src="/static/homelab.png"
+        alt=""
+        class="absolute inset-0 w-full h-full object-cover parallax-bg"
+        fetchpriority="high"
+        decoding="async"
+        aria-hidden="true"
+      />
+    </picture>
     
     <!-- Gradient Overlay for text readability -->
-    <div class="absolute inset-0 bg-gradient-to-br from-background/85 via-background/75 to-background/65 dark:from-background/90 dark:via-background/85 dark:to-background/80"></div>
+    <div class="absolute inset-0 z-[1] bg-gradient-to-br from-background/85 via-background/75 to-background/65 dark:from-background/90 dark:via-background/85 dark:to-background/80"></div>
     
     <!-- Edge fade for better visual flow -->
-    <div class="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent"></div>
+    <div class="absolute inset-0 z-[1] bg-gradient-to-t from-background/40 via-transparent to-transparent"></div>
 
     <!-- Content Container -->
     <div class="relative z-10 p-8 md:p-10">
@@ -72,6 +83,7 @@ const highlights = [
             width="112"
             height="112"
             loading="eager"
+            fetchpriority="high"
             class="w-28 h-28 rounded-full object-cover border-4 border-background shadow-xl ring-2 ring-primary/10 dark:ring-primary/20"
           />
         </div>
