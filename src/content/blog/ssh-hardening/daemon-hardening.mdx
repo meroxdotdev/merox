@@ -8,6 +8,7 @@ order: 2
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 The real hardening happens in `/etc/ssh/sshd_config`. I'll walk you through each critical setting.
 
@@ -22,6 +23,8 @@ sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.backup.$(date +%F)
 ```bash
 sudo nano /etc/ssh/sshd_config
 ```
+
+<AdSense />
 
 ## Essential Security Settings
 

@@ -8,6 +8,7 @@ order: 4
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 Host-based authentication allows one server to authenticate to another based on the client machine's host key, rather than user keys. This is particularly useful in enterprise environments where you have trusted servers that need automated, passwordless communication.
 
@@ -31,6 +32,8 @@ Host-based authentication works like this:
 2. Server trusts specific client hostnames
 3. During connection, client proves its identity using the host key
 4. Server verifies the hostname and host key match
+
+<AdSense />
 
 ## Prerequisites
 

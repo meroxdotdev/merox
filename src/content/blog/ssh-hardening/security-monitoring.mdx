@@ -8,6 +8,7 @@ order: 5
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 Security is useless without proper monitoring. This guide covers fail2ban protection, connection optimization, and comprehensive log analysis.
 
@@ -68,6 +69,8 @@ sudo fail2ban-client get sshd banned
 # Unban an IP
 sudo fail2ban-client set sshd unbanip 192.168.1.100
 ```
+
+<AdSense />
 
 ## Part 2: SSH Connection Management
 

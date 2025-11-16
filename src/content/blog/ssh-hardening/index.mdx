@@ -7,6 +7,7 @@ image: './ssh.svg'
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 After managing Linux infrastructure for several years, I've seen countless security incidents that could have been prevented with proper SSH configuration. The default SSH setup on most distributions is functional but far from secure for production environments. Today, I'm sharing the exact hardening steps I implement on every server I manage.
 
@@ -15,6 +16,8 @@ After managing Linux infrastructure for several years, I've seen countless secur
 SSH is the primary entry point to your Linux servers. A poorly configured SSH service is like leaving your front door unlocked with a neon sign saying "Come on in." I've witnessed brute-force attacks hitting servers with thousands of login attempts per hour. Without proper hardening, it's only a matter of time before something gives.
 
 The reality is that automated bots constantly scan the internet for vulnerable SSH services. They try default credentials, exploit weak configurations, and look for any opening to compromise your systems. I learned this the hard way early in my career when I checked auth logs and found over 50,000 failed login attempts in a single day.
+
+<AdSense />
 
 ## What This Guide Covers
 

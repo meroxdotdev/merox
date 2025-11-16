@@ -7,6 +7,7 @@ image: './dr.svg'
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 In today's digital landscape, data loss can be catastrophic whether you're running a sophisticated homelab or managing IT for an organization of any size. This guide shares my personal disaster recovery strategy, incorporating industry best practices and security considerations to help you build resilience against potential failures.
 
@@ -43,6 +44,8 @@ To mitigate these threats:
 <Callout variant="tip">
 By addressing these risks, you can ensure your backups remain resilient against both accidental failures and cyber threats.
 </Callout>
+
+<AdSense />
 
 ## My Infrastructure Stack
 
@@ -86,6 +89,8 @@ My automated backup chain ensures data flows through the system with minimal int
 3. **Synology → Hetzner**: Every Saturday at 08:00
    - Offsite copy for geographic redundancy
    - Protection against local disasters (fire, theft, etc.)
+
+<AdSense />
 
 ## Implementation Details
 
@@ -195,6 +200,8 @@ fi
 
 exit $EXIT_CODE
 ```
+
+<AdSense />
 
 ## Disaster Recovery Scenarios
 

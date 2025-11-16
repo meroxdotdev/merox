@@ -7,6 +7,7 @@ image: './3sdadsmb.svg'
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 Learn how to integrate Linux SMB file servers with Active Directory for seamless Windows authentication.
 
@@ -21,6 +22,8 @@ The solution combines several components:
 - **SSSD** - System Security Services Daemon for AD integration
 - **Kerberos** - Authentication protocol
 - **realmd** - Domain join utility
+
+<AdSense />
 
 ## Prerequisites
 
@@ -64,6 +67,8 @@ sudo apt install -y realmd sssd sssd-tools libnss-sss libpam-sss \
 sudo systemctl enable --now chrony
 sudo systemctl enable --now sssd
 ```
+
+<AdSense />
 
 ## Step 2: DNS and Time Configuration
 

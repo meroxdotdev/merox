@@ -7,6 +7,7 @@ image: './tailscale.svg'
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 I've decided to implement monitoring for my homelab through a cloud virtual machine. As cloud provider I've opted for Hetzner, but more on that in a future post.
 
@@ -34,6 +35,8 @@ In my case, there are two private subnets without any connectivity between them:
 IP addresses of the routers for each subnet:
 - **Subnet 1**: 10.57.57.1 (pfSense)
 - **Subnet 2**: 192.168.57.254 (Linux VM)
+
+<AdSense />
 
 ## Setting up Tailscale on pfSense (Subnet I)
 
@@ -92,6 +95,8 @@ This part is broken from last update [23.09.1] so NAT Alias is missing.
 This is how it should look:
 
 ![Tailscale pfSense NAT Rules](assets/blog-tailscale-pfsense2.png)
+
+<AdSense />
 
 ## Configure Tailscale on Linux VM (Subnet II)
 

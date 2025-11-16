@@ -8,6 +8,7 @@ draft: false
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 # Restoring Your Kubernetes Applications from Longhorn Backups
 
@@ -34,6 +35,8 @@ Here's what needed restoration:
 - **QBittorrent** (5GB) - Torrent client configuration
 - **Sonarr** (5GB) - TV show management settings
 
+<AdSense />
+
 ## Prerequisites
 
 Before starting, ensure you have:
@@ -59,6 +62,8 @@ kubectl get storageclass
 ```
 
 This gives you a complete picture of your current infrastructure and identifies which PVCs need replacement.
+
+<AdSense />
 
 ## Step 2: Scale Down Applications
 

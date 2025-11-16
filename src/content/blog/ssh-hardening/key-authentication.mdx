@@ -8,6 +8,7 @@ order: 1
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 Password authentication is fundamentally flawed for SSH. Even strong passwords can be compromised through brute-force attacks, keyloggers, or credential stuffing. Key-based authentication eliminates these risks.
 
@@ -23,6 +24,8 @@ ssh-keygen -t rsa -b 4096 -C "your_email@example.com" -f ~/.ssh/id_prod_server
 ```
 
 Why ED25519? It's faster, more secure, and uses shorter keys than RSA. I've switched all my infrastructure to ED25519 and never looked back.
+
+<AdSense />
 
 ## Deploy Public Key to Server
 ```bash

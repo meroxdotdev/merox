@@ -7,6 +7,7 @@ image: './dellr720.svg'
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 ![Tailscale pfSense Configuration](assets/dell-r720-server.webp)
 
@@ -81,6 +82,8 @@ ipmitool sensor | grep -i fan
 Fine-tuning the fan speeds can drastically reduce the noise levels in a homelab environment, which is often a crucial consideration compared to a data center where noise is less of an issue.
 </Callout>
 
+<AdSense />
+
 ## Upgrading Firmware via UpdateYODell.net
 
 Keeping firmware up-to-date is essential for security and performance. I upgraded my R720's firmware using the resources available on UpdateYODell.net. Here's a step-by-step guide:
@@ -104,6 +107,8 @@ Visit [Wikipedia's Dell PowerEdge](https://en.wikipedia.org/wiki/List_of_PowerEd
 Updating the firmware ensures that the server runs smoothly and is protected against known vulnerabilities. It can also bring new features and improvements to your system, which is particularly beneficial in a home lab setting where experimentation and learning are key.
 </Callout>
 
+<AdSense />
+
 ## Migrating Proxmox Cluster
 
 Migrating my Proxmox cluster to the new server was simplified by utilizing an NFS share on my Synology DS223 in the homelab. Here's how I did it:
@@ -125,6 +130,8 @@ Using an NFS share for backups and migrations offers several advantages:
 - **Simplicity**: Easy to set up and manage
 - **Efficiency**: Fast transfer speeds, especially with a dedicated network
 - **Flexibility**: Can easily expand storage as needed
+
+<AdSense />
 
 ## Storage Configuration
 

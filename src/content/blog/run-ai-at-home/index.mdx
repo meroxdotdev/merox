@@ -7,6 +7,7 @@ image: './webui.svg'
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 Recently, I started exploring the field of AI to better understand what my home lab setup is capable of. This time, I used a Dell PowerEdge R720 server, equipped with 192 GB of RAM, dual 6-core CPUs (24 threads), and no GPU, to familiarize myself with various AI tools. Having done some investigation into this matter, three major tools attracted my attention—Stable Diffusion, OpenWebUI and Ollama. Each tool has unique features while together they make up a functional AI environment for me to play around with.
 
@@ -19,6 +20,8 @@ Recently, I started exploring the field of AI to better understand what my home 
 In this article, I will go over how I set these tools up on my server as well as their configurations. The difficulties that were there, the solutions I found and useful tips that may be helpful when working under similar conditions will also be shared. Even though still new in Artificial Intelligence systems at least my experience can be of great help to others who may want to start too.
 
 ## Setting Up Ollama: My First Step into AI
+
+<AdSense />
 
 The first tool I tackled was **Ollama**. After doing some research, it seemed like a good starting point because of its straightforward setup and broad compatibility. Ollama is a flexible AI framework that can be installed on all major platforms—**Linux**, **MacOS**, and **Windows**—which made it accessible no matter what system you're running. Plus, it provides a solid foundation for further AI experiments, which is exactly what I needed for my home lab.
 
@@ -52,6 +55,8 @@ ollama run llama3
 <Callout variant="tip">
 **Answer**: The concept of time dilation in Interstellar is directly related to Albert Einstein's theory of special relativity, specifically the concept of time dilation. Here's how: In the movie, a wormhole allows Cooper's spaceship to travel at incredibly high speeds, approaching relativistic velocities. As they approach the speed of light (0.99c), time appears to slow down for them relative to Earth. This is precisely what Einstein predicted in his theory...
 </Callout>
+
+<AdSense />
 
 ## Setting Up Stable Diffusion
 
@@ -115,6 +120,8 @@ By default, running the `webui.sh` command will start the server and bind it to 
 This command makes the server accessible on all network interfaces at port 7860 (0.0.0.0:7860).
 
 ![Stable Diffusion Web Interface](assets/stablediffusion.png)
+
+<AdSense />
 
 ## Setting Up OpenWebUI
 

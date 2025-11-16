@@ -7,6 +7,7 @@ image: './minio.svg'
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 When MinIO recently announced they're discontinuing Docker images and moving to a source-only distribution model, many homelab users were left scrambling for alternatives. With hundreds of thousands of installations potentially running outdated versions with known CVEs, it was time to find a more reliable solution.
 
@@ -31,6 +32,8 @@ Garage checked all these boxes.
 - Ubuntu server with Docker and Docker Compose
 - Kubernetes cluster with Longhorn installed
 - Flux CD for GitOps (optional, but recommended)
+
+<AdSense />
 
 ## Setting Up Garage
 
@@ -142,6 +145,8 @@ garage bucket allow longhorn --read --write --owner --key longhorn-key
 # View credentials (note the Key ID and Secret key)
 garage key info longhorn-key --show-secret
 ```
+
+<AdSense />
 
 ## Integrating with Longhorn
 

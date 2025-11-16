@@ -7,6 +7,7 @@ image: './kubernetes.svg'
 ---
 
 import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
 
 For a long time, I've been on the hunt for a comprehensive and well crafted tutorial to deploy a media server on my Kubernetes cluster. This media server stack includes Jellyfin, Radarr, Sonarr, Jackett, and qBittorrent. Let's briefly dive into what each component brings to our setup.
 
@@ -22,6 +23,8 @@ For a long time, I've been on the hunt for a comprehensive and well crafted tuto
 | **Gluetun** | A lightweight, open-source VPN client for Docker environments, supporting multiple VPN providers to secure and manage internet connections across containerized applications. |
 
 The configuration for these applications is hosted on Longhorn storage, ensuring resilience and ease of management, while the media (movies, shows, books, etc.) is stored on a Synology NAS DS223. The NAS location is utilized as a Persistent Volume (PV) through NFS 4.1 by Kubernetes.
+
+<AdSense />
 
 ## Synology NAS NFS Setup for Kubernetes
 
@@ -114,6 +117,8 @@ Apply with:
 ```bash
 kubectl apply -f nfs-download-pv-and-pvc.yaml
 ```
+
+<AdSense />
 
 ## Configuring Longhorn PVC for Each Application
 
@@ -501,6 +506,8 @@ Apply with:
 ```bash
 kubectl apply -f default-headers-media.yaml
 ```
+
+<AdSense />
 
 ## Creating Ingress Route for Each Application
 
