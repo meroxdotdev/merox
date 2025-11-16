@@ -89,7 +89,7 @@ try {
 }
 ---
 
-<Layout>
+<Layout hideFloatingSidebar={hasChildPosts || isCurrentSubpost}>
   <PostHead slot="head" post={post} />
   {
     (hasChildPosts || isCurrentSubpost) && (

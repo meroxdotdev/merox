@@ -2,6 +2,7 @@
 import '@/styles/global.css'
 import '@/styles/typography.css'
 
+import FloatingSidebar from '@/components/FloatingSidebar.astro'
 import Footer from '@/components/Footer.astro'
 import Head from '@/components/Head.astro'
 import Header from '@/components/Header.astro'
@@ -10,9 +11,10 @@ import { cn } from '@/lib/utils'
 
 interface Props {
   class?: string
+  hideFloatingSidebar?: boolean
 }
 
-const { class: className } = Astro.props
+const { class: className, hideFloatingSidebar = false } = Astro.props
 ---
 
 <!doctype html>
@@ -36,6 +38,7 @@ const { class: className } = Astro.props
     >
       <slot />
     </main>
+    {!hideFloatingSidebar && <FloatingSidebar />}
     <Footer />
   </body>
 </html>
