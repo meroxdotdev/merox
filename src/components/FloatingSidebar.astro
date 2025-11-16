@@ -11,7 +11,8 @@ const popularTags = sortedTags.slice(0, 6) // Top 6 tags
 // 'bottom-bar' - Horizontal bar at bottom (modern, less intrusive)
 // 'bottom-right-corner' - Compact corner widget (minimal, modern)
 // 'left-fixed' - Fixed left side (natural reading flow, but may conflict)
-const position = 'right-fixed' // Change this to test different positions
+type Position = 'right-fixed' | 'bottom-bar' | 'bottom-right-corner' | 'left-fixed'
+const position: Position = 'right-fixed' as Position // Change this to test different positions
 ---
 
 {position === 'right-fixed' && (
@@ -303,3 +304,4 @@ const position = 'right-fixed' // Change this to test different positions
     }
   }
 </style>
+
