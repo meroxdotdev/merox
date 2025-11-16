@@ -4,80 +4,59 @@ import { Icon } from 'astro-icon/components'
 
 <div
   id="floating-sidebar"
-  class="fixed right-4 top-1/2 -translate-y-1/2 z-40 hidden xl:block"
+  class="fixed right-6 top-1/2 -translate-y-1/2 z-40 hidden xl:block opacity-0 animate-fade-in"
   aria-label="Support and advertising"
 >
-  <div
-    class="flex flex-col gap-4 w-64 transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
-  >
-    <!-- Buy Me a Coffee Card -->
+  <div class="flex flex-col gap-3 w-56">
+    <!-- Support Card -->
     <div
-      class="group relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent backdrop-blur-sm shadow-lg hover:shadow-xl transition-all duration-500 hover:scale-[1.02]"
+      class="group relative overflow-hidden rounded-lg border border-border/40 bg-background/80 backdrop-blur-md shadow-sm hover:shadow-md hover:border-border/60 transition-all duration-300"
     >
-      <!-- Subtle gradient orbs -->
-      <div class="absolute -top-10 -left-10 w-24 h-24 bg-primary/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-      <div class="absolute -bottom-10 -right-10 w-24 h-24 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-      <div class="relative z-10 p-5">
-        <div class="flex items-start gap-3 mb-3">
-          <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Icon name="lucide:coffee" class="w-5 h-5 text-primary" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <h3 class="text-sm font-semibold text-foreground mb-1">
-              Support My Work
-            </h3>
-            <p class="text-xs text-muted-foreground leading-relaxed">
-              Help fuel the server and keep the content coming
-            </p>
-          </div>
+      <div class="p-4">
+        <div class="mb-3">
+          <h3 class="text-sm font-medium text-foreground mb-1.5">
+            Support My Work
+          </h3>
+          <p class="text-xs text-muted-foreground leading-snug">
+            Help fuel the server and keep the content coming
+          </p>
         </div>
         <a
           href="https://buymeacoffee.com/merox.dev"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium transition-all duration-300 hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98] shadow-sm hover:shadow-md"
+          class="inline-flex items-center justify-center gap-1.5 w-full px-3 py-2 rounded-md bg-primary text-primary-foreground text-xs font-medium transition-all duration-200 hover:bg-primary/90 active:scale-[0.98]"
         >
-          <Icon name="lucide:heart" class="w-4 h-4" />
+          <Icon name="lucide:coffee" class="w-3.5 h-3.5" />
           <span>Buy Me a Coffee</span>
-          <Icon name="lucide:external-link" class="w-3.5 h-3.5 opacity-70" />
         </a>
       </div>
     </div>
 
-    <!-- Ads Section (Desktop Only) -->
+    <!-- Advertising Card -->
     <div
-      class="group relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent backdrop-blur-sm shadow-lg"
+      class="group relative overflow-hidden rounded-lg border border-border/40 bg-background/80 backdrop-blur-md shadow-sm hover:shadow-md hover:border-border/60 transition-all duration-300"
     >
-      <!-- Subtle gradient orbs -->
-      <div class="absolute -top-10 -right-10 w-24 h-24 bg-primary/10 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-      <div class="absolute -bottom-10 -left-10 w-24 h-24 bg-primary/5 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-      <div class="relative z-10 p-5">
-        <div class="flex items-start gap-3 mb-3">
-          <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <Icon name="lucide:megaphone" class="w-5 h-5 text-primary" />
-          </div>
-          <div class="flex-1 min-w-0">
-            <h3 class="text-sm font-semibold text-foreground mb-1">
-              Advertise Here
-            </h3>
-            <p class="text-xs text-muted-foreground leading-relaxed mb-3">
-              Reach a tech-savvy audience interested in infrastructure, DevOps, and homelab content
-            </p>
-          </div>
+      <div class="p-4">
+        <div class="mb-3">
+          <h3 class="text-sm font-medium text-foreground mb-1.5">
+            Advertise Here
+          </h3>
+          <p class="text-xs text-muted-foreground leading-snug mb-2.5">
+            Reach a tech-savvy audience interested in infrastructure, DevOps, and homelab content
+          </p>
         </div>
         <a
           href="mailto:hello@merox.dev?subject=Advertising Inquiry"
-          class="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-lg border border-primary/20 bg-background/50 text-foreground text-sm font-medium transition-all duration-300 hover:bg-primary/5 hover:border-primary/30 hover:scale-[1.02] active:scale-[0.98]"
+          class="inline-flex items-center justify-center gap-1.5 w-full px-3 py-2 rounded-md border border-border/60 bg-background text-foreground text-xs font-medium transition-all duration-200 hover:bg-muted/50 hover:border-border active:scale-[0.98] mb-2.5"
         >
-          <Icon name="lucide:mail" class="w-4 h-4" />
+          <Icon name="lucide:mail" class="w-3.5 h-3.5" />
           <span>Contact for Ads</span>
         </a>
-        <div class="mt-3 p-3 rounded-lg bg-muted/30 border border-border/50">
-          <p class="text-xs text-muted-foreground text-center">
-            Ad space available<br />
-            <span class="text-[10px] opacity-75">Desktop only</span>
+        <div class="pt-2.5 border-t border-border/40">
+          <p class="text-[10px] text-muted-foreground/80 text-center leading-tight">
+            Ad space available
+            <span class="block mt-0.5 opacity-60">Desktop only</span>
           </p>
         </div>
       </div>
@@ -86,23 +65,47 @@ import { Icon } from 'astro-icon/components'
 </div>
 
 <style>
-  /* Respect user motion preferences */
-  @media (prefers-reduced-motion: reduce) {
-    #floating-sidebar * {
-      transition: none !important;
-      animation: none !important;
+  /* Fade-in animation on page load */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translate(10px, -50%);
+    }
+    to {
+      opacity: 1;
+      transform: translate(0, -50%);
     }
   }
 
-  /* Positioning - fixed right margin that works across all desktop sizes */
-  /* On wider screens, it naturally sits in the margin area next to centered content */
+  #floating-sidebar.animate-fade-in {
+    animation: fade-in 0.4s ease-out 0.2s forwards;
+  }
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    #floating-sidebar *,
+    #floating-sidebar {
+      transition: none !important;
+      animation: none !important;
+      opacity: 1 !important;
+      transform: translateY(-50%) !important;
+    }
+  }
+
+  /* Responsive positioning - ensures sidebar doesn't overlap content */
   @media (min-width: 1280px) {
+    #floating-sidebar {
+      right: 1.5rem;
+    }
+  }
+
+  /* On medium desktop screens, ensure adequate spacing from content */
+  @media (min-width: 1280px) and (max-width: 1400px) {
     #floating-sidebar {
       right: 1rem;
     }
   }
 
-  /* On very wide screens, add a bit more margin for better spacing */
   @media (min-width: 1920px) {
     #floating-sidebar {
       right: 2rem;
