@@ -4,8 +4,13 @@ import ThemeToggle from '@/components/ThemeToggle.astro'
 import MobileMenu from '@/components/ui/mobile-menu'
 import { NAV_LINKS } from '@/consts'
 import { Image } from 'astro:assets'
+import { Icon } from 'astro-icon/components'
 import logo from '../../public/static/logo.svg'
 import logod from '../../public/static/logod.svg'
+
+const isExternalLink = (href: string) => {
+  return href.startsWith('http')
+}
 ---
 
 <header class="bg-background/50 sticky top-0 z-10 backdrop-blur-md" transition:persist>
@@ -17,11 +22,24 @@ import logod from '../../public/static/logod.svg'
     </Link>
     <div class="flex items-center gap-2 md:gap-4">
       <nav class="hidden items-center gap-4 text-sm sm:gap-6 md:flex">
-        {NAV_LINKS.map((item) => (
-          <Link href={item.href} class="text-foreground/60 hover:text-foreground/80 capitalize transition-colors">
-            {item.label}
-          </Link>
-        ))}
+        {NAV_LINKS.map((item) => {
+          const isExternal = isExternalLink(item.href)
+          return (
+            <Link 
+              href={item.href} 
+              class="text-foreground/60 hover:text-foreground/80 capitalize transition-colors flex items-center gap-1.5"
+            >
+              <span>{item.label}</span>
+              {isExternal && (
+                <Icon 
+                  name="lucide:external-link" 
+                  class="size-3.5 opacity-70 flex-shrink-0" 
+                  aria-hidden="true"
+                />
+              )}
+            </Link>
+          )
+        })}
       </nav>
       <MobileMenu client:load transition:persist />
       <ThemeToggle transition:persist />
