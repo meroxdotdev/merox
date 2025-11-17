@@ -42,8 +42,8 @@ const isExternalLink = (href: string) => {
           )
         })}
       </nav>
-      <SearchButton client:load />
-      <MobileMenu client:load transition:persist />
+      <SearchButton client:idle />
+      <MobileMenu client:idle transition:persist />
       <ThemeToggle transition:persist />
     </div>
   </div>

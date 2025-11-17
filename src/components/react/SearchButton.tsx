@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import SearchDialog from './SearchDialog'
+import { ErrorBoundary } from './ErrorBoundary'
 
 const SearchButton: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -20,7 +21,7 @@ const SearchButton: React.FC = () => {
   }, [])
 
   return (
-    <>
+    <ErrorBoundary>
       <Button
         variant="outline"
         size="icon"
@@ -32,8 +33,10 @@ const SearchButton: React.FC = () => {
         <Search className="h-5 w-5 md:h-4 md:w-4" />
         <span className="sr-only">Search</span>
       </Button>
-      <SearchDialog open={isOpen} onOpenChange={setIsOpen} />
-    </>
+      <ErrorBoundary>
+        <SearchDialog open={isOpen} onOpenChange={setIsOpen} />
+      </ErrorBoundary>
+    </ErrorBoundary>
   )
 }
 

@@ -1,48 +1,7 @@
 import React, { useMemo, useEffect, useRef } from 'react'
-import { type IconType } from 'react-icons'
-import { FaQuestionCircle } from 'react-icons/fa'
-import {
-  SiLinux,
-  SiUbuntu,
-  SiDebian,
-  SiProxmox,
-  SiDocker,
-  SiKubernetes,
-  SiCisco,
-  SiPfsense,
-  SiFortinet,
-  SiPaloaltonetworks,
-  SiAnsible,
-  SiTerraform,
-  SiPuppet,
-  SiSaltproject,
-  SiGit,
-  SiFlux,
-  SiRancher,
-  SiOracle,
-  SiCloudflare,
-  SiCilium,
-  SiPortainer,
-  SiAsterisk,
-  SiApache,
-  SiNginx,
-  SiMysql,
-  SiWordpress,
-  SiCpanel,
-} from 'react-icons/si'
-import { 
-  Shield, 
-  Server, 
-  Network, 
-  Cloud, 
-  HardDrive,
-  Lock,
-  Wifi,
-  Terminal,
-  CloudCog,
-  Box,
-} from 'lucide-react'
 import { InfiniteScroll } from './InfiniteScroll'
+import { ANIMATION } from '@/lib/constants'
+import { getIcon } from './SkillsIconLoader'
 
 // Types for technologies
 type Category = {
@@ -112,47 +71,6 @@ const technologies: Technologies = {
   ],
 }
 
-// Icon mapping
-const iconMap: { [key: string]: IconType } = {
-  'simple-icons:linux': SiLinux,
-  'mdi:ubuntu': SiUbuntu,
-  'simple-icons:debian': SiDebian,
-  'mdi:windows': Server,
-  'simple-icons:proxmox': SiProxmox,
-  'mdi:docker': SiDocker,
-  'mdi:kubernetes': SiKubernetes,
-  'lucide:box': Box,
-  'simple-icons:cisco': SiCisco,
-  'simple-icons:pfsense': SiPfsense,
-  'simple-icons:fortinet': SiFortinet,
-  'simple-icons:paloaltonetworks': SiPaloaltonetworks,
-  'lucide:wifi': Wifi,
-  'lucide:network': Network,
-  'lucide:lock': Lock,
-  'lucide:shield': Shield,
-  'simple-icons:ansible': SiAnsible,
-  'simple-icons:terraform': SiTerraform,
-  'simple-icons:puppet': SiPuppet,
-  'simple-icons:saltproject': SiSaltproject,
-  'lucide:terminal': Terminal,
-  'mdi:git': SiGit,
-  'simple-icons:flux': SiFlux,
-  'simple-icons:rancher': SiRancher,
-  'lucide:cloud': Cloud,
-  'simple-icons:oracle': SiOracle,
-  'simple-icons:cloudflare': SiCloudflare,
-  'lucide:server': Server,
-  'lucide:cloud-cog': CloudCog,
-  'simple-icons:cilium': SiCilium,
-  'simple-icons:portainer': SiPortainer,
-  'lucide:hard-drive': HardDrive,
-  'simple-icons:asterisk': SiAsterisk,
-  'simple-icons:apache': SiApache,
-  'simple-icons:nginx': SiNginx,
-  'simple-icons:mysql': SiMysql,
-  'simple-icons:wordpress': SiWordpress,
-  'simple-icons:cpanel': SiCpanel,
-}
 
 // Split technologies into 3 groups for 3 rows
 const categories = Object.keys(technologies)
@@ -196,7 +114,7 @@ const Skills: React.FC = React.memo(() => {
         const groupItems = group.flatMap((category) =>
           technologies[category as keyof Technologies].map(
             (tech: Category, techIndex: number) => {
-              const IconComponent = iconMap[tech.logo] || FaQuestionCircle
+              const IconComponent = getIcon(tech.logo)
               return (
                 <div
                   key={`${category}-${techIndex}`}
@@ -217,7 +135,7 @@ const Skills: React.FC = React.memo(() => {
         return (
           <InfiniteScroll
             key={groupIndex}
-            duration={45000}
+            duration={ANIMATION.SCROLL_DURATION_SKILLS}
             direction={groupIndex % 2 === 0 ? 'normal' : 'reverse'}
             showFade={true}
             className="flex flex-row"

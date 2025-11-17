@@ -7,6 +7,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
+import { PERFORMANCE } from '@/lib/constants'
 
 interface SearchResult {
   id: string
@@ -34,13 +35,20 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLDivElement>(null)
 
-  // Initialize search index on mount
+  // Lazy-load search index only when dialog opens
   useEffect(() => {
+    if (!open) return
+
+    let cancelled = false
+
     const loadSearchIndex = async () => {
       try {
         const response = await fetch('/api/search-index.json')
         if (!response.ok) throw new Error('Failed to load search index')
         const data: SearchResult[] = await response.json()
+        
+        if (cancelled) return
+        
         setSearchIndex(data)
 
         // Create FlexSearch index
@@ -61,14 +69,25 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
           searchIndex.add(idx, searchableText)
         })
 
-        setIndex(searchIndex)
+        if (!cancelled) {
+          setIndex(searchIndex)
+        }
       } catch (error) {
-        console.error('Error loading search index:', error)
+        if (!cancelled) {
+          console.error('Error loading search index:', error)
+        }
       }
     }
 
-    loadSearchIndex()
-  }, [])
+    // Only load if index hasn't been loaded yet
+    if (!index) {
+      loadSearchIndex()
+    }
+
+    return () => {
+      cancelled = true
+    }
+  }, [open, index])
 
   // Perform search
   const performSearch = useCallback(
@@ -132,7 +151,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
     const timeoutId = setTimeout(() => {
       performSearch(query)
-    }, 150)
+    }, PERFORMANCE.SEARCH_DEBOUNCE)
 
     return () => clearTimeout(timeoutId)
   }, [query, performSearch])
@@ -237,11 +256,22 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-2xl p-0 gap-0">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden">
         <DialogDescription className="sr-only">
           Search blog posts by title, description, tags, or content
         </DialogDescription>
-        <div className="flex items-center border-b px-4">
+        {/* Live region for screen readers */}
+        <div
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+          className="sr-only"
+        >
+          {isLoading && 'Searching...'}
+          {!isLoading && query.trim() && results.length > 0 && `${results.length} result${results.length !== 1 ? 's' : ''} found`}
+          {!isLoading && query.trim() && results.length === 0 && 'No results found'}
+        </div>
+        <div className="flex items-center border-b border-border px-4">
           <Search className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
           <input
             ref={inputRef}
@@ -249,7 +279,14 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
             placeholder="Search posts..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex h-14 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-14 w-full bg-transparent py-3 text-sm outline-none border-0 shadow-none appearance-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset focus-visible:ring-offset-0"
+            style={{ 
+              WebkitAppearance: 'none', 
+              MozAppearance: 'textfield',
+              border: 'none',
+              outline: 'none',
+              boxShadow: 'none',
+            }}
             aria-label="Search blog posts"
           />
           {isLoading && (

@@ -33,7 +33,7 @@ const socialLinks: SocialLink[] = [
       class={cn('block', isAuthorPage && 'pointer-events-none')}
     >
       <AvatarComponent
-        client:load
+        client:idle
         src={avatar}
         alt={`Avatar of ${name}`}
         fallback={name[0]}

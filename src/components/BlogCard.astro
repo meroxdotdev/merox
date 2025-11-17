@@ -61,7 +61,7 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
               {authors.map((author) => (
                 <div class="flex items-center gap-x-1.5">
                   <AvatarComponent
-                    client:load
+                    client:idle
                     src={author.avatar}
                     alt={author.name}
                     fallback={author.name[0]}

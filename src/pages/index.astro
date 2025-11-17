@@ -2,6 +2,7 @@
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
 import Skills from '@/components/react/Skills'
+import { ErrorBoundary } from '@/components/react/ErrorBoundary'
 import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
@@ -99,7 +100,9 @@ const highlights = [
         Core competencies across systems administration, security, and infrastructure automation
       </p>
     </div>
-    <Skills client:load />
+    <ErrorBoundary client:visible>
+      <Skills client:visible />
+    </ErrorBoundary>
   </section>
 
   <!-- Latest from the blog -->

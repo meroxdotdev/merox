@@ -101,6 +101,22 @@ const ogImage = image || (cleanPathname ? new URL(`/og${cleanPathname}.png`, Ast
 
   <Favicons />
   
+  <!-- Resource Hints for Performance -->
+  {ANALYTICS.google && (
+    <>
+      <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+      <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    </>
+  )}
+  {UMAMI.websiteId && (
+    <>
+      <link rel="dns-prefetch" href="https://cloud.umami.is" />
+      <link rel="preconnect" href="https://cloud.umami.is" crossorigin />
+    </>
+  )}
+  <!-- Prefetch search index for faster search -->
+  <link rel="prefetch" href="/api/search-index.json" as="fetch" crossorigin="anonymous" />
+  
   <!-- Google Analytics -->
   {ANALYTICS.google && (
     <>

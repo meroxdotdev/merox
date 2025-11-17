@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { ANIMATION } from '@/lib/constants'
 
 interface InfiniteScrollProps {
   children: React.ReactNode
@@ -10,7 +11,7 @@ interface InfiniteScrollProps {
 
 export const InfiniteScroll = React.memo(function InfiniteScroll({
   children,
-  duration = 40000,
+  duration = ANIMATION.SCROLL_DURATION_DEFAULT,
   direction = 'normal',
   showFade = true,
   className = '',
@@ -52,7 +53,7 @@ export const InfiniteScroll = React.memo(function InfiniteScroll({
     <div className={`relative overflow-hidden ${className}`}>
       {fadeGradients}
       <div
-        className="flex w-max animate-scroll items-center gap-0"
+        className="flex w-max animate-scroll items-center gap-0 [contain:layout_style_paint]"
         style={scrollStyle}
       >
         {duplicatedChildren}
