@@ -118,7 +118,6 @@ const highlights = [
       <div class="grid gap-6 md:grid-cols-2">
         {latestPosts.map((post) => (
           <Link
-            key={`${post.collection}-${post.id}`}
             href={`/${post.collection}/${post.id}`}
             class="block rounded-xl border bg-card hover:border-primary/50"
           >

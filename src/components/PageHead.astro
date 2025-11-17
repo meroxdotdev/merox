@@ -10,7 +10,7 @@ interface Props {
 
 const {
   title = SITE.title,
-  description,
+  description: _description, // Unused but kept for API consistency
   noindex = false,
   fullTitle = false,
 } = Astro.props
