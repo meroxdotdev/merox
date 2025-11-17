@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import Disqus from '@/components/Disqus.astro'
 import Link from '@/components/Link.astro'
 import PostHead from '@/components/PostHead.astro'
 import PostNavigation from '@/components/PostNavigation.astro'
@@ -10,6 +11,7 @@ import TOCSidebar from '@/components/TOCSidebar.astro'
 import { badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
+import { SITE } from '@/consts'
 import {
   getAdjacentPosts,
   getAllPostsAndSubposts,
@@ -285,6 +287,19 @@ try {
       olderPost={navigation.older}
       parentPost={isCurrentSubpost ? navigation.parent : undefined}
     />
+
+    {
+      /* Only show Disqus on main posts, not subposts */
+      !isCurrentSubpost && (
+        <div class="col-start-2 mt-12">
+          <Disqus
+            identifier={`blog-${currentPostId}`}
+            title={post.data.title}
+            url={new URL(`/blog/${currentPostId}`, SITE.href).href}
+          />
+        </div>
+      )
+    }
   </section>
 
   <Button

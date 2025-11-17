@@ -16,6 +16,13 @@ export const ANALYTICS = {
   google: 'G-RXSCNFY5WZ', // Replace with your actual Google Analytics ID
 }
 
+// Disqus Comments
+// Get your shortname from https://disqus.com/admin/settings/general/
+// Set it as an environment variable: PUBLIC_DISQUS_SHORTNAME=your-shortname
+export const DISQUS = {
+  shortname: import.meta.env.PUBLIC_DISQUS_SHORTNAME || '',
+}
+
 export const NAV_LINKS: SocialLink[] = [
 
   {
