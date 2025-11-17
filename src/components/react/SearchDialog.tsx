@@ -256,7 +256,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden">
+      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden top-[10%] sm:top-[15%] translate-y-0 max-h-[85vh] sm:max-h-[80vh] flex flex-col data-[state=open]:slide-in-from-top-[10%] data-[state=closed]:slide-out-to-top-[10%]">
         <DialogDescription className="sr-only">
           Search blog posts by title, description, tags, or content
         </DialogDescription>
@@ -271,7 +271,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
           {!isLoading && query.trim() && results.length > 0 && `${results.length} result${results.length !== 1 ? 's' : ''} found`}
           {!isLoading && query.trim() && results.length === 0 && 'No results found'}
         </div>
-        <div className="flex items-center border-b border-border px-4">
+        <div className="flex shrink-0 items-center border-b border-border px-4">
           <Search className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
           <input
             ref={inputRef}
@@ -296,7 +296,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
         <div
           ref={resultsRef}
-          className="max-h-[60vh] overflow-y-auto px-2 py-2"
+          className="flex-1 min-h-0 overflow-y-auto px-2 py-2"
         >
           {query.trim() && results.length === 0 && !isLoading && (
             <div className="flex flex-col items-center justify-center py-8 text-center">
@@ -377,7 +377,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         </div>
 
         {results.length > 0 && (
-          <div className="flex items-center justify-between border-t px-4 py-2 text-xs text-muted-foreground">
+          <div className="flex shrink-0 items-center justify-between border-t px-4 py-2 text-xs text-muted-foreground">
             <div className="flex items-center gap-4">
               <span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
