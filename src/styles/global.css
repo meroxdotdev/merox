@@ -155,81 +155,15 @@
   }
 }
 
-/* Infinite scroll animation - perfect loop with 3 copies */
-@keyframes scroll {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(calc(-100% / 3));
-  }
-}
-
-.animate-scroll {
-  animation: scroll linear infinite;
-  /* Optimize for performance - force GPU acceleration */
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Respect user's motion preferences */
-@media (prefers-reduced-motion: reduce) {
-  .animate-scroll {
-    animation: none;
-  }
-}
-
-/* Tech badge animations */
+/* Tech badge - minimal styles to avoid conflicts with Framer Motion */
 .tech-badge {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: fadeInUp 0.5s ease-out forwards;
+  /* Remove conflicting animations - let Framer Motion handle transforms */
+  will-change: auto;
 }
 
 .tech-badge-visible {
+  /* Just ensure visibility, no transform conflicts */
   opacity: 1;
-  transform: translateY(0);
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Respect user's motion preferences for animations */
-@media (prefers-reduced-motion: reduce) {
-  .tech-badge,
-  .tech-badge-visible {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-}
-
-/* Staggered animation delays for cascade effect */
-.tech-badge:nth-child(1) { animation-delay: 0.05s; }
-.tech-badge:nth-child(2) { animation-delay: 0.1s; }
-.tech-badge:nth-child(3) { animation-delay: 0.15s; }
-.tech-badge:nth-child(4) { animation-delay: 0.2s; }
-.tech-badge:nth-child(5) { animation-delay: 0.25s; }
-.tech-badge:nth-child(6) { animation-delay: 0.3s; }
-.tech-badge:nth-child(7) { animation-delay: 0.35s; }
-.tech-badge:nth-child(8) { animation-delay: 0.4s; }
-.tech-badge:nth-child(n+9) { animation-delay: 0.45s; }
-
-@media (prefers-reduced-motion: reduce) {
-  .tech-badge:nth-child(n) {
-    animation-delay: 0s;
-  }
 }
 
 /* Background effects */
