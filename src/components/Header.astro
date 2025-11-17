@@ -2,6 +2,7 @@
 import Link from '@/components/Link.astro'
 import ThemeToggle from '@/components/ThemeToggle.astro'
 import MobileMenu from '@/components/ui/mobile-menu'
+import SearchButton from '@/components/react/SearchButton'
 import { NAV_LINKS } from '@/consts'
 import { Image } from 'astro:assets'
 import { Icon } from 'astro-icon/components'
@@ -41,6 +42,7 @@ const isExternalLink = (href: string) => {
           )
         })}
       </nav>
+      <SearchButton client:load />
       <MobileMenu client:load transition:persist />
       <ThemeToggle transition:persist />
     </div>
