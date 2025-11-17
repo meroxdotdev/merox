@@ -11,3 +11,9 @@ pnpm-debug.log*
 .idea/
 teaser.pptx
 ~$teaser.pptx
+
+# Analysis and documentation files (generated/review files)
+*ANALYSIS*.md
+*FIXES*.md
+*REVIEW*.md
+*CHECKLIST*.md

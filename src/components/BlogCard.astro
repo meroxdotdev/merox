@@ -42,6 +42,7 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
             width={1200}
             height={630}
             class="object-cover"
+            loading="lazy"
           />
         </div>
       )

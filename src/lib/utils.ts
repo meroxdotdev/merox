@@ -52,16 +52,16 @@ export function getTagVariant(tag: string): {
     case 'experimental':
       return {
         variant: 'default',
-        // Opțiunea 1: Amber/Gold (recomandat - elegant și profesional)
+        // Option 1: Amber/Gold (recommended - elegant and professional)
         className: 'bg-amber-500 border-amber-500/50 text-white hover:!bg-amber-500 hover:!text-white dark:bg-amber-600 dark:border-amber-600/50 dark:hover:!bg-amber-600',
         
-        // Opțiunea 2: Yellow muted (mai subtil, mai puțin vibrant)
+        // Option 2: Yellow muted (more subtle, less vibrant)
         // className: 'bg-yellow-500/80 hover:bg-yellow-500 border-yellow-500/40 text-white dark:bg-yellow-600/70 dark:hover:bg-yellow-600 dark:border-yellow-600/40',
         
-        // Opțiunea 3: Orange muted (mai puțin agresiv decât original)
+        // Option 3: Orange muted (less aggressive than original)
         // className: 'bg-orange-500/80 hover:bg-orange-500 border-orange-500/40 text-white dark:bg-orange-600/70 dark:hover:bg-orange-600 dark:border-orange-600/40',
         
-//        tooltip: 'This content is experimental and may not follow best practices or require modifications',
+        // tooltip: 'This content is experimental and may not follow best practices or require modifications',
       }
     // You can add more special tags here in the future
     // case 'featured':

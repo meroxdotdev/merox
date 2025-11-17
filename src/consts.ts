@@ -12,8 +12,15 @@ export const SITE: Site = {
 }
 
 // Google Analytics
+// Configure via environment variable: PUBLIC_GOOGLE_ANALYTICS_ID
 export const ANALYTICS = {
-  google: 'G-RXSCNFY5WZ', // Replace with your actual Google Analytics ID
+  google: import.meta.env.PUBLIC_GOOGLE_ANALYTICS_ID || '',
+}
+
+// Umami Analytics
+// Configure via environment variable: PUBLIC_UMAMI_WEBSITE_ID
+export const UMAMI = {
+  websiteId: import.meta.env.PUBLIC_UMAMI_WEBSITE_ID || '',
 }
 
 // Disqus Comments
