@@ -37,12 +37,6 @@ const previousRoles = [
   }
 ]
 
-const techStack = {
-  infrastructure: ['Linux', 'Kubernetes', 'Docker', 'Proxmox', 'PBS/HPC'],
-  automation: ['Terraform', 'Ansible', 'FluxCD', 'Puppet', 'Salt'],
-  networking: ['pfSense', 'VLANs', 'IPsec', 'InfiniBand'],
-  security: ['Palo Alto', 'Fortinet', 'CyberArk', 'Nessus']
-}
 
 const homelabHighlights = [
   'Dell PowerEdge R720 with Proxmox virtualization',
@@ -80,17 +74,6 @@ const homelabHighlights = [
           <Icon name="lucide:download" class="size-4" />
           <span>Download CV</span>
         </Link>
-      </div>
-
-      <!-- Tech Stack Pills -->
-      <div class="mt-6 pt-6 border-t">
-        <div class="flex flex-wrap gap-2">
-          {Object.values(techStack).flat().slice(0, 8).map((tech) => (
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20">
-              {tech}
-            </span>
-          ))}
-        </div>
       </div>
     </div>
 
