@@ -20,7 +20,6 @@ export const InfiniteScroll = React.memo(function InfiniteScroll({
     () => ({
       animationDuration: `${duration}ms`,
       animationDirection: direction,
-      willChange: 'transform' as const,
     }),
     [duration, direction]
   )

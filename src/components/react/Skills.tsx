@@ -217,7 +217,7 @@ const Skills: React.FC = React.memo(() => {
         return (
           <InfiniteScroll
             key={groupIndex}
-            duration={80000}
+            duration={45000}
             direction={groupIndex % 2 === 0 ? 'normal' : 'reverse'}
             showFade={true}
             className="flex flex-row"

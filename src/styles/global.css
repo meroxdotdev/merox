@@ -104,20 +104,21 @@
 
 /* Infinite scroll animation - perfect loop with 3 copies */
 @keyframes scroll {
-  0% {
+  from {
     transform: translateX(0);
   }
-  100% {
+  to {
     transform: translateX(calc(-100% / 3));
   }
 }
 
 .animate-scroll {
   animation: scroll linear infinite;
-  /* Prevent jumps on hover or interaction */
-  will-change: transform;
   /* Optimize for performance - force GPU acceleration */
+  will-change: transform;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: translateZ(0);
   -webkit-font-smoothing: antialiased;
 }
 
