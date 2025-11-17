@@ -6,12 +6,8 @@ interface Props {
 }
 
 const { identifier, title, url } = Astro.props
-const disqusShortname = import.meta.env.PUBLIC_DISQUS_SHORTNAME || ''
-
-if (!disqusShortname) {
-  // If Disqus is not configured, don't render anything
-  return null
-}
+// Get shortname from build-time env var, with fallback for client-side check
+const disqusShortname = import.meta.env.PUBLIC_DISQUS_SHORTNAME || 'merox'
 
 // Sanitize inputs to prevent XSS
 const sanitize = (str: string) => {
@@ -65,7 +61,14 @@ const pageUrl = url || Astro.url.href
   (function() {
     'use strict'
 
-    if (!disqusShortname) {
+    // Get shortname - check env var first, then fallback
+    const shortname = disqusShortname || 'merox'
+    
+    if (!shortname || shortname === '') {
+      console.warn('Disqus shortname not configured')
+      if (loadingIndicator) {
+        loadingIndicator.innerHTML = '<span class="text-muted-foreground">Comments not configured.</span>'
+      }
       return
     }
 
@@ -127,7 +130,7 @@ const pageUrl = url || Astro.url.href
       // Create and load Disqus script
       try {
         const script = document.createElement('script')
-        script.src = `https://${disqusShortname}.disqus.com/embed.js`
+        script.src = `https://${shortname}.disqus.com/embed.js`
         script.async = true
         script.setAttribute('data-timestamp', Date.now().toString())
         
