@@ -135,10 +135,7 @@ const Newsletter: React.FC<NewsletterProps> = ({
               htmlFor="newsletter-consent"
               className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
             >
-              I agree to receive newsletter emails. You can unsubscribe at any time. 
-              <a href="/privacy" className="underline hover:text-foreground ml-1" target="_blank" rel="noopener noreferrer">
-                Privacy Policy
-              </a>
+              I agree to receive newsletter emails. <a href="/privacy" className="underline hover:text-foreground" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
             </label>
           </div>
           
@@ -221,10 +218,7 @@ const Newsletter: React.FC<NewsletterProps> = ({
                   htmlFor="newsletter-consent-inline"
                   className="text-xs text-muted-foreground cursor-pointer"
                 >
-                  I agree to receive emails. 
-                  <a href="/privacy" className="underline ml-1" target="_blank" rel="noopener noreferrer">
-                    Privacy Policy
-                  </a>
+                  I agree to receive emails. <a href="/privacy" className="underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
                 </label>
               </div>
               
@@ -307,10 +301,7 @@ const Newsletter: React.FC<NewsletterProps> = ({
               htmlFor="newsletter-consent-default"
               className="text-xs text-muted-foreground cursor-pointer"
             >
-              I agree to receive newsletter emails. 
-              <a href="/privacy" className="underline ml-1" target="_blank" rel="noopener noreferrer">
-                Privacy Policy
-              </a>
+              I agree to receive newsletter emails. <a href="/privacy" className="underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
             </label>
           </div>
           
