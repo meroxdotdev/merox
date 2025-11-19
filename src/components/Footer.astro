@@ -6,8 +6,9 @@ import Newsletter from './react/Newsletter'
 import { ErrorBoundary } from './react/ErrorBoundary'
 
 // Hide newsletter on confirmed page and homepage (newsletter is shown in index.astro before CTA)
-const isConfirmedPage = Astro.url.pathname === '/newsletter/confirmed'
-const isHomepage = Astro.url.pathname === '/' || Astro.url.pathname === '/index.html'
+const pathname = Astro.url.pathname.replace(/\/$/, '') // Remove trailing slash
+const isConfirmedPage = pathname === '/newsletter/confirmed'
+const isHomepage = pathname === '/' || pathname === '/index.html'
 ---
 
 <footer class="mx-auto mb-8 w-full max-w-3xl px-4 sm:mb-4">
