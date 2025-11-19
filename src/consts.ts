@@ -30,6 +30,17 @@ export const DISQUS = {
   shortname: import.meta.env.PUBLIC_DISQUS_SHORTNAME || '',
 }
 
+// Brevo Newsletter
+// Get your API key from https://app.brevo.com/settings/keys/api
+// Set it as an environment variable: BREVO_API_KEY=your-api-key
+// Optional: Set BREVO_LIST_ID to automatically add subscribers to a specific list
+// Optional: Set BREVO_TEMPLATE_ID for double opt-in confirmation email (default: 5)
+export const BREVO = {
+  apiKey: import.meta.env.BREVO_API_KEY || '',
+  listId: import.meta.env.BREVO_LIST_ID || '',
+  templateId: import.meta.env.BREVO_TEMPLATE_ID || '5',
+}
+
 export const NAV_LINKS: SocialLink[] = [
 
   {
