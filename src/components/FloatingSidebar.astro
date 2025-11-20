@@ -309,15 +309,14 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
 <script>
   // Prevent floating sidebar from overlapping footer
   function updateSidebarPosition() {
-    const sidebar = document.querySelector('[data-floating-sidebar]')
+    const sidebar = document.querySelector('[data-floating-sidebar]') as HTMLElement | null
     if (!sidebar) return
 
-    const footer = document.querySelector('footer')
+    const footer = document.querySelector('footer') as HTMLElement | null
     if (!footer) return
 
     const sidebarRect = sidebar.getBoundingClientRect()
     const footerRect = footer.getBoundingClientRect()
-    const viewportHeight = window.innerHeight
     const sidebarHeight = sidebarRect.height
     const topOffset = 128 // top-32 = 8rem = 128px
 
