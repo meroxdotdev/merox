@@ -14,7 +14,7 @@ const isExternalLink = (href: string) => {
 }
 ---
 
-<header class="bg-background/50 sticky top-0 z-10 backdrop-blur-md" transition:persist>
+<header class="bg-background/80 sticky top-0 z-10 backdrop-blur-md border-b border-border/50" transition:persist>
   <div class="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-4 p-4">
     <Link href="/" class="flex shrink-0 items-center gap-2 text-xl font-medium">
       <Image src={logo} alt="Logo" class="size-8 dark:block hidden" />
@@ -42,9 +42,12 @@ const isExternalLink = (href: string) => {
           )
         })}
       </nav>
-      <SearchButton client:idle />
-      <MobileMenu client:idle transition:persist />
-      <ThemeToggle transition:persist />
+      <div class="hidden h-6 w-px bg-border/60 md:block" aria-hidden="true"></div>
+      <div class="flex items-center gap-1.5">
+        <SearchButton client:idle />
+        <MobileMenu client:idle transition:persist />
+        <ThemeToggle transition:persist />
+      </div>
     </div>
   </div>
 </header>
