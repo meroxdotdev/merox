@@ -122,21 +122,21 @@ const Newsletter: React.FC<NewsletterProps> = ({
           </div>
           
           {/* GDPR Compliant Consent Checkbox */}
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-2 pl-2 sm:pl-10">
             <input
               type="checkbox"
               id="newsletter-consent"
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
               disabled={status === 'loading'}
-              className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary/20 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary/20 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer"
               required
             />
             <label
               htmlFor="newsletter-consent"
               className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
             >
-              {NEWSLETTER_CONSENT_TEXT.text} <a href={NEWSLETTER_CONSENT_TEXT.privacyLink} className="underline hover:text-foreground" target="_blank" rel="noopener noreferrer">{NEWSLETTER_CONSENT_TEXT.privacyText}</a>
+              {NEWSLETTER_CONSENT_TEXT.text} <a href={NEWSLETTER_CONSENT_TEXT.privacyLink} className="underline hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">{NEWSLETTER_CONSENT_TEXT.privacyText}</a>
             </label>
           </div>
           
@@ -205,21 +205,21 @@ const Newsletter: React.FC<NewsletterProps> = ({
               </div>
               
               {/* GDPR Consent */}
-              <div className="flex items-start gap-2">
+              <div className="flex items-start gap-2 pl-0 sm:pl-4">
                 <input
                   type="checkbox"
                   id="newsletter-consent-inline"
                   checked={consent}
                   onChange={(e) => setConsent(e.target.checked)}
                   disabled={status === 'loading'}
-                  className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
+                  className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary/20 focus:ring-offset-0 disabled:opacity-50 shrink-0 cursor-pointer"
                   required
                 />
                 <label
                   htmlFor="newsletter-consent-inline"
-                  className="text-xs text-muted-foreground cursor-pointer"
+                  className="text-xs text-muted-foreground cursor-pointer leading-relaxed"
                 >
-                  {NEWSLETTER_CONSENT_TEXT.text} <a href={NEWSLETTER_CONSENT_TEXT.privacyLink} className="underline" target="_blank" rel="noopener noreferrer">{NEWSLETTER_CONSENT_TEXT.privacyText}</a>
+                  {NEWSLETTER_CONSENT_TEXT.text} <a href={NEWSLETTER_CONSENT_TEXT.privacyLink} className="underline hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">{NEWSLETTER_CONSENT_TEXT.privacyText}</a>
                 </label>
               </div>
               
@@ -288,21 +288,21 @@ const Newsletter: React.FC<NewsletterProps> = ({
           </div>
           
           {/* GDPR Consent */}
-          <div className="flex items-start gap-2">
+          <div className="flex items-start gap-2 pl-0 sm:pl-4">
             <input
               type="checkbox"
               id="newsletter-consent-default"
               checked={consent}
               onChange={(e) => setConsent(e.target.checked)}
               disabled={status === 'loading'}
-              className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary/20 disabled:opacity-50"
+              className="mt-0.5 h-4 w-4 rounded border-border text-primary focus:ring-2 focus:ring-primary/20 focus:ring-offset-0 disabled:opacity-50 shrink-0 cursor-pointer"
               required
             />
             <label
               htmlFor="newsletter-consent-default"
-              className="text-xs text-muted-foreground cursor-pointer"
+              className="text-xs text-muted-foreground cursor-pointer leading-relaxed"
             >
-              {NEWSLETTER_CONSENT_TEXT.text} <a href={NEWSLETTER_CONSENT_TEXT.privacyLink} className="underline" target="_blank" rel="noopener noreferrer">{NEWSLETTER_CONSENT_TEXT.privacyText}</a>
+              {NEWSLETTER_CONSENT_TEXT.text} <a href={NEWSLETTER_CONSENT_TEXT.privacyLink} className="underline hover:text-foreground transition-colors" target="_blank" rel="noopener noreferrer">{NEWSLETTER_CONSENT_TEXT.privacyText}</a>
             </label>
           </div>
           
