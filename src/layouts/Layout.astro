@@ -48,7 +48,7 @@ const { class: className, hideFloatingSidebar = false } = Astro.props
     >
       <slot />
     </main>
-    {!hideFloatingSidebar && <FloatingSidebar />}
+    {false && !hideFloatingSidebar && <FloatingSidebar />}
     <Footer />
   </body>
 </html>

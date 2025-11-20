@@ -20,6 +20,7 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
     id="floating-sidebar"
     class="fixed right-6 top-32 z-40 hidden xl:block opacity-0 animate-fade-in"
     aria-label="Support and advertising"
+    data-floating-sidebar
   >
     <div class="w-56 rounded-lg border border-border/40 bg-background/80 backdrop-blur-md shadow-sm hover:shadow-md transition-all duration-300">
       <div class="p-4 flex flex-col gap-4">
@@ -304,4 +305,67 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
     }
   }
 </style>
+
+<script>
+  // Prevent floating sidebar from overlapping footer
+  function updateSidebarPosition() {
+    const sidebar = document.querySelector('[data-floating-sidebar]')
+    if (!sidebar) return
+
+    const footer = document.querySelector('footer')
+    if (!footer) return
+
+    const sidebarRect = sidebar.getBoundingClientRect()
+    const footerRect = footer.getBoundingClientRect()
+    const viewportHeight = window.innerHeight
+    const sidebarHeight = sidebarRect.height
+    const topOffset = 128 // top-32 = 8rem = 128px
+
+    // Calculate if sidebar would overlap footer
+    const sidebarBottom = window.scrollY + sidebarRect.top + sidebarHeight
+    const footerTop = window.scrollY + footerRect.top
+
+    // If sidebar would overlap footer, adjust its position
+    if (sidebarBottom > footerTop - 24) {
+      const maxBottom = footerTop - window.scrollY - 24 // 24px gap above footer
+      const maxTop = maxBottom - sidebarHeight
+      sidebar.style.top = `${Math.max(topOffset, maxTop)}px`
+      sidebar.style.bottom = 'auto'
+    } else {
+      // Reset to original position
+      sidebar.style.top = '8rem' // top-32
+      sidebar.style.bottom = 'auto'
+    }
+  }
+
+  // Update on scroll and resize
+  let ticking = false
+  function handleUpdate() {
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        updateSidebarPosition()
+        ticking = false
+      })
+      ticking = true
+    }
+  }
+
+  // Initialize on load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      updateSidebarPosition()
+      window.addEventListener('scroll', handleUpdate, { passive: true })
+      window.addEventListener('resize', handleUpdate, { passive: true })
+    })
+  } else {
+    updateSidebarPosition()
+    window.addEventListener('scroll', handleUpdate, { passive: true })
+    window.addEventListener('resize', handleUpdate, { passive: true })
+  }
+
+  // Update on Astro navigation
+  document.addEventListener('astro:page-load', () => {
+    setTimeout(updateSidebarPosition, 100)
+  })
+</script>
 

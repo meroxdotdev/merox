@@ -11,8 +11,6 @@ import TOCSidebar from '@/components/TOCSidebar.astro'
 import { badgeVariants } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
-import Newsletter from '@/components/react/Newsletter'
-import { ErrorBoundary } from '@/components/react/ErrorBoundary'
 import { SITE } from '@/consts'
 import {
   getAdjacentPosts,
@@ -304,29 +302,6 @@ try {
     }
   </section>
 
-  {/* Newsletter Section - Outside footer, only on blog posts */}
-  {!isCurrentSubpost && (
-    <div class="mx-auto max-w-3xl px-4 mt-12 mb-8">
-      <div class="rounded-xl border border-border/50 bg-background/60 backdrop-blur-sm p-6 md:p-8">
-        <div class="mx-auto max-w-xl">
-          <div class="text-center mb-5">
-            <h3 class="text-xl md:text-2xl font-semibold mb-2 tracking-tight">
-              Newsletter
-            </h3>
-            <p class="text-muted-foreground text-sm md:text-base leading-relaxed">
-              Get the latest posts about infrastructure, HPC, Kubernetes, and DevOps delivered to your inbox.
-            </p>
-          </div>
-          
-          <div class="max-w-md mx-auto">
-            <ErrorBoundary client:load>
-              <Newsletter client:load variant="compact" />
-            </ErrorBoundary>
-          </div>
-        </div>
-      </div>
-    </div>
-  )}
 
   <Button
     variant="outline"

@@ -2,6 +2,8 @@
 import { SOCIAL_LINKS, NAV_LINKS } from '@/consts'
 import SocialIcons from './SocialIcons.astro'
 import Link from '@/components/Link.astro'
+import Newsletter from './react/Newsletter'
+import { ErrorBoundary } from './react/ErrorBoundary'
 import { Icon } from 'astro-icon/components'
 
 const isExternalLink = (href: string) => {
@@ -10,55 +12,84 @@ const isExternalLink = (href: string) => {
 ---
 
 <footer class="bg-background/80 border-t border-border/50 backdrop-blur-md">
-  <div class="mx-auto max-w-3xl px-4 py-8 sm:py-8">
-    <!-- Footer Content -->
-    <div class="flex flex-col gap-6 sm:gap-6">
-      <!-- Navigation Links -->
-      <nav class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
-        {NAV_LINKS.map((item) => {
-          const isExternal = isExternalLink(item.href)
-          return (
-            <Link 
-              href={item.href} 
-              class="text-foreground/60 hover:text-foreground/80 capitalize transition-colors flex items-center gap-1.5"
-            >
-              <span>{item.label}</span>
-              {isExternal && (
-                <Icon 
-                  name="lucide:external-link" 
-                  class="size-3 opacity-70 flex-shrink-0" 
-                  aria-hidden="true"
-                />
-              )}
-            </Link>
-          )
-        })}
-      </nav>
-
-      <!-- Separator - Hidden on mobile -->
-      <div class="h-px bg-border/60 hidden sm:block" aria-hidden="true"></div>
-
-      <!-- Bottom Section -->
-      <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-4">
-        <!-- Copyright & Legal Links -->
-        <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-x-3 text-sm text-muted-foreground text-center">
-          <span>
-            &copy; {new Date().getFullYear()} Merox.
-          </span>
-          <div class="hidden sm:inline-block h-3 w-px bg-border/60" aria-hidden="true"></div>
-          <div class="flex items-center gap-x-2">
-            <a href="/privacy" class="hover:text-foreground transition-colors">
-              Privacy
-            </a>
-            <span class="text-border/60">·</span>
-            <a href="/terms" class="hover:text-foreground transition-colors">
-              Terms
-            </a>
+  <div class="mx-auto max-w-3xl px-4 py-8 sm:py-10">
+    <div class="flex flex-col gap-8">
+      <!-- Newsletter Section -->
+      <div class="flex flex-col sm:flex-row sm:items-start gap-6 pb-6 border-b border-border/60">
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-2">
+            <Icon name="lucide:mail" class="size-5 text-primary shrink-0" />
+            <h3 class="text-lg font-semibold">Stay Updated</h3>
           </div>
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            Get the latest posts about infrastructure, HPC, Kubernetes, and DevOps delivered to your inbox.
+          </p>
+        </div>
+        <div class="flex-1 sm:max-w-md">
+          <ErrorBoundary client:load>
+            <Newsletter client:load />
+          </ErrorBoundary>
+        </div>
+      </div>
+
+      <!-- Main Footer Content -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <!-- Navigation -->
+        <div>
+          <h4 class="text-sm font-semibold mb-3 text-foreground">Navigation</h4>
+          <nav class="flex flex-col gap-2">
+            {NAV_LINKS.map((item) => {
+              const isExternal = isExternalLink(item.href)
+              return (
+                <Link 
+                  href={item.href} 
+                  class="text-sm text-muted-foreground hover:text-foreground capitalize transition-colors flex items-center gap-1.5 group"
+                >
+                  <span>{item.label}</span>
+                  {isExternal && (
+                    <Icon 
+                      name="lucide:external-link" 
+                      class="size-3 opacity-70 flex-shrink-0 group-hover:opacity-100 transition-opacity" 
+                      aria-hidden="true"
+                    />
+                  )}
+                </Link>
+              )
+            })}
+          </nav>
         </div>
 
-        <!-- Social Icons -->
-        <SocialIcons links={SOCIAL_LINKS} />
+        <!-- Legal -->
+        <div>
+          <h4 class="text-sm font-semibold mb-3 text-foreground">Legal</h4>
+          <nav class="flex flex-col gap-2">
+            <Link href="/privacy" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Terms of Service
+            </Link>
+          </nav>
+        </div>
+
+        <!-- Connect -->
+        <div>
+          <h4 class="text-sm font-semibold mb-3 text-foreground">Connect</h4>
+          <SocialIcons links={SOCIAL_LINKS} />
+        </div>
+      </div>
+
+      <!-- Separator -->
+      <div class="h-px bg-border/60" aria-hidden="true"></div>
+
+      <!-- Bottom Section -->
+      <div class="flex flex-col items-center gap-2 sm:flex-row sm:justify-between text-sm text-muted-foreground">
+        <div class="text-center sm:text-left">
+          &copy; {new Date().getFullYear()} Merox. All rights reserved.
+        </div>
+        <div class="text-xs text-muted-foreground/80">
+          Based on <a href="https://github.com/jktrn/astro-erudite" target="_blank" rel="noopener noreferrer" class="underline hover:text-foreground transition-colors">erudite</a>
+        </div>
       </div>
     </div>
   </div>
