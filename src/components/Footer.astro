@@ -1,62 +1,65 @@
 ---
-import { Separator } from '@/components/ui/separator'
-import { SOCIAL_LINKS } from '@/consts'
+import { SOCIAL_LINKS, NAV_LINKS } from '@/consts'
 import SocialIcons from './SocialIcons.astro'
-import Newsletter from './react/Newsletter'
-import { ErrorBoundary } from './react/ErrorBoundary'
+import Link from '@/components/Link.astro'
+import { Icon } from 'astro-icon/components'
 
-// Hide newsletter on confirmed page, homepage, privacy, and terms pages
-const pathname = Astro.url.pathname
-const isConfirmedPage = pathname.includes('/newsletter/confirmed')
-const isHomepage = pathname === '/' || pathname === '' || pathname === '/index.html' || pathname.startsWith('/index')
-const isPrivacyPage = pathname === '/privacy'
-const isTermsPage = pathname === '/terms'
-const shouldHideNewsletter = isConfirmedPage || isHomepage || isPrivacyPage || isTermsPage
+const isExternalLink = (href: string) => {
+  return href.startsWith('http')
+}
 ---
 
-<footer class="mx-auto mb-8 w-full max-w-3xl px-4 sm:mb-4">
-  {!shouldHideNewsletter && (
-  <!-- Modern Newsletter Section - 2025 Design -->
-  <div class="mb-6 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-xl p-8 md:p-10 shadow-sm">
-    <div class="mx-auto max-w-2xl">
-      <div class="text-center mb-6">
-        <h3 class="text-2xl md:text-3xl font-semibold mb-2 tracking-tight">
-          Newsletter
-        </h3>
-        <p class="text-muted-foreground text-sm md:text-base max-w-lg mx-auto leading-relaxed">
-          Get the latest posts about infrastructure, HPC, Kubernetes, and DevOps delivered to your inbox.
-        </p>
-      </div>
-      
-      <div class="max-w-md mx-auto">
-        <ErrorBoundary client:load>
-          <Newsletter client:load variant="compact" />
-        </ErrorBoundary>
-      </div>
-    </div>
-  </div>
-  )}
+<footer class="bg-background/80 border-t border-border/50 backdrop-blur-md">
+  <div class="mx-auto max-w-3xl px-4 py-8 sm:py-8">
+    <!-- Footer Content -->
+    <div class="flex flex-col gap-6 sm:gap-6">
+      <!-- Navigation Links -->
+      <nav class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
+        {NAV_LINKS.map((item) => {
+          const isExternal = isExternalLink(item.href)
+          return (
+            <Link 
+              href={item.href} 
+              class="text-foreground/60 hover:text-foreground/80 capitalize transition-colors flex items-center gap-1.5"
+            >
+              <span>{item.label}</span>
+              {isExternal && (
+                <Icon 
+                  name="lucide:external-link" 
+                  class="size-3 opacity-70 flex-shrink-0" 
+                  aria-hidden="true"
+                />
+              )}
+            </Link>
+          )
+        })}
+      </nav>
 
-  <div class="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 via-primary/3 to-transparent backdrop-blur-sm">
-    <!-- Subtle gradient orbs -->
-    <div class="absolute -top-10 -left-10 w-24 h-24 bg-primary/10 rounded-full blur-2xl"></div>
-    <div class="absolute -bottom-10 -right-10 w-24 h-24 bg-primary/5 rounded-full blur-2xl"></div>
+      <!-- Separator - Hidden on mobile -->
+      <div class="h-px bg-border/60 hidden sm:block" aria-hidden="true"></div>
 
-    <div class="relative z-10 p-6 flex flex-col items-center justify-center gap-3 sm:flex-row sm:justify-between">
-      <div class="flex flex-wrap items-center justify-center gap-x-2.5 text-center text-sm text-muted-foreground">
-        <span>
-          &copy; {new Date().getFullYear()} Robert Melcher.
-        </span>
-        <span class="hidden sm:inline">·</span>
-        <a href="/privacy" class="hover:text-foreground transition-colors">
-          Privacy
-        </a>
-        <span>·</span>
-        <a href="/terms" class="hover:text-foreground transition-colors">
-          Terms
-        </a>
+      <!-- Bottom Section -->
+      <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-4">
+        <!-- Copyright & Legal Links -->
+        <div class="flex flex-col sm:flex-row items-center gap-2 sm:gap-x-3 text-sm text-muted-foreground text-center">
+          <span>
+            &copy; {new Date().getFullYear()} Merox.
+          </span>
+          <div class="hidden sm:inline-block h-3 w-px bg-border/60" aria-hidden="true"></div>
+          <div class="flex items-center gap-x-2">
+            <a href="/privacy" class="hover:text-foreground transition-colors">
+              Privacy
+            </a>
+            <span class="text-border/60">·</span>
+            <a href="/terms" class="hover:text-foreground transition-colors">
+              Terms
+            </a>
+          </div>
+        </div>
+
+        <!-- Social Icons -->
+        <SocialIcons links={SOCIAL_LINKS} />
       </div>
-      <SocialIcons links={SOCIAL_LINKS} />
     </div>
   </div>
 </footer>
