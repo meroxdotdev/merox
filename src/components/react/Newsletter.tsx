@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Mail, Loader2, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { NEWSLETTER_CONSENT_TEXT } from '@/consts'
 
 interface NewsletterProps {
   variant?: 'default' | 'compact' | 'inline'
@@ -135,7 +136,7 @@ const Newsletter: React.FC<NewsletterProps> = ({
               htmlFor="newsletter-consent"
               className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
             >
-              I agree to receive newsletter emails. <a href="/privacy" className="underline hover:text-foreground" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+              {NEWSLETTER_CONSENT_TEXT.text} <a href={NEWSLETTER_CONSENT_TEXT.privacyLink} className="underline hover:text-foreground" target="_blank" rel="noopener noreferrer">{NEWSLETTER_CONSENT_TEXT.privacyText}</a>
             </label>
           </div>
           
@@ -218,7 +219,7 @@ const Newsletter: React.FC<NewsletterProps> = ({
                   htmlFor="newsletter-consent-inline"
                   className="text-xs text-muted-foreground cursor-pointer"
                 >
-                  I agree to receive emails. <a href="/privacy" className="underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+                  {NEWSLETTER_CONSENT_TEXT.text} <a href={NEWSLETTER_CONSENT_TEXT.privacyLink} className="underline" target="_blank" rel="noopener noreferrer">{NEWSLETTER_CONSENT_TEXT.privacyText}</a>
                 </label>
               </div>
               
@@ -301,7 +302,7 @@ const Newsletter: React.FC<NewsletterProps> = ({
               htmlFor="newsletter-consent-default"
               className="text-xs text-muted-foreground cursor-pointer"
             >
-              I agree to receive newsletter emails. <a href="/privacy" className="underline" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+              {NEWSLETTER_CONSENT_TEXT.text} <a href={NEWSLETTER_CONSENT_TEXT.privacyLink} className="underline" target="_blank" rel="noopener noreferrer">{NEWSLETTER_CONSENT_TEXT.privacyText}</a>
             </label>
           </div>
           
