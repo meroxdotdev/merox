@@ -8,7 +8,7 @@ import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
 import { Image } from 'astro:assets'
-import { formatDate } from '@/lib/utils'
+import { formatDate, cn } from '@/lib/utils'
 
 // Error handling for fetching recent posts
 let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
@@ -18,11 +18,46 @@ try {
   console.error('Error fetching recent posts:', error)
   // Continue with empty array - page will still render
 }
-const highlights = [
-  'HPC @ Forvia: Full InfiniBand clusters + PBS scheduling',
-  'Dolphost Founder: Secure VPS & WordPress hosting',
-  'Cybersecurity @ Atos: Nessus, Palo Alto/Fortinet and Forescout configurations',
-  'SysAdmin @ Netex: Migrated bare-metal Puppet to Kubernetes',
+
+type ExperienceItem = {
+  role: string
+  company: string
+  period: string
+  current?: boolean
+  icon: string
+  key: string
+}
+
+const experience: ExperienceItem[] = [
+  {
+    role: 'HPC System Administrator',
+    company: 'Forvia',
+    period: '2022 - Present',
+    current: true,
+    icon: 'lucide:server',
+    key: 'Led end-to-end deployment of HPC cluster on Dell infrastructure with PBS scheduling • Cross-team coordination with network and firewall teams for infrastructure provisioning'
+  },
+  {
+    role: 'Founder',
+    company: 'Dolphost',
+    period: '2022 - 2024',
+    icon: 'lucide:rocket',
+    key: 'Built secure WordPress hosting platform • Managed VPS infrastructure and implemented WHMCS/cPanel solutions'
+  },
+  {
+    role: 'Cyber Security Engineer',
+    company: 'Atos IT Solutions',
+    period: '2020 - 2022',
+    icon: 'lucide:shield',
+    key: 'Conducted vulnerability assessments with NESSUS • Implemented firewall policies across Cisco, Fortinet, Palo Alto, and Juniper platforms'
+  },
+  {
+    role: 'System Administrator',
+    company: 'Netex Romania',
+    period: '2018 - 2020',
+    icon: 'lucide:server',
+    key: 'Migrated Puppet infrastructure to Kubernetes • Managed BAREOS backups for 200+ servers • Configured IPsec site-to-site VPN connections'
+  }
 ]
 ---
 <Layout class="max-w-3xl">
@@ -30,7 +65,6 @@ const highlights = [
   
   <!-- Preload LCP image for faster loading -->
   <link rel="preload" as="image" href="/static/homelab.webp" type="image/webp" fetchpriority="high" />
-  <link rel="preload" as="image" href="/static/homelab.png" type="image/png" fetchpriority="high" />
 
   <!-- Hero with homelab background -->
   <section class="relative overflow-hidden rounded-xl border">
@@ -66,7 +100,7 @@ const highlights = [
             Building infrastructure<br/>that scales.
           </h1>
           <p class="text-muted-foreground mt-4 leading-relaxed text-base md:text-lg">
-            DevOps-focused HPC System Administrator with 9+ years in IT, including 2 years as a Cybersecurity Engineer.
+            System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security.
           </p>
           <div class="mt-6 flex flex-wrap items-center gap-3">
             <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg' })}>
@@ -105,6 +139,57 @@ const highlights = [
     </ErrorBoundary>
   </section>
 
+  <!-- Experience Timeline - Clean Design -->
+  <section class="mt-12">
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold mb-2">Experience</h2>
+      <p class="text-sm text-muted-foreground">
+        6+ years across HPC deployment, cybersecurity, and enterprise infrastructure
+      </p>
+    </div>
+    
+    <div class="space-y-6">
+      {experience.map((exp, index) => (
+        <div key={`${exp.company}-${exp.period}`} class="relative">
+          <!-- Timeline connector -->
+          {index < experience.length - 1 && (
+            <div class="absolute left-[11px] top-8 bottom-0 w-px bg-border" aria-hidden="true"></div>
+          )}
+          
+          <div class="flex gap-4">
+            <!-- Icon -->
+            <div class={cn(
+              "relative flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ring-4 ring-background z-10",
+              exp.current ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+            )}>
+              <Icon name={exp.icon} class="size-3.5" />
+            </div>
+            
+            <!-- Content -->
+            <div class="flex-1 pb-2 min-w-0">
+              <div class="flex items-start justify-between gap-3 mb-1">
+                <div class="min-w-0 flex-1">
+                  <h3 class="font-semibold text-lg leading-tight">{exp.role}</h3>
+                  <p class="text-sm text-muted-foreground">
+                    {exp.company} · {exp.period}
+                  </p>
+                </div>
+                {exp.current && (
+                  <span class="px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-md border border-primary/20 flex-shrink-0">
+                    Current
+                  </span>
+                )}
+              </div>
+              <p class="text-sm text-muted-foreground/90 leading-relaxed mt-2">
+                {exp.key}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
   <!-- Latest from the blog -->
   {latestPosts && latestPosts.length > 0 && (
     <section class="mt-12">
@@ -125,7 +210,7 @@ const highlights = [
       </div>
       <div class="space-y-8">
         {latestPosts.map((post) => (
-          <article class="group">
+          <article key={post.id} class="group">
             <Link
               href={`/${post.collection}/${post.id}`}
               class="flex flex-col sm:flex-row gap-5"
@@ -182,30 +267,8 @@ const highlights = [
     </section>
   )}
 
-  <!-- Highlights -->
-  <section class="mt-8 rounded-xl border bg-card/50">
-    <div class="p-6">
-      <h2 class="text-xl font-bold mb-4">Professional Highlights</h2>
-      <p class="text-sm text-muted-foreground mb-4">
-        Throughout my career, I've focused on building infrastructure that scales across diverse environments—from enterprise cybersecurity deployments to high-performance computing clusters. Each role has reinforced my commitment to automation, security, and operational excellence.
-      </p>
-      <div class="space-y-2.5">
-        {highlights.map((h) => (
-          <div class="flex items-start gap-2.5 text-sm">
-            <span class="text-primary mt-0.5">▸</span>
-            <p class="leading-snug">{h}</p>
-          </div>
-        ))}
-      </div>
-      <div class="mt-5 pt-5 border-t text-sm">
-        <p class="font-medium">Now @ Forvia</p>
-        <p class="text-muted-foreground">ex-Atos (Cybersecurity)</p>
-      </div>
-    </div>
-  </section>
-
   <!-- CTA Section -->
-  <section class="mt-8 mb-8">
+  <section class="mt-12 mb-8">
     <div class="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent backdrop-blur-sm">
       <!-- Gradient orbs: top-left + bottom-right -->
       <div class="absolute -top-20 -left-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
