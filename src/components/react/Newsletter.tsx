@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Mail, Loader2, CheckCircle2, AlertCircle } from 'lucide-react'
+import { Mail, Loader2, CheckCircle2, AlertCircle, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { NEWSLETTER_CONSENT_TEXT } from '@/consts'
@@ -84,7 +84,7 @@ const Newsletter: React.FC<NewsletterProps> = ({ className }) => {
   return (
     <div className={cn('w-full', className)}>
       <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1 group">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary pointer-events-none z-10 flex-shrink-0" />
             <input
@@ -93,7 +93,7 @@ const Newsletter: React.FC<NewsletterProps> = ({ className }) => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               disabled={status === 'loading'}
-              className="w-full h-9 pl-10 pr-4 text-sm rounded-md border border-border/60 bg-background/80 backdrop-blur-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-10 pl-10 pr-4 text-sm rounded-md border border-border/60 bg-background/80 backdrop-blur-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Email address"
               required
             />
@@ -101,13 +101,20 @@ const Newsletter: React.FC<NewsletterProps> = ({ className }) => {
           <Button
             type="submit"
             disabled={status === 'loading'}
-            size="default"
-            className="shrink-0 h-9 px-4 sm:px-6 w-full sm:w-auto"
+            size="lg"
+            className="shrink-0 w-full sm:w-auto group"
           >
             {status === 'loading' ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Subscribing...</span>
+              </>
             ) : (
-              'Subscribe'
+              <>
+                <Mail className="h-4 w-4" />
+                <span>Subscribe</span>
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </>
             )}
           </Button>
         </div>

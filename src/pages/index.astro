@@ -267,29 +267,36 @@ const experience: ExperienceItem[] = [
     </section>
   )}
 
-  <!-- CTA Section -->
-  <section class="mt-12 mb-8">
-    <div class="relative overflow-hidden rounded-xl border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent backdrop-blur-sm">
-      <!-- Gradient orbs: top-left + bottom-right -->
-      <div class="absolute -top-20 -left-20 w-40 h-40 bg-primary/20 rounded-full blur-3xl"></div>
-      <div class="absolute -bottom-20 -right-20 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
-
-      <div class="relative z-10 p-8 text-center">
-        <h2 class="text-2xl font-semibold mb-3">
+<!-- CTA Section - Split Layout -->
+<section class="mt-12 mb-8">
+  <div class="rounded-xl border bg-card/50 overflow-hidden">
+    <div class="grid md:grid-cols-[1fr_auto] gap-6 p-6 md:p-8 items-center">
+      <div class="text-left">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 mb-3">
+          <span class="relative flex h-2 w-2">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+          </span>
+          <span class="text-xs font-medium text-green-600 dark:text-green-400">Available for consulting</span>
+        </div>
+        
+        <h2 class="text-2xl font-semibold mb-2">
           Let's talk infrastructure
         </h2>
-        <p class="text-muted-foreground mb-6 max-w-xl mx-auto">
+        <p class="text-muted-foreground text-sm">
           Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
         </p>
-        <Link 
-          href="mailto:hello@merox.dev" 
-          class={buttonVariants({ variant: 'default', size: 'lg' }) + ' group gap-2'}
-        >
-          <Icon name="lucide:mail" class="size-4" />
-          Get in touch
-          <span class="ml-1 transition-transform group-hover:translate-x-1">→</span>
-        </Link>
       </div>
+      
+      <Link 
+        href="mailto:hello@merox.dev" 
+        class={buttonVariants({ variant: 'default', size: 'lg' }) + ' group gap-2 md:flex-shrink-0'}
+      >
+        <Icon name="lucide:mail" class="size-4" />
+        Get in touch
+        <Icon name="lucide:arrow-right" class="size-4 transition-transform group-hover:translate-x-1" />
+      </Link>
     </div>
-  </section>
+  </div>
+</section>
 </Layout>
