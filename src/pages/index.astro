@@ -150,7 +150,7 @@ const experience: ExperienceItem[] = [
     
     <div class="space-y-6">
       {experience.map((exp, index) => (
-        <div key={`${exp.company}-${exp.period}`} class="relative">
+        <div class="relative">
           <!-- Timeline connector -->
           {index < experience.length - 1 && (
             <div class="absolute left-[11px] top-8 bottom-0 w-px bg-border" aria-hidden="true"></div>
@@ -210,7 +210,7 @@ const experience: ExperienceItem[] = [
       </div>
       <div class="space-y-8">
         {latestPosts.map((post) => (
-          <article key={post.id} class="group">
+          <article class="group">
             <Link
               href={`/${post.collection}/${post.id}`}
               class="flex flex-col sm:flex-row gap-5"
