@@ -211,18 +211,11 @@ const experience: ExperienceItem[] = [
             
             <!-- Content -->
             <div class="flex-1 pb-2 min-w-0">
-              <div class="flex items-start justify-between gap-3 mb-1">
-                <div class="min-w-0 flex-1">
-                  <h3 class="font-semibold text-lg leading-tight">{exp.role}</h3>
-                  <p class="text-sm text-muted-foreground">
-                    {exp.company} · {exp.period}
-                  </p>
-                </div>
-                {exp.current && (
-                  <span class="px-2 py-0.5 text-xs font-medium bg-primary/10 text-primary rounded-md border border-primary/20 flex-shrink-0">
-                    Current
-                  </span>
-                )}
+              <div class="mb-1">
+                <h3 class="font-semibold text-lg leading-tight">{exp.role}</h3>
+                <p class="text-sm text-muted-foreground">
+                  {exp.company} · {exp.period}
+                </p>
               </div>
               <p class="text-sm text-muted-foreground/90 leading-relaxed mt-2">
                 {exp.key}
