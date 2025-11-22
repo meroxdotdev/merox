@@ -46,6 +46,3 @@ export function initScrollAnimations() {
   })
 }
 
-// Export for use in Astro pages
-export { initScrollAnimations }
-
