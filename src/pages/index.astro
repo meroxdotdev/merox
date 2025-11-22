@@ -65,6 +65,63 @@ const experience: ExperienceItem[] = [
   
   <!-- Preload LCP image for faster loading -->
   <link rel="preload" as="image" href="/static/homelab.webp" type="image/webp" fetchpriority="high" />
+  
+  <!-- Scroll animations script -->
+  <script is:inline>
+    (function() {
+      // Respect user's motion preferences
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+      function initScrollAnimations() {
+        const observerOptions = {
+          threshold: 0.1,
+          rootMargin: '0px 0px -50px 0px',
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animate-in')
+              observer.unobserve(entry.target)
+            }
+          })
+        }, observerOptions)
+
+        // Observe all sections
+        const sections = document.querySelectorAll('section[class*="mt-"]')
+        sections.forEach((section) => {
+          section.classList.add('scroll-animate')
+          observer.observe(section)
+        })
+
+        // Observe experience timeline items
+        const experienceItems = document.querySelectorAll('section:has([class*="space-y-6"]) > div > div')
+        experienceItems.forEach((item, index) => {
+          item.classList.add('scroll-animate')
+          item.style.setProperty('--delay', `${index * 0.1}s`)
+          observer.observe(item)
+        })
+
+        // Observe blog post cards
+        const blogCards = document.querySelectorAll('article.group')
+        blogCards.forEach((card, index) => {
+          card.classList.add('scroll-animate')
+          card.style.setProperty('--delay', `${index * 0.15}s`)
+          observer.observe(card)
+        })
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initScrollAnimations)
+      } else {
+        initScrollAnimations()
+      }
+
+      document.addEventListener('astro:page-load', () => {
+        setTimeout(initScrollAnimations, 100)
+      })
+    })()
+  </script>
 
   <!-- Hero with homelab background -->
   <section class="relative overflow-hidden rounded-xl border">
@@ -126,21 +183,8 @@ const experience: ExperienceItem[] = [
     </div>
   </section>
 
-  <!-- Skills & Technologies -->
-  <section class="mt-8">
-    <div class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Skills & Technologies</h2>
-      <p class="text-sm text-muted-foreground">
-        Core competencies across systems administration, security, and infrastructure automation
-      </p>
-    </div>
-    <ErrorBoundary client:load>
-      <Skills client:load />
-    </ErrorBoundary>
-  </section>
-
   <!-- Experience Timeline - Clean Design -->
-  <section class="mt-12">
+  <section class="mt-8">
     <div class="mb-6">
       <h2 class="text-2xl font-semibold mb-2">Experience</h2>
       <p class="text-sm text-muted-foreground">
@@ -188,6 +232,19 @@ const experience: ExperienceItem[] = [
         </div>
       ))}
     </div>
+  </section>
+
+  <!-- Skills & Technologies -->
+  <section class="mt-12">
+    <div class="mb-6">
+      <h2 class="text-2xl font-semibold mb-2">Skills & Technologies</h2>
+      <p class="text-sm text-muted-foreground">
+        Core competencies across systems administration, security, and infrastructure automation
+      </p>
+    </div>
+    <ErrorBoundary client:load>
+      <Skills client:load />
+    </ErrorBoundary>
   </section>
 
   <!-- Latest from the blog -->
