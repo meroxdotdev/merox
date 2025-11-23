@@ -34,6 +34,47 @@ const { class: className, hideFloatingSidebar = false } = Astro.props
     >
       Skip to main content
     </a>
+    
+    <!-- Prevent navigation to same page to avoid refresh flicker -->
+    <script is:inline>
+      (function() {
+        // Only run once per page lifecycle
+        if (window.__preventSamePageNav) return
+        window.__preventSamePageNav = true
+        
+        function normalizePath(path) {
+          return path.split('#')[0].replace(/\/$/, '') || '/'
+        }
+        
+        function handleLinkClick(e) {
+          const link = e.target.closest('a[data-internal-link="true"]')
+          if (!link) return
+          
+          const href = link.getAttribute('href')
+          if (!href) return
+          
+          const currentPath = normalizePath(window.location.pathname)
+          const targetPath = normalizePath(href)
+          
+          // Prevent navigation if already on the same page (allow hash links)
+          if (currentPath === targetPath && !href.includes('#')) {
+            e.preventDefault()
+            e.stopPropagation()
+            e.stopImmediatePropagation()
+            return false
+          }
+        }
+        
+        // Use capture phase to intercept before Astro's view transitions
+        document.addEventListener('click', handleLinkClick, true)
+        
+        // Clean up on page unload (though this is handled by Astro's view transitions)
+        document.addEventListener('astro:before-swap', () => {
+          document.removeEventListener('click', handleLinkClick, true)
+          window.__preventSamePageNav = false
+        })
+      })()
+    </script>
     <header
       class="bg-background/50 sticky top-0 z-50 backdrop-blur-sm xl:backdrop-blur-none xl:bg-transparent divide-y divide-border xl:divide-none"
     >

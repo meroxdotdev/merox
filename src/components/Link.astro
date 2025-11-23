@@ -35,6 +35,7 @@ const isExternal = external || href.startsWith('http')
     className
   )}
   {...rest}
+  data-internal-link={!isExternal ? 'true' : undefined}
 >
   <slot />
 </a>

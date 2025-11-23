@@ -70,9 +70,33 @@ const experience: ExperienceItem[] = [
   <script is:inline>
     (function() {
       // Respect user's motion preferences
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      if (prefersReducedMotion) return
+
+      let observer = null
+      let initTimeout = null
+      const observedElements = new WeakSet()
+
+      function cleanup() {
+        if (observer) {
+          observer.disconnect()
+          observer = null
+        }
+        if (initTimeout) {
+          clearTimeout(initTimeout)
+          initTimeout = null
+        }
+        // Reset animation classes for re-initialization
+        document.querySelectorAll('.scroll-animate').forEach(el => {
+          if (!observedElements.has(el)) {
+            el.classList.remove('scroll-animate', 'animate-in')
+          }
+        })
+      }
 
       function initScrollAnimations() {
+        cleanup() // Clean up any existing observer first
+
         // Use more generous rootMargin on mobile to show content earlier
         const isMobile = window.innerWidth < 640
         const observerOptions = {
@@ -80,7 +104,7 @@ const experience: ExperienceItem[] = [
           rootMargin: isMobile ? '200px 0px -100px 0px' : '0px 0px -50px 0px',
         }
 
-        const observer = new IntersectionObserver((entries) => {
+        observer = new IntersectionObserver((entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
               entry.target.classList.add('animate-in')
@@ -89,22 +113,18 @@ const experience: ExperienceItem[] = [
           })
         }, observerOptions)
 
-        // Don't animate sections themselves - keep headers visible
-        // Only animate individual content items
-
         // Observe experience timeline items (individual items only)
         const experienceItems = document.querySelectorAll('section:has([class*="space-y-6"]) > div[class*="space-y"] > div')
         experienceItems.forEach((item, index) => {
           // On mobile, make first item visible immediately to indicate content below
-          // On desktop, animate all items normally
           if (isMobile && index === 0) {
             // First item visible immediately - no animation needed
-            // This provides visual cue that there's more content
-          } else {
-            item.classList.add('scroll-animate')
-            item.style.setProperty('--delay', `${index * 0.1}s`)
-            observer.observe(item)
+            return
           }
+          item.classList.add('scroll-animate')
+          item.style.setProperty('--delay', `${index * 0.1}s`)
+          observedElements.add(item)
+          observer.observe(item)
         })
 
         // Observe Skills section - find the actual Skills component container
@@ -115,6 +135,7 @@ const experience: ExperienceItem[] = [
           )
           if (skillsContainer && skillsContainer !== skillsSection.querySelector('div.mb-6')) {
             skillsContainer.classList.add('scroll-animate')
+            observedElements.add(skillsContainer)
             observer.observe(skillsContainer)
           }
         }
@@ -124,19 +145,28 @@ const experience: ExperienceItem[] = [
         blogCards.forEach((card, index) => {
           card.classList.add('scroll-animate')
           card.style.setProperty('--delay', `${index * 0.15}s`)
+          observedElements.add(card)
           observer.observe(card)
         })
       }
 
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initScrollAnimations)
-      } else {
-        initScrollAnimations()
+      function debouncedInit() {
+        if (initTimeout) {
+          clearTimeout(initTimeout)
+        }
+        initTimeout = setTimeout(initScrollAnimations, 50)
       }
 
-      document.addEventListener('astro:page-load', () => {
-        setTimeout(initScrollAnimations, 100)
-      })
+      // Initialize on page load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', debouncedInit)
+      } else {
+        debouncedInit()
+      }
+
+      // Handle Astro view transitions
+      document.addEventListener('astro:page-load', debouncedInit)
+      document.addEventListener('astro:before-swap', cleanup)
     })()
   </script>
 
