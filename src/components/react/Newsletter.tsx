@@ -85,7 +85,7 @@ const Newsletter: React.FC<NewsletterProps> = ({ className }) => {
     <div className={cn('w-full', className)}>
       <form onSubmit={handleSubmit} className="space-y-3">
         <div className="flex flex-col sm:flex-row gap-3 items-start">
-          <div className="relative flex-1 min-w-0 group">
+          <div className="relative w-full sm:flex-1 sm:min-w-0 group">
             <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary pointer-events-none z-10 flex-shrink-0" />
             <input
               type="email"
@@ -103,7 +103,7 @@ const Newsletter: React.FC<NewsletterProps> = ({ className }) => {
             disabled={status === 'loading'}
             size="lg"
             variant="default"
-            className="shrink-0 w-full sm:w-auto md:flex-shrink-0 group gap-2"
+            className="w-full sm:w-auto sm:flex-shrink-0 group gap-2"
           >
             {status === 'loading' ? (
               <>
