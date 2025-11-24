@@ -10,7 +10,13 @@ const SearchButton: React.FC = () => {
   // Keyboard shortcut: Cmd/Ctrl + K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      // Don't trigger if user is typing in an input, textarea, or contenteditable
+      const target = e.target as HTMLElement
+      const isInput = target.tagName === 'INPUT' || 
+                      target.tagName === 'TEXTAREA' || 
+                      target.isContentEditable
+      
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k' && !isInput) {
         e.preventDefault()
         setIsOpen(true)
       }

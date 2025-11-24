@@ -407,6 +407,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         e.preventDefault()
         const url = results[selectedIndex].url
         if (url) {
+          // Use proper navigation that preserves browser history
           window.location.href = url
           onOpenChange(false)
         }
