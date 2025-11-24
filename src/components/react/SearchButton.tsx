@@ -29,6 +29,8 @@ const SearchButton: React.FC = () => {
         className="size-9 border md:border-0 md:bg-transparent md:hover:bg-muted md:-my-2 md:-me-2 md:size-8"
         title="Search (⌘K)"
         aria-label="Search blog posts"
+        aria-expanded={isOpen}
+        aria-haspopup="dialog"
       >
         <Search className="h-5 w-5 md:h-4 md:w-4" />
         <span className="sr-only">Search</span>
