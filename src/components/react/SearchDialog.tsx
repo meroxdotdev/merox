@@ -662,7 +662,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
                     onClick={() => onOpenChange(false)}
                     className={cn(
                       'flex flex-col gap-2.5 rounded-md p-3.5 transition-colors',
-                      'hover:bg-muted focus:bg-muted focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2',
+                      'hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                       idx === selectedIndex && 'bg-muted',
                     )}
                     aria-label={`Go to ${result.title}`}
