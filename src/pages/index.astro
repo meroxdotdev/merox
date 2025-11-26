@@ -364,35 +364,51 @@ const experience: ExperienceItem[] = [
     </section>
   )}
 
-<!-- CTA Section - Split Layout -->
-<section class="mt-12 mb-8">
-  <div class="rounded-xl border bg-card/50 overflow-hidden">
-    <div class="grid md:grid-cols-[1fr_auto] gap-6 p-6 md:p-8 items-center">
-      <div class="text-left">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/10 border border-green-500/20 mb-3">
+<!-- CTA Section - Apple Style Refined -->
+<section class="mt-20 mb-16 overflow-hidden">
+  <div class="relative max-w-full">
+    <!-- Centered Content Container -->
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-8">
+      <!-- Status Indicator - Minimal Apple Style -->
+      <div class="flex justify-center mb-8">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/8 border border-green-500/15 backdrop-blur-sm transition-all duration-300 hover:bg-green-500/12">
           <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-40"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
           </span>
-          <span class="text-xs font-medium text-green-600 dark:text-green-400">Available for consulting</span>
+          <span class="text-[11px] font-medium tracking-[0.05em] text-green-600 dark:text-green-400 uppercase whitespace-nowrap">Available for consulting</span>
         </div>
-        
-        <h2 class="text-2xl font-semibold mb-2">
-          Let's talk infrastructure
-        </h2>
-        <p class="text-muted-foreground text-sm">
-          Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
-        </p>
       </div>
       
-      <Link 
-        href="mailto:hello@merox.dev" 
-        class={buttonVariants({ variant: 'default', size: 'lg' }) + ' shrink-0 w-full sm:w-auto md:flex-shrink-0 group gap-2'}
-      >
-        <Icon name="lucide:mail" class="size-4" />
-        Reach out
-        <Icon name="lucide:arrow-right" class="size-4 transition-transform group-hover:translate-x-1" />
-      </Link>
+      <!-- Main Heading - Apple's Signature Typography -->
+      <div class="text-center mb-6">
+        <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-[-0.02em] leading-[1.05] text-foreground mb-5 break-words">
+          Let's talk<br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground/95 to-foreground/90 break-words">infrastructure</span>
+        </h2>
+      </div>
+      
+      <!-- Description - Refined Apple Copy Style -->
+      <p class="text-center text-base sm:text-lg md:text-xl text-muted-foreground/90 leading-[1.6] max-w-2xl mx-auto mb-10 font-light break-words px-2">
+        Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
+      </p>
+      
+      <!-- CTA Button - Apple's Signature Button Style -->
+      <div class="flex justify-center px-2">
+        <Link 
+          href="mailto:hello@merox.dev" 
+          class="group relative inline-flex items-center justify-center gap-2.5 px-6 py-3 sm:px-8 sm:py-3.5 md:px-10 md:py-4 rounded-full bg-foreground text-background text-sm sm:text-base md:text-lg font-medium tracking-tight transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-foreground/20 dark:focus-visible:ring-offset-background whitespace-nowrap"
+        >
+          <Icon name="lucide:mail" class="size-4 sm:size-4.5 transition-transform duration-300 group-hover:scale-110" />
+          <span>Reach out</span>
+          <Icon name="lucide:arrow-right" class="size-4 sm:size-4.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+        </Link>
+      </div>
+    </div>
+    
+    <!-- Subtle Decorative Elements -->
+    <div class="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[500px] md:h-[500px] lg:w-[600px] lg:h-[600px] bg-primary/3 rounded-full blur-3xl opacity-40"></div>
     </div>
   </div>
 </section>
