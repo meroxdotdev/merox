@@ -8,6 +8,8 @@ import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
 import { formatDate, cn } from '@/lib/utils'
+import { SOCIAL_LINKS, ICON_MAP } from '@/consts'
+import type { SocialLink } from '@/types'
 
 // Error handling for fetching recent posts
 let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
@@ -117,6 +119,31 @@ const experience: ExperienceItem[] = [
             <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg' })}>
               About me
             </Link>
+          </div>
+          
+          <!-- Social Icons (Horizontal) -->
+          <div class="pt-2">
+            <ul class="flex flex-wrap items-center gap-2" role="list">
+              {SOCIAL_LINKS.map(({ href, label }: SocialLink) => (
+                <li>
+                  <Link
+                    href={href}
+                    aria-label={label}
+                    title={label}
+                    class={buttonVariants({ variant: 'outline', size: 'icon' }) + ' backdrop-blur-sm bg-background/80'}
+                    external={href.startsWith('http') || href.startsWith('mailto:')}
+                  >
+                    <Icon
+                      name={
+                        ICON_MAP[label as keyof typeof ICON_MAP] ||
+                        'lucide:message-circle-question'
+                      }
+                      class="size-4"
+                    />
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
         
