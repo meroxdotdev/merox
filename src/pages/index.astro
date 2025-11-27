@@ -66,110 +66,6 @@ const experience: ExperienceItem[] = [
   <!-- Preload LCP image for faster loading -->
   <link rel="preload" as="image" href="/static/homelab.webp" type="image/webp" fetchpriority="high" />
   
-  <!-- Scroll animations script -->
-  <script is:inline>
-    (function() {
-      // Respect user's motion preferences
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-      if (prefersReducedMotion) return
-
-      let observer = null
-      let initTimeout = null
-      const observedElements = new WeakSet()
-
-      function cleanup() {
-        if (observer) {
-          observer.disconnect()
-          observer = null
-        }
-        if (initTimeout) {
-          clearTimeout(initTimeout)
-          initTimeout = null
-        }
-        // Reset animation classes for re-initialization
-        document.querySelectorAll('.scroll-animate').forEach(el => {
-          if (!observedElements.has(el)) {
-            el.classList.remove('scroll-animate', 'animate-in')
-          }
-        })
-      }
-
-      function initScrollAnimations() {
-        cleanup() // Clean up any existing observer first
-
-        // Use more generous rootMargin on mobile to show content earlier
-        const isMobile = window.innerWidth < 640
-        const observerOptions = {
-          threshold: 0.1,
-          rootMargin: isMobile ? '200px 0px -100px 0px' : '0px 0px -50px 0px',
-        }
-
-        observer = new IntersectionObserver((entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('animate-in')
-              observer.unobserve(entry.target)
-            }
-          })
-        }, observerOptions)
-
-        // Observe experience timeline items (individual items only)
-        const experienceItems = document.querySelectorAll('section:has([class*="space-y-6"]) > div[class*="space-y"] > div')
-        experienceItems.forEach((item, index) => {
-          // On mobile, make first item visible immediately to indicate content below
-          if (isMobile && index === 0) {
-            // First item visible immediately - no animation needed
-            return
-          }
-          item.classList.add('scroll-animate')
-          item.style.setProperty('--delay', `${index * 0.1}s`)
-          observedElements.add(item)
-          observer.observe(item)
-        })
-
-        // Observe Skills section - find the actual Skills component container
-        const skillsSection = document.querySelector('section:has([class*="Skills"])')
-        if (skillsSection) {
-          const skillsContainer = Array.from(skillsSection.children).find(
-            el => el.tagName !== 'DIV' || !el.querySelector('h2')
-          )
-          if (skillsContainer && skillsContainer !== skillsSection.querySelector('div.mb-6')) {
-            skillsContainer.classList.add('scroll-animate')
-            observedElements.add(skillsContainer)
-            observer.observe(skillsContainer)
-          }
-        }
-
-        // Observe blog post cards
-        const blogCards = document.querySelectorAll('article.group')
-        blogCards.forEach((card, index) => {
-          card.classList.add('scroll-animate')
-          card.style.setProperty('--delay', `${index * 0.15}s`)
-          observedElements.add(card)
-          observer.observe(card)
-        })
-      }
-
-      function debouncedInit() {
-        if (initTimeout) {
-          clearTimeout(initTimeout)
-        }
-        initTimeout = setTimeout(initScrollAnimations, 50)
-      }
-
-      // Initialize on page load
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', debouncedInit)
-      } else {
-        debouncedInit()
-      }
-
-      // Handle Astro view transitions
-      document.addEventListener('astro:page-load', debouncedInit)
-      document.addEventListener('astro:before-swap', cleanup)
-    })()
-  </script>
-
   <!-- Hero with homelab background -->
   <section class="relative overflow-hidden rounded-xl border">
     <!-- Optimized Background Image with WebP support -->
@@ -364,51 +260,45 @@ const experience: ExperienceItem[] = [
     </section>
   )}
 
-<!-- CTA Section - Apple Style Refined -->
-<section class="mt-20 mb-16 overflow-hidden">
-  <div class="relative max-w-full">
-    <!-- Centered Content Container -->
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 md:px-8">
-      <!-- Status Indicator - Minimal Apple Style -->
-      <div class="flex justify-center mb-8">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/8 border border-green-500/15 backdrop-blur-sm transition-all duration-300 hover:bg-green-500/12">
-          <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-40"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-          </span>
-          <span class="text-[11px] font-medium tracking-[0.05em] text-green-600 dark:text-green-400 uppercase whitespace-nowrap">Available for consulting</span>
-        </div>
+<!-- CTA Section -->
+<section class="mt-24 mb-20">
+  <div class="max-w-2xl mx-auto">
+    <!-- Divider -->
+    <div class="mb-12 flex items-center gap-4">
+      <div class="flex-1 h-px bg-border"></div>
+      <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-muted/50 border border-border">
+        <span class="relative flex h-1.5 w-1.5">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+        </span>
+        <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Available</span>
       </div>
-      
-      <!-- Main Heading - Apple's Signature Typography -->
-      <div class="text-center mb-6">
-        <h2 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-[-0.02em] leading-[1.05] text-foreground mb-5 break-words">
-          Let's talk<br/>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-foreground via-foreground/95 to-foreground/90 break-words">infrastructure</span>
-        </h2>
-      </div>
-      
-      <!-- Description - Refined Apple Copy Style -->
-      <p class="text-center text-base sm:text-lg md:text-xl text-muted-foreground/90 leading-[1.6] max-w-2xl mx-auto mb-10 font-light break-words px-2">
-        Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
-      </p>
-      
-      <!-- CTA Button - Apple's Signature Button Style -->
-      <div class="flex justify-center px-2">
-        <Link 
-          href="mailto:hello@merox.dev" 
-          class="group relative inline-flex items-center justify-center gap-2.5 px-6 py-3 sm:px-8 sm:py-3.5 md:px-10 md:py-4 rounded-full bg-foreground text-background text-sm sm:text-base md:text-lg font-medium tracking-tight transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-foreground/20 dark:focus-visible:ring-offset-background whitespace-nowrap"
-        >
-          <Icon name="lucide:mail" class="size-4 sm:size-4.5 transition-transform duration-300 group-hover:scale-110" />
-          <span>Reach out</span>
-          <Icon name="lucide:arrow-right" class="size-4 sm:size-4.5 transition-transform duration-300 group-hover:translate-x-0.5" />
-        </Link>
-      </div>
+      <div class="flex-1 h-px bg-border"></div>
     </div>
     
-    <!-- Subtle Decorative Elements -->
-    <div class="absolute inset-0 -z-10 pointer-events-none overflow-hidden">
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] md:w-[500px] md:h-[500px] lg:w-[600px] lg:h-[600px] bg-primary/3 rounded-full blur-3xl opacity-40"></div>
+    <!-- Content -->
+    <div class="text-center space-y-6">
+      <div class="space-y-2">
+        <h2 class="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-foreground leading-tight">
+          Let's talk
+          <span class="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/90 to-primary/75">
+            infrastructure
+          </span>
+        </h2>
+      </div>
+      <p class="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto">
+        Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
+      </p>
+      <div class="pt-4">
+        <Link 
+          href="mailto:hello@merox.dev" 
+          class="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-lg bg-foreground text-background text-base font-medium hover:bg-foreground/90 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        >
+          <Icon name="lucide:mail" class="size-4" />
+          <span>Reach out</span>
+          <Icon name="lucide:arrow-right" class="size-4 transition-transform group-hover:translate-x-1" />
+        </Link>
+      </div>
     </div>
   </div>
 </section>
