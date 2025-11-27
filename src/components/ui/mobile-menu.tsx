@@ -37,6 +37,7 @@ const MobileMenu = () => {
       <DropdownMenuContent align="end" className="bg-background">
         {NAV_LINKS.map((item) => {
           const isExternal = isExternalLink(item.href)
+          const isInsideLink = item.label.toLowerCase() === 'inside'
           return (
             <DropdownMenuItem key={item.href} asChild>
               <a
@@ -44,13 +45,13 @@ const MobileMenu = () => {
                 target={isExternal ? '_blank' : '_self'}
                 rel={isExternal ? 'noopener noreferrer' : undefined}
                 className={`w-full text-lg font-medium capitalize flex items-center gap-2 ${
-                  isExternal ? 'text-primary/90 hover:text-primary' : ''
+                  isInsideLink ? 'text-primary hover:text-primary/80' : isExternal ? 'text-primary/90 hover:text-primary' : ''
                 }`}
                 onClick={() => setIsOpen(false)}
               >
                 <span>{item.label}</span>
                 {isExternal && (
-                  <ExternalLink className="h-4 w-4 opacity-80 flex-shrink-0" aria-hidden="true" />
+                  <ExternalLink className={`h-4 w-4 opacity-80 flex-shrink-0 ${isInsideLink ? 'text-primary' : ''}`} aria-hidden="true" />
                 )}
               </a>
             </DropdownMenuItem>

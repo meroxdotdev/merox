@@ -19,7 +19,7 @@ const isExternalLink = (href: string) => {
         <div class="text-left">
           <div class="flex items-center gap-2 mb-3">
             <Icon name="lucide:mail" class="size-5 text-primary shrink-0" />
-            <h3 class="text-lg font-semibold">Stay Updated</h3>
+            <h3 class="text-lg font-semibold text-foreground">Stay Updated</h3>
           </div>
           <p class="text-sm text-muted-foreground leading-relaxed">
             Get the latest posts about infrastructure, HPC, Kubernetes, and DevOps delivered to your inbox.
@@ -43,16 +43,21 @@ const isExternalLink = (href: string) => {
           <nav class="flex flex-col gap-2">
             {NAV_LINKS.map((item) => {
               const isExternal = isExternalLink(item.href)
+              const isInsideLink = item.label.toLowerCase() === 'inside'
               return (
                 <Link 
                   href={item.href} 
-                  class="text-sm text-muted-foreground hover:text-foreground capitalize transition-colors flex items-center gap-1.5 group"
+                  class={isInsideLink 
+                    ? "text-sm text-primary hover:text-primary/80 capitalize transition-colors flex items-center gap-1.5 group font-medium" 
+                    : "text-sm text-muted-foreground hover:text-primary capitalize transition-colors flex items-center gap-1.5 group"}
                 >
                   <span>{item.label}</span>
                   {isExternal && (
                     <Icon 
                       name="lucide:external-link" 
-                      class="size-3 opacity-70 flex-shrink-0 group-hover:opacity-100 transition-opacity" 
+                      class={isInsideLink 
+                        ? "size-3 opacity-80 flex-shrink-0 text-primary group-hover:opacity-100 transition-opacity" 
+                        : "size-3 opacity-70 flex-shrink-0 group-hover:opacity-100 group-hover:text-primary transition-colors"} 
                       aria-hidden="true"
                     />
                   )}
@@ -66,10 +71,10 @@ const isExternalLink = (href: string) => {
         <div>
           <h4 class="text-sm font-semibold mb-3 text-foreground">Legal</h4>
           <nav class="flex flex-col gap-2">
-            <Link href="/privacy" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/privacy" class="text-sm text-muted-foreground hover:text-primary transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/terms" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+            <Link href="/terms" class="text-sm text-muted-foreground hover:text-primary transition-colors">
               Terms of Service
             </Link>
           </nav>

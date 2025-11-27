@@ -7,7 +7,6 @@ import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
-import { Image } from 'astro:assets'
 import { formatDate, cn } from '@/lib/utils'
 
 // Error handling for fetching recent posts
@@ -16,7 +15,6 @@ try {
   latestPosts = await getRecentPosts(2)
 } catch (error) {
   console.error('Error fetching recent posts:', error)
-  // Continue with empty array - page will still render
 }
 
 type ExperienceItem = {
@@ -63,12 +61,10 @@ const experience: ExperienceItem[] = [
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true} />
   
-  <!-- Preload LCP image for faster loading -->
   <link rel="preload" as="image" href="/static/homelab.webp" type="image/webp" fetchpriority="high" />
   
   <!-- Hero with homelab background -->
   <section class="relative overflow-hidden rounded-xl border">
-    <!-- Optimized Background Image with WebP support -->
     <picture class="absolute inset-0 z-0 pointer-events-none">
       <source type="image/webp" srcset="/static/homelab.webp" />
       <img
@@ -81,23 +77,22 @@ const experience: ExperienceItem[] = [
       />
     </picture>
     
-    <!-- Gradient Overlay for text readability -->
     <div class="absolute inset-0 z-[1] bg-gradient-to-br from-background/85 via-background/75 to-background/65 dark:from-background/90 dark:via-background/85 dark:to-background/80"></div>
-    
-    <!-- Edge fade for better visual flow -->
     <div class="absolute inset-0 z-[1] bg-gradient-to-t from-background/40 via-transparent to-transparent"></div>
 
-    <!-- Content Container -->
     <div class="relative z-10 p-8 md:p-10">
       <div class="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div class="flex-1 min-w-0">
           <div class="inline-block mb-3">
-            <span class="text-xs font-medium uppercase tracking-wider text-primary px-3 py-1 rounded-full bg-primary/10 border border-primary/20">
+            <span class="text-xs font-medium uppercase tracking-wider text-muted-foreground px-3 py-1 rounded-full bg-muted/50 border border-border">
               HPC System Administrator
             </span>
           </div>
           <h1 class="text-4xl md:text-5xl leading-tight font-bold tracking-tight">
-            Building infrastructure<br/>that <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/50">scales</span>.
+            Building infrastructure<br/>that <span class="relative inline-block">
+              <span class="text-primary font-extrabold">scales</span>
+              <span class="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/60 via-primary to-primary/60 rounded-full"></span>
+            </span>.
           </h1>
           <p class="text-muted-foreground mt-4 leading-relaxed text-base md:text-lg">
             System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security.
@@ -119,14 +114,14 @@ const experience: ExperienceItem[] = [
             height="112"
             loading="eager"
             fetchpriority="high"
-            class="w-28 h-28 rounded-full object-cover border-4 border-background shadow-xl ring-2 ring-primary/10 dark:ring-primary/20"
+            class="w-28 h-28 rounded-full object-cover border-4 border-background shadow-xl ring-2 ring-border/50"
           />
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Experience Timeline - Clean Design -->
+  <!-- Experience Timeline -->
   <section class="mt-8">
     <div class="mb-6">
       <h2 class="text-2xl font-semibold mb-2">Experience</h2>
@@ -138,21 +133,18 @@ const experience: ExperienceItem[] = [
     <div class="space-y-6">
       {experience.map((exp, index) => (
         <div class="relative">
-          <!-- Timeline connector -->
           {index < experience.length - 1 && (
             <div class="absolute left-[11px] top-8 bottom-0 w-px bg-border" aria-hidden="true"></div>
           )}
           
           <div class="flex gap-4">
-            <!-- Icon -->
             <div class={cn(
               "relative flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ring-4 ring-background z-10",
-              exp.current ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+              exp.current ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "bg-muted text-muted-foreground"
             )}>
               <Icon name={exp.icon} class="size-3.5" />
             </div>
             
-            <!-- Content -->
             <div class="flex-1 pb-2 min-w-0">
               <div class="mb-1">
                 <h3 class="font-semibold text-lg leading-tight">{exp.role}</h3>
@@ -186,120 +178,101 @@ const experience: ExperienceItem[] = [
   <!-- Latest from the blog -->
   {latestPosts && latestPosts.length > 0 && (
     <section class="mt-12">
-      <div class="mb-8 flex items-center justify-between">
+      <div class="mb-6 flex items-center justify-between">
         <div>
-          <h2 class="text-3xl font-bold tracking-tight mb-1">Latest from the blog</h2>
+          <h2 class="text-2xl font-semibold mb-2">Latest from the blog</h2>
           <p class="text-sm text-muted-foreground">Recent insights and tutorials</p>
         </div>
-        <div class="hidden sm:block">
-          <Link 
-            href="/blog" 
-            class={buttonVariants({ variant: 'ghost' }) + ' group gap-1.5'}
-          >
-            Browse all articles
-            <Icon name="lucide:arrow-right" class="size-4 transition-transform group-hover:translate-x-0.5" />
-          </Link>
-        </div>
+        <Link 
+          href="/blog" 
+          class={buttonVariants({ variant: 'ghost' }) + ' hidden sm:flex items-center gap-1.5'}
+        >
+          View all
+          <Icon name="lucide:arrow-right" class="size-4" />
+        </Link>
       </div>
-      <div class="space-y-8">
+      
+      <div class="space-y-4">
         {latestPosts.map((post) => (
           <article class="group">
             <Link
               href={`/${post.collection}/${post.id}`}
-              class="flex flex-col sm:flex-row gap-5"
+              class="block rounded-lg border p-5 transition-colors hover:border-border hover:bg-accent/50"
             >
-              {post.data.image && (
-                <div class="w-full sm:w-48 sm:flex-shrink-0 aspect-video sm:aspect-square rounded-lg border border-border/40 flex items-center justify-center p-3">
-                  <Image
-                    src={post.data.image}
-                    alt={post.data.title}
-                    width={1200}
-                    height={630}
-                    class="h-full w-full object-contain transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
-                </div>
-              )}
-              <div class="flex-1 flex flex-col justify-center min-w-0">
-                <div class="flex items-center gap-2.5 text-sm text-muted-foreground mb-2.5">
-                  <time class="font-medium">{formatDate(post.data.date)}</time>
-                  {post.data.tags && post.data.tags.length > 0 && (
-                    <>
-                      <span aria-hidden="true" class="text-border">·</span>
-                      <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-primary/10 text-primary font-medium text-xs">
-                        {post.data.tags[0]}
-                      </span>
-                    </>
-                  )}
-                </div>
-                <h3 class="text-2xl font-bold mb-3 leading-tight group-hover:text-primary transition-colors duration-200">
-                  {post.data.title}
-                </h3>
-                {post.data.description && (
-                  <p class="text-muted-foreground line-clamp-2 leading-relaxed text-base mb-3">
-                    {post.data.description}
-                  </p>
+              <div class="flex items-start gap-2 text-sm text-muted-foreground mb-2">
+                <time>{formatDate(post.data.date)}</time>
+                {post.data.tags && post.data.tags.length > 0 && (
+                  <>
+                    <span>·</span>
+                    <span class="text-primary font-medium">{post.data.tags[0]}</span>
+                  </>
                 )}
-                <div class="flex items-center gap-2 text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                  <span>Read article</span>
-                  <Icon name="lucide:arrow-right" class="size-4 transition-transform group-hover:translate-x-1" />
-                </div>
               </div>
+              <h3 class="text-xl font-semibold mb-2 group-hover:text-foreground transition-colors">
+                {post.data.title}
+              </h3>
+              {post.data.description && (
+                <p class="text-muted-foreground text-sm line-clamp-2">
+                  {post.data.description}
+                </p>
+              )}
             </Link>
           </article>
         ))}
       </div>
-      <div class="mt-8 flex justify-center sm:hidden">
+      
+      <div class="mt-6 sm:hidden">
         <Link
           href="/blog"
-          class={buttonVariants({ variant: 'outline' }) + ' w-full justify-center max-w-xs gap-2'}
+          class={buttonVariants({ variant: 'outline' }) + ' w-full'}
         >
-          See more posts
-          <Icon name="lucide:arrow-right" class="size-4" />
+          View all posts
         </Link>
       </div>
     </section>
   )}
 
-<!-- CTA Section -->
-<section class="mt-24 mb-20">
-  <div class="max-w-2xl mx-auto">
-    <!-- Divider -->
-    <div class="mb-12 flex items-center gap-4">
-      <div class="flex-1 h-px bg-border"></div>
-      <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-muted/50 border border-border">
-        <span class="relative flex h-1.5 w-1.5">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
-        </span>
-        <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Available</span>
+  <!-- CTA Section -->
+  <section class="mt-24 mb-20">
+    <div class="max-w-2xl mx-auto">
+      <div class="mb-12 relative">
+        <div class="absolute inset-0 flex items-center" aria-hidden="true">
+          <div class="w-full border-t border-border"></div>
+        </div>
+        <div class="relative flex justify-center">
+          <div class="flex items-center gap-2.5 px-4 py-2 rounded-full bg-background border border-border shadow-sm">
+            <span class="relative flex h-1.5 w-1.5">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
+            </span>
+            <span class="text-xs font-medium text-muted-foreground uppercase tracking-wider">Available</span>
+          </div>
+        </div>
       </div>
-      <div class="flex-1 h-px bg-border"></div>
+      
+      <div class="text-center space-y-6">
+        <div class="space-y-2">
+          <h2 class="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-foreground leading-tight">
+            Let's talk
+            <span class="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/90 to-primary/75">
+              infrastructure
+            </span>
+          </h2>
+        </div>
+        <p class="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto">
+          Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
+        </p>
+        <div class="pt-4">
+          <Link 
+            href="mailto:hello@merox.dev" 
+            class="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-lg bg-foreground text-background text-base font-medium hover:bg-foreground/90 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <Icon name="lucide:mail" class="size-4" />
+            <span>Reach out</span>
+            <Icon name="lucide:arrow-right" class="size-4 transition-transform group-hover:translate-x-1" />
+          </Link>
+        </div>
+      </div>
     </div>
-    
-    <!-- Content -->
-    <div class="text-center space-y-6">
-      <div class="space-y-2">
-        <h2 class="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-foreground leading-tight">
-          Let's talk
-          <span class="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/90 to-primary/75">
-            infrastructure
-          </span>
-        </h2>
-      </div>
-      <p class="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto">
-        Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
-      </p>
-      <div class="pt-4">
-        <Link 
-          href="mailto:hello@merox.dev" 
-          class="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-lg bg-foreground text-background text-base font-medium hover:bg-foreground/90 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-        >
-          <Icon name="lucide:mail" class="size-4" />
-          <span>Reach out</span>
-          <Icon name="lucide:arrow-right" class="size-4 transition-transform group-hover:translate-x-1" />
-        </Link>
-      </div>
-    </div>
-  </div>
-</section>
+  </section>
 </Layout>
