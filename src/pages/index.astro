@@ -63,8 +63,9 @@ const experience: ExperienceItem[] = [
   
   <link rel="preload" as="image" href="/static/homelab.webp" type="image/webp" fetchpriority="high" />
   
-  <!-- Hero with homelab background -->
+  <!-- Hero Section -->
   <section class="relative overflow-hidden rounded-xl border">
+    <!-- Background Image -->
     <picture class="absolute inset-0 z-0 pointer-events-none">
       <source type="image/webp" srcset="/static/homelab.webp" />
       <img
@@ -77,44 +78,58 @@ const experience: ExperienceItem[] = [
       />
     </picture>
     
-    <div class="absolute inset-0 z-[1] bg-gradient-to-br from-background/85 via-background/75 to-background/65 dark:from-background/90 dark:via-background/85 dark:to-background/80"></div>
-    <div class="absolute inset-0 z-[1] bg-gradient-to-t from-background/40 via-transparent to-transparent"></div>
+    <!-- Gradient Overlay -->
+    <div class="absolute inset-0 z-[1] bg-gradient-to-b from-background/90 via-background/80 to-background/90 dark:from-background/95 dark:via-background/90 dark:to-background/95"></div>
 
-    <div class="relative z-10 p-8 md:p-10">
-      <div class="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between">
-        <div class="flex-1 min-w-0">
-          <div class="inline-block mb-3">
-            <span class="text-xs font-medium uppercase tracking-wider text-muted-foreground px-3 py-1 rounded-full bg-muted/50 border border-border">
+    <!-- Content -->
+    <div class="relative z-10 p-8 md:p-12">
+      <div class="flex flex-col-reverse gap-8 sm:flex-row sm:items-start sm:justify-between">
+        <!-- Main Content -->
+        <div class="flex-1 min-w-0 space-y-6">
+          <!-- Badge -->
+          <div class="inline-flex">
+            <span class="inline-flex items-center gap-2 text-xs font-medium uppercase tracking-wider text-muted-foreground px-3 py-1.5 rounded-full bg-muted/50 border border-border backdrop-blur-sm">
+              <span class="relative flex h-1.5 w-1.5">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary"></span>
+              </span>
               HPC System Administrator
             </span>
           </div>
-          <h1 class="text-4xl md:text-5xl leading-tight font-bold tracking-tight">
-            Building infrastructure<br/>that <span class="relative inline-block">
-              <span class="text-primary font-extrabold">scales</span>
-              <span class="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-gradient-to-r from-primary/60 via-primary to-primary/60 rounded-full"></span>
-            </span>.
-          </h1>
-          <p class="text-muted-foreground mt-4 leading-relaxed text-base md:text-lg">
-            System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security.
-          </p>
-          <div class="mt-6 flex flex-wrap items-center gap-3">
+          
+          <!-- Heading -->
+          <div class="space-y-4">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl leading-tight font-bold tracking-tight">
+              Building infrastructure<br class="hidden sm:block" />
+              <span class="text-primary">that scales</span>.
+            </h1>
+            <p class="text-muted-foreground mt-4 leading-relaxed text-base md:text-lg max-w-xl">
+              System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security.
+            </p>
+          </div>
+          
+          <!-- CTA Buttons -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
             <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg' })}>
               Read the blog
+              <Icon name="lucide:arrow-right" class="size-4" />
             </Link>
             <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg' })}>
               About me
             </Link>
           </div>
         </div>
-        <div class="relative flex-shrink-0">
+        
+        <!-- Profile Image -->
+        <div class="relative flex-shrink-0 sm:self-start">
           <img
             src="/reworkedmeroxdc1.webp"
             alt="Robert Melcher, HPC System Administrator"
-            width="112"
-            height="112"
+            width="128"
+            height="128"
             loading="eager"
             fetchpriority="high"
-            class="w-28 h-28 rounded-full object-cover border-4 border-background shadow-xl ring-2 ring-border/50"
+            class="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-background shadow-lg dark:shadow-xl dark:shadow-black/40 ring-1 ring-border/20"
           />
         </div>
       </div>
