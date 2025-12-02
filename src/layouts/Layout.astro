@@ -38,9 +38,13 @@ const { class: className, hideFloatingSidebar = false } = Astro.props
     <!-- Prevent navigation to same page to avoid refresh flicker -->
     <script is:inline>
       (function() {
-        // Only run once per page lifecycle
-        if (window.__preventSamePageNav) return
-        window.__preventSamePageNav = true
+        // Prevent multiple initializations
+        if (window.__preventSamePageNavInitialized) return
+        window.__preventSamePageNavInitialized = true
+        
+        let clickHandler = null
+        let touchStartHandler = null
+        let touchEndHandler = null
         
         function normalizePath(path) {
           if (!path) return '/'
@@ -65,43 +69,82 @@ const { class: className, hideFloatingSidebar = false } = Astro.props
           return currentPath === targetPath && !href.includes('#')
         }
         
-        function handleLinkInteraction(e) {
-          const link = e.target.closest('a[data-internal-link="true"]')
-          if (!link) return
+        function initPreventNavigation() {
+          // Remove existing handlers if they exist
+          cleanup()
           
-          if (shouldPreventNavigation(link)) {
-            e.preventDefault()
-            e.stopPropagation()
-            e.stopImmediatePropagation()
-            return false
+          // Create new handlers with current context
+          clickHandler = function(e) {
+            const link = e.target.closest('a[data-internal-link="true"]')
+            if (!link) return
+            
+            if (shouldPreventNavigation(link)) {
+              e.preventDefault()
+              e.stopPropagation()
+              e.stopImmediatePropagation()
+              return false
+            }
+          }
+          
+          touchStartHandler = function(e) {
+            const link = e.target.closest('a[data-internal-link="true"]')
+            if (!link) return
+            
+            if (shouldPreventNavigation(link)) {
+              e.preventDefault()
+              e.stopPropagation()
+              e.stopImmediatePropagation()
+              return false
+            }
+          }
+          
+          touchEndHandler = function(e) {
+            const link = e.target.closest('a[data-internal-link="true"]')
+            if (link && shouldPreventNavigation(link)) {
+              e.preventDefault()
+              e.stopPropagation()
+              e.stopImmediatePropagation()
+            }
+          }
+          
+          // Handle both click and touch events for mobile support
+          // Use capture phase to intercept before Astro's view transitions
+          // Touch events need to be non-passive to allow preventDefault
+          document.addEventListener('click', clickHandler, true)
+          document.addEventListener('touchstart', touchStartHandler, { passive: false, capture: true })
+          document.addEventListener('touchend', touchEndHandler, { passive: false, capture: true })
+        }
+        
+        function cleanup() {
+          if (clickHandler) {
+            document.removeEventListener('click', clickHandler, true)
+            clickHandler = null
+          }
+          if (touchStartHandler) {
+            document.removeEventListener('touchstart', touchStartHandler, true)
+            touchStartHandler = null
+          }
+          if (touchEndHandler) {
+            document.removeEventListener('touchend', touchEndHandler, true)
+            touchEndHandler = null
           }
         }
         
-        // Handle touchend for mobile (fires before click on mobile)
-        function handleTouchEnd(e) {
-          const link = e.target.closest('a[data-internal-link="true"]')
-          if (link && shouldPreventNavigation(link)) {
-            e.preventDefault()
-            e.stopPropagation()
-            e.stopImmediatePropagation()
-          }
+        // Handler for page navigation
+        function handlePageLoad() {
+          cleanup()
+          initPreventNavigation()
         }
         
-        // Handle both click and touch events for mobile support
-        // Use capture phase to intercept before Astro's view transitions
-        // Touch events need to be non-passive to allow preventDefault
-        document.addEventListener('click', handleLinkInteraction, true)
-        document.addEventListener('touchstart', handleLinkInteraction, { passive: false, capture: true })
-        // Also handle touchend to catch cases where touchstart doesn't prevent
-        document.addEventListener('touchend', handleTouchEnd, { passive: false, capture: true })
+        // Initialize on page load
+        initPreventNavigation()
         
-        // Clean up on page unload
-        document.addEventListener('astro:before-swap', () => {
-          document.removeEventListener('click', handleLinkInteraction, true)
-          document.removeEventListener('touchstart', handleLinkInteraction, true)
-          document.removeEventListener('touchend', handleTouchEnd, true)
-          window.__preventSamePageNav = false
-        })
+        // Reinitialize after each navigation (only once per navigation)
+        // Use page-load which fires once after navigation completes
+        document.addEventListener('astro:page-load', handlePageLoad)
+        
+        // Clean up before swap
+        document.addEventListener('astro:before-swap', cleanup)
       })()
     </script>
     <header
