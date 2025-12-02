@@ -9,6 +9,7 @@ interface Props {
   underline?: boolean
   'aria-label'?: string
   'data-testid'?: string
+  'data-astro-reload'?: boolean
   target?: '_blank' | '_self' | '_parent' | '_top'
   rel?: string
   // Allow standard HTML anchor attributes
@@ -36,7 +37,7 @@ const isExternal = external || href.startsWith('http')
   )}
   {...rest}
   data-internal-link={!isExternal ? 'true' : undefined}
-  data-astro-reload={rest['data-astro-reload'] !== undefined ? '' : undefined}
+  data-astro-reload={Astro.props['data-astro-reload'] ? '' : undefined}
 >
   <slot />
 </a>
