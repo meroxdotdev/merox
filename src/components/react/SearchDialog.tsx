@@ -483,7 +483,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden top-[10%] sm:top-[15%] translate-y-0 max-h-[85vh] sm:max-h-[80vh] flex flex-col data-[state=open]:slide-in-from-top-[10%] data-[state=closed]:slide-out-to-top-[10%]">
+      <DialogContent className="max-w-[calc(100vw-1rem)] sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden top-[5%] sm:top-[10%] translate-y-0 max-h-[90vh] sm:max-h-[85vh] flex flex-col data-[state=open]:slide-in-from-top-[5%] data-[state=closed]:slide-out-to-top-[5%] rounded-lg sm:rounded-lg">
         <DialogDescription className="sr-only">
           Search blog posts by title, description, tags, or content
         </DialogDescription>
@@ -540,7 +540,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         )}
 
         <div
-          className="flex-1 min-h-0 overflow-y-auto px-2 py-2"
+          className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-2 sm:py-2"
         >
           {/* Loading skeleton */}
           {isLoadingIndex && (
@@ -730,28 +730,28 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         </div>
 
         {results.length > 0 && (
-          <div className="flex shrink-0 items-center justify-between border-t px-4 py-2 text-xs text-muted-foreground">
-            <div className="flex items-center gap-4">
-              <span>
+          <div className="flex shrink-0 flex-col gap-2 border-t border-border bg-background px-4 py-3 pb-safe sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-2 text-xs text-muted-foreground">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+              <span className="hidden sm:inline">
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
                   ↑↓
                 </kbd>{' '}
                 to navigate
               </span>
-              <span>
+              <span className="hidden sm:inline">
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
                   ↵
                 </kbd>{' '}
                 to select
               </span>
-              <span>
+              <span className="hidden sm:inline">
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
                   esc
                 </kbd>{' '}
                 to close
               </span>
             </div>
-            <span>
+            <span className="text-center sm:text-right">
               {displayedResults < results.length
                 ? `Showing ${displayedResults} of ${results.length}`
                 : `${results.length} result${results.length !== 1 ? 's' : ''}`}

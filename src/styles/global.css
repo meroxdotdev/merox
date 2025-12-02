@@ -183,3 +183,12 @@
   }
 }
 
+/* Safe area support for mobile devices (notch, home indicator) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0.75rem);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 0.75rem);
+}
+
