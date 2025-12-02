@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Search, Loader2, FileText, Calendar, Hash, Clock, AlertCircle, ChevronDown } from 'lucide-react'
+import { Search, Loader2, FileText, Calendar, Hash, Clock, AlertCircle, ChevronDown, X } from 'lucide-react'
 import { Index } from 'flexsearch'
 import {
   Dialog,
@@ -500,7 +500,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
           {!isLoading && !isLoadingIndex && query.trim() && results.length === 0 && 'No results found'}
           {selectedIndex >= 0 && results[selectedIndex] && `Selected: ${results[selectedIndex].title}`}
         </div>
-        <div className="flex shrink-0 items-center border-b border-border px-4 sm:px-4 pt-safe">
+        <div className="flex shrink-0 items-center border-b border-border px-4 sm:px-4 pt-safe relative">
           <Search className="mr-3 h-5 w-5 shrink-0 text-muted-foreground sm:h-4 sm:w-4" />
           <input
             ref={inputRef}
@@ -508,7 +508,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
             placeholder="Search posts..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex h-16 sm:h-14 w-full bg-transparent py-4 sm:py-3 text-base sm:text-sm outline-none border-0 shadow-none appearance-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-0"
+            className="flex h-16 sm:h-14 w-full bg-transparent py-4 sm:py-3 pr-12 sm:pr-0 text-base sm:text-sm outline-none border-0 shadow-none appearance-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-0"
             style={{ 
               WebkitAppearance: 'none', 
               MozAppearance: 'textfield',
@@ -524,8 +524,16 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
             aria-autocomplete="list"
           />
           {isLoading && (
-            <Loader2 className="ml-2 h-5 w-5 sm:h-4 sm:w-4 animate-spin text-muted-foreground shrink-0" />
+            <Loader2 className="absolute right-14 sm:relative sm:right-0 ml-2 h-5 w-5 sm:h-4 sm:w-4 animate-spin text-muted-foreground shrink-0" />
           )}
+          {/* Close button for mobile - positioned in header */}
+          <button
+            onClick={() => onOpenChange(false)}
+            className="sm:hidden absolute right-4 top-1/2 -translate-y-1/2 rounded-lg p-2 opacity-70 transition-opacity active:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            aria-label="Close search"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
         {/* Error message */}
@@ -540,7 +548,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         )}
 
         <div
-          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-2 sm:py-2"
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-2 sm:py-2 pb-24 sm:pb-2"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {/* Loading skeleton */}
@@ -718,10 +726,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
           {/* Load more button */}
           {hasMoreResults && (
-            <div className="mt-4 sm:mt-2 flex justify-center">
+            <div className="mt-6 mb-4 sm:mt-4 sm:mb-2 flex justify-center">
               <button
                 onClick={() => setDisplayedResults((prev) => Math.min(prev + 10, results.length))}
-                className="flex items-center gap-2 rounded-lg sm:rounded-md border border-border bg-background px-6 py-3 sm:px-4 sm:py-2 text-base sm:text-sm text-foreground transition-colors active:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
+                className="flex items-center gap-2 rounded-lg sm:rounded-md border border-border bg-background px-6 py-3 sm:px-4 sm:py-2 text-base sm:text-sm text-foreground transition-colors active:bg-muted focus:outline-none focus:ring-2 focus:ring-ring shadow-sm"
               >
                 <ChevronDown className="h-5 w-5 sm:h-4 sm:w-4" />
                 Load more ({results.length - displayedResults} remaining)
@@ -731,7 +739,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         </div>
 
         {results.length > 0 && (
-          <div className="sticky bottom-0 z-10 flex shrink-0 flex-col gap-2 border-t border-border bg-background px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-2 text-sm sm:text-xs text-muted-foreground" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+          <div className="sticky bottom-0 z-10 flex shrink-0 flex-col gap-3 sm:gap-2 border-t border-border bg-background/95 backdrop-blur-sm px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-2.5 text-sm sm:text-xs text-muted-foreground" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
             <div className="hidden sm:flex flex-wrap items-center gap-4">
               <span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
