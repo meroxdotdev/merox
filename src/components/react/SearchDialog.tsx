@@ -548,7 +548,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         )}
 
         <div
-          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-2 sm:py-2 pb-24 sm:pb-2"
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-2 sm:py-2"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {/* Loading skeleton */}
@@ -739,32 +739,27 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         </div>
 
         {results.length > 0 && (
-          <div className="sticky bottom-0 z-10 flex shrink-0 flex-col gap-3 sm:gap-2 border-t border-border bg-background/95 backdrop-blur-sm px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-2.5 text-sm sm:text-xs text-muted-foreground" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+          <div className="flex shrink-0 items-center justify-center border-t border-border bg-background px-4 py-3 sm:py-2 text-xs text-muted-foreground pb-safe">
             <div className="hidden sm:flex flex-wrap items-center gap-4">
               <span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
                   ↑↓
                 </kbd>{' '}
-                to navigate
+                navigate
               </span>
               <span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
                   ↵
                 </kbd>{' '}
-                to select
+                select
               </span>
               <span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
                   esc
                 </kbd>{' '}
-                to close
+                close
               </span>
             </div>
-            <span className="text-center sm:text-right font-medium">
-              {displayedResults < results.length
-                ? `Showing ${displayedResults} of ${results.length}`
-                : `${results.length} result${results.length !== 1 ? 's' : ''}`}
-            </span>
           </div>
         )}
       </DialogContent>
