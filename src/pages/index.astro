@@ -212,7 +212,7 @@ const experience: ExperienceItem[] = [
         Core competencies across systems administration, security, and infrastructure automation
       </p>
     </div>
-    <ErrorBoundary client:load>
+    <ErrorBoundary client:load transition:persist="skills-error-boundary">
       <Skills client:load transition:persist="skills-section" />
     </ErrorBoundary>
   </section>
