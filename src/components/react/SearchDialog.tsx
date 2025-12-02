@@ -483,7 +483,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[calc(100vw-1rem)] sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden top-[5%] sm:top-[10%] translate-y-0 max-h-[90vh] sm:max-h-[85vh] flex flex-col data-[state=open]:slide-in-from-top-[5%] data-[state=closed]:slide-out-to-top-[5%] rounded-lg sm:rounded-lg">
+      <DialogContent className="max-w-[calc(100vw-1rem)] sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden top-[2%] sm:top-[10%] translate-y-0 max-h-[96vh] sm:max-h-[85vh] flex flex-col data-[state=open]:slide-in-from-top-[2%] data-[state=closed]:slide-out-to-top-[2%] rounded-lg sm:rounded-lg">
         <DialogDescription className="sr-only">
           Search blog posts by title, description, tags, or content
         </DialogDescription>
@@ -540,7 +540,8 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         )}
 
         <div
-          className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-2 sm:py-2"
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 py-3 sm:px-2 sm:py-2"
+          style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {/* Loading skeleton */}
           {isLoadingIndex && (
@@ -730,7 +731,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         </div>
 
         {results.length > 0 && (
-          <div className="flex shrink-0 flex-col gap-2 border-t border-border bg-background px-4 py-3 pb-safe sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-2 text-xs text-muted-foreground">
+          <div className="sticky bottom-0 z-10 flex shrink-0 flex-col gap-2 border-t border-border bg-background px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-2 text-xs text-muted-foreground" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
             <div className="flex flex-wrap items-center gap-2 sm:gap-4">
               <span className="hidden sm:inline">
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
