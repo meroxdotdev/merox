@@ -483,7 +483,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[calc(100vw-1rem)] sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden top-[2%] sm:top-[10%] translate-y-0 max-h-[96vh] sm:max-h-[85vh] flex flex-col data-[state=open]:slide-in-from-top-[2%] data-[state=closed]:slide-out-to-top-[2%] rounded-lg sm:rounded-lg">
+      <DialogContent className="max-w-full sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden top-0 sm:top-[10%] translate-y-0 h-screen sm:h-auto sm:max-h-[85vh] flex flex-col rounded-none sm:rounded-lg data-[state=open]:slide-in-from-top-0 data-[state=closed]:slide-out-to-top-0">
         <DialogDescription className="sr-only">
           Search blog posts by title, description, tags, or content
         </DialogDescription>
@@ -500,15 +500,15 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
           {!isLoading && !isLoadingIndex && query.trim() && results.length === 0 && 'No results found'}
           {selectedIndex >= 0 && results[selectedIndex] && `Selected: ${results[selectedIndex].title}`}
         </div>
-        <div className="flex shrink-0 items-center border-b border-border px-4">
-          <Search className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
+        <div className="flex shrink-0 items-center border-b border-border px-4 sm:px-4 pt-safe">
+          <Search className="mr-3 h-5 w-5 shrink-0 text-muted-foreground sm:h-4 sm:w-4" />
           <input
             ref={inputRef}
             type="text"
             placeholder="Search posts..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex h-14 w-full bg-transparent py-3 text-sm outline-none border-0 shadow-none appearance-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset focus-visible:ring-offset-0"
+            className="flex h-16 sm:h-14 w-full bg-transparent py-4 sm:py-3 text-base sm:text-sm outline-none border-0 shadow-none appearance-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-0"
             style={{ 
               WebkitAppearance: 'none', 
               MozAppearance: 'textfield',
@@ -524,7 +524,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
             aria-autocomplete="list"
           />
           {isLoading && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin text-muted-foreground" />
+            <Loader2 className="ml-2 h-5 w-5 sm:h-4 sm:w-4 animate-spin text-muted-foreground shrink-0" />
           )}
         </div>
 
@@ -540,7 +540,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         )}
 
         <div
-          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-3 py-3 sm:px-2 sm:py-2"
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-2 sm:py-2"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {/* Loading skeleton */}
@@ -565,25 +565,25 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
                   <h3 className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                     Recent Posts
                   </h3>
-                  <ul className="space-y-1">
+                  <ul className="space-y-2 sm:space-y-1">
                     {recentPosts.map((post) => (
                       <li key={post.id}>
                         <a
                           href={post.url}
                           onClick={() => onOpenChange(false)}
-                          className="flex flex-col gap-2 rounded-md p-3 transition-colors hover:bg-muted focus:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
+                          className="flex flex-col gap-2 rounded-lg sm:rounded-md p-4 sm:p-3 transition-colors active:bg-muted focus:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
                         >
                           <div className="flex items-start justify-between gap-2">
-                            <h3 className="font-medium text-sm leading-tight">
+                            <h3 className="font-medium text-base sm:text-sm leading-tight">
                               {post.title}
                             </h3>
                             <div className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
                               <Calendar className="h-3 w-3" />
-                              <span>{formatDate(post.date)}</span>
+                              <span className="hidden sm:inline">{formatDate(post.date)}</span>
                             </div>
                           </div>
                           {post.description && (
-                            <p className="text-xs text-muted-foreground line-clamp-2">
+                            <p className="text-sm sm:text-xs text-muted-foreground line-clamp-2">
                               {post.description}
                             </p>
                           )}
@@ -663,31 +663,31 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
                     href={result.url}
                     onClick={() => onOpenChange(false)}
                     className={cn(
-                      'flex flex-col gap-2.5 rounded-md p-3.5 transition-colors',
-                      'hover:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                      'flex flex-col gap-3 sm:gap-2.5 rounded-lg sm:rounded-md p-4 sm:p-3.5 transition-colors',
+                      'active:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
                       idx === selectedIndex && 'bg-muted',
                     )}
                     aria-label={`Go to ${result.title}`}
                   >
                     <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-medium text-sm leading-snug">
+                      <h3 className="font-medium text-base sm:text-sm leading-snug flex-1">
                         {highlightText(result.title, query)}
                       </h3>
                       <div className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        <span>{formatDate(result.date)}</span>
+                        <span className="hidden sm:inline">{formatDate(result.date)}</span>
                       </div>
                     </div>
 
                     {result.description && (
-                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      <p className="text-sm sm:text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                         {highlightText(result.description, query)}
                       </p>
                     )}
 
-                    {/* Content snippet */}
+                    {/* Content snippet - hidden on mobile for cleaner UI */}
                     {result.content && (
-                      <p className="text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed italic">
+                      <p className="hidden sm:block text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed italic">
                         {highlightText(extractSnippet(result.content, query), query)}
                       </p>
                     )}
@@ -697,7 +697,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
                         {result.tags.slice(0, 3).map((tag) => (
                           <span
                             key={tag}
-                            className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
+                            className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 sm:px-1.5 sm:py-0.5 text-xs text-muted-foreground"
                           >
                             <Hash className="h-3 w-3" />
                             {tag}
@@ -718,12 +718,12 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
           {/* Load more button */}
           {hasMoreResults && (
-            <div className="mt-2 flex justify-center">
+            <div className="mt-4 sm:mt-2 flex justify-center">
               <button
                 onClick={() => setDisplayedResults((prev) => Math.min(prev + 10, results.length))}
-                className="flex items-center gap-2 rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
+                className="flex items-center gap-2 rounded-lg sm:rounded-md border border-border bg-background px-6 py-3 sm:px-4 sm:py-2 text-base sm:text-sm text-foreground transition-colors active:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
               >
-                <ChevronDown className="h-4 w-4" />
+                <ChevronDown className="h-5 w-5 sm:h-4 sm:w-4" />
                 Load more ({results.length - displayedResults} remaining)
               </button>
             </div>
@@ -731,28 +731,28 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         </div>
 
         {results.length > 0 && (
-          <div className="sticky bottom-0 z-10 flex shrink-0 flex-col gap-2 border-t border-border bg-background px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-2 text-xs text-muted-foreground" style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))' }}>
-            <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-              <span className="hidden sm:inline">
+          <div className="sticky bottom-0 z-10 flex shrink-0 flex-col gap-2 border-t border-border bg-background px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:py-2 text-sm sm:text-xs text-muted-foreground" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
+            <div className="hidden sm:flex flex-wrap items-center gap-4">
+              <span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
                   ↑↓
                 </kbd>{' '}
                 to navigate
               </span>
-              <span className="hidden sm:inline">
+              <span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
                   ↵
                 </kbd>{' '}
                 to select
               </span>
-              <span className="hidden sm:inline">
+              <span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
                   esc
                 </kbd>{' '}
                 to close
               </span>
             </div>
-            <span className="text-center sm:text-right">
+            <span className="text-center sm:text-right font-medium">
               {displayedResults < results.length
                 ? `Showing ${displayedResults} of ${results.length}`
                 : `${results.length} result${results.length !== 1 ? 's' : ''}`}
