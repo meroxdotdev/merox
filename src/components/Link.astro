@@ -36,6 +36,7 @@ const isExternal = external || href.startsWith('http')
   )}
   {...rest}
   data-internal-link={!isExternal ? 'true' : undefined}
+  data-astro-reload={rest['data-astro-reload'] !== undefined ? '' : undefined}
 >
   <slot />
 </a>
