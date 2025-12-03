@@ -33,10 +33,10 @@ const toolsPages: Record<string, { frontmatter: { title: string; description: st
       description: 'Free online IP address geolocation and DNS lookup tool. Lookup IP location, ISP information, and DNS records for any domain or IP address.',
     },
   },
-  '/tools/base64-encoder': {
+  '/tools/ssl-checker': {
     frontmatter: {
-      title: 'Base64 Encoder & Decoder',
-      description: 'Free online Base64 encoder and decoder tool. Encode text to Base64 format or decode Base64 strings back to plain text instantly.',
+      title: 'SSL Certificate Checker',
+      description: 'Free online SSL certificate checker tool. Check SSL certificate validity, expiration dates, issuer information, and certificate details for any website.',
     },
   },
 }

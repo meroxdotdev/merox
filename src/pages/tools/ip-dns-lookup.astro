@@ -4,6 +4,7 @@ import PageHead from '@/components/PageHead.astro'
 import Layout from '@/layouts/Layout.astro'
 import IPDNSLookupComponent from '@/components/react/IPDNSLookup'
 import { ErrorBoundary } from '@/components/react/ErrorBoundary'
+import AdSense from '@/components/AdSense.astro'
 import { SITE } from '@/consts'
 
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href
@@ -79,6 +80,9 @@ const structuredData = {
         Lookup IP address information and DNS records
       </p>
     </header>
+
+    <!-- Ad -->
+    <AdSense />
 
     <!-- Tool Component -->
     <div class="rounded-lg border bg-card">

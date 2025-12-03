@@ -4,6 +4,7 @@ import PageHead from '@/components/PageHead.astro'
 import Layout from '@/layouts/Layout.astro'
 import Base64ToolComponent from '@/components/react/Base64Tool'
 import { ErrorBoundary } from '@/components/react/ErrorBoundary'
+import AdSense from '@/components/AdSense.astro'
 import { SITE } from '@/consts'
 
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href
@@ -79,6 +80,9 @@ const structuredData = {
         Encode and decode Base64 strings instantly
       </p>
     </header>
+
+    <!-- Ad -->
+    <AdSense />
 
     <!-- Tool Component -->
     <div class="rounded-lg border bg-card">

@@ -4,6 +4,7 @@ import PageHead from '@/components/PageHead.astro'
 import Layout from '@/layouts/Layout.astro'
 import SubnetCalculatorComponent from '@/components/react/SubnetCalculator'
 import { ErrorBoundary } from '@/components/react/ErrorBoundary'
+import AdSense from '@/components/AdSense.astro'
 import { SITE } from '@/consts'
 
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href
@@ -80,6 +81,9 @@ const structuredData = {
         Calculate subnet information instantly
       </p>
     </header>
+
+    <!-- Ad -->
+    <AdSense />
 
     <!-- Calculator Component -->
     <div class="rounded-lg border bg-card">
