@@ -1,0 +1,91 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import PageHead from '@/components/PageHead.astro'
+import Layout from '@/layouts/Layout.astro'
+import Base64ToolComponent from '@/components/react/Base64Tool'
+import { ErrorBoundary } from '@/components/react/ErrorBoundary'
+import { SITE } from '@/consts'
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Base64 Encoder & Decoder",
+  "description": "Free online Base64 encoder and decoder tool. Encode text to Base64 format or decode Base64 strings back to plain text instantly. Perfect for developers and IT professionals.",
+  "url": pageUrl,
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Encode text to Base64",
+    "Decode Base64 to text",
+    "Real-time encoding/decoding",
+    "One-click copy to clipboard",
+    "100% client-side processing"
+  ]
+}
+---
+
+<Layout class="max-w-3xl">
+  <PageHead 
+    slot="head" 
+    title="Base64 Encoder & Decoder - Free Online Base64 Tool"
+    description="Encode and decode Base64 strings instantly. Free online Base64 encoder and decoder tool for developers and IT professionals. No registration required."
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <Breadcrumbs 
+    items={[
+      { label: 'Tools', href: '/tools', icon: 'lucide:wrench' },
+      { label: 'Base64 Encoder', icon: 'lucide:code' },
+    ]} 
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": Astro.site?.href || SITE.href
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": new URL("/tools", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Base64 Encoder & Decoder",
+        "item": pageUrl
+      }
+    ]
+  })} />
+
+  <article class="flex flex-col gap-y-6">
+    <!-- Header -->
+    <header class="space-y-2">
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Base64 Encoder & Decoder</h1>
+      <p class="text-muted-foreground">
+        Encode and decode Base64 strings instantly
+      </p>
+    </header>
+
+    <!-- Tool Component -->
+    <div class="rounded-lg border bg-card">
+      <ErrorBoundary client:load>
+        <Base64ToolComponent client:load />
+      </ErrorBoundary>
+    </div>
+  </article>
+</Layout>
+

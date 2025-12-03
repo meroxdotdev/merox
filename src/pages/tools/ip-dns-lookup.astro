@@ -1,0 +1,91 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import PageHead from '@/components/PageHead.astro'
+import Layout from '@/layouts/Layout.astro'
+import IPDNSLookupComponent from '@/components/react/IPDNSLookup'
+import { ErrorBoundary } from '@/components/react/ErrorBoundary'
+import { SITE } from '@/consts'
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "IP & DNS Lookup",
+  "description": "Free online IP address geolocation and DNS lookup tool. Lookup IP location, ISP information, and DNS records (A, AAAA, MX, TXT, CNAME, NS) for any domain or IP address.",
+  "url": pageUrl,
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "IP geolocation lookup",
+    "DNS record lookup (A, AAAA, MX, TXT, CNAME, NS)",
+    "ISP and organization information",
+    "Get your own IP address",
+    "Real-time results"
+  ]
+}
+---
+
+<Layout class="max-w-3xl">
+  <PageHead 
+    slot="head" 
+    title="IP & DNS Lookup - Free IP Address and DNS Lookup Tool"
+    description="Lookup IP address geolocation information and DNS records instantly. Free IP and DNS lookup tool for network administrators and IT professionals. No registration required."
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <Breadcrumbs 
+    items={[
+      { label: 'Tools', href: '/tools', icon: 'lucide:wrench' },
+      { label: 'IP & DNS Lookup', icon: 'lucide:search' },
+    ]} 
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": Astro.site?.href || SITE.href
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": new URL("/tools", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "IP & DNS Lookup",
+        "item": pageUrl
+      }
+    ]
+  })} />
+
+  <article class="flex flex-col gap-y-6">
+    <!-- Header -->
+    <header class="space-y-2">
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">IP & DNS Lookup</h1>
+      <p class="text-muted-foreground">
+        Lookup IP address information and DNS records
+      </p>
+    </header>
+
+    <!-- Tool Component -->
+    <div class="rounded-lg border bg-card">
+      <ErrorBoundary client:load>
+        <IPDNSLookupComponent client:load />
+      </ErrorBoundary>
+    </div>
+  </article>
+</Layout>
+

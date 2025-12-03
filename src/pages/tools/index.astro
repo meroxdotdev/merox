@@ -1,0 +1,153 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import PageHead from '@/components/PageHead.astro'
+import Layout from '@/layouts/Layout.astro'
+import Link from '@/components/Link.astro'
+import { Icon } from 'astro-icon/components'
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Free Online Tools",
+  "description": "Collection of free online tools for system administrators, developers, and IT professionals. Password generator, subnet calculator, IP lookup, DNS lookup, and Base64 encoder/decoder.",
+  "url": pageUrl,
+  "mainEntity": {
+    "@type": "ItemList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Password Generator",
+        "url": new URL("/tools/password-generator", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Subnet Calculator",
+        "url": new URL("/tools/subnet-calculator", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "IP & DNS Lookup",
+        "url": new URL("/tools/ip-dns-lookup", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": "Base64 Encoder & Decoder",
+        "url": new URL("/tools/base64-encoder", Astro.site).href
+      }
+    ]
+  }
+}
+---
+
+<Layout class="max-w-3xl">
+  <PageHead 
+    slot="head" 
+    title="Free Online Tools - Password Generator, Subnet Calculator, IP Lookup"
+    description="Free online tools for system administrators, developers, and IT professionals. Password generator, subnet calculator, IP lookup, DNS lookup, and Base64 encoder. All tools run in your browser."
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <Breadcrumbs items={[{ label: 'Tools', icon: 'lucide:wrench' }]} />
+
+  <article class="flex flex-col gap-y-6">
+    <header class="space-y-2">
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Tools</h1>
+      <p class="text-muted-foreground">
+        Free online tools for system administrators, developers, and IT professionals.
+      </p>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- Password Generator -->
+      <Link
+        href="/tools/password-generator"
+        class="group block rounded-lg border bg-card p-5 hover:border-primary/50 hover:bg-accent/50 transition-all"
+      >
+        <div class="flex items-center gap-3">
+          <div class="rounded-lg bg-primary/10 p-2.5 group-hover:bg-primary/20 transition-colors shrink-0">
+            <Icon name="lucide:shield-check" class="size-5 text-primary" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-lg font-semibold mb-1 group-hover:text-primary transition-colors">
+              Password Generator
+            </h2>
+            <p class="text-sm text-muted-foreground">
+              Generate secure passwords and check strength
+            </p>
+          </div>
+          <Icon name="lucide:arrow-right" class="size-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+        </div>
+      </Link>
+
+      <!-- Subnet Calculator -->
+      <Link
+        href="/tools/subnet-calculator"
+        class="group block rounded-lg border bg-card p-5 hover:border-primary/50 hover:bg-accent/50 transition-all"
+      >
+        <div class="flex items-center gap-3">
+          <div class="rounded-lg bg-primary/10 p-2.5 group-hover:bg-primary/20 transition-colors shrink-0">
+            <Icon name="lucide:network" class="size-5 text-primary" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-lg font-semibold mb-1 group-hover:text-primary transition-colors">
+              Subnet Calculator
+            </h2>
+            <p class="text-sm text-muted-foreground">
+              Calculate subnet masks and network addresses
+            </p>
+          </div>
+          <Icon name="lucide:arrow-right" class="size-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+        </div>
+      </Link>
+
+      <!-- IP & DNS Lookup -->
+      <Link
+        href="/tools/ip-dns-lookup"
+        class="group block rounded-lg border bg-card p-5 hover:border-primary/50 hover:bg-accent/50 transition-all"
+      >
+        <div class="flex items-center gap-3">
+          <div class="rounded-lg bg-primary/10 p-2.5 group-hover:bg-primary/20 transition-colors shrink-0">
+            <Icon name="lucide:search" class="size-5 text-primary" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-lg font-semibold mb-1 group-hover:text-primary transition-colors">
+              IP & DNS Lookup
+            </h2>
+            <p class="text-sm text-muted-foreground">
+              Lookup IP geolocation and DNS records
+            </p>
+          </div>
+          <Icon name="lucide:arrow-right" class="size-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+        </div>
+      </Link>
+
+      <!-- Base64 Encoder -->
+      <Link
+        href="/tools/base64-encoder"
+        class="group block rounded-lg border bg-card p-5 hover:border-primary/50 hover:bg-accent/50 transition-all"
+      >
+        <div class="flex items-center gap-3">
+          <div class="rounded-lg bg-primary/10 p-2.5 group-hover:bg-primary/20 transition-colors shrink-0">
+            <Icon name="lucide:code" class="size-5 text-primary" />
+          </div>
+          <div class="flex-1 min-w-0">
+            <h2 class="text-lg font-semibold mb-1 group-hover:text-primary transition-colors">
+              Base64 Encoder & Decoder
+            </h2>
+            <p class="text-sm text-muted-foreground">
+              Encode and decode Base64 strings
+            </p>
+          </div>
+          <Icon name="lucide:arrow-right" class="size-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+        </div>
+      </Link>
+    </div>
+  </article>
+</Layout>
+

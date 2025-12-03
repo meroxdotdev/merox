@@ -1,0 +1,92 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import PageHead from '@/components/PageHead.astro'
+import Layout from '@/layouts/Layout.astro'
+import SubnetCalculatorComponent from '@/components/react/SubnetCalculator'
+import { ErrorBoundary } from '@/components/react/ErrorBoundary'
+import { SITE } from '@/consts'
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Subnet Calculator",
+  "description": "Free online subnet calculator for network administrators. Calculate subnet masks, network addresses, broadcast addresses, usable IP ranges, and CIDR notation instantly.",
+  "url": pageUrl,
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Calculate network and broadcast addresses",
+    "CIDR notation support",
+    "Subnet mask conversion",
+    "Binary representation",
+    "IP class identification",
+    "Host count calculation"
+  ]
+}
+---
+
+<Layout class="max-w-3xl">
+  <PageHead 
+    slot="head" 
+    title="Subnet Calculator - Free IP Subnet Calculator Tool"
+    description="Calculate subnet masks, network addresses, broadcast addresses, and usable IP ranges instantly. Free online subnet calculator supporting CIDR notation. Perfect for network administrators and IT professionals."
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <Breadcrumbs 
+    items={[
+      { label: 'Tools', href: '/tools', icon: 'lucide:wrench' },
+      { label: 'Subnet Calculator', icon: 'lucide:calculator' },
+    ]} 
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": Astro.site?.href || SITE.href
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": new URL("/tools", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Subnet Calculator",
+        "item": pageUrl
+      }
+    ]
+  })} />
+
+  <article class="flex flex-col gap-y-6">
+    <!-- Header -->
+    <header class="space-y-2">
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Subnet Calculator</h1>
+      <p class="text-muted-foreground">
+        Calculate subnet information instantly
+      </p>
+    </header>
+
+    <!-- Calculator Component -->
+    <div class="rounded-lg border bg-card">
+      <ErrorBoundary client:load>
+        <SubnetCalculatorComponent client:load />
+      </ErrorBoundary>
+    </div>
+  </article>
+</Layout>
+
