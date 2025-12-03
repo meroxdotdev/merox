@@ -4,72 +4,33 @@ import PageHead from '@/components/PageHead.astro'
 import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
-
-const currentRole = {
-  title: 'HPC System Administrator',
-  company: 'Forvia',
-  period: '2022 – Present',
-  highlights: [
-    'Managing high-performance computing infrastructure with PBS job scheduling and InfiniBand networking',
-    'Administering hybrid Windows/Linux server environments with ActiveDirectory integration',
-    'Orchestrating virtualization and network infrastructure using ManageIQ and VitalQIP'
-  ]
-}
-
-const previousRoles = [
-  {
-    title: 'Founder',
-    company: 'Dolphost',
-    period: '2022 – 2024',
-    summary: 'Built and operated web hosting business providing VPS, shared hosting, and WordPress solutions with WHMCS/cPanel infrastructure'
-  },
-  {
-    title: 'Cyber Security Engineer',
-    company: 'Atos IT Solutions',
-    period: '2020 – 2022',
-    summary: 'Conducted vulnerability assessments and managed enterprise security infrastructure (Palo Alto, Fortinet, McAfee, CyberArk, Forescout)'
-  },
-  {
-    title: 'System Administrator',
-    company: 'Netex Romania',
-    period: '2018 – 2020',
-    summary: 'Managed datacenter operations, migrated Puppet to Kubernetes, implemented IPsec networking, and maintained VOIP systems'
-  }
-]
-
-
-const homelabHighlights = [
-  'Dell PowerEdge R720 with Proxmox virtualization',
-  'Production K8S cluster running Talos Linux + FluxCD GitOps',
-  'Network segmentation with VLANs, WAF, and pfSense firewall'
-]
 ---
 
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="About" />
   <Breadcrumbs items={[{ label: 'About', icon: 'lucide:user' }]} />
 
-  <section class="flex flex-col gap-y-6">
-    <!-- Hero Header -->
-    <div class="rounded-lg border bg-gradient-to-br from-primary/5 to-transparent p-6">
-      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-        <div class="space-y-3">
-          <div>
-            <h1 class="text-3xl font-bold">Robert Melcher</h1>
-            <p class="text-sm text-muted-foreground font-mono mt-1">
-              aka <span class="text-primary font-semibold">merox</span> 
-              <span class="text-xs opacity-60">(MElcher + RObert + X)</span>
-            </p>
-          </div>
-          <p class="text-muted-foreground leading-relaxed max-w-2xl">
-            HPC System Administrator and former Cybersecurity Engineer with 9+ years of experience in Linux infrastructure, 
-            high-performance computing, and security. Specialized in datacenter operations, automation, and homelab innovation.
-          </p>
-        </div>
+  <section class="flex flex-col gap-8">
+    <!-- Header -->
+    <div class="flex flex-row md:flex-col gap-4 md:gap-0 items-start">
+      <img
+        src="/robert.jpg"
+        alt="Robert Melcher"
+        width="1492"
+        height="1864"
+        class="rounded-lg object-cover w-20 h-20 md:hidden shrink-0"
+        loading="eager"
+        decoding="async"
+      />
+      <div class="flex-1 md:flex-none">
+        <h1 class="text-3xl md:text-4xl font-bold">Robert Melcher</h1>
+        <p class="text-sm text-muted-foreground font-mono mt-1">
+          aka <span class="text-primary font-semibold">merox</span>
+        </p>
         <Link 
           href="/robert-melcher-cv.pdf" 
           external 
-          class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors shrink-0 text-sm font-medium whitespace-nowrap"
+          class="md:hidden inline-flex items-center gap-2 text-sm text-primary hover:underline mt-2"
         >
           <Icon name="lucide:download" class="size-4" />
           <span>Download CV</span>
@@ -77,100 +38,45 @@ const homelabHighlights = [
       </div>
     </div>
 
-    <!-- Current Role - Featured -->
-    <div class="rounded-lg border border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
-      <div class="p-6">
-        <div class="flex items-start gap-3 mb-4">
-          <div class="size-2.5 rounded-full bg-primary mt-2 animate-pulse"></div>
-          <div>
-            <h2 class="text-xl font-bold">{currentRole.title}</h2>
-            <p class="text-sm text-muted-foreground">{currentRole.company} • {currentRole.period}</p>
-          </div>
-        </div>
-        
-        <ul class="space-y-2">
-          {currentRole.highlights.map((highlight) => (
-            <li class="flex gap-2 text-sm">
-              <Icon name="lucide:chevron-right" class="size-4 text-primary shrink-0 mt-0.5" />
-              <span>{highlight}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-
-    <!-- Previous Experience - Condensed -->
-    <div class="rounded-lg border">
-      <div class="p-6">
-        <h2 class="text-xl font-bold mb-6">Previous Experience</h2>
-        
-        <div class="space-y-6">
-          {previousRoles.map((role, index) => (
-            <div class={`${index < previousRoles.length - 1 ? 'pb-6 border-b' : ''}`}>
-              <div class="flex items-baseline justify-between gap-4 mb-2">
-                <h3 class="font-semibold">{role.title}</h3>
-                <span class="text-xs text-muted-foreground whitespace-nowrap">{role.period}</span>
-              </div>
-              <p class="text-sm text-muted-foreground mb-1">{role.company}</p>
-              <p class="text-sm">{role.summary}</p>
-            </div>
-          ))}
+    <!-- Main Content -->
+    <div class="prose prose-sm dark:prose-invert max-w-none space-y-6">
+      <!-- Photo and Introduction -->
+      <div class="flex flex-col md:flex-row gap-6 items-start">
+        <img
+          src="/robert.jpg"
+          alt="Robert Melcher"
+          width="1492"
+          height="1864"
+          class="hidden md:block rounded-lg object-cover w-40 h-40 shrink-0"
+          loading="eager"
+          decoding="async"
+        />
+        <div class="flex-1 space-y-4">
+          <p class="text-muted-foreground leading-relaxed">
+            My name is <strong class="text-primary">Robert Melcher</strong>. I'm an <strong class="text-primary">HPC System Administrator</strong> at <strong class="text-primary">Forvia</strong>. I am the former <strong class="text-primary">Founder</strong> of <strong class="text-primary">Dolphost</strong>. Previously, I worked as a <strong class="text-primary">Cyber Security Engineer</strong> at <strong class="text-primary">Atos IT Solutions</strong>, and as a <strong class="text-primary">System Administrator</strong> at <strong class="text-primary">Netex Romania</strong>.
+          </p>
+          <Link 
+            href="/robert-melcher-cv.pdf" 
+            external 
+            class="hidden md:inline-flex items-center gap-2 text-sm text-primary hover:underline"
+          >
+            <Icon name="lucide:download" class="size-4" />
+            <span>Download CV</span>
+          </Link>
         </div>
       </div>
+
+      <p class="text-muted-foreground leading-relaxed">
+        I write about technologies I experiment with in my <strong class="text-primary">homelab</strong> as a passion, or use at work as a professional. I specialize in <strong class="text-primary">Linux-based technologies</strong>, <strong class="text-primary">networking</strong>, and <strong class="text-primary">security</strong>, with expertise in server management, virtualization solutions, and network implementation.
+      </p>
+
+      <p class="text-muted-foreground leading-relaxed">
+        I studied <strong class="text-primary">Computer Science</strong> at <strong class="text-primary">West University of Timișoara</strong> (2016–2018) and hold a <strong class="text-primary">CCNA</strong> certification from <strong class="text-primary">Cisco</strong> (2019–2020).
+      </p>
+
+      <p class="text-muted-foreground leading-relaxed">
+        The name <strong class="text-primary">merox</strong> comes from <strong class="text-primary">me</strong> (Melcher) + <strong class="text-primary">ro</strong> (Robert) = mero + <strong class="text-primary">x</strong>. The "x" can be interpreted in different ways, but it also comes from my old username <strong class="text-primary">mer0x39</strong>, where <strong class="text-primary">0x39</strong> = 57 in hexadecimal, with 5 representing my birth day and 7 representing the month (July).
+      </p>
     </div>
-
-    <!-- Qualifications (Merged Education + Certs) -->
-    <div class="rounded-lg border">
-      <div class="p-6">
-        <h2 class="text-xl font-bold mb-6">Qualifications</h2>
-        
-        <div class="grid gap-6 sm:grid-cols-2">
-          <div>
-            <div class="flex items-center gap-2 mb-3">
-              <Icon name="lucide:graduation-cap" class="size-5 text-primary" />
-              <h3 class="font-semibold">Education</h3>
-            </div>
-            <p class="text-sm">Computer Science</p>
-            <p class="text-sm text-muted-foreground">West University of Timișoara</p>
-            <p class="text-xs text-muted-foreground">2016–2018</p>
-          </div>
-
-          <div>
-            <div class="flex items-center gap-2 mb-3">
-              <Icon name="lucide:award" class="size-5 text-primary" />
-              <h3 class="font-semibold">Certification</h3>
-            </div>
-            <p class="text-sm">CCNA (Cisco Certified Network Associate)</p>
-            <p class="text-sm text-muted-foreground">Cisco • 2019–2020</p>
-            <p class="text-xs text-muted-foreground/60 font-mono">#NJXWKRFD7D1EQ7C0</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Homelab Projects -->
-    <div class="rounded-lg border border-primary/20 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
-      <div class="p-6">
-        <div class="flex items-center gap-2 mb-4">
-          <Icon name="lucide:server" class="size-5 text-primary" />
-          <h2 class="text-xl font-bold">Homelab</h2>
-        </div>
-        
-        <ul class="space-y-2 mb-6">
-          {homelabHighlights.map((project) => (
-            <li class="flex gap-3 text-sm">
-              <Icon name="lucide:check" class="size-4 text-primary shrink-0 mt-0.5" />
-              <span>{project}</span>
-            </li>
-          ))}
-        </ul>
-
-        <Link href="/blog" class="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline">
-          <span>Read about my infrastructure setup</span>
-          <Icon name="lucide:arrow-right" class="size-4" />
-        </Link>
-      </div>
-    </div>
-
   </section>
 </Layout>
