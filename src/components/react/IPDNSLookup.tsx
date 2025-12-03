@@ -85,31 +85,37 @@ const IPDNSLookup: React.FC = () => {
     ]
 
     // Try each API in order until one succeeds
-    for (const api of apis) {
-      try {
-        const response = await fetch(api.url, {
-          signal: AbortSignal.timeout(5000) // 5 second timeout
-        })
-        
-        if (!response.ok) continue
-        
-        const data = await response.json()
-        const parsed = api.parser(data)
-        
-        if (parsed) {
-          setIpInfo(parsed)
-          return
+    try {
+      for (const api of apis) {
+        try {
+          const response = await fetch(api.url, {
+            signal: AbortSignal.timeout(5000) // 5 second timeout
+          })
+          
+          if (!response.ok) continue
+          
+          const data = await response.json()
+          const parsed = api.parser(data)
+          
+          if (parsed) {
+            setIpInfo(parsed)
+            return
+          }
+        } catch (err) {
+          // Continue to next API if this one fails
+          console.warn(`${api.name} failed, trying fallback...`, err)
+          continue
         }
-      } catch (err) {
-        // Continue to next API if this one fails
-        console.warn(`${api.name} failed, trying fallback...`, err)
-        continue
       }
-    }
 
-    // If all APIs failed
-    setError('Failed to lookup IP address. Please try again later.')
-    setLoading(false)
+      // If all APIs failed
+      setError('Failed to lookup IP address. Please try again later.')
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again later.')
+      console.error('IP lookup error:', err)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   const lookupDNS = useCallback(async (domain: string) => {
@@ -145,10 +151,12 @@ const IPDNSLookup: React.FC = () => {
 
       if (records.length === 0) {
         setError('No DNS records found for this domain')
+        setLoading(false)
         return
       }
 
       setDnsRecords(records)
+      setLoading(false)
     } catch (err) {
       setError('Failed to lookup DNS records. Please check the domain name and try again.')
       console.error('DNS lookup error:', err)
