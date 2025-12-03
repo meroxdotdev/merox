@@ -189,6 +189,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
   const [recentPosts, setRecentPosts] = useState<SearchResult[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLUListElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
   const listboxId = 'search-results-listbox'
 
   // Load search index (with caching)
@@ -375,11 +376,15 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
     return () => clearTimeout(timeoutId)
   }, [query, performSearch])
 
-  // Focus input when dialog opens
+  // Focus input when dialog opens and reset scroll position
   useEffect(() => {
     if (open) {
       setTimeout(() => {
         inputRef.current?.focus()
+        // Reset scroll position to top when dialog opens
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = 0
+        }
       }, 100)
       setQuery('')
       setResults([])
@@ -388,6 +393,19 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
       setError(null)
     }
   }, [open])
+
+  // Reset scroll position when query changes (new search)
+  useEffect(() => {
+    if (scrollContainerRef.current && query.trim()) {
+      // Small delay to ensure DOM is updated
+      const timeoutId = setTimeout(() => {
+        if (scrollContainerRef.current) {
+          scrollContainerRef.current.scrollTop = 0
+        }
+      }, 100)
+      return () => clearTimeout(timeoutId)
+    }
+  }, [query])
 
   // Keyboard navigation
   useEffect(() => {
@@ -483,7 +501,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-full sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden top-0 sm:top-[10%] translate-y-0 h-screen sm:h-auto sm:max-h-[85vh] flex flex-col rounded-none sm:rounded-lg data-[state=open]:slide-in-from-top-0 data-[state=closed]:slide-out-to-top-0">
+      <DialogContent className="max-w-full sm:max-w-lg md:max-w-2xl p-0 gap-0 overflow-hidden top-0 sm:top-[10%] translate-y-0 h-[100dvh] sm:h-auto sm:max-h-[85vh] flex flex-col rounded-none sm:rounded-lg data-[state=open]:slide-in-from-top-0 data-[state=closed]:slide-out-to-top-0">
         <DialogDescription className="sr-only">
           Search blog posts by title, description, tags, or content
         </DialogDescription>
@@ -540,7 +558,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         {error && (
           <div
             role="alert"
-            className="mx-4 mt-2 flex items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive"
+            className="flex shrink-0 items-center gap-2 rounded-md bg-destructive/10 p-3 text-sm text-destructive mx-4 mt-2"
           >
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
@@ -548,6 +566,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         )}
 
         <div
+          ref={scrollContainerRef}
           className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-2 sm:py-2"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
@@ -726,7 +745,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
           {/* Load more button */}
           {hasMoreResults && (
-            <div className="mt-6 mb-4 sm:mt-4 sm:mb-2 flex justify-center">
+            <div className="mt-6 mb-4 sm:mt-4 sm:mb-2 flex justify-center pb-safe">
               <button
                 onClick={() => setDisplayedResults((prev) => Math.min(prev + 10, results.length))}
                 className="flex items-center gap-2 rounded-lg sm:rounded-md border border-border bg-background px-6 py-3 sm:px-4 sm:py-2 text-base sm:text-sm text-foreground transition-colors active:bg-muted focus:outline-none focus:ring-2 focus:ring-ring shadow-sm"
@@ -736,10 +755,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
               </button>
             </div>
           )}
+          
+          {/* Extra padding at bottom for mobile to ensure last items are scrollable */}
+          <div className="h-4 sm:h-2" aria-hidden="true" />
         </div>
 
         {results.length > 0 && (
-          <div className="flex shrink-0 items-center justify-center border-t border-border bg-background px-4 py-3 sm:py-2 text-xs text-muted-foreground pb-safe">
+          <div className="flex shrink-0 items-center justify-center border-t border-border bg-background px-4 py-3 sm:py-2 text-xs text-muted-foreground">
             <div className="hidden sm:flex flex-wrap items-center gap-4">
               <span>
                 <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
