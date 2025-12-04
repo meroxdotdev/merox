@@ -8,7 +8,7 @@ import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
 import { formatDate, cn } from '@/lib/utils'
-import { SOCIAL_LINKS, ICON_MAP } from '@/consts'
+import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
 import type { SocialLink } from '@/types'
 
 // Error handling for fetching recent posts
@@ -17,6 +17,61 @@ try {
   latestPosts = await getRecentPosts(2)
 } catch (error) {
   console.error('Error fetching recent posts:', error)
+}
+
+// Person Schema for homepage SEO
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Robert Melcher",
+  "alternateName": "merox",
+  "url": SITE.href,
+  "image": new URL('/reworkedmeroxdc1.webp', Astro.site).href,
+  "jobTitle": "HPC System Administrator",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Forvia"
+  },
+  "sameAs": [
+    "https://github.com/meroxdotdev",
+    "https://www.linkedin.com/in/robert-melcher-92a1a9157"
+  ],
+  "description": SITE.description
+}
+
+// Organization Schema
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": SITE.title,
+  "url": SITE.href,
+  "logo": new URL('/reworkedmeroxdc1.webp', Astro.site).href,
+  "description": SITE.description,
+  "founder": {
+    "@type": "Person",
+    "name": "Robert Melcher"
+  }
+}
+
+// Website Schema
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": SITE.title,
+  "url": SITE.href,
+  "description": SITE.description,
+  "author": {
+    "@type": "Person",
+    "name": "Robert Melcher"
+  },
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": `${SITE.href}/blog?q={search_term_string}`
+    },
+    "query-input": "required name=search_term_string"
+  }
 }
 
 type ExperienceItem = {
@@ -62,6 +117,11 @@ const experience: ExperienceItem[] = [
 ---
 <Layout class="max-w-3xl" transition:persist="home-layout">
   <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true} />
+  
+  <!-- Schema Markup for SEO -->
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
   
   <link rel="preload" as="image" href="/static/homelab.webp" type="image/webp" fetchpriority="high" />
   

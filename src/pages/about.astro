@@ -4,10 +4,49 @@ import PageHead from '@/components/PageHead.astro'
 import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
+import { SITE } from '@/consts'
+
+// Enhanced Person Schema for About page
+const personSchema = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Robert Melcher",
+  "alternateName": "merox",
+  "url": SITE.href,
+  "image": new URL('/robert.webp', Astro.site).href,
+  "jobTitle": "HPC System Administrator",
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Forvia"
+  },
+  "alumniOf": {
+    "@type": "EducationalOrganization",
+    "name": "West University of Timișoara"
+  },
+  "hasCredential": {
+    "@type": "EducationalOccupationalCredential",
+    "credentialCategory": "Professional Certification",
+    "recognizedBy": {
+      "@type": "Organization",
+      "name": "Cisco"
+    },
+    "name": "CCNA"
+  },
+  "sameAs": [
+    "https://github.com/meroxdotdev",
+    "https://www.linkedin.com/in/robert-melcher-92a1a9157"
+  ],
+  "email": "hello@merox.dev",
+  "description": "System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security."
+}
 ---
 
 <Layout class="max-w-3xl">
   <PageHead slot="head" title="About" />
+  
+  <!-- Person Schema for About page SEO -->
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+  
   <Breadcrumbs items={[{ label: 'About', icon: 'lucide:user' }]} />
 
   <section class="flex flex-col gap-8">
