@@ -18,19 +18,21 @@ import { Icon } from 'astro-icon/components'
         alt="Robert Melcher"
         width="1492"
         height="1864"
-        class="rounded-lg object-cover w-20 h-20 md:hidden shrink-0"
+        class="rounded-lg object-cover w-28 h-28 md:hidden shrink-0"
         loading="eager"
         decoding="async"
       />
-      <div class="flex-1 md:flex-none">
-        <h1 class="text-3xl md:text-4xl font-bold">Robert Melcher</h1>
-        <p class="text-sm text-muted-foreground font-mono mt-1">
-          aka <span class="text-primary font-semibold">merox</span>
-        </p>
+      <div class="flex-1 md:flex-none flex flex-col justify-between min-h-[7rem]">
+        <div>
+          <h1 class="text-3xl md:text-4xl font-bold">Robert Melcher</h1>
+          <p class="text-sm text-muted-foreground font-mono mt-1">
+            aka <span class="text-primary font-semibold">merox</span>
+          </p>
+        </div>
         <Link 
           href="/robert-melcher-cv.pdf" 
           external 
-          class="md:hidden inline-flex items-center gap-2 text-sm text-primary hover:underline mt-2"
+          class="md:hidden inline-flex items-center gap-2 text-sm text-primary hover:underline mt-auto"
         >
           <Icon name="lucide:download" class="size-4" />
           <span>Download CV</span>
