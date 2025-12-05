@@ -126,18 +126,38 @@ const experience: ExperienceItem[] = [
   
   <link rel="preload" as="image" href="/static/homelab.webp" type="image/webp" fetchpriority="high" />
   
+  <script is:inline define:vars={{ imageUrl: '/static/homelab.webp' }}>
+    // Ensure hero background image displays immediately when loaded
+    (function() {
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      
+      // If image is already cached, ensure it's visible
+      if (img.complete) {
+        document.addEventListener('DOMContentLoaded', function() {
+          const heroImg = document.querySelector('.hero-bg-image');
+          if (heroImg) {
+            heroImg.style.opacity = '1';
+          }
+        }, { once: true });
+      }
+    })();
+  </script>
+  
   <!-- Hero Section -->
   <section class="relative overflow-hidden rounded-xl border">
-    <!-- Background Image -->
-    <picture class="absolute inset-0 z-0 pointer-events-none">
+    <!-- Background Image - optimized with proper fallback -->
+    <picture class="absolute inset-0 z-0 pointer-events-none hero-bg-picture" aria-hidden="true">
       <source type="image/webp" srcset="/static/homelab.webp" />
       <img
         src="/static/homelab.png"
         alt=""
-        class="absolute inset-0 w-full h-full object-cover parallax-bg"
+        class="hero-bg-image"
         fetchpriority="high"
+        loading="eager"
         decoding="async"
-        aria-hidden="true"
+        width="1920"
+        height="1080"
       />
     </picture>
     

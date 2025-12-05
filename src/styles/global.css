@@ -175,6 +175,45 @@
   filter: grayscale(40%) contrast(1.1) brightness(0.85);
 }
 
+/* Hero background - enterprise-ready implementation */
+.hero-bg-picture {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Prevent layout shift */
+  contain: layout style paint;
+}
+
+.hero-bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(40%) contrast(1.1) brightness(0.85);
+  /* Prevent fade-in on load */
+  opacity: 1;
+  transition: none;
+  animation: none;
+  /* Optimize rendering performance */
+  will-change: auto;
+  content-visibility: auto;
+  /* Prevent image fade-in effect */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+/* Ensure image is visible immediately when loaded or cached */
+.hero-bg-image[complete],
+.hero-bg-image[loaded] {
+  opacity: 1;
+}
+
+/* Exclude from Astro view transitions for instant display */
+.hero-bg-picture {
+  view-transition-name: none;
+}
+
 
 /* Modern 2025 background effects */
 @supports (backdrop-filter: blur(1px)) {
