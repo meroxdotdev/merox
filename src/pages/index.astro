@@ -1,4 +1,5 @@
 ---
+import BlogCard from '@/components/BlogCard.astro'
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
 import Skills from '@/components/react/Skills'
@@ -7,7 +8,7 @@ import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
-import { formatDate, cn } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
 import type { SocialLink } from '@/types'
 
@@ -294,31 +295,10 @@ const experience: ExperienceItem[] = [
         </Link>
       </div>
       
-      <div class="space-y-4">
+      <div class="space-y-2">
         {latestPosts.map((post) => (
-          <article class="group">
-            <Link
-              href={`/${post.collection}/${post.id}`}
-              class="block rounded-lg border p-5 transition-colors hover:border-border hover:bg-accent/50"
-            >
-              <div class="flex items-start gap-2 text-sm text-muted-foreground mb-2">
-                <time>{formatDate(post.data.date)}</time>
-                {post.data.tags && post.data.tags.length > 0 && (
-                  <>
-                    <span>·</span>
-                    <span class="text-primary font-medium">{post.data.tags[0]}</span>
-                  </>
-                )}
-              </div>
-              <h3 class="text-xl font-semibold mb-2 group-hover:text-foreground transition-colors">
-                {post.data.title}
-              </h3>
-              {post.data.description && (
-                <p class="text-muted-foreground text-sm line-clamp-2">
-                  {post.data.description}
-                </p>
-              )}
-            </Link>
+          <article>
+            <BlogCard entry={post} />
           </article>
         ))}
       </div>

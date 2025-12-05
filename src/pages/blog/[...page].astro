@@ -32,12 +32,14 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
     ]}
   />
 
-  <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-y-8">
+  <div class="flex min-h-[calc(100vh-18rem)] flex-col">
     {
       years.map((year) => (
-        <section class="flex flex-col gap-y-4">
-          <div class="font-medium">{year}</div>
-          <ul class="flex flex-col gap-4">
+        <section class="flex flex-col">
+          <div class="text-muted-foreground/60 text-xs font-medium uppercase tracking-wider mb-2.5 mt-6 first:mt-0">
+            {year}
+          </div>
+          <ul class="flex flex-col gap-2">
             {postsByYear[year].map((post) => (
               <li>
                 <BlogCard entry={post} />
@@ -49,10 +51,12 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
     }
   </div>
 
-  <PaginationComponent
-    currentPage={page.currentPage}
-    totalPages={page.lastPage}
-    baseUrl="/blog/"
-    client:idle
-  />
+  <div class="mt-6">
+    <PaginationComponent
+      currentPage={page.currentPage}
+      totalPages={page.lastPage}
+      baseUrl="/blog/"
+      client:idle
+    />
+  </div>
 </Layout>
