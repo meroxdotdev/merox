@@ -1,0 +1,231 @@
+---
+title: "Introducing merox-erudite: My Customized Astro Blogging Theme"
+description: "After months of customizing astro-erudite for my blog, I decided to share my fork with the community. Here's what I added and why I made it a separate theme instead of contributing back."
+date: 2025-12-05
+tags: ["experimental", "astro", "theme", "blogging", "open-source"]
+image: './merox-erudite.svg'
+draft: false
+---
+
+import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
+
+When I started this blog, I chose [astro-erudite](https://github.com/jktrn/astro-erudite) as my base theme. It's an excellent, minimal template that gave me exactly what I needed to get started. But as I used it more, I found myself adding features that I needed for a production blog—newsletter integration, comments, analytics, and more.
+
+After several months of customizations, I realized I had made enough changes that it made sense to share my version as a separate theme: **merox-erudite**.
+
+<Callout variant="note">
+**Full Transparency:** This theme was developed exclusively using [Cursor](https://cursor.sh/) (an AI-powered code editor) with a paid subscription. I'm not a programmer by profession—I'm a System Administrator who wanted to share my customized blog theme with the community.
+</Callout>
+
+<Callout variant="warning">
+**Important Disclaimer:** This theme was built out of passion with basic programming knowledge, not professional expertise. As a "vibe-coded" project, it may contain bugs, workarounds, or suboptimal code that I'm not aware of. While I've tested it and it works for my use case, please use it at your own discretion. If you encounter issues, feel free to open an issue on GitHub or submit a pull request with improvements. This is a learning project shared with the community, not production-grade code.
+</Callout>
+
+## Why a Fork Instead of Contributing Back?
+
+I considered contributing these features back to astro-erudite, but there were a few reasons I decided to fork instead:
+
+1. **Different philosophy** - Some features (like AdSense) might not align with the original theme's minimal goals
+2. **Optional features** - Many additions are optional and might clutter the base theme
+3. **Extensive customization** - The modifications are quite extensive and personal
+4. **Easier maintenance** - Maintaining as a separate theme is simpler for me
+
+<Callout variant="tip">
+**Philosophy:** merox-erudite aims to be a "batteries-included" version for those who want a complete blogging solution out of the box, while astro-erudite remains a minimal, opinionated template.
+</Callout>
+
+<AdSense />
+
+## What I Added
+
+### Newsletter Integration (Brevo)
+
+One of the first things I needed was newsletter functionality. I chose Brevo (formerly Sendinblue) because they offer a generous free tier and have a straightforward API.
+
+The integration includes:
+- GDPR-compliant consent checkbox
+- Double opt-in support
+- Centralized configuration
+
+```ts
+// Configure in src/consts.ts
+export const BREVO = {
+  apiKey: import.meta.env.BREVO_API_KEY || '',
+  listId: import.meta.env.BREVO_LIST_ID || '',
+  templateId: import.meta.env.BREVO_TEMPLATE_ID || '5',
+}
+```
+
+### Disqus Comments
+
+I wanted comments on my blog posts, so I integrated Disqus with:
+- Lazy loading (comments only load when visible)
+- View transition support for Astro
+- Proper error handling
+- Accessibility improvements
+
+<Callout variant="tip">
+**Note:** Disqus is optional. If you don't configure it, the component simply won't render.
+</Callout>
+
+### Analytics Support
+
+I added support for both Google Analytics and Umami Analytics. Both are optional and configured via environment variables:
+
+```env
+PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
+PUBLIC_UMAMI_WEBSITE_ID=your-umami-id
+```
+
+### SEO Enhancements
+
+I created reusable components for FAQ Schema and HowTo Schema markup. These help with voice search optimization and structured data for search engines.
+
+### Enhanced Homepage
+
+I customized the homepage with:
+- Experience timeline component
+- Skills showcase with animated tech badges
+- Better hero section
+
+The experience timeline is particularly useful for showcasing your professional journey. You can customize it in `src/pages/index.astro`:
+
+```ts
+const experience: ExperienceItem[] = [
+  {
+    role: 'Your Role',
+    company: 'Company Name',
+    period: '2020 - Present',
+    current: true,
+    icon: 'lucide:briefcase',
+    key: 'Your achievements and responsibilities'
+  },
+]
+```
+
+### Design Improvements
+
+- **Geist font family** - I switched to Geist variable fonts for better typography
+- **Improved contrast** - Better accessibility compliance
+- **Enhanced dark mode** - Refined color palette
+- **Better focus indicators** - Improved keyboard navigation
+
+## What's Different?
+
+| Feature | astro-erudite | merox-erudite |
+|---------|---------------|---------------|
+| Newsletter | ❌ | ✅ Brevo integration |
+| Comments | ❌ | ✅ Disqus support |
+| Analytics | ❌ | ✅ GA & Umami |
+| SEO Schemas | Basic | ✅ FAQ & HowTo |
+| Homepage | Standard | ✅ Enhanced with timeline |
+| Fonts | System | ✅ Geist variable fonts |
+| AdSense | ❌ | ✅ Built-in component |
+
+## Getting Started
+
+If you want to use merox-erudite for your blog:
+
+1. **Use the template** - Click "Use this template" on the [merox-erudite repository](https://github.com/meroxdotdev/merox-erudite) to create your own repository
+2. **Clone your repository:**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
+   cd YOUR_REPO_NAME
+   ```
+3. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+4. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+   Your site will be available at `http://localhost:4321`
+5. **Configure** - Update `src/consts.ts` with your site information (title, description, author, etc.)
+6. **Optional features** - Set up newsletter, comments, or analytics if needed (see [Deployment](#deployment-on-cloudflare-pages) section for environment variables)
+
+<Callout variant="warning">
+**Important:** This theme is based on astro-erudite by [@jktrn](https://github.com/jktrn). For detailed documentation about the original theme's architecture and design philosophy, visit the [official astro-erudite repository](https://github.com/jktrn/astro-erudite).
+</Callout>
+
+## Deployment on Cloudflare Pages
+
+I recommend deploying merox-erudite on [Cloudflare Pages](https://pages.cloudflare.com/)—it's free, fast, and makes handling environment variables (especially for Brevo) very straightforward.
+
+### Why Cloudflare Pages?
+
+- **Free tier** - Generous limits for personal blogs
+- **Fast global CDN** - Your site loads quickly worldwide
+- **Easy environment variables** - Simple UI for managing secrets
+- **Automatic deployments** - Connects directly to GitHub
+- **Built-in analytics** - Optional Web Analytics included
+
+### Setting Up Environment Variables
+
+After connecting your repository to Cloudflare Pages, you'll need to add environment variables for optional features:
+
+1. Go to your project in Cloudflare Dashboard
+2. Navigate to **Settings** → **Environment Variables**
+3. Add the following variables:
+
+**For Newsletter (Brevo):**
+```
+BREVO_API_KEY=your-api-key-here (set as Secret)
+BREVO_LIST_ID=your-list-id-here (can be Text)
+BREVO_TEMPLATE_ID=5 (can be Text)
+```
+
+**For Analytics:**
+```
+PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX (can be Text)
+PUBLIC_UMAMI_WEBSITE_ID=your-umami-id (can be Text)
+```
+
+**For Disqus:**
+```
+PUBLIC_DISQUS_SHORTNAME=your-shortname (can be Text)
+```
+
+<Callout variant="warning">
+**Important:** API keys like `BREVO_API_KEY` must be set as **Secret** (not Text) in Cloudflare Pages. This ensures they're encrypted and not exposed in logs or build outputs. Only set them as Text if they're truly public values (like `PUBLIC_*` variables that are meant to be exposed to the browser).
+</Callout>
+
+<Callout variant="tip">
+**Pro Tip:** Cloudflare Pages makes it easy to have different variables for production and preview deployments. You can set production-only variables that won't be exposed in preview builds.
+</Callout>
+
+### Build Settings
+
+Cloudflare Pages will auto-detect Astro, but if needed, use these settings:
+
+- **Build command:** `npm run build`
+- **Build output directory:** `dist`
+- **Node version:** 20.x or later
+
+That's it! Once you push to your repository, Cloudflare Pages will automatically build and deploy your site. The environment variables are securely stored and only accessible during the build process and at runtime (for `PUBLIC_*` variables).
+
+## Development Process
+
+Since I'm not a professional programmer, I used [Cursor](https://cursor.sh/) to help me build this theme. The process involved:
+
+- Iterative conversations with Cursor's AI assistant
+- Learning code concepts through AI explanations
+- Testing and refining features
+- Building on the excellent foundation of astro-erudite
+
+While the code was written with AI assistance, all decisions about features, design, and implementation were made by me based on my actual needs as a blogger. The theme has been tested and is fully functional. All features work as documented.
+
+## Credits
+
+- **Original theme:** [astro-erudite](https://github.com/jktrn/astro-erudite) by [@jktrn](https://github.com/jktrn) - All credit for the original design and architecture
+- **Inspiration:** [Astro Micro](https://astro-micro.vercel.app/) by [trevortylerlee](https://github.com/trevortylerlee)
+- **Development tool:** [Cursor](https://cursor.sh/) AI coding assistant
+
+## Try It Out
+
+Ready to use merox-erudite? Head over to the [GitHub repository](https://github.com/meroxdotdev/merox-erudite) and click "Use this template" to get started!
+
+<Callout variant="tip">
+**Questions or feedback?** Feel free to open an issue on [GitHub](https://github.com/meroxdotdev/merox-erudite/issues) or reach out via [email](mailto:hello@merox.dev)!
+</Callout>
