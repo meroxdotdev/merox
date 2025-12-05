@@ -126,40 +126,10 @@ const experience: ExperienceItem[] = [
   
   <link rel="preload" as="image" href="/static/homelab.webp" type="image/webp" fetchpriority="high" />
   
-  <script is:inline define:vars={{ imageUrl: '/static/homelab.webp' }}>
-    // Ensure hero background image displays immediately when loaded
-    (function() {
-      const img = document.createElement('img');
-      img.src = imageUrl;
-      
-      // If image is already cached, ensure it's visible
-      if (img.complete) {
-        document.addEventListener('DOMContentLoaded', function() {
-          const heroImg = document.querySelector('.hero-bg-image');
-          if (heroImg) {
-            heroImg.style.opacity = '1';
-          }
-        }, { once: true });
-      }
-    })();
-  </script>
-  
   <!-- Hero Section -->
-  <section class="relative overflow-hidden rounded-xl border">
-    <!-- Background Image - optimized with proper fallback -->
-    <picture class="absolute inset-0 z-0 pointer-events-none hero-bg-picture" aria-hidden="true">
-      <source type="image/webp" srcset="/static/homelab.webp" />
-      <img
-        src="/static/homelab.png"
-        alt=""
-        class="hero-bg-image"
-        fetchpriority="high"
-        loading="eager"
-        decoding="async"
-        width="1920"
-        height="1080"
-      />
-    </picture>
+  <section class="relative overflow-hidden rounded-xl border" transition:animate="none">
+    <!-- Background Image - CSS background-image (best practice for backgrounds) -->
+    <div class="hero-bg-container" aria-hidden="true"></div>
     
     <!-- Gradient Overlay -->
     <div class="absolute inset-0 z-[1] bg-gradient-to-b from-background/90 via-background/80 to-background/90 dark:from-background/95 dark:via-background/90 dark:to-background/95"></div>
