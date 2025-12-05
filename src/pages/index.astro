@@ -293,19 +293,35 @@ const experience: ExperienceItem[] = [
         ))}
       </div>
       
-      <div class="mt-6 sm:hidden">
+      <article class="mt-2 sm:hidden">
         <Link
           href="/blog"
-          class={buttonVariants({ variant: 'outline' }) + ' w-full'}
+          aria-label="View all blog posts"
+          class="group block py-3 px-2 rounded-md border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-primary/30 transition-all duration-200"
         >
-          View all posts
+          <div class="flex items-center gap-3">
+            <div class="flex-shrink-0 w-10 h-10 rounded-lg bg-primary/10 dark:bg-primary/20 flex items-center justify-center group-hover:bg-primary/20 dark:group-hover:bg-primary/30 transition-colors" aria-hidden="true">
+              <Icon name="lucide:library" class="size-5 text-primary" />
+            </div>
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span class="text-sm font-semibold text-foreground group-hover:text-primary transition-colors">
+                  View all posts
+                </span>
+                <Icon name="lucide:arrow-right" class="size-4 text-primary/70 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" aria-hidden="true" />
+              </div>
+              <p class="text-xs text-muted-foreground mt-0.5">
+                Explore all articles and tutorials
+              </p>
+            </div>
+          </div>
         </Link>
-      </div>
+      </article>
     </section>
   )}
 
   <!-- CTA Section -->
-  <section class="mt-24 mb-20">
+  <section class="mt-12 sm:mt-24 mb-20">
     <div class="max-w-2xl mx-auto">
       <div class="mb-12 relative">
         <div class="absolute inset-0 flex items-center" aria-hidden="true">
