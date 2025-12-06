@@ -29,7 +29,7 @@
   src: url('/fonts/GeistVF.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 @font-face {
@@ -37,7 +37,7 @@
   src: url('/fonts/GeistMonoVF.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
 }
 
 :root {
@@ -195,6 +195,52 @@
   contain: layout style paint;
   will-change: auto;
   content-visibility: auto;
+}
+
+/* Prevent layout shifts in hero section */
+.hero-section {
+  /* Prevent layout shifts during font loading and view transitions */
+  contain: layout style;
+  /* Ensure stable rendering */
+  will-change: auto;
+  /* Prevent view transition animations from causing shifts */
+  view-transition-name: none;
+}
+
+/* Prevent text shifting during font load in hero section */
+.hero-section h1,
+.hero-section p {
+  /* Prevent layout shifts during font loading */
+  text-rendering: optimizeLegibility;
+  /* Ensure stable rendering */
+  contain: layout;
+}
+
+/* On mobile, ensure hero content doesn't shift during navigation */
+@media (max-width: 640px) {
+  .hero-section {
+    /* Prevent layout shifts on mobile during view transitions */
+    contain: layout style paint;
+  }
+  
+  .hero-section > div:last-child {
+    /* Ensure content container has stable dimensions */
+    min-height: fit-content;
+    /* Prevent font loading shifts */
+    contain: layout;
+  }
+  
+  /* Prevent badge and text from shifting */
+  .hero-section .inline-flex,
+  .hero-section .space-y-4,
+  .hero-section .space-y-6 {
+    contain: layout;
+  }
+  
+  /* Ensure headings have stable dimensions */
+  .hero-section h1 {
+    min-height: 1.2em;
+  }
 }
 
 /* Fallback for browsers that don't support WebP */
