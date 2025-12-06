@@ -32,7 +32,7 @@ const ThemePromo: React.FC = () => {
   return (
     <div
       id="theme-promo"
-      className="fixed left-4 bottom-4 z-40 hidden xl:block"
+      className="fixed right-6 bottom-6 z-[60] hidden xl:block"
       aria-label="Theme information"
     >
       {/* Collapsed Button - Only show when card is closed */}
@@ -57,7 +57,7 @@ const ThemePromo: React.FC = () => {
       {/* Expanded Card */}
       {isOpen && (
         <div
-          className="w-80 rounded-lg border border-border/60 bg-background/95 backdrop-blur-md shadow-xl mt-3 overflow-hidden animate-in slide-in-from-bottom-2"
+          className="w-80 rounded-lg border border-border/60 bg-background/95 backdrop-blur-md shadow-xl mb-3 overflow-hidden animate-in slide-in-from-bottom-2"
         >
           <div className="p-5 flex flex-col gap-4">
             {/* Header */}
