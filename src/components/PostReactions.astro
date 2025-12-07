@@ -1,0 +1,427 @@
+---
+import { cn } from '@/lib/utils'
+
+interface Props {
+  postId: string
+  className?: string
+}
+
+const { postId, className } = Astro.props
+
+// Emoji reactions with labels
+const reactions = [
+  { emoji: '👍', label: 'Like', key: 'like' },
+  { emoji: '❤️', label: 'Love', key: 'love' },
+  { emoji: '🎉', label: 'Celebrate', key: 'celebrate' },
+  { emoji: '💬', label: 'Comment', key: 'comment' },
+  { emoji: '🔥', label: 'Fire', key: 'fire' },
+  { emoji: '👏', label: 'Clap', key: 'clap' },
+] as const
+
+---
+
+<section
+  class={cn('flex flex-col gap-3', className)}
+  aria-label="Post reactions"
+>
+  <h3 class="text-sm font-semibold text-muted-foreground">
+    How did you like this post?
+  </h3>
+  <div class="flex flex-wrap items-center gap-2">
+    {
+      reactions.map((reaction) => (
+        <button
+          type="button"
+          data-reaction={reaction.key}
+          data-post-id={postId}
+          class="group relative flex items-center gap-1.5 rounded-lg border border-border bg-background px-3 py-2 text-sm transition-all hover:bg-muted hover:border-primary/50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label={`React with ${reaction.label}`}
+          title={reaction.label}
+        >
+          <span class="text-lg leading-none" aria-hidden="true">
+            {reaction.emoji}
+          </span>
+          <span
+            class="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors"
+            data-count={`${reaction.key}-count`}
+          >
+            0
+          </span>
+        </button>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  /**
+   * Post Reactions Component - Best Practices Implementation
+   * - Uses localStorage for persistence (client-side only)
+   * - No server-side tracking (privacy-friendly)
+   * - Proper event delegation
+   * - Clean event listener management
+   * - Accessible and keyboard-friendly
+   */
+  (function () {
+    'use strict'
+
+    const STORAGE_KEY = 'post-reactions'
+    const USER_REACTIONS_KEY = 'user-post-reactions'
+    let reactionButtons: NodeListOf<HTMLButtonElement> | null = null
+    let clickHandler: ((e: Event) => void) | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    let scaleTimeoutIds: Map<HTMLButtonElement, ReturnType<typeof setTimeout>> = new Map()
+    const processingButtons = new Set<HTMLButtonElement>() // Debounce: track buttons being processed
+
+    /**
+     * Get reactions from localStorage
+     */
+    function getStoredReactions(): Record<string, Record<string, number>> {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY)
+        return stored ? JSON.parse(stored) : {}
+      } catch {
+        return {}
+      }
+    }
+
+    /**
+     * Save reactions to localStorage
+     */
+    function saveReactions(reactions: Record<string, Record<string, number>>): void {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(reactions))
+      } catch (err) {
+        // Handle quota exceeded error
+        if (err instanceof DOMException && err.name === 'QuotaExceededError') {
+          console.warn('LocalStorage quota exceeded. Clearing old reactions...')
+          // Clear oldest entries (simple cleanup - in production, use more sophisticated LRU)
+          try {
+            const keys = Object.keys(reactions)
+            if (keys.length > 100) {
+              // Keep only most recent 50 posts
+              const sorted = keys.sort()
+              const toKeep = sorted.slice(-50)
+              const cleaned: Record<string, Record<string, number>> = {}
+              toKeep.forEach(key => {
+                cleaned[key] = reactions[key]
+              })
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned))
+            }
+          } catch (cleanupErr) {
+            console.error('Failed to cleanup localStorage:', cleanupErr)
+          }
+        } else {
+          console.error('Failed to save reactions:', err)
+        }
+      }
+    }
+
+    /**
+     * Get user's reactions (which ones they've clicked)
+     */
+    function getUserReactions(): Record<string, string[]> {
+      try {
+        const stored = localStorage.getItem(USER_REACTIONS_KEY)
+        return stored ? JSON.parse(stored) : {}
+      } catch {
+        return {}
+      }
+    }
+
+    /**
+     * Save user's reactions
+     */
+    function saveUserReactions(userReactions: Record<string, string[]>): void {
+      try {
+        localStorage.setItem(USER_REACTIONS_KEY, JSON.stringify(userReactions))
+      } catch (err) {
+        // Handle quota exceeded error
+        if (err instanceof DOMException && err.name === 'QuotaExceededError') {
+          console.warn('LocalStorage quota exceeded for user reactions')
+          // Clear oldest entries
+          try {
+            const keys = Object.keys(userReactions)
+            if (keys.length > 100) {
+              const sorted = keys.sort()
+              const toKeep = sorted.slice(-50)
+              const cleaned: Record<string, string[]> = {}
+              toKeep.forEach(key => {
+                cleaned[key] = userReactions[key]
+              })
+              localStorage.setItem(USER_REACTIONS_KEY, JSON.stringify(cleaned))
+            }
+          } catch (cleanupErr) {
+            console.error('Failed to cleanup user reactions:', cleanupErr)
+          }
+        } else {
+          console.error('Failed to save user reactions:', err)
+        }
+      }
+    }
+
+    /**
+     * Check if user has already reacted to this post
+     */
+    function hasUserReacted(postId: string, reactionKey?: string): boolean {
+      const userReactions = getUserReactions()
+      const postReactions = userReactions[postId] || []
+      
+      if (reactionKey) {
+        return postReactions.includes(reactionKey)
+      }
+      // If no specific reaction key, check if user has reacted at all
+      return postReactions.length > 0
+    }
+
+    /**
+     * Mark that user has reacted
+     */
+    function markUserReacted(postId: string, reactionKey: string): void {
+      const userReactions = getUserReactions()
+      if (!userReactions[postId]) {
+        userReactions[postId] = []
+      }
+      if (!userReactions[postId].includes(reactionKey)) {
+        userReactions[postId].push(reactionKey)
+        saveUserReactions(userReactions)
+      }
+    }
+
+    /**
+     * Get reaction count for a specific post and reaction type
+     */
+    function getReactionCount(
+      postId: string,
+      reactionKey: string,
+    ): number {
+      const reactions = getStoredReactions()
+      return reactions[postId]?.[reactionKey] || 0
+    }
+
+    /**
+     * Increment reaction count (only if user hasn't reacted yet)
+     */
+    function incrementReaction(postId: string, reactionKey: string): number | null {
+      // Check if user has already reacted to this post
+      if (hasUserReacted(postId, reactionKey)) {
+        return null // User already reacted, don't increment
+      }
+
+      const reactions = getStoredReactions()
+      if (!reactions[postId]) {
+        reactions[postId] = {}
+      }
+      if (!reactions[postId][reactionKey]) {
+        reactions[postId][reactionKey] = 0
+      }
+      reactions[postId][reactionKey] += 1
+      saveReactions(reactions)
+      
+      // Mark that user has reacted
+      markUserReacted(postId, reactionKey)
+      
+      return reactions[postId][reactionKey]
+    }
+
+    /**
+     * Update reaction count display and button state
+     */
+    function updateReactionDisplay(
+      button: HTMLButtonElement,
+      count: number,
+      isReacted: boolean = false,
+    ): void {
+      const countElement = button.querySelector<HTMLElement>(
+        '[data-count]',
+      )
+      if (countElement) {
+        countElement.textContent = count.toString()
+      }
+
+      // Update button state based on whether user has reacted
+      if (isReacted) {
+        button.disabled = true
+        button.classList.add('opacity-60', 'cursor-not-allowed')
+        button.classList.remove('hover:bg-muted', 'hover:border-primary/50')
+        button.setAttribute('aria-label', button.getAttribute('aria-label') + ' (already reacted)')
+      } else {
+        button.disabled = false
+        button.classList.remove('opacity-60', 'cursor-not-allowed')
+        button.classList.add('hover:bg-muted', 'hover:border-primary/50')
+      }
+
+      // Visual feedback on click
+      if (!isReacted) {
+        // Clear any existing timeout for this button
+        const existingTimeout = scaleTimeoutIds.get(button)
+        if (existingTimeout) {
+          clearTimeout(existingTimeout)
+        }
+        
+        button.classList.add('scale-105')
+        const scaleTimeout = setTimeout(() => {
+          button.classList.remove('scale-105')
+          scaleTimeoutIds.delete(button)
+        }, 200)
+        scaleTimeoutIds.set(button, scaleTimeout)
+      }
+    }
+
+    /**
+     * Initialize reaction counts from storage and button states
+     */
+    function initializeReactionCounts(): void {
+      if (!reactionButtons) return
+
+      reactionButtons.forEach((button) => {
+        const postId = button.dataset.postId
+        const reactionKey = button.dataset.reaction
+
+        if (!postId || !reactionKey) return
+
+        const count = getReactionCount(postId, reactionKey)
+        const hasReacted = hasUserReacted(postId, reactionKey)
+        updateReactionDisplay(button, count, hasReacted)
+      })
+    }
+
+    /**
+     * Handle reaction button click
+     */
+    function handleReactionClick(e: Event): void {
+      const button = e.currentTarget as HTMLButtonElement
+      const postId = button.dataset.postId
+      const reactionKey = button.dataset.reaction
+
+      if (!postId || !reactionKey) return
+
+      // Debounce: prevent rapid clicks
+      if (processingButtons.has(button)) {
+        e.preventDefault()
+        return
+      }
+
+      // Prevent if already reacted
+      if (hasUserReacted(postId, reactionKey)) {
+        e.preventDefault()
+        return
+      }
+
+      // Prevent if user has already reacted to this post (any reaction)
+      if (hasUserReacted(postId)) {
+        e.preventDefault()
+        return
+      }
+
+      e.preventDefault()
+      processingButtons.add(button)
+      button.disabled = true
+
+      // Increment reaction
+      const newCount = incrementReaction(postId, reactionKey)
+      
+      if (newCount !== null) {
+        // Successfully incremented
+        updateReactionDisplay(button, newCount, true)
+        
+        // Disable all other reaction buttons for this post
+        if (reactionButtons) {
+          reactionButtons.forEach((otherButton) => {
+            const otherPostId = otherButton.dataset.postId
+            const otherReactionKey = otherButton.dataset.reaction
+            
+            if (otherPostId && otherReactionKey && otherPostId === postId && otherReactionKey !== reactionKey) {
+              const otherCount = getReactionCount(otherPostId, otherReactionKey)
+              updateReactionDisplay(otherButton, otherCount, false)
+              otherButton.disabled = true
+              otherButton.classList.add('opacity-60', 'cursor-not-allowed')
+              otherButton.classList.remove('hover:bg-muted', 'hover:border-primary/50')
+            }
+          })
+        }
+      } else {
+        // User already reacted
+        button.disabled = true
+        updateReactionDisplay(button, getReactionCount(postId, reactionKey), true)
+      }
+      
+      // Remove from processing set after a short delay
+      setTimeout(() => {
+        processingButtons.delete(button)
+      }, 300)
+    }
+
+    /**
+     * Initialize reaction buttons
+     */
+    function initReactions(): void {
+      // Clean up previous listeners
+      if (reactionButtons && clickHandler) {
+        reactionButtons.forEach((button) => {
+          button.removeEventListener('click', clickHandler as EventListener)
+        })
+      }
+
+      // Find all reaction buttons
+      reactionButtons = document.querySelectorAll<HTMLButtonElement>(
+        'button[data-reaction][data-post-id]',
+      )
+
+      if (reactionButtons.length === 0) return
+
+      // Create handler
+      clickHandler = handleReactionClick
+
+      // Attach listeners
+      reactionButtons.forEach((button) => {
+        button.addEventListener('click', clickHandler as EventListener)
+      })
+
+      // Initialize counts
+      initializeReactionCounts()
+    }
+
+    /**
+     * Cleanup function
+     */
+    function cleanup(): void {
+      // Clear all pending timeouts
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+        timeoutId = null
+      }
+      
+      // Clear all scale animation timeouts
+      scaleTimeoutIds.forEach((timeout) => {
+        clearTimeout(timeout)
+      })
+      scaleTimeoutIds.clear()
+      
+      if (reactionButtons && clickHandler) {
+        reactionButtons.forEach((button) => {
+          button.removeEventListener('click', clickHandler as EventListener)
+        })
+        reactionButtons = null
+        clickHandler = null
+      }
+    }
+
+    // Initialize on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initReactions)
+    } else {
+      initReactions()
+    }
+
+    // Re-initialize on Astro view transitions
+    document.addEventListener('astro:page-load', () => {
+      cleanup()
+      timeoutId = setTimeout(initReactions, 0)
+    })
+
+    // Cleanup before page swap
+    document.addEventListener('astro:before-swap', cleanup)
+  })()
+</script>
+

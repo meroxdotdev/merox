@@ -4,6 +4,9 @@ import Disqus from '@/components/Disqus.astro'
 import Link from '@/components/Link.astro'
 import PostHead from '@/components/PostHead.astro'
 import PostNavigation from '@/components/PostNavigation.astro'
+import PostReactions from '@/components/PostReactions.astro'
+import RelatedPosts from '@/components/RelatedPosts.astro'
+import SocialShare from '@/components/SocialShare.astro'
 import SubpostsHeader from '@/components/SubpostsHeader.astro'
 import SubpostsSidebar from '@/components/SubpostsSidebar.astro'
 import TOCHeader from '@/components/TOCHeader.astro'
@@ -282,11 +285,38 @@ try {
       )
     }
 
+    {
+      /* Social sharing buttons - show on all posts */
+      <div class="col-start-2 mt-8">
+        <SocialShare
+          title={post.data.title}
+          url={new URL(`/blog/${currentPostId}`, SITE.href).href}
+          description={post.data.description}
+        />
+      </div>
+    }
+
+    {
+      /* Post reactions - show on all posts */
+      <div class="col-start-2 mt-8">
+        <PostReactions postId={currentPostId} />
+      </div>
+    }
+
     <PostNavigation
       newerPost={navigation.newer}
       olderPost={navigation.older}
       parentPost={isCurrentSubpost ? navigation.parent : undefined}
     />
+
+    {
+      /* Related posts - show on main posts only */
+      !isCurrentSubpost && (
+        <div class="col-start-2 mt-12">
+          <RelatedPosts currentPostId={currentPostId} limit={3} />
+        </div>
+      )
+    }
 
     {
       /* Only show Disqus on main posts, not subposts */

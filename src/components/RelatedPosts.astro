@@ -1,0 +1,41 @@
+---
+import BlogCard from '@/components/BlogCard.astro'
+import { getRelatedPosts } from '@/lib/data-utils'
+import type { CollectionEntry } from 'astro:content'
+import { cn } from '@/lib/utils'
+
+interface Props {
+  currentPostId: string
+  limit?: number
+  className?: string
+}
+
+const { currentPostId, limit = 3, className } = Astro.props
+
+let relatedPosts: CollectionEntry<'blog'>[] = []
+try {
+  relatedPosts = await getRelatedPosts(currentPostId, limit)
+} catch (error) {
+  console.error('Error fetching related posts:', error)
+  relatedPosts = []
+}
+---
+
+{
+  relatedPosts.length > 0 && (
+    <section
+      class={cn('flex flex-col gap-4', className)}
+      aria-label="Related posts"
+    >
+      <h2 class="text-xl font-semibold">Related Posts</h2>
+      <div class="space-y-1">
+        {
+          relatedPosts.map((post) => (
+            <BlogCard entry={post} />
+          ))
+        }
+      </div>
+    </section>
+  )
+}
+

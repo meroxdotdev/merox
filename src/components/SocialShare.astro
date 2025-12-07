@@ -1,0 +1,338 @@
+---
+import { buttonVariants } from '@/components/ui/button'
+import { Icon } from 'astro-icon/components'
+import { cn } from '@/lib/utils'
+
+interface Props {
+  title: string
+  url: string
+  description?: string
+  className?: string
+}
+
+const { title, url, description, className } = Astro.props
+
+// Encode URL and text for sharing
+const encodedUrl = encodeURIComponent(url)
+const encodedTitle = encodeURIComponent(title)
+
+// Social sharing URLs
+const shareLinks = {
+  twitter: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}${description ? `&via=meroxdotdev` : ''}`,
+  linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+  reddit: `https://reddit.com/submit?url=${encodedUrl}&title=${encodedTitle}`,
+  facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+}
+
+// Generate unique ID for accessibility
+const copyButtonId = `copy-link-${Math.random().toString(36).substring(2, 9)}`
+---
+
+<section
+  class={cn('flex flex-col gap-3', className)}
+  aria-label="Share this post"
+>
+  <h3 class="text-sm font-semibold text-muted-foreground">Share this post</h3>
+  <div class="flex flex-wrap items-center gap-2">
+    <!-- Twitter/X -->
+    <a
+      href={shareLinks.twitter}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={cn(
+        buttonVariants({ variant: 'outline', size: 'sm' }),
+        'group',
+      )}
+      aria-label="Share on Twitter/X"
+      title="Share on Twitter/X"
+    >
+      <Icon
+        name="simple-icons:x"
+        class="size-4 transition-transform group-hover:scale-110"
+      />
+      <span class="sr-only">Share on Twitter/X</span>
+    </a>
+
+    <!-- LinkedIn -->
+    <a
+      href={shareLinks.linkedin}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={cn(
+        buttonVariants({ variant: 'outline', size: 'sm' }),
+        'group',
+      )}
+      aria-label="Share on LinkedIn"
+      title="Share on LinkedIn"
+    >
+      <Icon
+        name="simple-icons:linkedin"
+        class="size-4 transition-transform group-hover:scale-110"
+      />
+      <span class="sr-only">Share on LinkedIn</span>
+    </a>
+
+    <!-- Reddit -->
+    <a
+      href={shareLinks.reddit}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={cn(
+        buttonVariants({ variant: 'outline', size: 'sm' }),
+        'group',
+      )}
+      aria-label="Share on Reddit"
+      title="Share on Reddit"
+    >
+      <Icon
+        name="simple-icons:reddit"
+        class="size-4 transition-transform group-hover:scale-110"
+      />
+      <span class="sr-only">Share on Reddit</span>
+    </a>
+
+    <!-- Facebook -->
+    <a
+      href={shareLinks.facebook}
+      target="_blank"
+      rel="noopener noreferrer"
+      class={cn(
+        buttonVariants({ variant: 'outline', size: 'sm' }),
+        'group',
+      )}
+      aria-label="Share on Facebook"
+      title="Share on Facebook"
+    >
+      <Icon
+        name="simple-icons:facebook"
+        class="size-4 transition-transform group-hover:scale-110"
+      />
+      <span class="sr-only">Share on Facebook</span>
+    </a>
+
+    <!-- Copy Link -->
+    <button
+      id={copyButtonId}
+      type="button"
+      data-share-url={url}
+      class={cn(
+        buttonVariants({ variant: 'outline', size: 'sm' }),
+        'group',
+      )}
+      aria-label="Copy link to clipboard"
+      title="Copy link to clipboard"
+    >
+      <Icon
+        name="lucide:link"
+        class="size-4 transition-transform group-hover:scale-110"
+      />
+      <span class="sr-only">Copy link</span>
+    </button>
+  </div>
+</section>
+
+<script>
+  /**
+   * Social Share Component - Best Practices Implementation
+   * - Uses data attributes instead of global IDs
+   * - Proper event delegation
+   * - Clean event listener management
+   * - Web Share API as progressive enhancement
+   * - Proper error handling
+   * - No innerHTML manipulation
+   */
+  (function () {
+    'use strict'
+
+    let copyButton: HTMLButtonElement | null = null
+    let clickHandler: ((e: Event) => void) | null = null
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    let restoreTimeoutId: ReturnType<typeof setTimeout> | null = null
+    let isCopying = false // Debounce flag
+
+    /**
+     * Copy text to clipboard using modern API with fallback
+     */
+    async function copyToClipboard(text: string): Promise<boolean> {
+      try {
+        // Modern Clipboard API (preferred)
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text)
+          return true
+        }
+
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea')
+        textArea.value = text
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-999999px'
+        textArea.style.top = '-999999px'
+        textArea.setAttribute('readonly', '')
+        document.body.appendChild(textArea)
+
+        // Select and copy
+        textArea.select()
+        textArea.setSelectionRange(0, text.length)
+
+        const success = document.execCommand('copy')
+        document.body.removeChild(textArea)
+        return success
+      } catch (err) {
+        console.error('Failed to copy to clipboard:', err)
+        return false
+      }
+    }
+
+    /**
+     * Show visual feedback when link is copied
+     */
+    function showCopyFeedback(button: HTMLButtonElement): void {
+      const icon = button.querySelector('svg')
+      const checkIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      checkIcon.setAttribute('class', 'size-4')
+      checkIcon.setAttribute('fill', 'none')
+      checkIcon.setAttribute('stroke', 'currentColor')
+      checkIcon.setAttribute('viewBox', '0 0 24 24')
+      
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+      path.setAttribute('stroke-linecap', 'round')
+      path.setAttribute('stroke-linejoin', 'round')
+      path.setAttribute('stroke-width', '2')
+      path.setAttribute('d', 'M5 13l4 4L19 7')
+      checkIcon.appendChild(path)
+
+      // Store original icon
+      const originalIcon = icon?.cloneNode(true) as SVGElement | null
+      button.dataset.originalIcon = originalIcon?.outerHTML || ''
+
+      // Replace icon
+      if (icon && icon.parentNode) {
+        icon.parentNode.replaceChild(checkIcon, icon)
+      }
+
+      // Update button state
+      button.classList.add('text-green-600', 'dark:text-green-400')
+      button.setAttribute('aria-label', 'Link copied!')
+      
+      // Clear any existing restore timeout
+      if (restoreTimeoutId) {
+        clearTimeout(restoreTimeoutId)
+      }
+      
+      // Restore after 2 seconds
+      restoreTimeoutId = setTimeout(() => {
+        if (originalIcon && checkIcon.parentNode) {
+          checkIcon.parentNode.replaceChild(originalIcon, checkIcon)
+        }
+        button.classList.remove('text-green-600', 'dark:text-green-400')
+        button.setAttribute('aria-label', 'Copy link to clipboard')
+        restoreTimeoutId = null
+      }, 2000)
+    }
+
+    /**
+     * Handle copy button click
+     */
+    async function handleCopyClick(e: Event): Promise<void> {
+      const button = e.currentTarget as HTMLButtonElement
+      const url = button.dataset.shareUrl
+
+      if (!url) {
+        console.error('Share URL not found')
+        return
+      }
+
+      // Debounce: prevent rapid clicks
+      if (isCopying) {
+        e.preventDefault()
+        return
+      }
+
+      e.preventDefault()
+      isCopying = true
+      button.disabled = true
+
+      try {
+        const success = await copyToClipboard(url)
+        
+        if (success) {
+          showCopyFeedback(button)
+        } else {
+          // Show error feedback
+          const originalAriaLabel = button.getAttribute('aria-label')
+          button.setAttribute('aria-label', 'Failed to copy link')
+          setTimeout(() => {
+            button.setAttribute('aria-label', originalAriaLabel || 'Copy link to clipboard')
+          }, 2000)
+        }
+      } finally {
+        // Re-enable after a short delay to prevent rapid clicks
+        setTimeout(() => {
+          button.disabled = false
+          isCopying = false
+        }, 500)
+      }
+    }
+
+    /**
+     * Initialize the copy button
+     */
+    function initCopyButton(): void {
+      // Clean up previous listener
+      if (copyButton && clickHandler) {
+        copyButton.removeEventListener('click', clickHandler)
+      }
+
+      // Find button by data attribute (more reliable than ID)
+      // Use attribute selector to find any copy button with share URL
+      copyButton = document.querySelector<HTMLButtonElement>(
+        'button[data-share-url]'
+      )
+
+      if (!copyButton) return
+
+      // Create new handler
+      clickHandler = handleCopyClick
+      copyButton.addEventListener('click', clickHandler)
+    }
+
+    /**
+     * Cleanup function
+     */
+    function cleanup(): void {
+      // Clear any pending timeouts
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+        timeoutId = null
+      }
+      if (restoreTimeoutId) {
+        clearTimeout(restoreTimeoutId)
+        restoreTimeoutId = null
+      }
+      
+      if (copyButton && clickHandler) {
+        copyButton.removeEventListener('click', clickHandler)
+        copyButton = null
+        clickHandler = null
+      }
+    }
+
+    // Initialize on page load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCopyButton)
+    } else {
+      initCopyButton()
+    }
+
+    // Re-initialize on Astro view transitions
+    document.addEventListener('astro:page-load', () => {
+      cleanup()
+      // Small delay to ensure DOM is ready
+      timeoutId = setTimeout(initCopyButton, 0)
+    })
+
+    // Cleanup before page swap
+    document.addEventListener('astro:before-swap', cleanup)
+  })()
+</script>
+

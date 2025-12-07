@@ -120,6 +120,61 @@ export async function getRecentPosts(
   return posts.slice(0, count)
 }
 
+export async function getRelatedPosts(
+  currentPostId: string,
+  limit: number = 3,
+): Promise<CollectionEntry<'blog'>[]> {
+  const allPosts = await getAllPosts()
+  const currentPost = allPosts.find((post) => post.id === currentPostId)
+
+  if (!currentPost || !currentPost.data.tags || currentPost.data.tags.length === 0) {
+    // If no tags, return recent posts excluding current
+    return allPosts.filter((post) => post.id !== currentPostId).slice(0, limit)
+  }
+
+  // Score posts based on tag overlap
+  const scoredPosts = allPosts
+    .filter((post) => post.id !== currentPostId)
+    .map((post) => {
+      const currentTags = new Set(currentPost.data.tags || [])
+      const postTags = new Set(post.data.tags || [])
+      
+      // Count matching tags
+      let score = 0
+      postTags.forEach((tag) => {
+        if (currentTags.has(tag)) {
+          score += 1
+        }
+      })
+
+      return { post, score }
+    })
+    .filter((item) => item.score > 0) // Only include posts with at least one matching tag
+    .sort((a, b) => {
+      // Sort by score (descending), then by date (descending)
+      if (b.score !== a.score) {
+        return b.score - a.score
+      }
+      return b.post.data.date.valueOf() - a.post.data.date.valueOf()
+    })
+    .slice(0, limit)
+    .map((item) => item.post)
+
+  // If we don't have enough related posts, fill with recent posts
+  if (scoredPosts.length < limit) {
+    const recentPosts = allPosts
+      .filter(
+        (post) =>
+          post.id !== currentPostId &&
+          !scoredPosts.some((related) => related.id === post.id),
+      )
+      .slice(0, limit - scoredPosts.length)
+    return [...scoredPosts, ...recentPosts]
+  }
+
+  return scoredPosts
+}
+
 export async function getSortedTags(): Promise<
   { tag: string; count: number }[]
 > {
