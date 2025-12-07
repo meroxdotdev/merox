@@ -8,13 +8,12 @@ interface Props {
 
 const { postId, className } = Astro.props
 
-// Emoji reactions with labels
+// Emoji reactions with labels - keeping the 5 most useful ones
 const reactions = [
   { emoji: '👍', label: 'Like', key: 'like' },
   { emoji: '❤️', label: 'Love', key: 'love' },
-  { emoji: '🎉', label: 'Celebrate', key: 'celebrate' },
-  { emoji: '💬', label: 'Comment', key: 'comment' },
   { emoji: '🔥', label: 'Fire', key: 'fire' },
+  { emoji: '🎉', label: 'Celebrate', key: 'celebrate' },
   { emoji: '👏', label: 'Clap', key: 'clap' },
 ] as const
 

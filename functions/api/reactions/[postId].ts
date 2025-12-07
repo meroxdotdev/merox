@@ -116,7 +116,7 @@ export const onRequestPost = async ({
     }
 
     // Valid reaction keys
-    const validReactions = ['like', 'love', 'celebrate', 'comment', 'fire', 'clap']
+    const validReactions = ['like', 'love', 'fire', 'celebrate', 'clap']
     if (!validReactions.includes(reactionKey)) {
       return new Response(
         JSON.stringify({ error: 'Invalid reaction key' }),
