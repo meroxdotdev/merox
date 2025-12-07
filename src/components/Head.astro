@@ -148,17 +148,75 @@ const ogImage = image || (cleanPathname ? new URL(`/og${cleanPathname}.png`, Ast
             }
           }
           
+          // Enhanced UTM and query parameter tracking
+          function trackQueryParameters() {
+            if (typeof window === 'undefined' || !window.umami) return;
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Track UTM source
+            const utmSource = urlParams.get('utm_source');
+            if (utmSource) {
+              window.umami.track('utm_source', { source: utmSource });
+            }
+            
+            // Track UTM campaign
+            const utmCampaign = urlParams.get('utm_campaign');
+            if (utmCampaign) {
+              window.umami.track('utm_campaign', { campaign: utmCampaign });
+            }
+            
+            // Track UTM medium
+            const utmMedium = urlParams.get('utm_medium');
+            if (utmMedium) {
+              window.umami.track('utm_medium', { medium: utmMedium });
+            }
+            
+            // Track referrer source
+            const ref = urlParams.get('ref');
+            if (ref) {
+              window.umami.track('referrer_source', { ref: ref });
+            }
+            
+            // Track translation usage (browser translation indicators)
+            const translationLang = urlParams.get('_x_tr_tl');
+            if (translationLang) {
+              window.umami.track('translation_language', { lang: translationLang });
+            }
+            
+            // Track Facebook click ID (fbclid)
+            const fbclid = urlParams.get('fbclid');
+            if (fbclid) {
+              window.umami.track('facebook_click', { has_fbclid: true });
+            }
+          }
+          
+          // Track on initial page load
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+              trackQueryParameters();
+            });
+          } else {
+            trackQueryParameters();
+          }
+          
           // Track page views on Astro view transitions (client-side navigation)
           // The Umami script automatically tracks the initial page load,
           // so we only need to track on navigation events
           document.addEventListener('astro:page-load', () => {
             // Small delay to ensure Umami is ready and page is fully loaded
-            setTimeout(trackPageView, 100);
+            setTimeout(() => {
+              trackPageView();
+              trackQueryParameters();
+            }, 100);
           });
           
           // Also track on after-swap for compatibility
           document.addEventListener('astro:after-swap', () => {
-            setTimeout(trackPageView, 100);
+            setTimeout(() => {
+              trackPageView();
+              trackQueryParameters();
+            }, 100);
           });
         })();
       </script>
