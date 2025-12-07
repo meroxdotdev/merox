@@ -10,7 +10,7 @@ const structuredData = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "name": "Free Online Tools",
-  "description": "Collection of free online tools for system administrators, developers, and IT professionals. Password generator, subnet calculator, IP lookup, DNS lookup, and Base64 encoder/decoder.",
+  "description": "Collection of free online tools for system administrators, developers, and IT professionals. Password generator, subnet calculator, IP lookup, DNS lookup, Base64 encoder, JSON formatter, YAML validator, and Docker run to Compose converter.",
   "url": pageUrl,
   "mainEntity": {
     "@type": "ItemList",
@@ -38,6 +38,24 @@ const structuredData = {
         "position": 4,
         "name": "Base64 Encoder & Decoder",
         "url": new URL("/tools/base64-encoder", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 5,
+        "name": "JSON Formatter & Validator",
+        "url": new URL("/tools/json-formatter", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 6,
+        "name": "YAML Validator & Formatter",
+        "url": new URL("/tools/yaml-validator", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 7,
+        "name": "Docker Run to Compose Converter",
+        "url": new URL("/tools/docker-converter", Astro.site).href
       }
     ]
   }
@@ -48,7 +66,7 @@ const structuredData = {
   <PageHead 
     slot="head" 
     title="Free Online Tools - Password Generator, Subnet Calculator, IP Lookup"
-    description="Free online tools for system administrators, developers, and IT professionals. Password generator, subnet calculator, IP lookup, DNS lookup, and Base64 encoder. All tools run in your browser."
+    description="Free online tools for system administrators, developers, and IT professionals. Password generator, subnet calculator, IP lookup, DNS lookup, Base64 encoder, JSON formatter, YAML validator, and Docker run to Compose converter. All tools run in your browser."
   />
   
   <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
@@ -123,6 +141,54 @@ const structuredData = {
           </h2>
           <p class="text-sm text-muted-foreground">
             Encode and decode Base64 strings
+          </p>
+        </div>
+        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
+      </Link>
+
+      <Link
+        href="/tools/json-formatter"
+        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
+      >
+        <Icon name="lucide:code" class="size-5 text-primary shrink-0" />
+        <div class="flex-1 min-w-0">
+          <h2 class="font-semibold group-hover:text-primary transition-colors">
+            JSON Formatter & Validator
+          </h2>
+          <p class="text-sm text-muted-foreground">
+            Format, validate, and minify JSON strings
+          </p>
+        </div>
+        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
+      </Link>
+
+      <Link
+        href="/tools/yaml-validator"
+        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
+      >
+        <Icon name="lucide:file-code" class="size-5 text-primary shrink-0" />
+        <div class="flex-1 min-w-0">
+          <h2 class="font-semibold group-hover:text-primary transition-colors">
+            YAML Validator & Formatter
+          </h2>
+          <p class="text-sm text-muted-foreground">
+            Validate, format, and convert YAML files
+          </p>
+        </div>
+        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
+      </Link>
+
+      <Link
+        href="/tools/docker-converter"
+        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
+      >
+        <Icon name="lucide:container" class="size-5 text-primary shrink-0" />
+        <div class="flex-1 min-w-0">
+          <h2 class="font-semibold group-hover:text-primary transition-colors">
+            Docker Run to Compose Converter
+          </h2>
+          <p class="text-sm text-muted-foreground">
+            Convert docker run commands to Docker Compose YAML
           </p>
         </div>
         <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />

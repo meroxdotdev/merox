@@ -1,0 +1,100 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import PageHead from '@/components/PageHead.astro'
+import Layout from '@/layouts/Layout.astro'
+import DockerConverterComponent from '@/components/react/DockerConverter'
+import { ErrorBoundary } from '@/components/react/ErrorBoundary'
+import AdSense from '@/components/AdSense.astro'
+import { SITE } from '@/consts'
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Docker Run to Compose Converter",
+  "description": "Free online tool to convert docker run commands to Docker Compose YAML format. Transform your docker run commands into docker-compose.yml files instantly. Perfect for DevOps engineers and developers.",
+  "url": pageUrl,
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Convert docker run commands to Docker Compose",
+    "Parse ports, volumes, environment variables",
+    "Support for all common docker run flags",
+    "Generate valid docker-compose.yml files",
+    "Real-time conversion",
+    "One-click copy to clipboard",
+    "100% client-side processing"
+  ]
+}
+---
+
+<Layout class="max-w-3xl">
+  <PageHead 
+    slot="head" 
+    title="Docker Run to Compose Converter - Free Online Docker Tool"
+    description="Convert docker run commands to Docker Compose YAML format instantly. Free online Docker converter tool for DevOps engineers and developers. No registration required."
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <Breadcrumbs 
+    items={[
+      { label: 'Tools', href: '/tools', icon: 'lucide:wrench' },
+      { label: 'Docker Converter', icon: 'lucide:container' },
+    ]} 
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": Astro.site?.href || SITE.href
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": new URL("/tools", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Docker Run to Compose Converter",
+        "item": pageUrl
+      }
+    ]
+  })} />
+
+  <article class="flex flex-col gap-y-6">
+    <!-- Header -->
+    <header class="space-y-2">
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Docker Run to Compose Converter</h1>
+      <p class="text-muted-foreground">
+        Convert docker run commands to Docker Compose YAML format instantly
+      </p>
+    </header>
+
+    <!-- Ad -->
+    <AdSense />
+
+    <!-- Tool Component -->
+    <div class="rounded-lg border bg-card">
+      <ErrorBoundary client:load>
+        <DockerConverterComponent client:load />
+      </ErrorBoundary>
+    </div>
+
+    <!-- Ad -->
+    <AdSense />
+  </article>
+</Layout>
+

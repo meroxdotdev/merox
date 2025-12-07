@@ -1,0 +1,99 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import PageHead from '@/components/PageHead.astro'
+import Layout from '@/layouts/Layout.astro'
+import JSONFormatterComponent from '@/components/react/JSONFormatter'
+import { ErrorBoundary } from '@/components/react/ErrorBoundary'
+import AdSense from '@/components/AdSense.astro'
+import { SITE } from '@/consts'
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "JSON Formatter & Validator",
+  "description": "Free online JSON formatter, validator, and minifier. Format, validate, and minify JSON strings instantly. Perfect for developers and IT professionals working with JSON data.",
+  "url": pageUrl,
+  "applicationCategory": "UtilityApplication",
+  "operatingSystem": "Any",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  },
+  "featureList": [
+    "Format JSON with customizable indentation",
+    "Minify JSON to reduce file size",
+    "Validate JSON syntax with error reporting",
+    "Real-time formatting and validation",
+    "One-click copy to clipboard",
+    "100% client-side processing"
+  ]
+}
+---
+
+<Layout class="max-w-3xl">
+  <PageHead 
+    slot="head" 
+    title="JSON Formatter & Validator - Free Online JSON Tool"
+    description="Format, validate, and minify JSON strings instantly. Free online JSON formatter and validator tool for developers and IT professionals. No registration required."
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+
+  <Breadcrumbs 
+    items={[
+      { label: 'Tools', href: '/tools', icon: 'lucide:wrench' },
+      { label: 'JSON Formatter', icon: 'lucide:code' },
+    ]} 
+  />
+  
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": Astro.site?.href || SITE.href
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Tools",
+        "item": new URL("/tools", Astro.site).href
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "JSON Formatter & Validator",
+        "item": pageUrl
+      }
+    ]
+  })} />
+
+  <article class="flex flex-col gap-y-6">
+    <!-- Header -->
+    <header class="space-y-2">
+      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">JSON Formatter & Validator</h1>
+      <p class="text-muted-foreground">
+        Format, validate, and minify JSON strings instantly
+      </p>
+    </header>
+
+    <!-- Ad -->
+    <AdSense />
+
+    <!-- Tool Component -->
+    <div class="rounded-lg border bg-card">
+      <ErrorBoundary client:load>
+        <JSONFormatterComponent client:load />
+      </ErrorBoundary>
+    </div>
+
+    <!-- Ad -->
+    <AdSense />
+  </article>
+</Layout>
+
