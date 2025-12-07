@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { Button } from '@/components/ui/button'
 import { Copy, Check, RefreshCw, FileCode, AlertCircle } from 'lucide-react'
 import * as yaml from 'js-yaml'
@@ -289,7 +289,9 @@ function parseDockerRun(command: string): DockerCompose | null {
   if (service.networks && service.networks.length > 0) {
     compose.networks = {}
     service.networks.forEach(net => {
-      compose.networks[net] = {}
+      if (compose.networks) {
+        compose.networks[net] = {}
+      }
     })
   }
 
