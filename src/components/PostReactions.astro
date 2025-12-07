@@ -56,8 +56,9 @@ const reactions = [
 <script>
   /**
    * Post Reactions Component - Best Practices Implementation
-   * - Uses localStorage for persistence (client-side only)
-   * - No server-side tracking (privacy-friendly)
+   * - Fetches reaction counts from server (centralized)
+   * - Uses localStorage only to track user's own reactions (prevent duplicates)
+   * - Syncs with server on reaction click
    * - Proper event delegation
    * - Clean event listener management
    * - Accessible and keyboard-friendly
@@ -65,57 +66,15 @@ const reactions = [
   (function () {
     'use strict'
 
-    const STORAGE_KEY = 'post-reactions'
     const USER_REACTIONS_KEY = 'user-post-reactions'
+    const API_BASE = '/api/reactions'
     let reactionButtons: NodeListOf<HTMLButtonElement> | null = null
     let clickHandler: ((e: Event) => void) | null = null
     let timeoutId: ReturnType<typeof setTimeout> | null = null
     let scaleTimeoutIds: Map<HTMLButtonElement, ReturnType<typeof setTimeout>> = new Map()
     const processingButtons = new Set<HTMLButtonElement>() // Debounce: track buttons being processed
-
-    /**
-     * Get reactions from localStorage
-     */
-    function getStoredReactions(): Record<string, Record<string, number>> {
-      try {
-        const stored = localStorage.getItem(STORAGE_KEY)
-        return stored ? JSON.parse(stored) : {}
-      } catch {
-        return {}
-      }
-    }
-
-    /**
-     * Save reactions to localStorage
-     */
-    function saveReactions(reactions: Record<string, Record<string, number>>): void {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(reactions))
-      } catch (err) {
-        // Handle quota exceeded error
-        if (err instanceof DOMException && err.name === 'QuotaExceededError') {
-          console.warn('LocalStorage quota exceeded. Clearing old reactions...')
-          // Clear oldest entries (simple cleanup - in production, use more sophisticated LRU)
-          try {
-            const keys = Object.keys(reactions)
-            if (keys.length > 100) {
-              // Keep only most recent 50 posts
-              const sorted = keys.sort()
-              const toKeep = sorted.slice(-50)
-              const cleaned: Record<string, Record<string, number>> = {}
-              toKeep.forEach(key => {
-                cleaned[key] = reactions[key]
-              })
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned))
-            }
-          } catch (cleanupErr) {
-            console.error('Failed to cleanup localStorage:', cleanupErr)
-          }
-        } else {
-          console.error('Failed to save reactions:', err)
-        }
-      }
-    }
+    let serverReactions: Record<string, number> = {} // Store server reaction counts
+    let currentPostId: string | null = null
 
     /**
      * Get user's reactions (which ones they've clicked)
@@ -189,39 +148,83 @@ const reactions = [
     }
 
     /**
-     * Get reaction count for a specific post and reaction type
+     * Fetch reaction counts from server
      */
-    function getReactionCount(
-      postId: string,
-      reactionKey: string,
-    ): number {
-      const reactions = getStoredReactions()
-      return reactions[postId]?.[reactionKey] || 0
+    async function fetchReactionCounts(postId: string): Promise<void> {
+      try {
+        const response = await fetch(`${API_BASE}/${postId}`)
+        if (!response.ok) {
+          console.warn('Failed to fetch reaction counts:', response.statusText)
+          return
+        }
+        const data = await response.json()
+        serverReactions = data.reactions || {}
+        
+        // Update UI with server counts
+        if (reactionButtons) {
+          reactionButtons.forEach((button) => {
+            const reactionKey = button.dataset.reaction
+            if (reactionKey) {
+              const count = serverReactions[reactionKey] || 0
+              const countElement = button.querySelector<HTMLElement>('[data-count]')
+              if (countElement) {
+                countElement.textContent = count.toString()
+              }
+            }
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching reaction counts:', error)
+        // Continue with empty counts - UI will show 0
+      }
     }
 
     /**
-     * Increment reaction count (only if user hasn't reacted yet)
+     * Get reaction count from server data
      */
-    function incrementReaction(postId: string, reactionKey: string): number | null {
+    function getReactionCount(reactionKey: string): number {
+      return serverReactions[reactionKey] || 0
+    }
+
+    /**
+     * Increment reaction on server (only if user hasn't reacted yet)
+     */
+    async function incrementReaction(
+      postId: string,
+      reactionKey: string,
+    ): Promise<number | null> {
       // Check if user has already reacted to this post
-      if (hasUserReacted(postId, reactionKey)) {
+      if (hasUserReacted(postId)) {
         return null // User already reacted, don't increment
       }
 
-      const reactions = getStoredReactions()
-      if (!reactions[postId]) {
-        reactions[postId] = {}
+      try {
+        const response = await fetch(`${API_BASE}/${postId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ reactionKey }),
+        })
+
+        if (!response.ok) {
+          console.error('Failed to update reaction:', response.statusText)
+          return null
+        }
+
+        const data = await response.json()
+        
+        // Update local server reactions cache
+        serverReactions = data.reactions || {}
+        
+        // Mark that user has reacted
+        markUserReacted(postId, reactionKey)
+        
+        return data.count || serverReactions[reactionKey] || 0
+      } catch (error) {
+        console.error('Error updating reaction:', error)
+        return null
       }
-      if (!reactions[postId][reactionKey]) {
-        reactions[postId][reactionKey] = 0
-      }
-      reactions[postId][reactionKey] += 1
-      saveReactions(reactions)
-      
-      // Mark that user has reacted
-      markUserReacted(postId, reactionKey)
-      
-      return reactions[postId][reactionKey]
     }
 
     /**
@@ -269,19 +272,23 @@ const reactions = [
     }
 
     /**
-     * Initialize reaction counts from storage and button states
+     * Initialize reaction counts from server and button states
      */
-    function initializeReactionCounts(): void {
-      if (!reactionButtons) return
+    async function initializeReactionCounts(): Promise<void> {
+      if (!reactionButtons || !currentPostId) return
 
+      // Fetch counts from server
+      await fetchReactionCounts(currentPostId)
+
+      // Update button states
       reactionButtons.forEach((button) => {
         const postId = button.dataset.postId
         const reactionKey = button.dataset.reaction
 
         if (!postId || !reactionKey) return
 
-        const count = getReactionCount(postId, reactionKey)
-        const hasReacted = hasUserReacted(postId, reactionKey)
+        const count = getReactionCount(reactionKey)
+        const hasReacted = hasUserReacted(postId)
         updateReactionDisplay(button, count, hasReacted)
       })
     }
@@ -289,7 +296,7 @@ const reactions = [
     /**
      * Handle reaction button click
      */
-    function handleReactionClick(e: Event): void {
+    async function handleReactionClick(e: Event): Promise<void> {
       const button = e.currentTarget as HTMLButtonElement
       const postId = button.dataset.postId
       const reactionKey = button.dataset.reaction
@@ -298,12 +305,6 @@ const reactions = [
 
       // Debounce: prevent rapid clicks
       if (processingButtons.has(button)) {
-        e.preventDefault()
-        return
-      }
-
-      // Prevent if already reacted
-      if (hasUserReacted(postId, reactionKey)) {
         e.preventDefault()
         return
       }
@@ -318,32 +319,40 @@ const reactions = [
       processingButtons.add(button)
       button.disabled = true
 
-      // Increment reaction
-      const newCount = incrementReaction(postId, reactionKey)
+      // Increment reaction on server
+      const newCount = await incrementReaction(postId, reactionKey)
       
       if (newCount !== null) {
         // Successfully incremented
         updateReactionDisplay(button, newCount, true)
         
-        // Disable all other reaction buttons for this post
+        // Update all button counts from server cache
         if (reactionButtons) {
           reactionButtons.forEach((otherButton) => {
             const otherPostId = otherButton.dataset.postId
             const otherReactionKey = otherButton.dataset.reaction
             
-            if (otherPostId && otherReactionKey && otherPostId === postId && otherReactionKey !== reactionKey) {
-              const otherCount = getReactionCount(otherPostId, otherReactionKey)
-              updateReactionDisplay(otherButton, otherCount, false)
-              otherButton.disabled = true
-              otherButton.classList.add('opacity-60', 'cursor-not-allowed')
-              otherButton.classList.remove('hover:bg-muted', 'hover:border-primary/50')
+            if (otherPostId && otherReactionKey && otherPostId === postId) {
+              const otherCount = getReactionCount(otherReactionKey)
+              const countElement = otherButton.querySelector<HTMLElement>('[data-count]')
+              if (countElement) {
+                countElement.textContent = otherCount.toString()
+              }
+              
+              // Disable all buttons since user has reacted
+              if (otherReactionKey !== reactionKey) {
+                otherButton.disabled = true
+                otherButton.classList.add('opacity-60', 'cursor-not-allowed')
+                otherButton.classList.remove('hover:bg-muted', 'hover:border-primary/50')
+              }
             }
           })
         }
       } else {
-        // User already reacted
+        // User already reacted or server error
         button.disabled = true
-        updateReactionDisplay(button, getReactionCount(postId, reactionKey), true)
+        const count = getReactionCount(reactionKey)
+        updateReactionDisplay(button, count, true)
       }
       
       // Remove from processing set after a short delay
@@ -370,6 +379,15 @@ const reactions = [
 
       if (reactionButtons.length === 0) return
 
+      // Get post ID from first button
+      const firstButton = reactionButtons[0]
+      currentPostId = firstButton.dataset.postId || null
+
+      if (!currentPostId) {
+        console.error('Post ID not found')
+        return
+      }
+
       // Create handler
       clickHandler = handleReactionClick
 
@@ -378,7 +396,7 @@ const reactions = [
         button.addEventListener('click', clickHandler as EventListener)
       })
 
-      // Initialize counts
+      // Initialize counts from server
       initializeReactionCounts()
     }
 
