@@ -135,7 +135,7 @@ const ogImage = image || (cleanPathname ? new URL(`/og${cleanPathname}.png`, Ast
   )}
   
   <ClientRouter />
-  <!-- Umami Analytics -->
+  <!-- Umami Analytics & CF -->
   {UMAMI.websiteId && (
     <>
       <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id={UMAMI.websiteId}></script>
