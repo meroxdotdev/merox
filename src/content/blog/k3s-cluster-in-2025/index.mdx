@@ -88,13 +88,18 @@ If you prefer an even more automated approach using tools like **Packer** or **T
 ### Script Overview
 
 **Option 1: Create Cloud-Init Template**  
-- Downloads the Ubuntu Cloud image (currently Ubuntu 24.04, code-named "noble")  
-- Creates a VM based on the Cloud-Init image  
-- Converts it into a template
+- Downloads the **Ubuntu Cloud image** (currently Ubuntu 24.04, code-named "noble")  
+- Creates a VM based on the **cloud-init** image  
+- Configures **cloud-init ubuntu** settings for automated provisioning
+- Converts it into a template for rapid VM deployment
 
 **Option 2: Deploy VMs**  
 - Clones the **Cloud-Init** template to create the desired number of VMs  
-- Configures IP addressing, gateway, DNS, search domain, SSH key, etc.  
+- Automatically configures **ubuntu cloud-init** settings including:
+  - IP addressing and network configuration
+  - Gateway and DNS settings
+  - Search domain configuration
+  - SSH key injection for secure access
 - Adjusts CPU, RAM, and disk size to fit your needs
 
 **Option 3: Destroy VMs**  
@@ -141,7 +146,7 @@ if [[ "$ACTION" == "1" ]]; then
     IMG_URL="https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
     IMG_FILE="/root/noble-server-cloudimg-amd64.img"
 
-    echo "📥 Downloading Ubuntu Cloud image..."
+    echo "📥 Downloading Ubuntu Cloud image for cloud-init setup..."
     cd /root
     wget -O $IMG_FILE $IMG_URL || { echo "❌ Failed to download the image"; exit 1; }
 

@@ -3,7 +3,7 @@ import type { IconMap, SocialLink, Site } from '@/types'
 export const SITE: Site = {
   title: 'Merox',
   description:
-    'System Administrator with cybersecurity background and expertise in Linux, Networking, and Security. I focus on practical solutions and sharing knowledge gained through hands-on experience in enterprise environments.',
+    'merox.dev - System Administrator and Cybersecurity Engineer sharing practical guides on Linux, Kubernetes, homelab infrastructure, and security. Learn from hands-on experience in enterprise environments.',
   href: 'https://merox.dev',
   author: 'merox',
   locale: 'en-US',

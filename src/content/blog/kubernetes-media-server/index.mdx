@@ -1,15 +1,26 @@
 ---
 title: "Deploying a Kubernetes-Based Media Server"
-description: "Well-crafted tutorial to deploy a media server on my Kubernetes cluster"
+description: "Complete guide to deploy an ARR stack (Radarr, Sonarr) media server on Kubernetes with Jellyfin, Gluetun, and qBittorrent. Step-by-step tutorial for homelab setups."
 date: 2024-03-06
-tags: ["kubernetes", "media-server", "jellyfin", "radarr", "sonarr"]
+tags: ["kubernetes", "media-server", "jellyfin", "radarr", "sonarr", "arr-stack"]
 image: './kubernetes.svg'
 ---
 
 import Callout from '@/components/Callout.astro'
 import AdSense from '@/components/AdSense.astro'
 
-For a long time, I've been on the hunt for a comprehensive and well crafted tutorial to deploy a media server on my Kubernetes cluster. This media server stack includes Jellyfin, Radarr, Sonarr, Jackett, and qBittorrent. Let's briefly dive into what each component brings to our setup.
+For a long time, I've been on the hunt for a comprehensive and well crafted tutorial to deploy a media server on my Kubernetes cluster. This **ARR stack kubernetes** setup includes the complete media automation stack: Jellyfin for streaming, Radarr and Sonarr for media management, Jackett for indexers, and qBittorrent for downloads. Let's briefly dive into what each component brings to our setup.
+
+## What is the ARR Stack?
+
+The **ARR Stack** (Automated Radarr/Readarr/Sonarr) is a popular collection of open-source media management applications that work together to automate your media library. When deployed on Kubernetes, it provides a scalable, containerized solution for managing your entire media workflow.
+
+### ARR Stack Components
+
+- **Radarr** - Movie collection manager
+- **Sonarr** - TV show collection manager  
+- **Readarr** - Book collection manager (optional)
+- **Prowlarr** - Indexer manager (alternative to Jackett)
 
 ## Components Overview
 
