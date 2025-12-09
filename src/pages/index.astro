@@ -15,7 +15,7 @@ import type { SocialLink } from '@/types'
 // Error handling for fetching recent posts
 let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
 try {
-  latestPosts = await getRecentPosts(2)
+  latestPosts = await getRecentPosts(3)
 } catch (error) {
   console.error('Error fetching recent posts:', error)
 }
@@ -312,7 +312,7 @@ const experience: ExperienceItem[] = [
   )}
 
   <!-- CTA Section -->
-  <section class="mt-12 sm:mt-24">
+  <section class="mt-8 sm:mt-12">
     <div class="max-w-2xl mx-auto">
       <div class="mb-12 relative">
         <div class="absolute inset-0 flex items-center" aria-hidden="true">
