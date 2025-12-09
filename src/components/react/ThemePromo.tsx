@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Palette, ChevronRight, X, Check, Github, BookOpen } from 'lucide-react'
+import { Palette, ChevronRight, X, Check, Github, BookOpen, ExternalLink } from 'lucide-react'
 
 const ThemePromo: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -105,10 +105,19 @@ const ThemePromo: React.FC = () => {
             {/* Actions */}
             <div className="flex flex-col gap-2 pt-2 border-t border-border/40">
               <a
-                href="https://github.com/meroxdotdev/merox-erudite"
+                href="https://astro.build/themes/details/merox-erudite/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-md bg-primary text-primary-foreground text-sm font-medium transition-all duration-200 hover:bg-primary/90 active:scale-[0.98]"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>Get theme on Astro</span>
+              </a>
+              <a
+                href="https://github.com/meroxdotdev/merox-erudite"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-md border border-border/60 bg-background text-foreground text-sm font-medium transition-all duration-200 hover:bg-muted/50 hover:border-border active:scale-[0.98]"
               >
                 <Github className="w-4 h-4" />
                 <span>View on GitHub</span>
