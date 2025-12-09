@@ -181,8 +181,8 @@
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  /* Background image with WebP support and fallback */
-  background-image: url('/static/homelab.webp');
+  /* Background image - light mode */
+  background-image: url('/static/homelab_d.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -195,6 +195,11 @@
   contain: layout style paint;
   will-change: auto;
   content-visibility: auto;
+}
+
+/* Dark mode background image */
+[data-theme='dark'] .hero-bg-container {
+  background-image: url('/static/homelab_w.webp');
 }
 
 /* Prevent layout shifts in hero section */
@@ -243,12 +248,6 @@
   }
 }
 
-/* Fallback for browsers that don't support WebP */
-@supports not (background-image: url('/static/homelab.webp')) {
-  .hero-bg-container {
-    background-image: url('/static/homelab.png');
-  }
-}
 
 /* Exclude from Astro view transitions for instant display */
 .hero-bg-picture {
