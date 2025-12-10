@@ -29,10 +29,10 @@ const SearchButton: React.FC = () => {
   return (
     <ErrorBoundary>
       <Button
-        variant="outline"
+        variant="ghost"
         size="icon"
         onClick={() => setIsOpen(true)}
-        className="size-9 border md:border-0 md:bg-transparent md:hover:bg-muted md:-my-2 md:-me-2 md:size-8"
+        className="size-9 md:-my-2 md:-me-2 md:size-8"
         title="Search (⌘K)"
         aria-label="Search blog posts"
         aria-expanded={isOpen}
