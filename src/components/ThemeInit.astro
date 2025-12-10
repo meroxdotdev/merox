@@ -1,19 +1,5 @@
 ---
-import { Button } from '@/components/ui/button'
-import { Icon } from 'astro-icon/components'
 ---
-
-<Button
-  id="theme-toggle"
-  variant="ghost"
-  size="icon"
-  title="Toggle theme"
-  className="-my-2 -me-2 size-8"
->
-  <Icon name="lucide:sun" class="size-4 dark:hidden" />
-  <Icon name="lucide:moon" class="absolute hidden size-4 dark:block" />
-  <span class="sr-only">Toggle theme</span>
-</Button>
 
 <script is:inline data-astro-rerun>
   (() => {
@@ -59,30 +45,7 @@ import { Icon } from 'astro-icon/components'
 </script>
 
 <script>
-  function handleToggleClick() {
-    const element = document.documentElement
-    const currentTheme = element.getAttribute('data-theme')
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
-
-    element.classList.add('[&_*]:transition-none')
-    element.setAttribute('data-theme', newTheme)
-    window.getComputedStyle(element).getPropertyValue('opacity')
-
-    requestAnimationFrame(() => {
-      element.classList.remove('[&_*]:transition-none')
-    })
-
-    localStorage.setItem('theme', newTheme)
-  }
-
-  function initThemeToggle() {
-    document
-      .getElementById('theme-toggle')
-      ?.addEventListener('click', handleToggleClick)
-  }
-
-  initThemeToggle()
-
+  // Restore theme and palette after navigation
   document.addEventListener('astro:after-swap', () => {
     const getTheme = () => {
       try {
@@ -115,7 +78,6 @@ import { Icon } from 'astro-icon/components'
     requestAnimationFrame(() => {
       element.classList.remove('[&_*]:transition-none')
     })
-
-    initThemeToggle()
   })
 </script>
+

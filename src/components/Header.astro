@@ -1,8 +1,8 @@
 ---
 import Link from '@/components/Link.astro'
-import ThemeToggle from '@/components/ThemeToggle.astro'
 import MobileMenu from '@/components/ui/mobile-menu'
 import SearchButton from '@/components/react/SearchButton'
+import ThemeSelector from '@/components/react/ThemeSelector'
 import { NAV_LINKS } from '@/consts'
 import { Icon } from 'astro-icon/components'
 
@@ -64,8 +64,10 @@ const isExternalLink = (href: string) => {
       </nav>
       <div class="hidden h-6 w-px bg-border/60 md:block" aria-hidden="true"></div>
       <SearchButton client:idle />
+      <div class="hidden md:flex md:items-center">
+        <ThemeSelector client:idle />
+      </div>
       <MobileMenu client:idle transition:persist />
-      <ThemeToggle transition:persist />
     </div>
   </div>
 </header>
