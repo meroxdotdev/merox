@@ -13,28 +13,10 @@ const isExternalLink = (href: string) => {
 
 <header class="bg-background/50 sticky top-0 z-10 backdrop-blur-md" transition:persist>
   <div class="mx-auto flex max-w-3xl flex-wrap items-center justify-between gap-4 p-4">
-    <Link href="/" class="flex shrink-0 items-center gap-2 text-xl font-medium" data-astro-reload>
-      <img 
-        src="/static/logo.svg" 
-        alt="Logo" 
-        class="size-8 dark:block hidden" 
-        width="32" 
-        height="32"
-        loading="eager"
-        fetchpriority="high"
-        transition:persist="logo-dark"
-      />
-      <img 
-        src="/static/logod.svg" 
-        alt="Logo" 
-        class="size-8 dark:hidden block" 
-        width="32" 
-        height="32"
-        loading="eager"
-        fetchpriority="high"
-        transition:persist="logo-light"
-      />
-     <!-- <span class="hidden min-[400px]:block">{SITE.title}</span> -->
+    <Link href="/" class="flex shrink-0 items-center gap-2" data-astro-reload>
+      <span class="brand-logo">
+        Merox
+      </span>
     </Link>
     <div class="flex items-center gap-2 md:gap-4">
       <nav class="hidden items-center gap-4 text-sm sm:gap-6 md:flex">

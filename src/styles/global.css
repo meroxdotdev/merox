@@ -5,6 +5,7 @@
 @theme inline {
   --font-sans: Geist, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   --font-mono: Geist Mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-brand: 'Plus Jakarta Sans', var(--font-sans);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -553,4 +554,61 @@
 .pt-safe {
   padding-top: env(safe-area-inset-top, 0.75rem);
 }
+
+/* Premium Brand Logo - Apple-level typography & design */
+.brand-logo {
+  font-family: var(--font-brand);
+  font-weight: 800;
+  font-size: 1.625rem;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+  position: relative;
+  display: inline-block;
+  text-transform: none;
+}
+
+/* Accent only on letter X */
+@supports (background-clip: text) or (-webkit-background-clip: text) {
+  .brand-logo {
+    background-image: linear-gradient(
+      to right,
+      var(--foreground) 0%,
+      var(--foreground) 82%,
+      var(--primary) 82%,
+      var(--primary) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* Responsive sizing with perfect scaling */
+@media (max-width: 640px) {
+  .brand-logo {
+    font-size: 1.375rem;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .brand-logo {
+    font-size: 1.5rem;
+    letter-spacing: -0.025em;
+  }
+}
+
+@media (min-width: 1024px) {
+  .brand-logo {
+    font-size: 1.75rem;
+    letter-spacing: -0.03em;
+  }
+}
+
 
