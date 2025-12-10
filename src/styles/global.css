@@ -200,6 +200,8 @@
 /* Dark mode background image */
 [data-theme='dark'] .hero-bg-container {
   background-image: url('/static/homelab_w.webp');
+  /* Enhanced filters for better sketch linework visibility in dark mode */
+  filter: grayscale(0%) contrast(1.8) brightness(1.1);
 }
 
 /* Prevent layout shifts in hero section */
