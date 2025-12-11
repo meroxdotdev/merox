@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useRef, useEffect, useState, useCallback } from 'react'
-import { motion, useAnimationControls } from 'framer-motion'
+import { motion, useMotionValue, useAnimationFrame } from 'framer-motion'
 import { cn } from '@/lib/utils'
 
 interface InfiniteScrollProps {
@@ -12,6 +12,18 @@ interface InfiniteScrollProps {
   children: React.ReactNode
   pauseOnHover?: boolean
 }
+
+/**
+ * InfiniteScroll Component
+ * 
+ * Creates a smooth infinite scrolling animation using Framer Motion.
+ * Supports pause on hover, bidirectional scrolling, and accessibility features.
+ * 
+ * @example
+ * <InfiniteScroll duration={15000} direction="normal" pauseOnHover>
+ *   {items}
+ * </InfiniteScroll>
+ */
 
 export function InfiniteScroll({
   className,
@@ -25,13 +37,20 @@ export function InfiniteScroll({
   const [isPaused, setIsPaused] = useState(false)
   const scrollerRef = useRef<HTMLDivElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
-  const controls = useAnimationControls()
-  const elapsedTimeRef = useRef(0)
-  const lastTimeRef = useRef(0)
+  // Motion value for smooth transform animation
+  const x = useMotionValue(0)
+  
+  // Refs for animation state management
   const animationFrameRef = useRef<number | undefined>(undefined)
   const resizeObserverRef = useRef<ResizeObserver | null>(null)
+  const startTimeRef = useRef<number | null>(null)
+  const pauseStartTimeRef = useRef<number | null>(null)
+  const pausedPositionRef = useRef<number | null>(null)
 
-  // Optimized width calculation with proper cleanup
+  /**
+   * Calculates and updates the content width.
+   * Uses requestAnimationFrame for optimal performance.
+   */
   const updateWidth = useCallback(() => {
     const content = contentRef.current
     if (!content) return
@@ -52,7 +71,10 @@ export function InfiniteScroll({
     })
   }, [])
 
-  // Setup ResizeObserver and window resize listener
+  /**
+   * Sets up ResizeObserver and window resize listener for responsive width updates.
+   * Properly cleans up all observers and listeners on unmount.
+   */
   useEffect(() => {
     const content = contentRef.current
     if (!content) return
@@ -93,53 +115,99 @@ export function InfiniteScroll({
     }
   }, [updateWidth])
 
-  // Animation effect - only runs when contentWidth is available
+  /**
+   * Initializes animation when content width is available.
+   * Resets animation state when content width or direction changes.
+   */
   useEffect(() => {
     if (!contentWidth) return
 
     const startX = direction === 'normal' ? 0 : -contentWidth
-    const endX = direction === 'normal' ? -contentWidth : 0
+    x.set(startX)
+    startTimeRef.current = null // Will be set on first animation frame
+    pauseStartTimeRef.current = null
+  }, [contentWidth, direction, x])
 
-    if (!isPaused) {
-      const remainingDuration = duration - elapsedTimeRef.current
-      const progress = elapsedTimeRef.current / duration
-      const currentX =
-        direction === 'normal'
-          ? startX + (endX - startX) * progress
-          : endX + (startX - endX) * (1 - progress)
+  /**
+   * Handles pause/resume state changes.
+   * Adjusts animation timing to prevent visual jumps when pausing/resuming.
+   */
+  useEffect(() => {
+    if (!contentWidth || startTimeRef.current === null) return
 
-      controls.set({ x: currentX })
-      controls.start({
-        x: endX,
-        transition: {
-          duration: remainingDuration / 1000,
-          ease: 'linear',
-          repeat: Infinity,
-          repeatType: 'loop',
-          repeatDelay: 0,
-        },
-      })
-
-      lastTimeRef.current = Date.now()
+    if (isPaused) {
+      // When pausing, store the current position and pause time
+      if (pauseStartTimeRef.current === null) {
+        pausedPositionRef.current = x.get()
+        pauseStartTimeRef.current = performance.now()
+      }
+    } else {
+      // When resuming, adjust the start time to account for pause duration
+      // This ensures the animation continues smoothly from where it paused
+      if (pauseStartTimeRef.current !== null) {
+        const pauseDuration = performance.now() - pauseStartTimeRef.current
+        startTimeRef.current += pauseDuration
+        pauseStartTimeRef.current = null
+        pausedPositionRef.current = null
+      }
     }
-  }, [controls, direction, duration, contentWidth, isPaused])
+  }, [isPaused, contentWidth, x])
 
+  /**
+   * Main animation loop using Framer Motion's useAnimationFrame.
+   * Calculates position based on elapsed time and handles infinite looping.
+   */
+  useAnimationFrame(() => {
+    if (!contentWidth) return
+
+    const now = performance.now()
+
+    // Initialize start time on first frame
+    if (startTimeRef.current === null) {
+      startTimeRef.current = now
+      return
+    }
+
+    // If paused, don't update position (maintain current position)
+    if (isPaused) {
+      return
+    }
+
+    // Calculate elapsed time (the pause effect already adjusted startTimeRef)
+    const elapsed = now - startTimeRef.current
+
+    // Calculate progress (modulo to handle infinite loop)
+    const progress = (elapsed % duration) / duration
+
+    // Calculate position
+    const startX = direction === 'normal' ? 0 : -contentWidth
+    const endX = direction === 'normal' ? -contentWidth : 0
+    const totalDistance = Math.abs(endX - startX)
+
+    // Calculate current X position within one cycle
+    const currentDistance = progress * totalDistance
+    const currentX = direction === 'normal'
+      ? startX - currentDistance
+      : startX + currentDistance
+
+    x.set(currentX)
+  })
+
+  /**
+   * Handles mouse enter event to pause animation on hover.
+   */
   const handleMouseEnter = useCallback(() => {
-    if (!pauseOnHover) return
-
-    const currentTime = Date.now()
-    const deltaTime = currentTime - lastTimeRef.current
-    elapsedTimeRef.current = (elapsedTimeRef.current + deltaTime) % duration
-
+    if (!pauseOnHover || !contentWidth) return
     setIsPaused(true)
-    controls.stop()
-  }, [pauseOnHover, duration, controls])
+  }, [pauseOnHover, contentWidth])
 
+  /**
+   * Handles mouse leave event to resume animation.
+   */
   const handleMouseLeave = useCallback(() => {
-    if (!pauseOnHover) return
-    lastTimeRef.current = Date.now()
+    if (!pauseOnHover || !contentWidth) return
     setIsPaused(false)
-  }, [pauseOnHover])
+  }, [pauseOnHover, contentWidth])
 
   // Check for reduced motion preference
   const prefersReducedMotion =
@@ -183,8 +251,12 @@ export function InfiniteScroll({
         <motion.div
           ref={scrollerRef}
           className="flex shrink-0"
-          animate={controls}
-          style={{ willChange: 'transform' }}
+          style={{ 
+            x,
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden'
+          }}
         >
           <div ref={contentRef} className="flex shrink-0">
             {children}

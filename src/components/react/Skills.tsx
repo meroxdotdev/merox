@@ -92,7 +92,7 @@ const TechBadge: React.FC<TechBadgeProps> = ({ tech, category, techIndex }) => {
 
   return (
     <div
-      className="mr-4 flex items-center gap-2.5 rounded-full bg-muted/30 px-4 py-2.5 transition-colors duration-200 hover:bg-muted/50 hover:shadow-sm"
+      className="mr-4 flex items-center gap-2.5 rounded-full bg-muted/30 px-4 py-2.5 transition-colors duration-200 hover:bg-muted/50"
       role="listitem"
     >
       <div
