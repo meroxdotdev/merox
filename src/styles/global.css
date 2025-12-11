@@ -437,15 +437,9 @@
   }
 }
 
-/* Tech badge - minimal styles to avoid conflicts with Framer Motion */
+/* Tech badge - optimized for performance */
 .tech-badge {
-  /* Remove conflicting animations - let Framer Motion handle transforms */
   will-change: auto;
-}
-
-.tech-badge-visible {
-  /* Just ensure visibility, no transform conflicts */
-  opacity: 1;
 }
 
 /* Background effects */
