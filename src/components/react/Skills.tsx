@@ -31,7 +31,7 @@ const technologies: Technologies = {
     { text: 'XEN', logo: 'lucide:box' },
   ],
   'Networking & Security': [
-    { text: 'CISCO', logo: 'simple-icons:cisco' },
+    { text: 'Cisco', logo: 'simple-icons:cisco' },
     { text: 'pfSense', logo: 'simple-icons:pfsense' },
     { text: 'Fortinet', logo: 'simple-icons:fortinet' },
     { text: 'Palo Alto', logo: 'simple-icons:paloaltonetworks' },
@@ -62,7 +62,7 @@ const technologies: Technologies = {
   ],
   'Monitoring & Tools': [
     { text: 'Portainer', logo: 'simple-icons:portainer' },
-    { text: 'BAREOS', logo: 'lucide:hard-drive' },
+    { text: 'Bareos', logo: 'lucide:hard-drive' },
     { text: 'Asterisk', logo: 'simple-icons:asterisk' },
     { text: 'Apache', logo: 'simple-icons:apache' },
     { text: 'Nginx', logo: 'simple-icons:nginx' },
