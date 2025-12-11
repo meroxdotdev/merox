@@ -29,21 +29,44 @@ export const GET: APIRoute = async () => {
       }
     })
 
-    return new Response(JSON.stringify(searchIndex), {
+    // Get the latest post date for cache invalidation
+    const latestPostDate = posts.length > 0
+      ? Math.max(...posts.map((p) => p.data.date?.getTime() || 0))
+      : Date.now()
+
+    // Return index with metadata for cache invalidation
+    const response = {
+      posts: searchIndex,
+      metadata: {
+        count: searchIndex.length,
+        latestPostDate: new Date(latestPostDate).toISOString(),
+        generatedAt: new Date().toISOString(),
+      },
+    }
+
+    return new Response(JSON.stringify(response), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600', // 5 min fresh, 1h stale-while-revalidate
       },
     })
   } catch (error) {
     console.error('Error generating search index:', error)
-    // Return empty array on error instead of failing
-    return new Response(JSON.stringify([]), {
+    // Return empty response with proper structure on error
+    const errorResponse = {
+      posts: [],
+      metadata: {
+        count: 0,
+        latestPostDate: new Date().toISOString(),
+        generatedAt: new Date().toISOString(),
+      },
+    }
+    return new Response(JSON.stringify(errorResponse), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'public, max-age=60', // Shorter cache on error
       },
     })
   }

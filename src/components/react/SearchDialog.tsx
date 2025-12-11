@@ -20,6 +20,17 @@ interface SearchResult {
   content: string
 }
 
+interface SearchIndexMetadata {
+  count: number
+  latestPostDate: string
+  generatedAt: string
+}
+
+interface SearchIndexResponse {
+  posts: SearchResult[]
+  metadata: SearchIndexMetadata
+}
+
 interface SearchDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
@@ -28,6 +39,7 @@ interface SearchDialogProps {
 // LocalStorage keys
 const STORAGE_KEYS = {
   SEARCH_INDEX: 'search_index',
+  SEARCH_INDEX_METADATA: 'search_index_metadata',
   SEARCH_INDEX_VERSION: 'search_index_version',
   SEARCH_HISTORY: 'search_history',
 } as const
@@ -130,12 +142,17 @@ function saveSearchHistory(query: string): void {
 }
 
 // Get cached search index
-function getCachedIndex(): { data: SearchResult[]; version: string } | null {
+function getCachedIndex(): { data: SearchResult[]; metadata: SearchIndexMetadata; version: string } | null {
   try {
     const cached = localStorage.getItem(STORAGE_KEYS.SEARCH_INDEX)
+    const cachedMetadata = localStorage.getItem(STORAGE_KEYS.SEARCH_INDEX_METADATA)
     const version = localStorage.getItem(STORAGE_KEYS.SEARCH_INDEX_VERSION)
-    if (cached && version === INDEX_VERSION) {
-      return { data: JSON.parse(cached), version }
+    if (cached && cachedMetadata && version === INDEX_VERSION) {
+      return {
+        data: JSON.parse(cached),
+        metadata: JSON.parse(cachedMetadata),
+        version,
+      }
     }
   } catch {
     // Ignore errors
@@ -143,14 +160,30 @@ function getCachedIndex(): { data: SearchResult[]; version: string } | null {
   return null
 }
 
-// Cache search index
-function cacheIndex(data: SearchResult[]): void {
+// Cache search index with metadata
+function cacheIndex(data: SearchResult[], metadata: SearchIndexMetadata): void {
   try {
     localStorage.setItem(STORAGE_KEYS.SEARCH_INDEX, JSON.stringify(data))
+    localStorage.setItem(STORAGE_KEYS.SEARCH_INDEX_METADATA, JSON.stringify(metadata))
     localStorage.setItem(STORAGE_KEYS.SEARCH_INDEX_VERSION, INDEX_VERSION)
   } catch {
     // Ignore localStorage errors (quota exceeded, etc.)
   }
+}
+
+// Check if cached index is stale by comparing metadata
+function isCacheStale(cachedMetadata: SearchIndexMetadata, newMetadata: SearchIndexMetadata): boolean {
+  // Invalidate if post count changed
+  if (cachedMetadata.count !== newMetadata.count) return true
+  
+  // Invalidate if latest post date changed (new post published)
+  if (cachedMetadata.latestPostDate !== newMetadata.latestPostDate) return true
+  
+  // Invalidate if cache is older than 1 hour
+  const cacheAge = Date.now() - new Date(cachedMetadata.generatedAt).getTime()
+  if (cacheAge > 3600000) return true // 1 hour
+  
+  return false
 }
 
 // Extract content snippet around search terms
@@ -199,11 +232,14 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
     let cancelled = false
 
     const loadSearchIndex = async () => {
-      // Check cache first
+      setIsLoadingIndex(true)
+      setError(null)
+
+      // Check cache first and use it if available
       const cached = getCachedIndex()
       if (cached && cached.data.length > 0) {
+        // Use cached data immediately for fast initial load
         setSearchIndex(cached.data)
-        setIsLoadingIndex(false)
         
         // Create FlexSearch index from cached data
         const searchIndex = new Index({
@@ -224,53 +260,64 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
         if (!cancelled) {
           setIndex(searchIndex)
-          // Set recent posts from cached data
           setRecentPosts(cached.data.slice(0, 5))
+          setIsLoadingIndex(false)
         }
-        return
       }
 
-      setIsLoadingIndex(true)
-      setError(null)
-
+      // Always fetch latest to check for updates (in background)
+      // Use cache: 'reload' to bypass cache but allow revalidation
       try {
-        const response = await fetch('/api/search-index.json')
+        const response = await fetch('/api/search-index.json', {
+          cache: 'reload', // Bypass cache to check for updates
+        })
         if (!response.ok) throw new Error('Failed to load search index')
-        const data: SearchResult[] = await response.json()
+        const responseData: SearchIndexResponse = await response.json()
         
         if (cancelled) return
-        
-        // Cache the index
-        cacheIndex(data)
-        
-        setSearchIndex(data)
-        setRecentPosts(data.slice(0, 5))
 
-        // Create FlexSearch index
-        const searchIndex = new Index({
-          tokenize: 'forward',
-        })
+        // Check if cache is stale
+        const shouldUpdate =
+          !cached ||
+          !cached.metadata ||
+          isCacheStale(cached.metadata, responseData.metadata)
 
-        // Index all fields
-        data.forEach((item, idx) => {
-          const searchableText = [
-            item.title || '',
-            item.description || '',
-            (item.tags || []).join(' '),
-            item.content || '',
-          ]
-            .join(' ')
-            .toLowerCase()
-          searchIndex.add(idx, searchableText)
-        })
+        if (shouldUpdate) {
+          // Update cache and index with fresh data
+          cacheIndex(responseData.posts, responseData.metadata)
+          
+          setSearchIndex(responseData.posts)
+          setRecentPosts(responseData.posts.slice(0, 5))
 
-        if (!cancelled) {
-          setIndex(searchIndex)
+          // Create FlexSearch index
+          const searchIndex = new Index({
+            tokenize: 'forward',
+          })
+
+          // Index all fields
+          responseData.posts.forEach((item, idx) => {
+            const searchableText = [
+              item.title || '',
+              item.description || '',
+              (item.tags || []).join(' '),
+              item.content || '',
+            ]
+              .join(' ')
+              .toLowerCase()
+            searchIndex.add(idx, searchableText)
+          })
+
+          if (!cancelled) {
+            setIndex(searchIndex)
+          }
         }
       } catch (error) {
         if (!cancelled) {
           console.error('Error loading search index:', error)
-          setError('Failed to load search index. Please try again later.')
+          // Only show error if we don't have cached data
+          if (!cached || !cached.data.length) {
+            setError('Failed to load search index. Please try again later.')
+          }
         }
       } finally {
         if (!cancelled) {
