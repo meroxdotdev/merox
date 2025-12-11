@@ -413,17 +413,6 @@
     border-width: 0;
   }
 
-  .focus\:not-sr-only:focus {
-    position: static;
-    width: auto;
-    height: auto;
-    padding: inherit;
-    margin: inherit;
-    overflow: visible;
-    clip: auto;
-    white-space: normal;
-  }
-
   /* Ensure theme selector button aligns with search button */
   button[aria-label="Theme & appearance"] {
     display: inline-flex;
