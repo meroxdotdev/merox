@@ -190,16 +190,23 @@ const experience: ExperienceItem[] = [
         </div>
         
         <!-- Profile Image -->
-        <div class="relative flex-shrink-0 sm:self-start">
-          <img
-            src="/reworkedmeroxdc1.webp"
-            alt="Robert Melcher, HPC System Administrator"
-            width="128"
-            height="128"
-            loading="eager"
-            fetchpriority="high"
-            class="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-2 border-background shadow-lg dark:shadow-xl dark:shadow-black/40 ring-1 ring-border/20"
-          />
+        <div class="relative flex-shrink-0 sm:self-start group pb-3 pr-3 sm:pb-4 sm:pr-4">
+          <div class="relative size-24 sm:size-32 md:size-40">
+            <div class="w-full h-full rounded-3xl overflow-hidden border-2 border-background shadow-2xl rotate-3">
+              <img
+                src="/reworkedmeroxdc1.webp"
+                alt="Robert Melcher, HPC System Administrator"
+                width="160"
+                height="160"
+                loading="eager"
+                fetchpriority="high"
+                class="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-500"
+              />
+            </div>
+            <div class="absolute bottom-0 right-0 sm:-bottom-1 sm:-right-1 size-10 sm:size-12 bg-primary rounded-2xl flex items-center justify-center text-primary-foreground shadow-lg -rotate-12 z-10">
+              <Icon name="lucide:terminal" class="size-5 sm:size-6" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
