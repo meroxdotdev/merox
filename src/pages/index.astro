@@ -128,16 +128,17 @@ const experience: ExperienceItem[] = [
   <link rel="preload" as="image" href="/static/homelab_d.webp" type="image/webp" fetchpriority="high" />
   <link rel="preload" as="image" href="/static/homelab_w.webp" type="image/webp" fetchpriority="high" />
   
-  <!-- Hero Section -->
-  <section class="hero-section relative overflow-hidden rounded-xl border" transition:animate="none">
-    <!-- Background Image - CSS background-image (best practice for backgrounds) -->
-    <div class="hero-bg-container" aria-hidden="true"></div>
-    
-    <!-- Gradient Overlay -->
-    <div class="absolute inset-0 z-[1] bg-gradient-to-b from-background/90 via-background/80 to-background/90 dark:from-background/95 dark:via-background/90 dark:to-background/95"></div>
+  <!-- Hero Section - Full width on mobile, contained on desktop -->
+  <div class="hero-wrapper relative -mx-4 sm:mx-0 sm:rounded-xl sm:border overflow-hidden" transition:animate="none">
+    <section class="hero-section relative">
+      <!-- Background Image - CSS background-image (best practice for backgrounds) -->
+      <div class="hero-bg-container" aria-hidden="true"></div>
+      
+      <!-- Gradient Overlay -->
+      <div class="absolute inset-0 z-[1] bg-gradient-to-b from-background/90 via-background/80 to-background/90 dark:from-background/95 dark:via-background/90 dark:to-background/95"></div>
 
-    <!-- Content -->
-    <div class="relative z-10 p-8 md:p-12">
+      <!-- Content -->
+      <div class="relative z-10 p-6 sm:p-8 md:p-12">
       <div class="flex flex-col-reverse gap-8 sm:flex-row sm:items-start sm:justify-between">
         <!-- Main Content -->
         <div class="flex-1 min-w-0 space-y-6">
@@ -209,8 +210,9 @@ const experience: ExperienceItem[] = [
           </div>
         </div>
       </div>
-    </div>
-  </section>
+      </div>
+    </section>
+  </div>
 
   <!-- Experience Timeline -->
   <section class="mt-8">
