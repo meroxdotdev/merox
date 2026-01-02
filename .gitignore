@@ -17,3 +17,7 @@ teaser.pptx
 *FIXES*.md
 *REVIEW*.md
 *CHECKLIST*.md
+
+# Personal pricing calculator tool (private, not for public)
+src/components/react/PricingCalculator.tsx
+src/pages/tools/pricing-calculator.astro
