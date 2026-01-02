@@ -256,7 +256,7 @@ const experience: ExperienceItem[] = [
   </section>
 
   <!-- Skills & Technologies -->
-  <section class="mt-12">
+  <section class="mt-12 pt-12 border-t border-border/50">
     <div class="mb-6">
       <h2 class="text-2xl font-semibold mb-2">Skills & Technologies</h2>
       <p class="text-sm text-muted-foreground">
@@ -270,7 +270,7 @@ const experience: ExperienceItem[] = [
 
   <!-- Latest from the blog -->
   {latestPosts && latestPosts.length > 0 && (
-    <section class="mt-12">
+    <section class="mt-12 pt-12 border-t border-border/50">
       <div class="mb-6 flex items-center justify-between">
         <div>
           <h2 class="text-2xl font-semibold mb-2">Latest from the blog</h2>
@@ -306,34 +306,164 @@ const experience: ExperienceItem[] = [
     </section>
   )}
 
-  <!-- CTA Section - Full width background extending to footer -->
-  <div class="bg-muted/30 relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen overflow-x-hidden -mb-[6.5rem] pb-20">
-    <section class="mt-16 sm:mt-20 -mt-6 sm:-mt-6 py-16 sm:py-20 px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16">
-      <div class="max-w-3xl mx-auto">
-        <div class="text-center space-y-6">
-          <div class="space-y-2">
-            <h2 class="text-4xl sm:text-5xl md:text-6xl font-semibold tracking-tight text-foreground leading-tight">
-              Let's talk
-              <span class="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-primary via-primary/90 to-primary/75">
-                infrastructure
-              </span>
-            </h2>
-          </div>
-          <p class="text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto">
-            Into HPC, Kubernetes, homelabs, or just solid systems? I build, secure, and automate infrastructure that just works.
-          </p>
-          <div class="pt-4">
-            <Link 
-              href="mailto:hello@merox.dev" 
-              class="group inline-flex items-center gap-2.5 px-7 py-3.5 rounded-lg bg-foreground text-background text-base font-medium hover:bg-foreground/90 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-            >
-              <Icon name="lucide:mail" class="size-4" />
-              <span>Reach out</span>
-              <Icon name="lucide:arrow-right" class="size-4 transition-transform group-hover:translate-x-1" />
-            </Link>
-          </div>
-        </div>
+  <!-- Premium Consulting Services Section -->
+  <section class="mt-12 pt-12 border-t border-border/50">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <div class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+        <Icon name="lucide:sparkles" class="size-4 mr-2" />
+        Infrastructure Consulting
       </div>
-    </section>
-  </div>
+      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
+        Let's build something
+        <span class="text-primary block mt-2">exceptional together</span>
+      </h2>
+      <p class="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+        Whether you're scaling HPC clusters, securing enterprise networks, or automating your homelab—I help you build infrastructure that's robust, secure, and built to last.
+      </p>
+    </div>
+
+    <!-- Services Grid -->
+    <div class="grid gap-6 sm:grid-cols-3 mb-12">
+      <!-- Service Card 1: Linux Infrastructure -->
+      <div class="group flex flex-col p-6 rounded-lg border bg-card transition-all duration-200 hover:border-primary/50 hover:shadow-md">
+        <!-- Icon -->
+        <div class="mb-4">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/5 text-primary mb-3">
+            <Icon name="lucide:server" class="size-6" />
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Linux Infrastructure</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            From bare metal to containers, I optimize and secure Linux systems at scale.
+          </p>
+        </div>
+        
+        <!-- Features List -->
+        <ul class="space-y-2.5 mt-auto">
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>System hardening & security audits</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>Performance tuning & optimization</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>Docker & Kubernetes deployment</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>Backup & disaster recovery</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Service Card 2: Network Security -->
+      <div class="group flex flex-col p-6 rounded-lg border bg-card transition-all duration-200 hover:border-primary/50 hover:shadow-md">
+        <!-- Icon -->
+        <div class="mb-4">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/5 text-primary mb-3">
+            <Icon name="lucide:shield" class="size-6" />
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Network Security</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            Secure your network with proper firewall policies, VPNs, and vulnerability assessments.
+          </p>
+        </div>
+        
+        <!-- Features List -->
+        <ul class="space-y-2.5 mt-auto">
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>Firewall architecture & policies</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>Site-to-site VPN configuration</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>Vulnerability scanning & remediation</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>Network segmentation design</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Service Card 3: Infrastructure Automation -->
+      <div class="group flex flex-col p-6 rounded-lg border bg-card transition-all duration-200 hover:border-primary/50 hover:shadow-md">
+        <!-- Icon -->
+        <div class="mb-4">
+          <div class="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/5 text-primary mb-3">
+            <Icon name="lucide:workflow" class="size-6" />
+          </div>
+          <h3 class="text-lg font-semibold mb-2">Infrastructure Automation</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            Transform manual processes into reliable, repeatable Infrastructure as Code.
+          </p>
+        </div>
+        
+        <!-- Features List -->
+        <ul class="space-y-2.5 mt-auto">
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>Ansible & Terraform workflows</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>CI/CD pipeline implementation</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>Configuration management at scale</span>
+          </li>
+          <li class="flex items-start gap-2 text-sm text-muted-foreground">
+            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
+            <span>GitOps & Homelab as Code</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Trust Indicators -->
+    <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center gap-6 sm:gap-8 mb-10 px-4 sm:px-6 py-6 rounded-lg bg-muted/30 border border-border/50">
+      <div class="text-center">
+        <div class="text-2xl sm:text-3xl font-bold text-foreground mb-1">9+</div>
+        <div class="text-xs sm:text-sm text-muted-foreground">Years Experience</div>
+      </div>
+      <div class="hidden sm:block h-10 w-px bg-border/50" aria-hidden="true"></div>
+      <div class="text-center">
+        <div class="text-2xl sm:text-3xl font-bold text-foreground mb-1">400+</div>
+        <div class="text-xs sm:text-sm text-muted-foreground">Servers Managed</div>
+      </div>
+      <div class="hidden sm:block h-10 w-px bg-border/50" aria-hidden="true"></div>
+      <div class="text-center">
+        <div class="text-2xl sm:text-3xl font-bold text-foreground mb-1">CCNA</div>
+        <div class="text-xs sm:text-sm text-muted-foreground">Certified</div>
+      </div>
+      <div class="hidden sm:block h-10 w-px bg-border/50" aria-hidden="true"></div>
+      <div class="text-center">
+        <div class="text-2xl sm:text-3xl font-bold text-foreground mb-1">Enterprise</div>
+        <div class="text-xs sm:text-sm text-muted-foreground">Security Experience</div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="text-center pt-6 border-t border-border/30">
+      <Link 
+        href="mailto:hello@merox.dev?subject=Infrastructure Consulting Inquiry" 
+        class="group inline-flex items-center gap-2.5 px-8 py-4 rounded-lg bg-foreground text-background text-base font-semibold hover:bg-foreground/90 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
+      >
+        <Icon name="lucide:mail" class="size-5" />
+        <span>Start a conversation</span>
+        <Icon name="lucide:arrow-right" class="size-5 transition-transform group-hover:translate-x-1" />
+      </Link>
+      <p class="mt-4 text-sm text-muted-foreground">
+        Typical response time: within 24 hours
+      </p>
+    </div>
+  </section>
 </Layout>
