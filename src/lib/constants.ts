@@ -34,5 +34,32 @@ export const PERFORMANCE = {
   
   // Debounce delays
   SEARCH_DEBOUNCE: 150, // milliseconds
+  
+  // Focus delay for better UX
+  FOCUS_DELAY: 100, // milliseconds
+  
+  // Scroll reset delay
+  SCROLL_RESET_DELAY: 100, // milliseconds
+} as const
+
+/**
+ * Search constants
+ */
+export const SEARCH = {
+  // Cache settings
+  CACHE_VERSION: '1.0',
+  CACHE_TTL: 3600000, // 1 hour in milliseconds
+  
+  // Search settings
+  MAX_SEARCH_RESULTS: 50,
+  INITIAL_DISPLAY_RESULTS: 10,
+  LOAD_MORE_INCREMENT: 10,
+  MAX_SEARCH_HISTORY: 10,
+  MAX_RECENT_POSTS: 5,
+  MAX_DISPLAYED_SEARCH_HISTORY: 6, // Show one more than recent posts for better UX
+  
+  // Snippet settings
+  SNIPPET_MAX_LENGTH: 150,
+  SNIPPET_CONTEXT_LENGTH: 50,
 } as const
 

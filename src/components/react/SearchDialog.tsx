@@ -7,7 +7,7 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
-import { PERFORMANCE } from '@/lib/constants'
+import { PERFORMANCE, SEARCH } from '@/lib/constants'
 
 interface SearchResult {
   id: string
@@ -44,8 +44,8 @@ const STORAGE_KEYS = {
   SEARCH_HISTORY: 'search_history',
 } as const
 
-// Cache version - increment when index structure changes
-const INDEX_VERSION = '1.0'
+// Use constants from lib
+const INDEX_VERSION = SEARCH.CACHE_VERSION
 
 
 // Calculate relevance score
@@ -126,6 +126,15 @@ function getSearchHistory(): string[] {
   }
 }
 
+// Clear search history
+function clearSearchHistory(): void {
+  try {
+    localStorage.removeItem(STORAGE_KEYS.SEARCH_HISTORY)
+  } catch {
+    // Ignore errors
+  }
+}
+
 // Save search to history
 function saveSearchHistory(query: string): void {
   if (!query.trim()) return
@@ -134,7 +143,7 @@ function saveSearchHistory(query: string): void {
     const normalizedQuery = query.trim().toLowerCase()
     // Remove if exists and add to front
     const filtered = history.filter((q) => q.toLowerCase() !== normalizedQuery)
-    const updated = [normalizedQuery, ...filtered].slice(0, 10) // Keep last 10
+    const updated = [normalizedQuery, ...filtered].slice(0, SEARCH.MAX_SEARCH_HISTORY)
     localStorage.setItem(STORAGE_KEYS.SEARCH_HISTORY, JSON.stringify(updated))
   } catch {
     // Ignore localStorage errors
@@ -179,28 +188,33 @@ function isCacheStale(cachedMetadata: SearchIndexMetadata, newMetadata: SearchIn
   // Invalidate if latest post date changed (new post published)
   if (cachedMetadata.latestPostDate !== newMetadata.latestPostDate) return true
   
-  // Invalidate if cache is older than 1 hour
+  // Invalidate if cache is older than TTL
   const cacheAge = Date.now() - new Date(cachedMetadata.generatedAt).getTime()
-  if (cacheAge > 3600000) return true // 1 hour
+  if (cacheAge > SEARCH.CACHE_TTL) return true
   
   return false
 }
 
 // Extract content snippet around search terms
-function extractSnippet(content: string, query: string, maxLength: number = 150): string {
-  if (!content) return content.substring(0, maxLength)
-  if (!query) return content.substring(0, maxLength) + (content.length > maxLength ? '...' : '')
+function extractSnippet(content: string, query: string, maxLength: number = SEARCH.SNIPPET_MAX_LENGTH): string {
+  if (!content || content.length === 0) {
+    return ''
+  }
+  
+  if (!query || query.trim().length === 0) {
+    return content.length > maxLength ? content.substring(0, maxLength) + '...' : content
+  }
   
   const queryLower = query.toLowerCase()
   const contentLower = content.toLowerCase()
   const index = contentLower.indexOf(queryLower)
   
   if (index === -1) {
-    return content.substring(0, maxLength) + (content.length > maxLength ? '...' : '')
+    return content.length > maxLength ? content.substring(0, maxLength) + '...' : content
   }
   
-  const start = Math.max(0, index - 50)
-  const end = Math.min(content.length, index + query.length + maxLength - 50)
+  const start = Math.max(0, index - SEARCH.SNIPPET_CONTEXT_LENGTH)
+  const end = Math.min(content.length, index + query.length + maxLength - SEARCH.SNIPPET_CONTEXT_LENGTH)
   let snippet = content.substring(start, end)
   
   if (start > 0) snippet = '...' + snippet
@@ -220,6 +234,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
   const [index, setIndex] = useState<Index | null>(null)
   const [displayedResults, setDisplayedResults] = useState(10)
   const [recentPosts, setRecentPosts] = useState<SearchResult[]>([])
+  const [searchHistory, setSearchHistory] = useState<string[]>([])
   const inputRef = useRef<HTMLInputElement>(null)
   const resultsRef = useRef<HTMLUListElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -260,7 +275,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
         if (!cancelled) {
           setIndex(searchIndex)
-          setRecentPosts(cached.data.slice(0, 5))
+          setRecentPosts(cached.data.slice(0, SEARCH.MAX_RECENT_POSTS))
           setIsLoadingIndex(false)
         }
       }
@@ -287,7 +302,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
           cacheIndex(responseData.posts, responseData.metadata)
           
           setSearchIndex(responseData.posts)
-          setRecentPosts(responseData.posts.slice(0, 5))
+          setRecentPosts(responseData.posts.slice(0, SEARCH.MAX_RECENT_POSTS))
 
           // Create FlexSearch index
           const searchIndex = new Index({
@@ -330,7 +345,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
     if (!index) {
       loadSearchIndex()
     } else if (recentPosts.length === 0 && searchIndex.length > 0) {
-      setRecentPosts(searchIndex.slice(0, 5))
+      setRecentPosts(searchIndex.slice(0, SEARCH.MAX_RECENT_POSTS))
     }
 
     return () => {
@@ -344,7 +359,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
       if (!index || !searchQuery.trim()) {
         setResults([])
         setSelectedIndex(0)
-        setDisplayedResults(10)
+        setDisplayedResults(SEARCH.INITIAL_DISPLAY_RESULTS)
         return
       }
 
@@ -358,7 +373,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
         // First try exact search
         let searchResults = index.search(normalizedQuery, {
-          limit: 50, // Get more results for better sorting
+          limit: SEARCH.MAX_SEARCH_RESULTS,
         })
 
         // If no results, try fuzzy matching
@@ -395,7 +410,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
         setResults(sortedResults)
         setSelectedIndex(0)
-        setDisplayedResults(10) // Reset to first 10
+        setDisplayedResults(SEARCH.INITIAL_DISPLAY_RESULTS)
       } catch (error) {
         console.error('Search error:', error)
         setError('An error occurred while searching. Please try again.')
@@ -412,7 +427,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
     if (!query.trim()) {
       setResults([])
       setSelectedIndex(0)
-      setDisplayedResults(10)
+      setDisplayedResults(SEARCH.INITIAL_DISPLAY_RESULTS)
       return
     }
 
@@ -432,12 +447,13 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         if (scrollContainerRef.current) {
           scrollContainerRef.current.scrollTop = 0
         }
-      }, 100)
+      }, PERFORMANCE.FOCUS_DELAY)
       setQuery('')
       setResults([])
       setSelectedIndex(0)
-      setDisplayedResults(10)
+      setDisplayedResults(SEARCH.INITIAL_DISPLAY_RESULTS)
       setError(null)
+      setSearchHistory(getSearchHistory())
     }
   }, [open])
 
@@ -449,7 +465,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         if (scrollContainerRef.current) {
           scrollContainerRef.current.scrollTop = 0
         }
-      }, 100)
+      }, PERFORMANCE.SCROLL_RESET_DELAY)
       return () => clearTimeout(timeoutId)
     }
   }, [query])
@@ -542,7 +558,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
     }
   }
 
-  const searchHistory = getSearchHistory()
   const hasMoreResults = results.length > displayedResults
   const visibleResults = results.slice(0, displayedResults)
 
@@ -565,22 +580,15 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
           {!isLoading && !isLoadingIndex && query.trim() && results.length === 0 && 'No results found'}
           {selectedIndex >= 0 && results[selectedIndex] && `Selected: ${results[selectedIndex].title}`}
         </div>
-        <div className="flex shrink-0 items-center border-b border-border px-4 sm:px-4 pt-safe relative">
+        <div className="flex shrink-0 items-center border-b border-border/50 px-4 pt-safe relative bg-muted/20">
           <Search className="mr-3 h-5 w-5 shrink-0 text-muted-foreground sm:h-4 sm:w-4" />
           <input
             ref={inputRef}
             type="text"
-            placeholder="Search posts..."
+            placeholder="Search posts, tags, or content..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex h-16 sm:h-14 w-full bg-transparent py-4 sm:py-3 pr-12 sm:pr-0 text-base sm:text-sm outline-none border-0 shadow-none appearance-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-0"
-            style={{ 
-              WebkitAppearance: 'none', 
-              MozAppearance: 'textfield',
-              border: 'none',
-              outline: 'none',
-              boxShadow: 'none',
-            }}
+            className="flex h-16 sm:h-14 w-full bg-transparent py-4 sm:py-3 pr-12 sm:pr-0 text-base sm:text-sm outline-none border-0 shadow-none [appearance:none] placeholder:text-muted-foreground/70 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-0"
             aria-label="Search blog posts"
             aria-expanded={results.length > 0}
             aria-controls={listboxId}
@@ -588,17 +596,28 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
             role="combobox"
             aria-autocomplete="list"
           />
-          {isLoading && (
-            <Loader2 className="absolute right-14 sm:relative sm:right-0 ml-2 h-5 w-5 sm:h-4 sm:w-4 animate-spin text-muted-foreground shrink-0" />
-          )}
-          {/* Close button for mobile - positioned in header */}
-          <button
-            onClick={() => onOpenChange(false)}
-            className="sm:hidden absolute right-4 top-1/2 -translate-y-1/2 rounded-lg p-2 opacity-70 transition-opacity active:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            aria-label="Close search"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {isLoading && (
+              <Loader2 className="h-5 w-5 sm:h-4 sm:w-4 animate-spin text-muted-foreground shrink-0" />
+            )}
+            {query && !isLoading && (
+              <button
+                onClick={() => setQuery('')}
+                className="rounded-full p-1 hover:bg-muted transition-colors text-muted-foreground"
+                aria-label="Clear search"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+            {/* Close button for mobile - positioned in header */}
+            <button
+              onClick={() => onOpenChange(false)}
+              className="sm:hidden rounded-lg p-2 opacity-70 transition-opacity active:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              aria-label="Close search"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         {/* Error message */}
@@ -614,17 +633,16 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
         <div
           ref={scrollContainerRef}
-          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-2 sm:py-2"
-          style={{ WebkitOverflowScrolling: 'touch' }}
+          className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6 sm:py-6 [-webkit-overflow-scrolling:touch]"
         >
           {/* Loading skeleton */}
           {isLoadingIndex && (
-            <div className="space-y-2 py-4">
+            <div className="space-y-4 py-4">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="animate-pulse rounded-md bg-muted p-3">
-                  <div className="h-4 w-3/4 bg-muted-foreground/20 rounded mb-2" />
-                  <div className="h-3 w-full bg-muted-foreground/20 rounded mb-1" />
-                  <div className="h-3 w-2/3 bg-muted-foreground/20 rounded" />
+                <div key={i} className="animate-pulse space-y-2">
+                  <div className="h-4 w-3/4 bg-muted rounded mb-2" />
+                  <div className="h-3 w-full bg-muted rounded mb-1" />
+                  <div className="h-3 w-2/3 bg-muted rounded" />
                 </div>
               ))}
             </div>
@@ -632,32 +650,64 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
           {/* No query - show suggestions */}
           {!query.trim() && !isLoadingIndex && (
-            <div className="py-4">
+            <div className="space-y-8 py-2">
+              {/* Recent searches */}
+              {searchHistory.length > 0 && (
+                <div>
+                  <div className="mb-4 flex items-center justify-between px-1">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2">
+                      <Clock className="h-3 w-3" />
+                      Recent Searches
+                    </h3>
+                    <button
+                      onClick={() => {
+                        clearSearchHistory()
+                        setSearchHistory([])
+                      }}
+                      className="text-[10px] font-medium uppercase tracking-tight text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      Clear All
+                    </button>
+                  </div>
+                  <div className="flex flex-wrap gap-2 px-1">
+                    {searchHistory.slice(0, SEARCH.MAX_DISPLAYED_SEARCH_HISTORY).map((term, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setQuery(term)}
+                        className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/30 px-3 py-1.5 text-xs font-medium text-foreground transition-all hover:bg-muted hover:border-border/80 focus:outline-none focus:ring-2 focus:ring-ring"
+                      >
+                        {term}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Recent posts */}
               {recentPosts.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Recent Posts
+                <div>
+                  <h3 className="mb-4 px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80 flex items-center gap-2">
+                    <FileText className="h-3 w-3" />
+                    Latest Content
                   </h3>
-                  <ul className="space-y-2 sm:space-y-1">
+                  <ul className="space-y-2">
                     {recentPosts.map((post) => (
                       <li key={post.id}>
                         <a
                           href={post.url}
                           onClick={() => onOpenChange(false)}
-                          className="flex flex-col gap-2 rounded-lg sm:rounded-md p-4 sm:p-3 transition-colors active:bg-muted focus:bg-muted focus:outline-none focus:ring-2 focus:ring-ring"
+                          className="group flex flex-col gap-1 rounded-xl border border-transparent p-3 transition-all hover:bg-muted/50 hover:border-border/50 active:bg-muted"
                         >
-                          <div className="flex items-start justify-between gap-2">
-                            <h3 className="font-medium text-base sm:text-sm leading-tight">
+                          <div className="flex items-center justify-between gap-4">
+                            <h4 className="font-medium text-sm text-foreground group-hover:text-primary transition-colors line-clamp-1 leading-tight">
                               {post.title}
-                            </h3>
-                            <div className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
-                              <Calendar className="h-3 w-3" />
-                              <span className="hidden sm:inline">{formatDate(post.date)}</span>
-                            </div>
+                            </h4>
+                            <span className="shrink-0 text-[10px] font-medium text-muted-foreground tabular-nums">
+                              {formatDate(post.date)}
+                            </span>
                           </div>
                           {post.description && (
-                            <p className="text-sm sm:text-xs text-muted-foreground line-clamp-2">
+                            <p className="text-xs text-muted-foreground line-clamp-1">
                               {post.description}
                             </p>
                           )}
@@ -668,37 +718,29 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
                 </div>
               )}
 
-              {/* Search history */}
-              {searchHistory.length > 0 && (
-                <div>
-                  <h3 className="mb-3 px-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                    Recent Searches
-                  </h3>
-                  <div className="flex flex-wrap gap-2 px-2">
-                    {searchHistory.slice(0, 5).map((term, idx) => (
+              {/* Quick Links / Suggestions */}
+              {recentPosts.length === 0 && searchHistory.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 text-center">
+                  <div className="mb-4 rounded-full bg-muted/50 p-4">
+                    <Search className="h-8 w-8 text-muted-foreground/60" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">Search Merox.dev</h3>
+                  <p className="mt-2 text-sm text-muted-foreground max-w-[280px]">
+                    Find articles, tutorials, and insights about infrastructure, security, and Linux.
+                  </p>
+                  
+                  <div className="mt-8 grid grid-cols-2 gap-3 w-full max-w-sm">
+                    {['Docker', 'Kubernetes', 'HPC', 'Linux', 'Security', 'Ansible'].map((tag) => (
                       <button
-                        key={idx}
-                        onClick={() => setQuery(term)}
-                        className="inline-flex items-center gap-1 rounded-md bg-muted px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring"
+                        key={tag}
+                        onClick={() => setQuery(tag)}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-border bg-background p-2.5 text-xs font-medium hover:bg-muted transition-colors"
                       >
-                        <Clock className="h-3 w-3" />
-                        {term}
+                        <Hash className="h-3 w-3 text-muted-foreground" />
+                        {tag}
                       </button>
                     ))}
                   </div>
-                </div>
-              )}
-
-              {/* Empty state if no suggestions */}
-              {recentPosts.length === 0 && searchHistory.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <Search className="mb-2 h-8 w-8 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground">
-                    Start typing to search posts...
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    Search by title, description, tags, or content
-                  </p>
                 </div>
               )}
             </div>
@@ -706,13 +748,15 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
           {/* No results */}
           {query.trim() && results.length === 0 && !isLoading && !isLoadingIndex && (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <FileText className="mb-2 h-8 w-8 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">
-                No results found for &quot;{query}&quot;
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="mb-4 rounded-full bg-muted/50 p-4">
+                <FileText className="h-8 w-8 text-muted-foreground/60" />
+              </div>
+              <p className="text-base font-medium text-foreground">
+                No results for &quot;{query}&quot;
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Try different keywords or check your spelling
+              <p className="mt-2 text-sm text-muted-foreground">
+                Try searching for something else or check your spelling.
               </p>
             </div>
           )}
@@ -724,7 +768,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
               id={listboxId}
               role="listbox"
               aria-label="Search results"
-              className="space-y-1"
+              className="space-y-2"
             >
               {visibleResults.map((result, idx) => (
                 <li
@@ -737,51 +781,50 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
                     href={result.url}
                     onClick={() => onOpenChange(false)}
                     className={cn(
-                      'flex flex-col gap-3 sm:gap-2.5 rounded-lg sm:rounded-md p-4 sm:p-3.5 transition-colors',
-                      'active:bg-muted focus-visible:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-                      idx === selectedIndex && 'bg-muted',
+                      'group flex flex-col gap-2 rounded-xl border border-transparent p-4 transition-all',
+                      'hover:bg-muted/50 hover:border-border/50 active:bg-muted',
+                      idx === selectedIndex ? 'bg-muted border-border/80 ring-1 ring-border/50 shadow-sm' : 'bg-transparent',
                     )}
                     aria-label={`Go to ${result.title}`}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-medium text-base sm:text-sm leading-snug flex-1">
-                        {highlightText(result.title, query)}
-                      </h3>
-                      <div className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
-                        <span className="hidden sm:inline">{formatDate(result.date)}</span>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className={cn(
+                          "font-semibold text-sm sm:text-base leading-snug transition-colors",
+                          idx === selectedIndex ? "text-primary" : "text-foreground group-hover:text-primary"
+                        )}>
+                          {highlightText(result.title, query)}
+                        </h3>
+                      </div>
+                      <div className="flex shrink-0 items-center gap-1 text-[10px] font-medium text-muted-foreground uppercase tracking-tight tabular-nums">
+                        {formatDate(result.date)}
                       </div>
                     </div>
 
                     {result.description && (
-                      <p className="text-sm sm:text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2 leading-relaxed">
                         {highlightText(result.description, query)}
                       </p>
                     )}
 
-                    {/* Content snippet - hidden on mobile for cleaner UI */}
-                    {result.content && (
-                      <p className="hidden sm:block text-xs text-muted-foreground/80 line-clamp-2 leading-relaxed italic">
-                        {highlightText(extractSnippet(result.content, query), query)}
+                    {/* Content snippet - only show if description doesn't contain query */}
+                    {result.content && 
+                     (!result.description || !result.description.toLowerCase().includes(query.toLowerCase())) && (
+                      <p className="text-xs text-muted-foreground/60 line-clamp-1 leading-relaxed mt-1">
+                        {highlightText(extractSnippet(result.content, query, SEARCH.SNIPPET_MAX_LENGTH - SEARCH.SNIPPET_CONTEXT_LENGTH), query)}
                       </p>
                     )}
 
                     {result.tags && result.tags.length > 0 && (
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        {result.tags.slice(0, 3).map((tag) => (
+                      <div className="flex flex-wrap items-center gap-1.5 mt-1">
+                        {result.tags.slice(0, 4).map((tag) => (
                           <span
                             key={tag}
-                            className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 sm:px-1.5 sm:py-0.5 text-xs text-muted-foreground"
+                            className="inline-flex items-center rounded-md bg-muted/80 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground transition-colors group-hover:bg-muted"
                           >
-                            <Hash className="h-3 w-3" />
-                            {tag}
+                            #{tag}
                           </span>
                         ))}
-                        {result.tags.length > 3 && (
-                          <span className="text-xs text-muted-foreground">
-                            +{result.tags.length - 3} more
-                          </span>
-                        )}
                       </div>
                     )}
                   </a>
@@ -792,45 +835,48 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
 
           {/* Load more button */}
           {hasMoreResults && (
-            <div className="mt-6 mb-4 sm:mt-4 sm:mb-2 flex justify-center pb-safe">
+            <div className="mt-8 mb-4 flex justify-center pb-safe">
               <button
-                onClick={() => setDisplayedResults((prev) => Math.min(prev + 10, results.length))}
-                className="flex items-center gap-2 rounded-lg sm:rounded-md border border-border bg-background px-6 py-3 sm:px-4 sm:py-2 text-base sm:text-sm text-foreground transition-colors active:bg-muted focus:outline-none focus:ring-2 focus:ring-ring shadow-sm"
+                onClick={() => setDisplayedResults((prev) => Math.min(prev + SEARCH.LOAD_MORE_INCREMENT, results.length))}
+                className="inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-2 text-xs font-semibold text-foreground transition-all hover:bg-muted hover:border-border/80 shadow-sm"
               >
-                <ChevronDown className="h-5 w-5 sm:h-4 sm:w-4" />
-                Load more ({results.length - displayedResults} remaining)
+                <ChevronDown className="h-3.5 w-3.5" />
+                View {results.length - displayedResults} more results
               </button>
             </div>
           )}
           
-          {/* Extra padding at bottom for mobile to ensure last items are scrollable */}
-          <div className="h-4 sm:h-2" aria-hidden="true" />
+          <div className="h-2" aria-hidden="true" />
         </div>
 
-        {results.length > 0 && (
-          <div className="flex shrink-0 items-center justify-center border-t border-border bg-background px-4 py-3 sm:py-2 text-xs text-muted-foreground">
-            <div className="hidden sm:flex flex-wrap items-center gap-4">
-              <span>
-                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
-                  ↑↓
-                </kbd>{' '}
-                navigate
-              </span>
-              <span>
-                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
-                  ↵
-                </kbd>{' '}
-                select
-              </span>
-              <span>
-                <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100">
-                  esc
-                </kbd>{' '}
-                close
-              </span>
-            </div>
+        {/* Footer shortcuts - only visible on desktop with results */}
+        <div className="hidden sm:flex shrink-0 items-center justify-between border-t border-border/40 bg-muted/10 px-6 py-3 text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+          <div className="flex items-center gap-5">
+            <span className="flex items-center gap-1.5">
+              <kbd className="inline-flex h-5 items-center justify-center rounded border bg-background px-1.5 font-sans shadow-sm">
+                ↑↓
+              </kbd>
+              Navigate
+            </span>
+            <span className="flex items-center gap-1.5">
+              <kbd className="inline-flex h-5 items-center justify-center rounded border bg-background px-1.5 font-sans shadow-sm">
+                ↵
+              </kbd>
+              Select
+            </span>
+            <span className="flex items-center gap-1.5">
+              <kbd className="inline-flex h-5 items-center justify-center rounded border bg-background px-1.5 font-sans shadow-sm">
+                esc
+              </kbd>
+              Close
+            </span>
           </div>
-        )}
+          {results.length > 0 && (
+            <div className="text-muted-foreground/60 tabular-nums">
+              {results.length} result{results.length !== 1 ? 's' : ''} found
+            </div>
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   )
