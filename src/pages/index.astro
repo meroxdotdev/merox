@@ -124,7 +124,7 @@ const experience: ExperienceItem[] = [
   <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
   
-  <!-- Preload hero image for instant display (desktop only to avoid mobile theme transition issues) -->
+  <!-- Preload hero image for instant display on desktop -->
   <link rel="preload" as="image" href="/meroxindc1.webp" type="image/webp" fetchpriority="high" media="(min-width: 768px)" />
   
   <!-- Hero glow animation with reduced motion support -->
@@ -137,6 +137,12 @@ const experience: ExperienceItem[] = [
       .hero-glow {
         animation: none;
       }
+    }
+    
+    /* Prevent image container from being used as background during theme transitions */
+    .hero-section > div > div:last-child {
+      background: transparent;
+      background-image: none;
     }
   </style>
   
