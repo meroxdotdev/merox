@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { NAV_LINKS } from '@/consts'
 import { Menu, ExternalLink, Palette, Sun, Moon, Check } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import {
   COLOR_PALETTES,
   DEFAULT_PALETTE,
@@ -91,102 +92,97 @@ const MobileMenu = () => {
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden" title="Menu">
+        <Button variant="ghost" size="icon" className="md:hidden rounded-full hover:bg-foreground/5 size-9" title="Menu">
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-background">
-        {NAV_LINKS.map((item) => {
-          const isExternal = isExternalLink(item.href)
-          const isInsideLink = item.label.toLowerCase() === 'inside'
-          return (
-            <DropdownMenuItem key={item.href} asChild>
-              <a
-                href={item.href}
-                target={isExternal ? '_blank' : '_self'}
-                rel={isExternal ? 'noopener noreferrer' : undefined}
-                className={`w-full text-lg font-medium capitalize flex items-center gap-2 ${
-                  isInsideLink ? 'text-primary hover:text-primary/80' : isExternal ? 'text-primary/90 hover:text-primary' : ''
-                }`}
-                onClick={() => setIsOpen(false)}
-              >
-                <span>{item.label}</span>
-                {isExternal && (
-                  <ExternalLink className={`h-4 w-4 opacity-80 flex-shrink-0 ${isInsideLink ? 'text-primary' : ''}`} aria-hidden="true" />
-                )}
-              </a>
-            </DropdownMenuItem>
-          )
-        })}
-        <DropdownMenuSeparator />
-        {/* Theme Mode */}
-        <div className="px-2 py-1.5">
-          <div className="flex items-center gap-1.5 mb-2 px-2">
-            <span className="text-xs font-medium text-foreground/40 uppercase tracking-wider">
-              Mode
+      <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-xl border-border/40 min-w-[240px] p-2 rounded-2xl shadow-2xl">
+        <div className="flex flex-col gap-1">
+          {NAV_LINKS.map((item) => {
+            const isExternal = isExternalLink(item.href)
+            const isInsideLink = item.label.toLowerCase() === 'inside'
+            return (
+              <DropdownMenuItem key={item.href} asChild>
+                <a
+                  href={item.href}
+                  target={isExternal ? '_blank' : '_self'}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                  className={cn(
+                    "flex items-center justify-between w-full px-4 py-3 text-base font-medium transition-all rounded-xl",
+                    isInsideLink 
+                      ? "bg-primary/5 text-primary" 
+                      : "text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+                  )}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <span>{item.label}</span>
+                  {isExternal && (
+                    <ExternalLink className="h-4 w-4 opacity-50" aria-hidden="true" />
+                  )}
+                </a>
+              </DropdownMenuItem>
+            )
+          })}
+        </div>
+        
+        <DropdownMenuSeparator className="my-2 bg-border/40" />
+        
+        <div className="p-2">
+          <div className="px-2 mb-2">
+            <span className="text-[10px] font-bold text-foreground/30 uppercase tracking-[0.1em]">
+              Appearance
             </span>
           </div>
-          <div className="space-y-1">
+          
+          <div className="grid grid-cols-2 gap-2">
             {THEMES.map((theme) => (
               <button
                 key={theme}
                 onClick={() => handleThemeChange(theme)}
-                className={`
-                  w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs
-                  transition-colors
-                  ${
-                    currentTheme === theme
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-foreground/60 hover:text-foreground hover:bg-muted/50'
-                  }
-                `}
+                className={cn(
+                  "flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium transition-all",
+                  currentTheme === theme
+                    ? "bg-foreground text-background shadow-lg"
+                    : "bg-foreground/[0.03] text-foreground/60 hover:bg-foreground/[0.06]"
+                )}
+                aria-label={`Switch to ${theme} theme`}
+                aria-pressed={currentTheme === theme}
               >
                 {theme === 'dark' ? (
-                  <Moon className="h-3 w-3" />
+                  <Moon className="h-3.5 w-3.5" />
                 ) : (
-                  <Sun className="h-3 w-3" />
+                  <Sun className="h-3.5 w-3.5" />
                 )}
                 <span className="capitalize">{theme}</span>
-                {currentTheme === theme && (
-                  <Check className="h-3 w-3 ml-auto text-primary" />
-                )}
               </button>
             ))}
           </div>
-        </div>
-        <DropdownMenuSeparator />
-        {/* Color Palette */}
-        <div className="px-2 py-1.5">
-          <div className="flex items-center gap-1.5 mb-2 px-2">
-            <Palette className="h-3 w-3 text-foreground/40" />
-            <span className="text-xs font-medium text-foreground/40 uppercase tracking-wider">
-              Palette
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-1.5">
+          
+          <div className="grid grid-cols-4 gap-2 mt-2">
             {COLOR_PALETTES.map((palette) => (
               <button
                 key={palette.id}
                 onClick={() => handlePaletteChange(palette.id)}
-                className={`
-                  flex items-center gap-1.5 px-2 py-1.5 rounded text-xs
-                  transition-colors
-                  ${
-                    currentPalette === palette.id
-                      ? 'bg-primary/10 text-primary'
-                      : 'text-foreground/60 hover:text-foreground hover:bg-muted/50'
-                  }
-                `}
+                className={cn(
+                  "relative flex items-center justify-center aspect-square rounded-full transition-all group",
+                  currentPalette === palette.id
+                    ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
+                    : "hover:scale-110"
+                )}
+                title={palette.name}
+                aria-label={`Select ${palette.name} color palette`}
+                aria-pressed={currentPalette === palette.id}
               >
                 <div
-                  className="size-2.5 rounded-full border border-border/40 flex-shrink-0"
+                  className="size-full rounded-full border border-black/5 dark:border-white/5 shadow-inner"
                   style={{ backgroundColor: palette.color }}
                   aria-hidden="true"
                 />
-                <span className="capitalize">{palette.name}</span>
                 {currentPalette === palette.id && (
-                  <Check className="h-3 w-3 ml-auto text-primary" />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Check className="h-3 w-3 text-white mix-blend-difference" />
+                  </div>
                 )}
               </button>
             ))}

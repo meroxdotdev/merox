@@ -32,20 +32,17 @@ const SearchButton: React.FC = () => {
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "group hidden md:flex items-center justify-between gap-2 rounded-full border border-border bg-muted/30 px-3 py-1.5 text-sm text-muted-foreground transition-all hover:bg-muted hover:border-border/80 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background md:w-48 lg:w-64 md:-my-1"
+          "group hidden md:flex items-center gap-2 rounded-full border border-border/40 bg-foreground/[0.03] px-3.5 py-1.5 text-sm text-foreground/50 transition-all hover:bg-foreground/[0.06] hover:border-border/80 focus:outline-none focus:ring-2 focus:ring-ring/20 md:w-40 lg:w-56"
         )}
         title="Search (⌘K)"
         aria-label="Search blog posts"
         aria-expanded={isOpen}
         aria-haspopup="dialog"
       >
-        <div className="flex items-center gap-2 overflow-hidden">
-          <Search className="h-4 w-4 shrink-0 transition-colors group-hover:text-foreground" />
-          <span className="truncate transition-colors group-hover:text-foreground">Search...</span>
-          <span className="sr-only">Search</span>
-        </div>
+        <Search className="h-4 w-4 shrink-0 transition-colors group-hover:text-foreground/80" />
+        <span className="flex-1 text-left truncate transition-colors group-hover:text-foreground/80">Search...</span>
         
-        <kbd className="pointer-events-none h-5 select-none items-center gap-1 rounded border bg-background px-1.5 font-mono text-[10px] font-medium opacity-100 hidden md:flex">
+        <kbd className="pointer-events-none hidden lg:flex h-5 select-none items-center gap-1 rounded border border-border/50 bg-background/50 px-1.5 font-mono text-[10px] font-medium opacity-60 group-hover:opacity-100 transition-opacity">
           <span className="text-xs">⌘</span>K
         </kbd>
       </button>

@@ -8,6 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Palette, Sun, Moon, Check } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import {
   COLOR_PALETTES,
   DEFAULT_PALETTE,
@@ -101,80 +102,97 @@ export default function ThemeSelector({ className }: ThemeSelectorProps = {}) {
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="outline"
+          variant="ghost"
           size="icon"
           title="Theme & appearance"
-          className={className || "size-9 border md:border-0 md:bg-transparent md:hover:bg-muted md:-my-2 md:-me-2 md:size-8"}
+          className={cn(
+            "size-9 rounded-full transition-all duration-200 hover:bg-foreground/5",
+            className
+          )}
           aria-label="Theme & appearance"
         >
           {currentTheme === 'dark' ? (
-            <Moon className="h-5 w-5 md:h-4 md:w-4" aria-hidden="true" />
+            <Moon className="h-[1.1rem] w-[1.1rem] transition-all" aria-hidden="true" />
           ) : (
-            <Sun className="h-5 w-5 md:h-4 md:w-4" aria-hidden="true" />
+            <Sun className="h-[1.1rem] w-[1.1rem] transition-all" aria-hidden="true" />
           )}
           <span className="sr-only">Theme & appearance</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-background min-w-[180px] p-1.5">
+      <DropdownMenuContent 
+        align="end" 
+        className="bg-background/95 backdrop-blur-xl border-border/40 min-w-[220px] p-3 rounded-2xl shadow-2xl"
+      >
         {/* Theme Mode Section */}
-        <div className="px-2 py-1.5 mb-1">
-          <span className="text-xs font-medium text-foreground/50 uppercase tracking-wider">
-            Mode
-          </span>
-        </div>
-        <div className="px-1 mb-1">
-          {THEMES.map((theme) => (
-            <DropdownMenuItem
-              key={theme}
-              onClick={() => handleThemeChange(theme)}
-              className="flex items-center justify-between cursor-pointer px-2 py-1.5 text-sm"
-            >
-              <div className="flex items-center gap-2">
+        <div className="mb-4">
+          <div className="px-2 mb-2 flex items-center justify-between">
+            <span className="text-[10px] font-bold text-foreground/30 uppercase tracking-[0.1em]">
+              Appearance
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-foreground/[0.03] rounded-xl">
+            {THEMES.map((theme) => (
+              <button
+                key={theme}
+                onClick={() => handleThemeChange(theme)}
+                className={cn(
+                  "flex items-center justify-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
+                  currentTheme === theme
+                    ? "bg-background text-foreground shadow-sm ring-1 ring-border/50"
+                    : "text-foreground/50 hover:text-foreground hover:bg-background/50"
+                )}
+                aria-label={`Switch to ${theme} theme`}
+                aria-pressed={currentTheme === theme}
+              >
                 {theme === 'dark' ? (
                   <Moon className="size-3.5" />
                 ) : (
                   <Sun className="size-3.5" />
                 )}
                 <span className="capitalize">{theme}</span>
-              </div>
-              {currentTheme === theme && (
-                <Check className="size-3.5 text-primary" />
-              )}
-            </DropdownMenuItem>
-          ))}
-        </div>
-
-        <DropdownMenuSeparator className="my-1" />
-
-        {/* Color Palette Section */}
-        <div className="px-2 py-1.5 mb-1">
-          <div className="flex items-center gap-1.5">
-            <Palette className="h-3 w-3 text-foreground/40" />
-            <span className="text-xs font-medium text-foreground/50 uppercase tracking-wider">
-              Palette
-            </span>
+              </button>
+            ))}
           </div>
         </div>
-        <div className="px-1">
-          {COLOR_PALETTES.map((palette) => (
-            <DropdownMenuItem
-              key={palette.id}
-              onClick={() => handlePaletteChange(palette.id)}
-              className="flex items-center justify-between cursor-pointer px-2 py-1.5 text-sm"
-            >
-              <div className="flex items-center gap-2">
+
+        <DropdownMenuSeparator className="mb-4 bg-border/40" />
+
+        {/* Color Palette Section */}
+        <div>
+          <div className="px-2 mb-3 flex items-center gap-1.5">
+            <Palette className="h-3 w-3 text-foreground/30" />
+            <span className="text-[10px] font-bold text-foreground/30 uppercase tracking-[0.1em]">
+              Accent Color
+            </span>
+          </div>
+          <div className="grid grid-cols-5 gap-2 px-1">
+            {COLOR_PALETTES.map((palette) => (
+              <button
+                key={palette.id}
+                onClick={() => handlePaletteChange(palette.id)}
+                className={cn(
+                  "group relative flex items-center justify-center aspect-square rounded-full transition-all duration-300",
+                  currentPalette === palette.id
+                    ? "ring-2 ring-primary ring-offset-2 ring-offset-background scale-110"
+                    : "hover:scale-110"
+                )}
+                title={palette.name}
+                aria-label={`Select ${palette.name} color palette`}
+                aria-pressed={currentPalette === palette.id}
+              >
                 <div
-                  className="size-3 rounded-full border border-border/50 flex-shrink-0"
+                  className="size-full rounded-full border border-black/5 dark:border-white/5 shadow-inner transition-transform group-hover:scale-90"
                   style={{ backgroundColor: palette.color }}
                   aria-hidden="true"
                 />
-                <span className="capitalize">{palette.name}</span>
-              </div>
-              {currentPalette === palette.id && (
-                <Check className="size-3.5 text-primary" />
-              )}
-            </DropdownMenuItem>
-          ))}
+                {currentPalette === palette.id && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Check className="h-2.5 w-2.5 text-white mix-blend-difference" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
