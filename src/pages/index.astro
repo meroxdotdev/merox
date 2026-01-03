@@ -140,9 +140,22 @@ const experience: ExperienceItem[] = [
     }
     
     /* Prevent image container from being used as background during theme transitions */
+    .hero-section {
+      background: transparent;
+      background-image: none;
+    }
+    
     .hero-section > div > div:last-child {
       background: transparent;
       background-image: none;
+      isolation: isolate;
+    }
+    
+    .hero-section picture,
+    .hero-section img {
+      background: transparent;
+      background-image: none;
+      display: block;
     }
   </style>
   
@@ -214,7 +227,7 @@ const experience: ExperienceItem[] = [
             width="320"
             height="400"
             loading="eager"
-            fetchpriority="high"
+            decoding="async"
             class="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_20px_50px_rgba(255,255,255,0.03)]"
           />
         </picture>
