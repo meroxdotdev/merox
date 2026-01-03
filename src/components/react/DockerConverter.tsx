@@ -384,131 +384,96 @@ const DockerConverter: React.FC = () => {
   }, [dockerRun])
 
   return (
-    <div className="w-full space-y-6">
-      {/* Input Section */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <label htmlFor="docker-run-input" className="text-sm font-medium">
-            Docker Run Command
-          </label>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={loadExample}
-              className="h-7 text-xs"
-            >
-              Load Example
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearAll}
-              className="h-7"
-            >
-              <RefreshCw className="size-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => copyToClipboard(dockerRun, 'input')}
-              disabled={!dockerRun}
-              className="h-7"
-            >
-              {copied === 'input' ? (
-                <Check className="size-3" />
-              ) : (
-                <Copy className="size-3" />
-              )}
-            </Button>
+    <div className="w-full">
+      {/* Tool Header/Settings */}
+      <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
+        <div className="flex items-center gap-2">
+          <div className="p-1.5 rounded-md bg-primary/10 text-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-container"><path d="M22 7.7c0-.6-.4-1.2-.8-1.5l-6.3-4c-.5-.3-1.1-.3-1.6 0l-6.5 4.1c-.5.3-.8.9-.8 1.5v8.7c0 .5.3 1.1.8 1.4l6.5 4.1c.5.3 1.1.3 1.6 0l6.3-4c.4-.3.8-.9.8-1.5Z"/><path d="M10 21.9V14L2.1 9.1"/><path d="m10 14 11.9-6.9"/><path d="M14 19.8v-8.1"/><path d="m18 17.5-4-2.3"/></svg>
           </div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Docker Converter</span>
         </div>
-        <textarea
-          id="docker-run-input"
-          value={dockerRun}
-          onChange={handleInputChange}
-          placeholder="Enter docker run command...&#10;&#10;Example:&#10;docker run -d --name myapp -p 8080:80 -v /host:/container nginx:latest"
-          rows={12}
-          className="w-full px-4 py-2 rounded-md border bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 resize-y"
-        />
-        {stats && (
-          <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t">
-            <span>Lines: {stats.lines}</span>
-            <span>Characters: {stats.chars.toLocaleString()}</span>
-          </div>
-        )}
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={clearAll}
+            className="h-8 px-3 rounded-md hover:bg-destructive/10 hover:text-destructive transition-colors text-xs"
+          >
+            Clear
+          </Button>
+        </div>
       </div>
 
-      {/* Error Display */}
-      {error && (
-        <div className="rounded-lg border bg-destructive/10 border-destructive/20 p-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="size-5 text-destructive shrink-0 mt-0.5" />
-            <div className="flex-1 space-y-1">
-              <p className="text-sm font-medium text-destructive">Error</p>
-              <p className="text-xs text-muted-foreground font-mono">
-                {error}
-              </p>
+      <div className="flex flex-col divide-y">
+        {/* Input Section */}
+        <div className="flex flex-col p-4 space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <label htmlFor="docker-run-input" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Docker Run Command
+            </label>
+            <div className="flex items-center gap-3">
+              <button onClick={loadExample} className="text-[10px] font-bold text-primary/70 hover:text-primary uppercase tracking-widest transition-colors">
+                Load Example
+              </button>
+              <button
+                onClick={() => copyToClipboard(dockerRun, 'input')}
+                disabled={!dockerRun}
+                className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${copied === 'input' ? 'text-green-500' : 'text-muted-foreground hover:text-primary'}`}
+              >
+                {copied === 'input' ? 'Copied' : 'Copy'}
+              </button>
             </div>
           </div>
+          <textarea
+            id="docker-run-input"
+            value={dockerRun}
+            onChange={handleInputChange}
+            placeholder="Paste docker run command here..."
+            className="w-full h-48 p-3 rounded-lg border bg-muted/5 text-foreground font-mono text-sm focus:ring-1 focus:ring-primary/30 resize-none transition-all"
+          />
         </div>
-      )}
 
-      {/* Output Section */}
-      {compose && (
-        <div className="rounded-lg border bg-card p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <label htmlFor="docker-compose-output" className="text-sm font-medium flex items-center gap-2">
-              <FileCode className="size-4" />
+        {/* Output Section */}
+        <div className="flex flex-col p-4 space-y-3 bg-muted/5">
+          <div className="flex items-center justify-between px-1">
+            <label htmlFor="docker-compose-output" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
               Docker Compose YAML
             </label>
-            <Button
-              variant="ghost"
-              size="sm"
+            <button
               onClick={() => copyToClipboard(compose, 'output')}
               disabled={!compose}
-              className="h-7"
+              className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${copied === 'output' ? 'text-green-500' : 'text-muted-foreground hover:text-primary'}`}
             >
-              {copied === 'output' ? (
-                <Check className="size-3" />
-              ) : (
-                <Copy className="size-3" />
-              )}
-            </Button>
+              {copied === 'output' ? 'Copied' : 'Copy Result'}
+            </button>
           </div>
           <textarea
             id="docker-compose-output"
             value={compose}
             readOnly
-            placeholder="Docker Compose YAML will appear here..."
-            rows={20}
-            className="w-full px-4 py-2 rounded-md border bg-muted/50 text-foreground font-mono text-sm resize-y"
+            placeholder="Compose file will appear here..."
+            className="w-full h-64 p-3 rounded-lg border bg-transparent text-foreground font-mono text-sm focus:ring-0 resize-none transition-all"
           />
-          <div className="rounded-md bg-muted/30 p-3 text-xs text-muted-foreground">
-            <p className="font-medium mb-1">Supported flags:</p>
-            <ul className="list-disc list-inside space-y-0.5">
-              <li><code className="px-1 py-0.5 bg-background rounded">--name, -n</code> → container_name</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">--publish, -p</code> → ports</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">--volume, -v</code> → volumes</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">--env, -e</code> → environment</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">--restart</code> → restart</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">--network</code> → networks</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">--workdir, -w</code> → working_dir</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">--user, -u</code> → user</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">--privileged</code> → privileged</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">-it</code> → stdin_open + tty</li>
-              <li><code className="px-1 py-0.5 bg-background rounded">-d</code> → detach (default in compose)</li>
-            </ul>
-          </div>
+        </div>
+      </div>
+
+      {error && (
+        <div className="px-4 py-3 border-t bg-destructive/5 text-destructive flex items-center gap-2">
+          <AlertCircle className="size-3.5" />
+          <p className="text-[10px] font-bold uppercase tracking-widest">{error}</p>
         </div>
       )}
 
-      {/* Info Section */}
-      {!compose && !error && dockerRun.trim() && (
-        <div className="rounded-lg border bg-muted/30 p-4">
-          <p className="text-sm text-muted-foreground">
-            Enter a docker run command above to convert it to Docker Compose format.
-          </p>
+      {compose && (
+        <div className="p-4 bg-muted/10 border-t space-y-3">
+          <h4 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Mapping Reference</h4>
+          <div className="flex flex-wrap gap-x-4 gap-y-2">
+            {['--name', '-p', '-v', '-e', '--restart'].map(flag => (
+              <code key={flag} className="text-[10px] opacity-70 bg-background px-1 rounded border">{flag}</code>
+            ))}
+          </div>
         </div>
       )}
     </div>

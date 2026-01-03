@@ -222,200 +222,128 @@ const IPDNSLookup: React.FC = () => {
   }
 
   return (
-    <div className="w-full space-y-6">
-      {/* Input Section */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
-        <div className="flex items-center gap-4">
-          <Button
-            variant={lookupType === 'ip' ? 'default' : 'outline'}
+    <div className="w-full">
+      {/* Tool Header/Inputs */}
+      <div className="flex flex-col sm:flex-row items-center gap-3 px-4 py-4 border-b bg-muted/30">
+        <div className="flex bg-background/50 p-1 rounded-lg border shadow-sm w-full sm:w-auto">
+          <button
             onClick={() => {
               setLookupType('ip')
               setIpInfo(null)
               setDnsRecords([])
               setError(null)
             }}
-            className="flex-1"
+            className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
+              lookupType === 'ip'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'hover:bg-muted text-muted-foreground'
+            }`}
           >
-            IP Lookup
-          </Button>
-          <Button
-            variant={lookupType === 'dns' ? 'default' : 'outline'}
+            IP Info
+          </button>
+          <button
             onClick={() => {
               setLookupType('dns')
               setIpInfo(null)
               setDnsRecords([])
               setError(null)
             }}
-            className="flex-1"
+            className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
+              lookupType === 'dns'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'hover:bg-muted text-muted-foreground'
+            }`}
           >
             DNS Lookup
-          </Button>
+          </button>
         </div>
 
-        <div className="space-y-2">
-          <div className="flex gap-2">
+        <div className="flex-1 flex gap-2 w-full">
+          <div className="relative flex-1 group">
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={lookupType === 'ip' ? 'Enter IP address (e.g., 8.8.8.8)' : 'Enter domain name (e.g., google.com)'}
-              className="flex-1 px-4 py-2 rounded-md border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              placeholder={lookupType === 'ip' ? 'IP Address...' : 'Domain...'}
+              className="w-full pl-8 pr-3 py-2 rounded-lg border bg-background shadow-sm focus:ring-1 focus:ring-primary/30 transition-all text-sm font-mono"
             />
-            <Button onClick={handleLookup} disabled={loading || !input.trim()}>
-              {loading ? (
-                <>
-                  <Loader2 className="size-4 animate-spin" />
-                  Looking up...
-                </>
-              ) : (
-                <>
-                  <Search className="size-4" />
-                  Lookup
-                </>
-              )}
-            </Button>
           </div>
-          {lookupType === 'ip' && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={getMyIP}
-              disabled={loading}
-              className="w-full sm:w-auto"
-            >
-              Get My IP Address
-            </Button>
-          )}
+          <Button 
+            onClick={handleLookup} 
+            disabled={loading || !input.trim()}
+            className="h-9 px-4 rounded-lg shadow-sm transition-all shrink-0 text-xs font-bold uppercase tracking-widest"
+          >
+            {loading ? <Loader2 className="size-3.5 animate-spin" /> : 'Lookup'}
+          </Button>
         </div>
 
-        {error && (
-          <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
-            {error}
-          </div>
+        {lookupType === 'ip' && (
+          <button
+            onClick={getMyIP}
+            disabled={loading}
+            className="text-[10px] font-bold uppercase tracking-widest text-primary/70 hover:text-primary transition-colors px-2 shrink-0"
+          >
+            My IP
+          </button>
         )}
       </div>
 
+      {error && (
+        <div className="m-4 p-3 rounded-lg bg-destructive/5 border border-destructive/20 text-destructive text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
+          <AlertCircle className="size-3.5" />
+          {error}
+        </div>
+      )}
+
       {/* IP Info Results */}
       {ipInfo && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">IP Address Information</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="rounded-lg border bg-card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">IP Address</span>
-                <button
-                  onClick={() => copyToClipboard(ipInfo.ip, 'ip')}
-                  className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
-                >
-                  {copied === 'ip' ? <Check className="size-3" /> : <Copy className="size-3" />}
-                </button>
+        <div className="p-4 space-y-4 animate-in fade-in duration-500">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {[
+              { label: 'IP Address', value: ipInfo.ip, mono: true },
+              { label: 'Location', value: `${ipInfo.city}, ${ipInfo.country}` },
+              { label: 'Provider', value: ipInfo.isp },
+              { label: 'Timezone', value: ipInfo.timezone },
+              { label: 'ASN', value: ipInfo.as, mono: true },
+              { label: 'Coordinates', value: `${ipInfo.lat?.toFixed(4)}, ${ipInfo.lon?.toFixed(4)}` },
+            ].map(item => (
+              <div key={item.label} className="p-3 rounded-lg border bg-background shadow-sm space-y-1">
+                <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">{item.label}</span>
+                <p className={`text-sm font-bold truncate ${item.mono ? 'font-mono' : ''}`}>{item.value}</p>
               </div>
-              <p className="text-base font-mono font-semibold">{ipInfo.ip}</p>
-            </div>
-
-            {ipInfo.country && (
-              <div className="rounded-lg border bg-card p-4">
-                <span className="text-sm font-medium text-muted-foreground">Country</span>
-                <p className="text-base font-semibold mt-1">{ipInfo.country} {ipInfo.countryCode && `(${ipInfo.countryCode})`}</p>
-              </div>
-            )}
-
-            {ipInfo.region && (
-              <div className="rounded-lg border bg-card p-4">
-                <span className="text-sm font-medium text-muted-foreground">Region</span>
-                <p className="text-base font-semibold mt-1">{ipInfo.region}</p>
-              </div>
-            )}
-
-            {ipInfo.city && (
-              <div className="rounded-lg border bg-card p-4">
-                <span className="text-sm font-medium text-muted-foreground">City</span>
-                <p className="text-base font-semibold mt-1">{ipInfo.city}</p>
-              </div>
-            )}
-
-            {ipInfo.timezone && (
-              <div className="rounded-lg border bg-card p-4">
-                <span className="text-sm font-medium text-muted-foreground">Timezone</span>
-                <p className="text-base font-semibold mt-1">{ipInfo.timezone}</p>
-              </div>
-            )}
-
-            {ipInfo.isp && (
-              <div className="rounded-lg border bg-card p-4">
-                <span className="text-sm font-medium text-muted-foreground">ISP</span>
-                <p className="text-base font-semibold mt-1">{ipInfo.isp}</p>
-              </div>
-            )}
-
-            {ipInfo.org && (
-              <div className="rounded-lg border bg-card p-4">
-                <span className="text-sm font-medium text-muted-foreground">Organization</span>
-                <p className="text-base font-semibold mt-1">{ipInfo.org}</p>
-              </div>
-            )}
-
-            {ipInfo.as && (
-              <div className="rounded-lg border bg-card p-4">
-                <span className="text-sm font-medium text-muted-foreground">AS Number</span>
-                <p className="text-base font-mono font-semibold mt-1">{ipInfo.as}</p>
-              </div>
-            )}
-
-            {ipInfo.lat !== undefined && ipInfo.lon !== undefined && (
-              <div className="rounded-lg border bg-card p-4 md:col-span-2">
-                <span className="text-sm font-medium text-muted-foreground">Coordinates</span>
-                <div className="flex items-center gap-2 mt-1">
-                  <p className="text-base font-mono font-semibold">
-                    {ipInfo.lat.toFixed(4)}, {ipInfo.lon.toFixed(4)}
-                  </p>
-                  <a
-                    href={`https://www.google.com/maps?q=${ipInfo.lat},${ipInfo.lon}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-primary hover:underline"
-                  >
-                    View on Maps
-                  </a>
-                </div>
-              </div>
-            )}
+            ))}
           </div>
         </div>
       )}
 
       {/* DNS Records Results */}
       {dnsRecords.length > 0 && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">DNS Records</h3>
-          <div className="rounded-lg border bg-card overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-muted/50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Type</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Name</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">Value</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium">TTL</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {dnsRecords.map((record, index) => (
-                    <tr key={index} className="hover:bg-muted/30">
-                      <td className="px-4 py-3 text-sm font-mono font-semibold">{record.type}</td>
-                      <td className="px-4 py-3 text-sm font-mono">{record.name}</td>
-                      <td className="px-4 py-3 text-sm font-mono break-all">{record.value}</td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">{record.ttl ? `${record.ttl}s` : '-'}</td>
-                    </tr>
+        <div className="animate-in fade-in duration-500">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-muted/30 border-y">
+                <tr>
+                  {['Type', 'Host', 'Value', 'TTL'].map(h => (
+                    <th key={h} className="px-4 py-2 text-left text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-70">{h}</th>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </tr>
+              </thead>
+              <tbody className="divide-y text-xs">
+                {dnsRecords.map((record, index) => (
+                  <tr key={index} className="hover:bg-muted/20 transition-colors">
+                    <td className="px-4 py-2 font-mono font-bold text-primary">{record.type}</td>
+                    <td className="px-4 py-2 font-mono opacity-60">{record.name}</td>
+                    <td className="px-4 py-2 font-mono break-all">{record.value}</td>
+                    <td className="px-4 py-2 text-muted-foreground opacity-50">{record.ttl ? `${record.ttl}s` : '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
-
     </div>
   )
 }

@@ -5,59 +5,76 @@ import Layout from '@/layouts/Layout.astro'
 import Link from '@/components/Link.astro'
 import { Icon } from 'astro-icon/components'
 
+const tools = [
+  {
+    name: "Password Generator",
+    description: "Generate secure passwords and check strength",
+    href: "/tools/password-generator",
+    icon: "lucide:shield-check",
+    category: "Security"
+  },
+  {
+    name: "Subnet Calculator",
+    description: "Calculate subnet masks and network addresses",
+    href: "/tools/subnet-calculator",
+    icon: "lucide:network",
+    category: "Network"
+  },
+  {
+    name: "IP & DNS Lookup",
+    description: "Lookup IP geolocation and DNS records",
+    href: "/tools/ip-dns-lookup",
+    icon: "lucide:search",
+    category: "Network"
+  },
+  {
+    name: "Base64 Encoder & Decoder",
+    description: "Encode and decode Base64 strings",
+    href: "/tools/base64-encoder",
+    icon: "lucide:code",
+    category: "Developer"
+  },
+  {
+    name: "JSON Formatter & Validator",
+    description: "Format, validate, and minify JSON strings",
+    href: "/tools/json-formatter",
+    icon: "lucide:braces",
+    category: "Developer"
+  },
+  {
+    name: "YAML Validator & Formatter",
+    description: "Validate, format, and convert YAML files",
+    href: "/tools/yaml-validator",
+    icon: "lucide:file-code",
+    category: "Developer"
+  },
+  {
+    name: "Docker Run to Compose",
+    description: "Convert docker run commands to Docker Compose YAML",
+    href: "/tools/docker-converter",
+    icon: "lucide:container",
+    category: "Developer"
+  }
+]
+
+const categories = [...new Set(tools.map(t => t.category))]
+
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href
+
 const structuredData = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
   "name": "Free Online Tools",
-  "description": "Collection of free online tools for system administrators, developers, and IT professionals. Password generator, subnet calculator, IP lookup, DNS lookup, Base64 encoder, JSON formatter, YAML validator, and Docker run to Compose converter.",
+  "description": "Collection of free online tools for system administrators, developers, and IT professionals.",
   "url": pageUrl,
   "mainEntity": {
     "@type": "ItemList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Password Generator",
-        "url": new URL("/tools/password-generator", Astro.site).href
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Subnet Calculator",
-        "url": new URL("/tools/subnet-calculator", Astro.site).href
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": "IP & DNS Lookup",
-        "url": new URL("/tools/ip-dns-lookup", Astro.site).href
-      },
-      {
-        "@type": "ListItem",
-        "position": 4,
-        "name": "Base64 Encoder & Decoder",
-        "url": new URL("/tools/base64-encoder", Astro.site).href
-      },
-      {
-        "@type": "ListItem",
-        "position": 5,
-        "name": "JSON Formatter & Validator",
-        "url": new URL("/tools/json-formatter", Astro.site).href
-      },
-      {
-        "@type": "ListItem",
-        "position": 6,
-        "name": "YAML Validator & Formatter",
-        "url": new URL("/tools/yaml-validator", Astro.site).href
-      },
-      {
-        "@type": "ListItem",
-        "position": 7,
-        "name": "Docker Run to Compose Converter",
-        "url": new URL("/tools/docker-converter", Astro.site).href
-      }
-    ]
+    "itemListElement": tools.map((tool, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": tool.name,
+      "url": new URL(tool.href, Astro.site).href
+    }))
   }
 }
 ---
@@ -66,134 +83,50 @@ const structuredData = {
   <PageHead 
     slot="head" 
     title="Free Online Tools - Password Generator, Subnet Calculator, IP Lookup"
-    description="Free online tools for system administrators, developers, and IT professionals. Password generator, subnet calculator, IP lookup, DNS lookup, Base64 encoder, JSON formatter, YAML validator, and Docker run to Compose converter. All tools run in your browser."
+    description="Free online tools for system administrators, developers, and IT professionals. All tools run in your browser."
   />
   
   <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
 
   <Breadcrumbs items={[{ label: 'Tools', icon: 'lucide:wrench' }]} />
 
-  <article class="flex flex-col gap-y-6">
+  <div class="flex flex-col gap-y-8 py-4">
     <header class="space-y-2">
       <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Tools</h1>
       <p class="text-muted-foreground">
-        Free online tools for system administrators, developers, and IT professionals.
+        Privacy-focused, client-side tools for developers and system administrators.
       </p>
     </header>
 
-    <div class="space-y-1">
-      <Link
-        href="/tools/password-generator"
-        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-      >
-        <Icon name="lucide:shield-check" class="size-5 text-primary shrink-0" />
-        <div class="flex-1 min-w-0">
-          <h2 class="font-semibold group-hover:text-primary transition-colors">
-            Password Generator
-          </h2>
-          <p class="text-sm text-muted-foreground">
-            Generate secure passwords and check strength
-          </p>
-        </div>
-        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
-      </Link>
-
-      <Link
-        href="/tools/subnet-calculator"
-        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-      >
-        <Icon name="lucide:network" class="size-5 text-primary shrink-0" />
-        <div class="flex-1 min-w-0">
-          <h2 class="font-semibold group-hover:text-primary transition-colors">
-            Subnet Calculator
-          </h2>
-          <p class="text-sm text-muted-foreground">
-            Calculate subnet masks and network addresses
-          </p>
-        </div>
-        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
-      </Link>
-
-      <Link
-        href="/tools/ip-dns-lookup"
-        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-      >
-        <Icon name="lucide:search" class="size-5 text-primary shrink-0" />
-        <div class="flex-1 min-w-0">
-          <h2 class="font-semibold group-hover:text-primary transition-colors">
-            IP & DNS Lookup
-          </h2>
-          <p class="text-sm text-muted-foreground">
-            Lookup IP geolocation and DNS records
-          </p>
-        </div>
-        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
-      </Link>
-
-      <Link
-        href="/tools/base64-encoder"
-        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-      >
-        <Icon name="lucide:code" class="size-5 text-primary shrink-0" />
-        <div class="flex-1 min-w-0">
-          <h2 class="font-semibold group-hover:text-primary transition-colors">
-            Base64 Encoder & Decoder
-          </h2>
-          <p class="text-sm text-muted-foreground">
-            Encode and decode Base64 strings
-          </p>
-        </div>
-        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
-      </Link>
-
-      <Link
-        href="/tools/json-formatter"
-        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-      >
-        <Icon name="lucide:code" class="size-5 text-primary shrink-0" />
-        <div class="flex-1 min-w-0">
-          <h2 class="font-semibold group-hover:text-primary transition-colors">
-            JSON Formatter & Validator
-          </h2>
-          <p class="text-sm text-muted-foreground">
-            Format, validate, and minify JSON strings
-          </p>
-        </div>
-        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
-      </Link>
-
-      <Link
-        href="/tools/yaml-validator"
-        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-      >
-        <Icon name="lucide:file-code" class="size-5 text-primary shrink-0" />
-        <div class="flex-1 min-w-0">
-          <h2 class="font-semibold group-hover:text-primary transition-colors">
-            YAML Validator & Formatter
-          </h2>
-          <p class="text-sm text-muted-foreground">
-            Validate, format, and convert YAML files
-          </p>
-        </div>
-        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
-      </Link>
-
-      <Link
-        href="/tools/docker-converter"
-        class="group flex items-center gap-4 p-4 rounded-lg hover:bg-muted/50 transition-colors"
-      >
-        <Icon name="lucide:container" class="size-5 text-primary shrink-0" />
-        <div class="flex-1 min-w-0">
-          <h2 class="font-semibold group-hover:text-primary transition-colors">
-            Docker Run to Compose Converter
-          </h2>
-          <p class="text-sm text-muted-foreground">
-            Convert docker run commands to Docker Compose YAML
-          </p>
-        </div>
-        <Icon name="lucide:chevron-right" class="size-4 text-muted-foreground group-hover:text-primary shrink-0" />
-      </Link>
+    <div class="grid gap-10">
+      {categories.map(category => (
+        <section class="space-y-4">
+          <h2 class="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">{category}</h2>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+            {tools.filter(t => t.category === category).map(tool => (
+              <Link
+                href={tool.href}
+                class="group flex items-start gap-4 p-3 -m-3 rounded-xl hover:bg-muted/50 transition-colors"
+              >
+                <div class="p-2 rounded-lg bg-primary/5 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors shrink-0">
+                  <Icon name={tool.icon} class="size-5" />
+                </div>
+                
+                <div class="space-y-1">
+                  <h3 class="font-semibold text-sm group-hover:text-primary transition-colors flex items-center gap-1.5">
+                    {tool.name}
+                    <Icon name="lucide:arrow-up-right" class="size-3 text-muted-foreground/50 opacity-0 group-hover:opacity-100 transition-all transform -translate-x-1 group-hover:translate-x-0" />
+                  </h3>
+                  <p class="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                    {tool.description}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ))}
     </div>
-  </article>
+  </div>
 </Layout>
-

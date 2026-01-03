@@ -225,194 +225,122 @@ const PasswordTool: React.FC = () => {
   }, [])
 
   return (
-    <div className="w-full space-y-6">
-      {/* Password Generator Section */}
-      <div className="rounded-lg border bg-card p-6 space-y-6">
-        <div className="space-y-2">
-          <h2 className="text-xl font-semibold">Generate Secure Password</h2>
-          <p className="text-sm text-muted-foreground">
-            Create a strong, random password with customizable options
-          </p>
+    <div className="w-full">
+      {/* Result Section */}
+      <div className="p-4 sm:p-6 space-y-4 border-b bg-muted/5">
+        <div className="relative group">
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={password}
+            onChange={handleCheckPassword}
+            placeholder="Generated password..."
+            className="w-full px-4 py-3 pr-12 rounded-xl border bg-background text-lg font-mono tracking-wider focus:ring-1 focus:ring-primary/30 transition-all shadow-sm"
+          />
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {showPassword ? <EyeOff className="size-5" /> : <Eye className="size-5" />}
+          </button>
         </div>
 
-        {/* Options */}
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <label className="flex items-center justify-between">
-              <span className="text-sm font-medium">Length: {options.length}</span>
-              <span className="text-xs text-muted-foreground">{options.length} characters</span>
-            </label>
-            <input
-              type="range"
-              min="8"
-              max="64"
-              value={options.length}
-              onChange={(e) => setOptions({ ...options, length: parseInt(e.target.value, 10) })}
-              className="w-full"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={options.includeUppercase}
-                onChange={(e) => setOptions({ ...options, includeUppercase: e.target.checked })}
-                className="rounded border-border accent-primary"
-              />
-              <span className="text-sm">Uppercase (A-Z)</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={options.includeLowercase}
-                onChange={(e) => setOptions({ ...options, includeLowercase: e.target.checked })}
-                className="rounded border-border accent-primary"
-              />
-              <span className="text-sm">Lowercase (a-z)</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={options.includeNumbers}
-                onChange={(e) => setOptions({ ...options, includeNumbers: e.target.checked })}
-                className="rounded border-border accent-primary"
-              />
-              <span className="text-sm">Numbers (0-9)</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={options.includeSymbols}
-                onChange={(e) => setOptions({ ...options, includeSymbols: e.target.checked })}
-                className="rounded border-border accent-primary"
-              />
-              <span className="text-sm">Symbols (!@#$...)</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={options.excludeSimilar}
-                onChange={(e) => setOptions({ ...options, excludeSimilar: e.target.checked })}
-                className="rounded border-border accent-primary"
-              />
-              <span className="text-sm">Exclude similar (i, l, 1, L, o, 0, O)</span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={options.excludeAmbiguous}
-                onChange={(e) => setOptions({ ...options, excludeAmbiguous: e.target.checked })}
-                className="rounded border-border accent-primary"
-              />
-              <span className="text-sm">Exclude ambiguous ({'{}[]()...'})</span>
-            </label>
-          </div>
-        </div>
-
-        <Button onClick={handleGenerate} className="w-full sm:w-auto">
-          <RefreshCw className="size-4" />
-          Generate Password
-        </Button>
-      </div>
-
-      {/* Password Display & Strength Checker */}
-      <div className="rounded-lg border bg-card p-6 space-y-6">
-        <div className="space-y-2">
-          <h2 className="text-xl font-semibold">Check Password Strength</h2>
-          <p className="text-sm text-muted-foreground">
-            Enter a password to check its strength and get security recommendations
-          </p>
-        </div>
-
-        {/* Password Input */}
-        <div className="space-y-2">
-          <div className="flex gap-2">
-            <div className="relative flex-1">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={handleCheckPassword}
-                placeholder="Enter or generate a password"
-                className="w-full px-4 py-2 pr-20 rounded-md border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-              </button>
-            </div>
-            <Button
-              onClick={handleCopy}
-              disabled={!password}
-              variant="outline"
-              size="icon"
-              title="Copy password"
-            >
-              {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-            </Button>
-          </div>
-        </div>
-
-        {/* Strength Indicator */}
         {password && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Strength: {strength.label}</span>
-              <span className="text-xs text-muted-foreground">{Math.round(strength.score)}%</span>
+          <div className="space-y-3 animate-in fade-in slide-in-from-top-1 duration-300">
+            <div className="flex items-center justify-between px-1">
+              <div className="flex items-center gap-2">
+                <div className={`size-2 rounded-full animate-pulse ${strength.color}`} />
+                <span className="text-[10px] font-bold uppercase tracking-widest">{strength.label}</span>
+              </div>
+              <span className="text-[10px] font-mono text-muted-foreground uppercase">{Math.round(strength.score)}% Score</span>
             </div>
-            <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+            <div className="h-1 w-full bg-muted rounded-full overflow-hidden">
               <div
-                className={`h-full transition-all duration-300 ${strength.color}`}
+                className={`h-full transition-all duration-500 ease-out ${strength.color}`}
                 style={{ width: `${strength.score}%` }}
               />
             </div>
-
-            {/* Feedback */}
-            {strength.feedback.length > 0 && (
-              <div className="rounded-md bg-muted/50 p-3 space-y-1">
-                <p className="text-xs font-medium text-muted-foreground mb-2">Recommendations:</p>
-                <ul className="space-y-1">
-                  {strength.feedback.map((item, index) => (
-                    <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                      <span className="text-primary mt-0.5">•</span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         )}
 
-        {/* Password Stats */}
-        {password && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t">
-            <div>
-              <span className="text-xs text-muted-foreground">Length</span>
-              <p className="text-lg font-semibold font-mono">{password.length}</p>
-            </div>
-            <div>
-              <span className="text-xs text-muted-foreground">Uppercase</span>
-              <p className="text-lg font-semibold font-mono">
-                {(password.match(/[A-Z]/g) || []).length}
-              </p>
-            </div>
-            <div>
-              <span className="text-xs text-muted-foreground">Numbers</span>
-              <p className="text-lg font-semibold font-mono">
-                {(password.match(/[0-9]/g) || []).length}
-              </p>
-            </div>
-            <div>
-              <span className="text-xs text-muted-foreground">Symbols</span>
-              <p className="text-lg font-semibold font-mono">
-                {(password.match(/[^a-zA-Z0-9]/g) || []).length}
-              </p>
-            </div>
+        <div className="flex items-center gap-2 pt-2">
+          <Button
+            onClick={handleGenerate}
+            className="flex-1 h-10 rounded-xl shadow-sm font-bold uppercase tracking-widest text-xs"
+          >
+            <RefreshCw className="size-3.5 mr-2" />
+            Generate
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleCopy}
+            disabled={!password}
+            className={`h-10 px-4 rounded-xl transition-colors ${copied ? 'text-green-500 border-green-500/30 bg-green-500/5' : ''}`}
+          >
+            {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
+          </Button>
+        </div>
+      </div>
+
+      {/* Configuration Section */}
+      <div className="p-4 sm:p-6 space-y-6">
+        <div className="space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Length</label>
+            <span className="text-xs font-mono font-bold text-primary">{options.length}</span>
+          </div>
+          <input
+            type="range"
+            min="8"
+            max="64"
+            value={options.length}
+            onChange={(e) => setOptions({ ...options, length: parseInt(e.target.value, 10) })}
+            className="w-full h-1.5 bg-muted rounded-lg appearance-none cursor-pointer accent-primary"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {[
+            { id: 'upper', label: 'Uppercase', key: 'includeUppercase' },
+            { id: 'lower', label: 'Lowercase', key: 'includeLowercase' },
+            { id: 'numbers', label: 'Numbers', key: 'includeNumbers' },
+            { id: 'symbols', label: 'Symbols', key: 'includeSymbols' },
+          ].map((opt) => (
+            <label key={opt.id} className="flex items-center justify-between p-2 rounded-lg border bg-background hover:bg-muted/50 cursor-pointer transition-colors">
+              <span className="text-xs font-medium opacity-80">{opt.label}</span>
+              <input
+                type="checkbox"
+                checked={options[opt.key as keyof PasswordOptions] as boolean}
+                onChange={(e) => setOptions({ ...options, [opt.key]: e.target.checked })}
+                className="size-3.5 rounded border-border accent-primary"
+              />
+            </label>
+          ))}
+          <label className="sm:col-span-2 flex items-center justify-between p-2 rounded-lg border bg-background hover:bg-muted/50 cursor-pointer transition-colors">
+            <span className="text-xs font-medium opacity-80">Exclude similar (i, l, 1, L, o, 0, O)</span>
+            <input
+              type="checkbox"
+              checked={options.excludeSimilar}
+              onChange={(e) => setOptions({ ...options, excludeSimilar: e.target.checked })}
+              className="size-3.5 rounded border-border accent-primary"
+            />
+          </label>
+        </div>
+
+        {password && strength.feedback.length > 0 && (
+          <div className="p-3 rounded-lg bg-muted/30 border border-dashed space-y-2">
+            <h4 className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground opacity-60 flex items-center gap-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+              Feedback
+            </h4>
+            <ul className="space-y-1">
+              {strength.feedback.map((item, index) => (
+                <li key={index} className="text-[10px] text-muted-foreground flex items-center gap-2 italic">
+                  <div className="size-1 rounded-full bg-primary/30" />
+                  {item}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>

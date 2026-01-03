@@ -186,11 +186,11 @@ const SubnetCalculator: React.FC = () => {
   }
 
   return (
-    <div className="w-full space-y-6">
-      {/* Input Section */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
-        <div className="space-y-2">
-          <label htmlFor="ip-address" className="text-sm font-medium">
+    <div className="w-full">
+      {/* Tool Header/Inputs */}
+      <div className="flex flex-col sm:flex-row items-end gap-3 px-4 py-4 border-b bg-muted/30">
+        <div className="flex-1 space-y-1.5 w-full">
+          <label htmlFor="ip-address" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
             IP Address
           </label>
           <input
@@ -200,13 +200,13 @@ const SubnetCalculator: React.FC = () => {
             onChange={(e) => setIpAddress(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="192.168.1.1"
-            className="w-full px-4 py-2 rounded-md border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            className="w-full px-3 py-2 rounded-lg border bg-background shadow-sm focus:ring-1 focus:ring-primary/30 transition-all text-sm font-mono"
           />
         </div>
 
-        <div className="space-y-2">
-          <label htmlFor="cidr-mask" className="text-sm font-medium">
-            CIDR Notation or Subnet Mask
+        <div className="flex-1 space-y-1.5 w-full">
+          <label htmlFor="cidr-mask" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">
+            CIDR / Mask
           </label>
           <input
             id="cidr-mask"
@@ -214,138 +214,73 @@ const SubnetCalculator: React.FC = () => {
             value={cidrOrMask}
             onChange={(e) => setCidrOrMask(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="24 or 255.255.255.0"
-            className="w-full px-4 py-2 rounded-md border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            placeholder="24"
+            className="w-full px-3 py-2 rounded-lg border bg-background shadow-sm focus:ring-1 focus:ring-primary/30 transition-all text-sm font-mono"
           />
-          <p className="text-xs text-muted-foreground">
-            Enter CIDR notation (e.g., 24) or subnet mask (e.g., 255.255.255.0)
-          </p>
         </div>
 
-        <Button onClick={handleCalculate} className="w-full sm:w-auto">
-          Calculate Subnet
+        <Button onClick={handleCalculate} className="h-9 px-6 rounded-lg shadow-sm w-full sm:w-auto text-xs font-bold uppercase tracking-widest">
+          Calculate
         </Button>
-
-        {error && (
-          <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
-            {error}
-          </div>
-        )}
       </div>
+
+      {error && (
+        <div className="px-4 py-3 border-b bg-destructive/5 text-destructive flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-circle"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <p className="text-[10px] font-bold uppercase tracking-widest">{error}</p>
+        </div>
+      )}
 
       {/* Results Section */}
       {result && (
-        <div className="space-y-4">
-          {/* Main Results Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="rounded-lg border bg-card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">Network Address</span>
-                <button
-                  onClick={() => copyToClipboard(result.networkAddress, 'network')}
-                  className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
-                  title="Copy to clipboard"
-                >
-                  {copied === 'network' ? <Check className="size-3" /> : <Copy className="size-3" />}
-                </button>
+        <div className="flex flex-col divide-y animate-in fade-in duration-500">
+          {/* Summary Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 divide-x divide-y sm:divide-y-0 border-b">
+            {[
+              { label: 'Network', value: result.networkAddress },
+              { label: 'Broadcast', value: result.broadcastAddress },
+              { label: 'First IP', value: result.firstUsableIP },
+              { label: 'Last IP', value: result.lastUsableIP },
+            ].map((item) => (
+              <div key={item.label} className="p-4 space-y-1 hover:bg-muted/20 transition-colors">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground opacity-60">{item.label}</span>
+                <p className="text-sm font-mono font-bold truncate">{item.value}</p>
               </div>
-              <p className="text-lg font-mono font-semibold">{result.networkAddress}</p>
-            </div>
-
-            <div className="rounded-lg border bg-card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">Broadcast Address</span>
-                <button
-                  onClick={() => copyToClipboard(result.broadcastAddress, 'broadcast')}
-                  className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
-                  title="Copy to clipboard"
-                >
-                  {copied === 'broadcast' ? <Check className="size-3" /> : <Copy className="size-3" />}
-                </button>
-              </div>
-              <p className="text-lg font-mono font-semibold">{result.broadcastAddress}</p>
-            </div>
-
-            <div className="rounded-lg border bg-card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">First Usable IP</span>
-                <button
-                  onClick={() => copyToClipboard(result.firstUsableIP, 'first')}
-                  className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
-                  title="Copy to clipboard"
-                >
-                  {copied === 'first' ? <Check className="size-3" /> : <Copy className="size-3" />}
-                </button>
-              </div>
-              <p className="text-lg font-mono font-semibold">{result.firstUsableIP}</p>
-            </div>
-
-            <div className="rounded-lg border bg-card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-muted-foreground">Last Usable IP</span>
-                <button
-                  onClick={() => copyToClipboard(result.lastUsableIP, 'last')}
-                  className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
-                  title="Copy to clipboard"
-                >
-                  {copied === 'last' ? <Check className="size-3" /> : <Copy className="size-3" />}
-                </button>
-              </div>
-              <p className="text-lg font-mono font-semibold">{result.lastUsableIP}</p>
-            </div>
+            ))}
           </div>
 
-          {/* Additional Information */}
-          <div className="rounded-lg border bg-card p-6 space-y-4">
-            <h3 className="text-lg font-semibold">Subnet Information</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <span className="text-sm text-muted-foreground">Subnet Mask</span>
-                <p className="text-base font-mono font-semibold mt-1">{result.subnetMask}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x">
+            <div className="p-4 space-y-4">
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Technical Info</h4>
+              <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                {[
+                  { label: 'Subnet Mask', value: result.subnetMask },
+                  { label: 'CIDR', value: `/${result.cidr}` },
+                  { label: 'IP Class', value: result.ipClass },
+                  { label: 'Usable Hosts', value: result.usableHosts.toLocaleString() },
+                ].map(spec => (
+                  <div key={spec.label} className="flex flex-col">
+                    <span className="text-[9px] uppercase font-bold text-muted-foreground opacity-50">{spec.label}</span>
+                    <span className="text-xs font-mono font-bold">{spec.value}</span>
+                  </div>
+                ))}
               </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Wildcard Mask</span>
-                <p className="text-base font-mono font-semibold mt-1">{result.wildcardMask}</p>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">CIDR Notation</span>
-                <p className="text-base font-mono font-semibold mt-1">/{result.cidr}</p>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">IP Class</span>
-                <p className="text-base font-semibold mt-1">{result.ipClass}</p>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Total Hosts</span>
-                <p className="text-base font-semibold mt-1">{result.totalHosts.toLocaleString()}</p>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Usable Hosts</span>
-                <p className="text-base font-semibold mt-1">{result.usableHosts.toLocaleString()}</p>
+            </div>
+
+            <div className="p-4 space-y-4 bg-muted/5">
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Binary View</h4>
+              <div className="space-y-3 font-mono text-[10px] opacity-70 leading-none">
+                <div className="space-y-1">
+                  <span className="opacity-50 uppercase font-bold text-[8px]">Network</span>
+                  <p className="break-all">{result.binaryNetworkAddress}</p>
+                </div>
+                <div className="space-y-1">
+                  <span className="opacity-50 uppercase font-bold text-[8px]">Mask</span>
+                  <p className="break-all">{result.binarySubnetMask}</p>
+                </div>
               </div>
             </div>
           </div>
-
-          {/* Binary Representation */}
-          <details className="rounded-lg border bg-card">
-            <summary className="p-4 cursor-pointer font-medium hover:bg-muted/50 transition-colors">
-              Binary Representation
-            </summary>
-            <div className="p-4 pt-0 space-y-3 border-t">
-              <div>
-                <span className="text-sm text-muted-foreground">Network Address (Binary)</span>
-                <p className="text-sm font-mono mt-1 break-all">{result.binaryNetworkAddress}</p>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Subnet Mask (Binary)</span>
-                <p className="text-sm font-mono mt-1 break-all">{result.binarySubnetMask}</p>
-              </div>
-              <div>
-                <span className="text-sm text-muted-foreground">Broadcast Address (Binary)</span>
-                <p className="text-sm font-mono mt-1 break-all">{result.binaryBroadcastAddress}</p>
-              </div>
-            </div>
-          </details>
         </div>
       )}
     </div>

@@ -110,110 +110,98 @@ const Base64Tool: React.FC = () => {
   }
 
   return (
-    <div className="w-full space-y-6">
-      {/* Mode Selector */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
-        <div className="flex items-center gap-4">
-          <Button
-            variant={mode === 'encode' ? 'default' : 'outline'}
+    <div className="w-full">
+      {/* Tool Header/Settings */}
+      <div className="flex flex-wrap items-center justify-between px-4 py-3 border-b bg-muted/30 gap-3">
+        <div className="flex bg-background/50 p-1 rounded-lg border shadow-sm">
+          <button
             onClick={() => handleModeChange('encode')}
-            className="flex-1"
+            className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
+              mode === 'encode'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'hover:bg-muted text-muted-foreground'
+            }`}
           >
             Encode
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => handleModeChange(mode === 'encode' ? 'decode' : 'encode')}
-            title="Switch mode"
-          >
-            <ArrowUpDown className="size-4" />
-          </Button>
-          <Button
-            variant={mode === 'decode' ? 'default' : 'outline'}
+          </button>
+          <button
             onClick={() => handleModeChange('decode')}
-            className="flex-1"
+            className={`px-4 py-1.5 rounded-md text-xs font-medium transition-all ${
+              mode === 'decode'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'hover:bg-muted text-muted-foreground'
+            }`}
           >
             Decode
-          </Button>
+          </button>
         </div>
-      </div>
 
-      {/* Input Section */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <label htmlFor="base64-input" className="text-sm font-medium">
-            {mode === 'encode' ? 'Text to Encode' : 'Base64 to Decode'}
-          </label>
+        <div className="flex items-center gap-2">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
-            onClick={() => copyToClipboard(input, 'input')}
-            disabled={!input}
-            className="h-7"
+            onClick={clearAll}
+            className="h-8 px-3 rounded-md hover:bg-destructive/10 hover:text-destructive transition-colors text-xs"
           >
-            {copied === 'input' ? (
-              <Check className="size-3" />
-            ) : (
-              <Copy className="size-3" />
-            )}
+            Clear
           </Button>
         </div>
-        <textarea
-          id="base64-input"
-          value={input}
-          onChange={handleInputChange}
-          placeholder={mode === 'encode' ? 'Enter text to encode to Base64...' : 'Enter Base64 string to decode...'}
-          rows={6}
-          className="w-full px-4 py-2 rounded-md border bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 resize-y"
-        />
       </div>
 
-      {/* Output Section */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <label htmlFor="base64-output" className="text-sm font-medium">
-            {mode === 'encode' ? 'Base64 Encoded' : 'Decoded Text'}
-          </label>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearAll}
-              className="h-7"
+      <div className="flex flex-col divide-y">
+        {/* Input Section */}
+        <div className="flex flex-col p-4 space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <label htmlFor="base64-input" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              {mode === 'encode' ? 'Text' : 'Base64'} Input
+            </label>
+            <button
+              onClick={() => copyToClipboard(input, 'input')}
+              disabled={!input}
+              className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${copied === 'input' ? 'text-green-500' : 'text-muted-foreground hover:text-primary'}`}
             >
-              <RefreshCw className="size-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
+              {copied === 'input' ? 'Copied' : 'Copy'}
+            </button>
+          </div>
+          <textarea
+            id="base64-input"
+            value={input}
+            onChange={handleInputChange}
+            placeholder={mode === 'encode' ? 'Enter text to encode...' : 'Enter Base64 string to decode...'}
+            className="w-full h-48 p-3 rounded-lg border bg-muted/5 text-foreground font-mono text-sm focus:ring-1 focus:ring-primary/30 resize-none transition-all"
+          />
+        </div>
+
+        {/* Output Section */}
+        <div className="flex flex-col p-4 space-y-3 bg-muted/5">
+          <div className="flex items-center justify-between px-1">
+            <label htmlFor="base64-output" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              {mode === 'encode' ? 'Base64' : 'Text'} Result
+            </label>
+            <button
               onClick={() => copyToClipboard(output, 'output')}
               disabled={!output}
-              className="h-7"
+              className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${copied === 'output' ? 'text-green-500' : 'text-muted-foreground hover:text-primary'}`}
             >
-              {copied === 'output' ? (
-                <Check className="size-3" />
-              ) : (
-                <Copy className="size-3" />
-              )}
-            </Button>
+              {copied === 'output' ? 'Copied' : 'Copy Result'}
+            </button>
           </div>
+          <textarea
+            id="base64-output"
+            value={output}
+            readOnly
+            placeholder="Result will appear here..."
+            className="w-full h-48 p-3 rounded-lg border bg-transparent text-foreground font-mono text-sm focus:ring-0 resize-none transition-all"
+          />
         </div>
-        <textarea
-          id="base64-output"
-          value={output}
-          readOnly
-          placeholder={mode === 'encode' ? 'Encoded Base64 will appear here...' : 'Decoded text will appear here...'}
-          rows={6}
-          className="w-full px-4 py-2 rounded-md border bg-muted/50 text-foreground font-mono text-sm resize-y"
-        />
-        {error && (
-          <div className="rounded-md bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
-            {error}
-          </div>
-        )}
       </div>
 
+      {error && (
+        <div className="px-4 py-3 border-t bg-destructive/5 text-destructive flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-alert-circle"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+          <p className="text-[10px] font-bold uppercase tracking-widest">{error}</p>
+        </div>
+      )}
     </div>
   )
 }

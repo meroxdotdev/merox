@@ -358,171 +358,138 @@ tags:
   }, [input])
 
   return (
-    <div className="w-full space-y-6">
-      {/* Mode Selector */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant={mode === 'validate' ? 'default' : 'outline'}
+    <div className="w-full">
+      {/* Tool Header/Settings */}
+      <div className="flex flex-wrap items-center justify-between px-4 py-3 border-b bg-muted/30 gap-3">
+        <div className="flex bg-background/50 p-1 rounded-lg border shadow-sm overflow-x-auto">
+          <button
             onClick={() => handleModeChange('validate')}
-            className="flex-1 sm:flex-none"
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+              mode === 'validate'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'hover:bg-muted text-muted-foreground'
+            }`}
           >
-            <FileCheck className="size-4" />
             Validate
-          </Button>
-          <Button
-            variant={mode === 'format' ? 'default' : 'outline'}
+          </button>
+          <button
             onClick={() => handleModeChange('format')}
-            className="flex-1 sm:flex-none"
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+              mode === 'format'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'hover:bg-muted text-muted-foreground'
+            }`}
           >
             Format
-          </Button>
-          <Button
-            variant={mode === 'to-json' ? 'default' : 'outline'}
+          </button>
+          <button
             onClick={() => handleModeChange('to-json')}
-            className="flex-1 sm:flex-none"
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+              mode === 'to-json'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'hover:bg-muted text-muted-foreground'
+            }`}
           >
-            <ArrowLeftRight className="size-4" />
             YAML → JSON
-          </Button>
-          <Button
-            variant={mode === 'from-json' ? 'default' : 'outline'}
+          </button>
+          <button
             onClick={() => handleModeChange('from-json')}
-            className="flex-1 sm:flex-none"
+            className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap ${
+              mode === 'from-json'
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'hover:bg-muted text-muted-foreground'
+            }`}
           >
-            <ArrowLeftRight className="size-4" />
             JSON → YAML
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={clearAll}
+            className="h-8 px-3 rounded-md hover:bg-destructive/10 hover:text-destructive transition-colors text-xs"
+          >
+            Clear
           </Button>
         </div>
       </div>
 
-      {/* Input Section */}
-      <div className="rounded-lg border bg-card p-6 space-y-4">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <label htmlFor="yaml-input" className="text-sm font-medium">
-            {mode === 'from-json' ? 'JSON Input' : 'YAML Input'}
-          </label>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={mode === 'from-json' ? loadJSONExample : loadYAMLExample}
-              className="h-7 text-xs"
-            >
-              Load Example
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearAll}
-              className="h-7"
-            >
-              <RefreshCw className="size-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => copyToClipboard(input, 'input')}
-              disabled={!input}
-              className="h-7"
-            >
-              {copied === 'input' ? (
-                <Check className="size-3" />
-              ) : (
-                <Copy className="size-3" />
-              )}
-            </Button>
+      <div className="flex flex-col divide-y">
+        {/* Input Section */}
+        <div className="flex flex-col p-4 space-y-3">
+          <div className="flex items-center justify-between px-1">
+            <label htmlFor="yaml-input" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              {mode === 'from-json' ? 'JSON' : 'YAML'} Input
+            </label>
+            <div className="flex items-center gap-3">
+              <button onClick={mode === 'from-json' ? loadJSONExample : loadYAMLExample} className="text-[10px] font-bold text-primary/70 hover:text-primary uppercase tracking-widest transition-colors">
+                Load Example
+              </button>
+              <button
+                onClick={() => copyToClipboard(input, 'input')}
+                disabled={!input}
+                className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${copied === 'input' ? 'text-green-500' : 'text-muted-foreground hover:text-primary'}`}
+              >
+                {copied === 'input' ? 'Copied' : 'Copy'}
+              </button>
+            </div>
           </div>
+          <textarea
+            id="yaml-input"
+            value={input}
+            onChange={handleInputChange}
+            placeholder={mode === 'from-json' ? 'Paste your JSON here...' : 'Paste your YAML here...'}
+            className="w-full h-48 p-3 rounded-lg border bg-muted/5 text-foreground font-mono text-sm focus:ring-1 focus:ring-primary/30 resize-none transition-all"
+          />
         </div>
-        <textarea
-          id="yaml-input"
-          value={input}
-          onChange={handleInputChange}
-          placeholder={mode === 'from-json' ? 'Enter JSON to convert to YAML...' : 'Enter YAML to validate, format, or convert...'}
-          rows={12}
-          className="w-full px-4 py-2 rounded-md border bg-background text-foreground font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 resize-y"
-        />
-        {stats && (
-          <div className="flex items-center gap-4 text-xs text-muted-foreground pt-2 border-t">
-            <span>Lines: {stats.lines}</span>
-            <span>Characters: {stats.chars.toLocaleString()}</span>
+
+        {/* Validation Status */}
+        {validation && (
+          <div className={`px-4 py-3 border-y transition-all ${
+            validation.valid 
+              ? 'bg-green-500/5 text-green-600 dark:text-green-400' 
+              : 'bg-destructive/5 text-destructive'
+          }`}>
+            <div className="flex items-center gap-2">
+              {validation.valid ? <FileCheck className="size-3.5" /> : <AlertCircle className="size-3.5" />}
+              <p className="text-[10px] font-bold uppercase tracking-widest">
+                {validation.valid 
+                  ? (mode === 'from-json' ? 'JSON is valid' : 'YAML is valid')
+                  : (mode === 'from-json' ? 'Invalid JSON' : 'Invalid YAML')
+                }
+                {validation.error && <span className="ml-2 font-normal normal-case opacity-80 font-mono italic">— {validation.error}</span>}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Output Section */}
+        {mode !== 'validate' && (
+          <div className="flex flex-col p-4 space-y-3 bg-muted/5">
+            <div className="flex items-center justify-between px-1">
+              <label htmlFor="yaml-output" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                {mode === 'format' ? 'Formatted YAML' : mode === 'to-json' ? 'JSON' : 'YAML'} Result
+              </label>
+              <button
+                onClick={() => copyToClipboard(output, 'output')}
+                disabled={!output}
+                className={`text-[10px] font-bold uppercase tracking-widest transition-colors ${copied === 'output' ? 'text-green-500' : 'text-muted-foreground hover:text-primary'}`}
+              >
+                {copied === 'output' ? 'Copied' : 'Copy Result'}
+              </button>
+            </div>
+            <textarea
+              id="yaml-output"
+              value={output}
+              readOnly
+              placeholder="Result will appear here..."
+              className="w-full h-64 p-3 rounded-lg border bg-transparent text-foreground font-mono text-sm focus:ring-0 resize-none transition-all"
+            />
           </div>
         )}
       </div>
-
-      {/* Validation Status */}
-      {validation && (
-        <div className={`rounded-lg border p-4 ${
-          validation.valid 
-            ? 'bg-green-500/10 border-green-500/20' 
-            : 'bg-destructive/10 border-destructive/20'
-        }`}>
-          <div className="flex items-start gap-3">
-            {validation.valid ? (
-              <FileCheck className="size-5 text-green-500 shrink-0 mt-0.5" />
-            ) : (
-              <AlertCircle className="size-5 text-destructive shrink-0 mt-0.5" />
-            )}
-            <div className="flex-1 space-y-1">
-              <p className={`text-sm font-medium ${
-                validation.valid ? 'text-green-600 dark:text-green-400' : 'text-destructive'
-              }`}>
-                {validation.valid 
-                  ? (mode === 'from-json' ? 'Valid JSON' : 'Valid YAML')
-                  : (mode === 'from-json' ? 'Invalid JSON' : 'Invalid YAML')
-                }
-              </p>
-              {validation.error && (
-                <p className="text-xs text-muted-foreground font-mono">
-                  {validation.error}
-                </p>
-              )}
-              {validation.line && (
-                <p className="text-xs text-muted-foreground">
-                  Error at line {validation.line}
-                  {validation.column && `, column ${validation.column}`}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Output Section */}
-      {(mode === 'format' || mode === 'to-json' || mode === 'from-json') && (
-        <div className="rounded-lg border bg-card p-6 space-y-4">
-          <div className="flex items-center justify-between">
-            <label htmlFor="yaml-output" className="text-sm font-medium">
-              {mode === 'format' ? 'Formatted YAML' : mode === 'to-json' ? 'JSON Output' : 'YAML Output'}
-            </label>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => copyToClipboard(output, 'output')}
-              disabled={!output}
-              className="h-7"
-            >
-              {copied === 'output' ? (
-                <Check className="size-3" />
-              ) : (
-                <Copy className="size-3" />
-              )}
-            </Button>
-          </div>
-          <textarea
-            id="yaml-output"
-            value={output}
-            readOnly
-            placeholder={
-              mode === 'format' ? 'Formatted YAML will appear here...' :
-              mode === 'to-json' ? 'JSON will appear here...' :
-              'YAML will appear here...'
-            }
-            rows={12}
-            className="w-full px-4 py-2 rounded-md border bg-muted/50 text-foreground font-mono text-sm resize-y"
-          />
-        </div>
-      )}
     </div>
   )
 }

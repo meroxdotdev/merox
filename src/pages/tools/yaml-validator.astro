@@ -1,10 +1,7 @@
 ---
-import Breadcrumbs from '@/components/Breadcrumbs.astro'
-import PageHead from '@/components/PageHead.astro'
-import Layout from '@/layouts/Layout.astro'
+import ToolLayout from '@/layouts/ToolLayout.astro'
 import YAMLValidatorComponent from '@/components/react/YAMLValidator'
 import { ErrorBoundary } from '@/components/react/ErrorBoundary'
-import AdSense from '@/components/AdSense.astro'
 import { SITE } from '@/consts'
 
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href
@@ -12,7 +9,7 @@ const structuredData = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
   "name": "YAML Validator & Formatter",
-  "description": "Free online YAML validator, formatter, and converter. Validate YAML syntax, format YAML files, and convert between YAML and JSON formats. Perfect for DevOps engineers and Kubernetes administrators.",
+  "description": "Free online YAML validator, formatter, and converter. Validate YAML syntax, format YAML files, and convert between YAML and JSON formats.",
   "url": pageUrl,
   "applicationCategory": "UtilityApplication",
   "operatingSystem": "Any",
@@ -33,68 +30,14 @@ const structuredData = {
 }
 ---
 
-<Layout class="max-w-3xl">
-  <PageHead 
-    slot="head" 
-    title="YAML Validator & Formatter - Free Online YAML Tool"
-    description="Validate, format, and convert YAML files instantly. Free online YAML validator and formatter tool with JSON conversion. Perfect for DevOps engineers and Kubernetes administrators."
-  />
-  
-  <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+<ToolLayout
+  title="YAML Validator & Formatter"
+  description="Validate, format, and convert YAML files instantly. 100% client-side, privacy-focused."
+  toolName="YAML Validator & Formatter"
+  toolIcon="lucide:file-code"
+  structuredData={structuredData}
+>
+  <YAMLValidatorComponent client:load />
+</ToolLayout>
 
-  <Breadcrumbs 
-    items={[
-      { label: 'Tools', href: '/tools', icon: 'lucide:wrench' },
-      { label: 'YAML Validator', icon: 'lucide:file-code' },
-    ]} 
-  />
-  
-  <script type="application/ld+json" set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      {
-        "@type": "ListItem",
-        "position": 1,
-        "name": "Home",
-        "item": Astro.site?.href || SITE.href
-      },
-      {
-        "@type": "ListItem",
-        "position": 2,
-        "name": "Tools",
-        "item": new URL("/tools", Astro.site).href
-      },
-      {
-        "@type": "ListItem",
-        "position": 3,
-        "name": "YAML Validator & Formatter",
-        "item": pageUrl
-      }
-    ]
-  })} />
-
-  <article class="flex flex-col gap-y-6">
-    <!-- Header -->
-    <header class="space-y-2">
-      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">YAML Validator & Formatter</h1>
-      <p class="text-muted-foreground">
-        Validate, format, and convert YAML files instantly
-      </p>
-    </header>
-
-    <!-- Ad -->
-    <AdSense />
-
-    <!-- Tool Component -->
-    <div class="rounded-lg border bg-card">
-      <ErrorBoundary client:load>
-        <YAMLValidatorComponent client:load />
-      </ErrorBoundary>
-    </div>
-
-    <!-- Ad -->
-    <AdSense />
-  </article>
-</Layout>
 
