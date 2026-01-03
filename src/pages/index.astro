@@ -124,95 +124,97 @@ const experience: ExperienceItem[] = [
   <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
   
-  <!-- Preload hero background images for instant theme switching -->
-  <link rel="preload" as="image" href="/static/homelab_d.webp" type="image/webp" fetchpriority="high" />
-  <link rel="preload" as="image" href="/static/homelab_w.webp" type="image/webp" fetchpriority="high" />
+  <!-- Preload hero image for instant display -->
+  <link rel="preload" as="image" href="/meroxindc1.webp" type="image/webp" fetchpriority="high" />
   
-  <!-- Hero Section - Full width on mobile, contained on desktop -->
-  <div class="hero-wrapper relative -mx-4 sm:mx-0 sm:rounded-xl sm:border overflow-hidden" transition:animate="none">
-    <section class="hero-section relative">
-      <!-- Background Image - CSS background-image (best practice for backgrounds) -->
-      <div class="hero-bg-container" aria-hidden="true"></div>
-      
-      <!-- Gradient Overlay -->
-      <div class="absolute inset-0 z-[1] bg-gradient-to-b from-background/90 via-background/80 to-background/90 dark:from-background/95 dark:via-background/90 dark:to-background/95"></div>
-
-      <!-- Content -->
-      <div class="relative z-10 p-6 sm:p-8 md:p-12">
-      <div class="flex flex-col-reverse gap-8 sm:flex-row sm:items-start sm:justify-between">
-        <!-- Main Content -->
-        <div class="flex-1 min-w-0 space-y-6">
-          <!-- Heading -->
-          <div class="space-y-4">
-            <h1 class="text-4xl sm:text-5xl md:text-6xl leading-tight font-bold tracking-tight">
-              Building infrastructure<br class="hidden sm:block" />
-              <span class="text-primary">that scales</span>.
-            </h1>
-            <p class="text-muted-foreground mt-4 leading-relaxed text-base md:text-lg max-w-xl">
-              System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security.
-            </p>
-          </div>
-          
-          <!-- CTA Buttons -->
-          <div class="flex flex-wrap items-center gap-3 pt-2">
-            <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg' })}>
+  <!-- Hero glow animation with reduced motion support -->
+  <style>
+    .hero-glow {
+      animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+      .hero-glow {
+        animation: none;
+      }
+    }
+  </style>
+  
+  <!-- Hero Section - Minimal & Impactful -->
+  <section class="relative pt-6 pb-12 md:pt-12 md:pb-20" transition:animate="none">
+    <div class="flex flex-col-reverse md:flex-row items-center gap-8 md:gap-6">
+      <!-- Main Content -->
+      <div class="flex-1 space-y-8 text-center md:text-left">
+        <!-- Heading -->
+        <div class="space-y-4">
+          <h1 class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] text-balance">
+            Building<br />
+            infrastructure<br />
+            <span class="text-primary">that scales</span>.
+          </h1>
+          <p class="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mx-auto md:mx-0">
+            System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security.
+          </p>
+        </div>
+        
+        <!-- CTA Buttons & Socials -->
+        <div class="flex flex-col items-center md:items-start gap-6">
+          <div class="flex flex-wrap justify-center md:justify-start items-center gap-3">
+            <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-0.5 active:scale-95' })}>
               Read the blog
-              <Icon name="lucide:arrow-right" class="size-4" />
+              <Icon name="lucide:arrow-right" class="ml-2 size-4" aria-hidden="true" />
             </Link>
-            <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg' })}>
+            <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold hover:bg-muted transition-all hover:-translate-y-0.5 active:scale-95' })}>
               About me
             </Link>
           </div>
           
-          <!-- Social Icons (Horizontal) -->
-          <div class="pt-2">
-            <ul class="flex flex-wrap items-center gap-2" role="list">
+          <!-- Social Links -->
+          <nav aria-label="Social links">
+            <ul class="flex items-center gap-1.5" role="list">
               {SOCIAL_LINKS.map(({ href, label }: SocialLink) => (
                 <li>
                   <Link
                     href={href}
                     aria-label={label}
                     title={label}
-                    class={buttonVariants({ variant: 'outline', size: 'icon' }) + ' backdrop-blur-sm bg-background/80'}
+                    class="group p-2.5 rounded-full hover:bg-primary/10 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     external={href.startsWith('http') || href.startsWith('mailto:')}
                   >
                     <Icon
-                      name={
-                        ICON_MAP[label as keyof typeof ICON_MAP] ||
-                        'lucide:message-circle-question'
-                      }
-                      class="size-4"
+                      name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:message-circle-question'}
+                      class="size-5 text-muted-foreground group-hover:text-primary transition-colors"
+                      aria-hidden="true"
                     />
+                    <span class="sr-only">{label}</span>
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
         </div>
+      </div>
+      
+      <!-- Profile Image - Cutout PNG -->
+      <div class="relative flex-shrink-0 w-full max-w-[260px] md:max-w-none md:w-[280px] lg:w-[320px]">
+        <!-- Subtle accent background glow -->
+        <div class="hero-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 rounded-full blur-[80px] -z-10" aria-hidden="true"></div>
         
-        <!-- Profile Image -->
-        <div class="relative flex-shrink-0 sm:self-start group pb-3 pr-3 sm:pb-4 sm:pr-4">
-          <div class="relative size-24 sm:size-32 md:size-40">
-            <div class="w-full h-full rounded-3xl overflow-hidden border-2 border-background shadow-2xl rotate-3">
-              <img
-                src="/reworkedmeroxdc1.webp"
-                alt="Robert Melcher, HPC System Administrator"
-                width="160"
-                height="160"
-                loading="eager"
-                fetchpriority="high"
-                class="w-full h-full object-cover scale-110 group-hover:scale-100 transition-transform duration-500"
-              />
-            </div>
-            <div class="absolute bottom-0 right-0 sm:-bottom-1 sm:-right-1 size-10 sm:size-12 bg-primary rounded-2xl flex items-center justify-center text-primary-foreground shadow-lg -rotate-12 z-10">
-              <Icon name="lucide:terminal" class="size-5 sm:size-6" />
-            </div>
-          </div>
-        </div>
+        <picture>
+          <source srcset="/meroxindc1.webp" type="image/webp" />
+          <img
+            src="/meroxindc1.webp"
+            alt="Robert Melcher, HPC System Administrator"
+            width="320"
+            height="400"
+            loading="eager"
+            fetchpriority="high"
+            class="w-full h-auto drop-shadow-[0_20px_50px_rgba(0,0,0,0.2)] dark:drop-shadow-[0_20px_50px_rgba(255,255,255,0.03)]"
+          />
+        </picture>
       </div>
-      </div>
-    </section>
-  </div>
+    </div>
+  </section>
 
   <!-- Experience Timeline -->
   <section class="mt-8">

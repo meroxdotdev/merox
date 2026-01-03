@@ -440,33 +440,14 @@
   filter: grayscale(40%) contrast(1.1) brightness(0.85);
 }
 
-/* Hero background - best practice: CSS background-image for backgrounds */
+/* Hero background - Removed per redesign */
 .hero-bg-container {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  /* Background image - light mode */
-  background-image: url('/static/homelab_d.webp');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  /* Visual effects */
-  filter: grayscale(40%) contrast(1.1) brightness(0.85);
-  /* No transitions or animations - instant display */
-  transition: none;
-  animation: none;
-  /* Optimize rendering */
-  contain: layout style paint;
-  will-change: auto;
-  content-visibility: auto;
+  display: none;
 }
 
-/* Dark mode background image */
+/* Dark mode background image - Removed per redesign */
 [data-theme='dark'] .hero-bg-container {
-  background-image: url('/static/homelab_w.webp');
-  /* Enhanced filters for better sketch linework visibility in dark mode */
-  filter: grayscale(0%) contrast(1.8) brightness(1.1);
+  display: none;
 }
 
 /* Prevent layout shifts in hero section */
