@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
-import { Copy, Check, Search, Loader2 } from 'lucide-react'
+import { Copy, Check, Search, Loader2, AlertCircle } from 'lucide-react'
 
 interface IPInfo {
   ip: string

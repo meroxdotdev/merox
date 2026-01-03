@@ -389,7 +389,7 @@ const DockerConverter: React.FC = () => {
       <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-md bg-primary/10 text-primary">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-container"><path d="M22 7.7c0-.6-.4-1.2-.8-1.5l-6.3-4c-.5-.3-1.1-.3-1.6 0l-6.5 4.1c-.5.3-.8.9-.8 1.5v8.7c0 .5.3 1.1.8 1.4l6.5 4.1c.5.3 1.1.3 1.6 0l6.3-4c.4-.3.8-.9.8-1.5Z"/><path d="M10 21.9V14L2.1 9.1"/><path d="m10 14 11.9-6.9"/><path d="M14 19.8v-8.1"/><path d="m18 17.5-4-2.3"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-container"><path d="M22 7.7c0-.6-.4-1.2-.8-1.5l-6.3-4c-.5-.3-1.1-.3-1.6 0l-6.5 4.1c-.5.3-.8.9-.8 1.5v8.7c0 .5.3 1.1.8 1.4l6.5 4.1c.5.3 1.1.3 1.6 0l6.3-4c.4-.3.8-.9.8-1.5Z"/><path d="M10 21.9V14L2.1 9.1"/><path d="m10 14 11.9-6.9"/><path d="M14 19.8v-8.1"/><path d="m18 17.5-4-2.3"/></svg>
           </div>
           <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Docker Converter</span>
         </div>
