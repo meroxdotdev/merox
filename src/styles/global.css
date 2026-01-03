@@ -526,7 +526,7 @@
   font-size: 1.625rem;
   letter-spacing: -0.025em;
   line-height: 1.1;
-  color: var(--primary);
+  color: var(--foreground);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -536,21 +536,6 @@
   text-transform: none;
 }
 
-/* Accent only on letter X */
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-  .brand-logo {
-    background-image: linear-gradient(
-      to right,
-      var(--foreground) 0%,
-      var(--foreground) 82%,
-      var(--primary) 82%,
-      var(--primary) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-}
 
 /* Responsive sizing with perfect scaling */
 @media (max-width: 640px) {
