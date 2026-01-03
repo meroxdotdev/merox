@@ -124,8 +124,8 @@ const experience: ExperienceItem[] = [
   <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
   
-  <!-- Preload hero image for instant display -->
-  <link rel="preload" as="image" href="/meroxindc1.webp" type="image/webp" fetchpriority="high" />
+  <!-- Preload hero image for instant display (desktop only to avoid mobile theme transition issues) -->
+  <link rel="preload" as="image" href="/meroxindc1.webp" type="image/webp" fetchpriority="high" media="(min-width: 768px)" />
   
   <!-- Hero glow animation with reduced motion support -->
   <style>
@@ -141,7 +141,7 @@ const experience: ExperienceItem[] = [
   </style>
   
   <!-- Hero Section - Minimal & Impactful -->
-  <section class="relative pt-6 pb-12 md:pt-12 md:pb-20" transition:animate="none">
+  <section class="hero-section relative pt-6 pb-12 md:pt-12 md:pb-20" transition:animate="none">
     <div class="flex flex-col-reverse md:flex-row items-center gap-8 md:gap-6">
       <!-- Main Content -->
       <div class="flex-1 space-y-8 text-center md:text-left">
