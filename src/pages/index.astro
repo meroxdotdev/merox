@@ -221,7 +221,7 @@ const experience: ExperienceItem[] = [
       </div>
       
       <!-- Profile Image - Cutout PNG -->
-      <div class="relative flex-shrink-0 w-full max-w-[260px] md:max-w-none md:w-[280px] lg:w-[320px]">
+      <div class="relative flex-shrink-0 w-full max-w-[200px] md:max-w-none md:w-[220px] lg:w-[250px]">
         <!-- Subtle accent background glow -->
         <div class="hero-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 rounded-full blur-[80px] -z-10" aria-hidden="true"></div>
         
@@ -241,257 +241,178 @@ const experience: ExperienceItem[] = [
     </div>
   </section>
 
-  <!-- Experience Timeline -->
-  <section class="mt-8">
-    <div class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Experience</h2>
-      <p class="text-sm text-muted-foreground">
-        9+ years in server infrastructure and enterprise environments, with additional experience in cybersecurity
-      </p>
-    </div>
-    
-    <div class="space-y-6">
-      {experience.map((exp, index) => (
-        <div class="relative">
-          {index < experience.length - 1 && (
-            <div class="absolute left-[11px] top-8 bottom-0 w-px bg-border" aria-hidden="true"></div>
-          )}
-          
-          <div class="flex gap-4">
-            <div class={cn(
-              "relative flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center ring-4 ring-background z-10",
-              exp.current ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "bg-muted text-muted-foreground"
-            )}>
-              <Icon name={exp.icon} class="size-3.5" />
-            </div>
-            
-            <div class="flex-1 pb-2 min-w-0">
-              <div class="mb-1">
-                <h3 class="font-semibold text-lg leading-tight">{exp.role}</h3>
-                <p class="text-sm text-muted-foreground">
-                  {exp.company} · {exp.period}
-                </p>
+  <!-- Experience Section -->
+  <section class="mt-16 pt-16 border-t border-border/50">
+    <div class="flex flex-col md:flex-row gap-8 md:gap-16">
+      <div class="md:w-1/4">
+        <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground sticky top-24">
+          Career<br />
+          <span class="text-primary">Journey</span>.
+        </h2>
+      </div>
+
+      <div class="flex-1 space-y-10">
+        {experience.map((exp) => (
+          <div class="group space-y-3">
+            <div class="space-y-1">
+              <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+                <h3 class="text-lg font-bold text-foreground">
+                  {exp.role}
+                </h3>
+                <time class="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest tabular-nums">
+                  {exp.period}
+                </time>
               </div>
-              <p class="text-sm text-muted-foreground/90 leading-relaxed mt-2">
-                {exp.key}
-              </p>
+              <div class="text-xs font-bold text-primary uppercase tracking-wider">
+                {exp.company}
+              </div>
             </div>
+            <p class="text-sm text-muted-foreground leading-relaxed max-w-xl">
+              {exp.key}
+            </p>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   </section>
 
   <!-- Skills & Technologies -->
-  <section class="mt-12 pt-12 border-t border-border/50">
-    <div class="mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Skills & Technologies</h2>
-      <p class="text-sm text-muted-foreground">
-        Core competencies across systems administration, security, and infrastructure automation
-      </p>
+  <section class="mt-16 pt-16 border-t border-border/50">
+    <div class="flex flex-col md:flex-row gap-8 md:gap-16">
+      <div class="md:w-1/4">
+        <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground sticky top-24">
+          Stack &<br />
+          <span class="text-primary">Skills</span>.
+        </h2>
+      </div>
+
+      <div class="flex-1 overflow-hidden">
+        <ErrorBoundary client:load transition:persist="skills-error-boundary">
+          <Skills client:load transition:persist="skills-section" />
+        </ErrorBoundary>
+      </div>
     </div>
-    <ErrorBoundary client:load transition:persist="skills-error-boundary">
-      <Skills client:load transition:persist="skills-section" />
-    </ErrorBoundary>
   </section>
 
   <!-- Latest from the blog -->
   {latestPosts && latestPosts.length > 0 && (
-    <section class="mt-12 pt-12 border-t border-border/50">
-      <div class="mb-6 flex items-center justify-between">
-        <div>
-          <h2 class="text-2xl font-semibold mb-2">Latest from the blog</h2>
-          <p class="text-sm text-muted-foreground">Recent insights and tutorials</p>
+    <section class="mt-16 pt-16 border-t border-border/50">
+      <div class="flex flex-col md:flex-row gap-8 md:gap-16">
+        <div class="md:w-1/4 space-y-4">
+          <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground sticky top-24">
+            Latest<br />
+            <span class="text-primary">Insights</span>.
+          </h2>
+          <Link 
+            href="/blog" 
+            class={buttonVariants({ variant: 'outline', size: 'sm', class: 'rounded-full px-5 text-[10px] font-bold hidden md:flex w-fit' })}
+          >
+            All posts
+            <Icon name="lucide:arrow-right" class="ml-2 size-3" />
+          </Link>
         </div>
-        <Link 
-          href="/blog" 
-          class={buttonVariants({ variant: 'ghost' }) + ' hidden sm:flex items-center gap-1.5'}
-        >
-          View all
-          <Icon name="lucide:arrow-right" class="size-4" />
-        </Link>
-      </div>
-      
-      <div class="space-y-2">
-        {latestPosts.map((post) => (
-          <article>
-            <BlogCard entry={post} />
-          </article>
-        ))}
-      </div>
-      
-      <!-- Apple-style pill button for mobile -->
-      <div class="mt-6 sm:hidden flex justify-center">
-        <Link
-          href="/blog"
-          aria-label="View all blog posts"
-          class="inline-flex items-center justify-center px-6 py-3 rounded-full bg-muted/60 hover:bg-muted/80 text-sm font-semibold text-foreground transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.98]"
-        >
-          View All
-        </Link>
+
+        <div class="flex-1 space-y-3">
+          {latestPosts.map((post) => (
+            <article>
+              <BlogCard entry={post} />
+            </article>
+          ))}
+          <div class="pt-2 md:hidden">
+            <Link
+              href="/blog"
+              class="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-muted/60 text-xs font-bold w-full"
+            >
+              View All Posts
+            </Link>
+          </div>
+        </div>
       </div>
     </section>
   )}
 
   <!-- Premium Consulting Services Section -->
-  <section class="mt-12 pt-12 border-t border-border/50">
-    <!-- Header -->
-    <div class="text-center mb-12">
-      <div class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-        <Icon name="lucide:sparkles" class="size-4 mr-2" />
-        Infrastructure Consulting
+  <section class="mt-16 pt-16 border-t border-border/50 pb-0">
+    <div class="flex flex-col md:flex-row gap-12 md:gap-16">
+      <div class="md:w-1/4">
+        <h2 class="text-3xl font-black tracking-tighter uppercase leading-none text-foreground sticky top-24">
+          Built to<br />
+          <span class="text-primary">Last</span>.
+        </h2>
       </div>
-      <h2 class="text-3xl sm:text-4xl font-bold tracking-tight mb-4">
-        Let's build something
-        <span class="text-primary block mt-2">exceptional together</span>
-      </h2>
-      <p class="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-        Whether you're scaling HPC clusters, securing enterprise networks, or automating your homelab—I help you build infrastructure that's robust, secure, and built to last.
-      </p>
-    </div>
 
-    <!-- Services Grid -->
-    <div class="grid gap-6 sm:grid-cols-3 mb-12">
-      <!-- Service Card 1: Linux Infrastructure -->
-      <div class="group flex flex-col p-6 rounded-lg border bg-card transition-all duration-200 hover:border-primary/50 hover:shadow-md">
-        <!-- Icon -->
-        <div class="mb-4">
-          <div class="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/5 text-primary mb-3">
-            <Icon name="lucide:server" class="size-6" />
-          </div>
-          <h3 class="text-lg font-semibold mb-2">Linux Infrastructure</h3>
-          <p class="text-sm text-muted-foreground leading-relaxed">
-            From bare metal to containers, I optimize and secure Linux systems at scale.
-          </p>
+      <div class="flex-1 space-y-12">
+        <!-- Main Services Grid -->
+        <div class="grid grid-cols-1 gap-8">
+          {[
+            {
+              title: 'Linux Infrastructure',
+              icon: 'lucide:server',
+              desc: 'From bare metal to containers, I optimize and secure Linux systems at scale.',
+              features: ['System hardening & security audits', 'Performance tuning & optimization', 'Docker & Kubernetes deployment', 'Backup & disaster recovery']
+            },
+            {
+              title: 'Network Security',
+              icon: 'lucide:shield',
+              desc: 'Secure your network with proper firewall policies, VPNs, and vulnerability assessments.',
+              features: ['Firewall architecture & policies', 'Site-to-site VPN configuration', 'Vulnerability scanning & remediation', 'Network segmentation design']
+            },
+            {
+              title: 'Infrastructure Automation',
+              icon: 'lucide:workflow',
+              desc: 'Transform manual processes into reliable, repeatable Infrastructure as Code.',
+              features: ['Ansible & Terraform workflows', 'CI/CD pipeline implementation', 'Configuration management at scale', 'GitOps & Homelab as Code']
+            }
+          ].map((service) => (
+            <div class="group space-y-4">
+              <div class="flex items-center gap-3">
+                <div class="size-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10">
+                  <Icon name={service.icon} class="size-5" />
+                </div>
+                <h3 class="text-lg font-black uppercase tracking-tight text-foreground">{service.title}</h3>
+              </div>
+              
+              <div class="grid sm:grid-cols-[1fr_auto] gap-8 items-start">
+                <p class="text-sm text-muted-foreground leading-relaxed max-w-md">
+                  {service.desc}
+                </p>
+                <ul class="grid grid-cols-1 gap-x-8 gap-y-2 sm:min-w-[240px]">
+                  {service.features.map(feature => (
+                    <li class="flex items-center gap-2 text-[10px] font-bold text-foreground/70 uppercase tracking-wide">
+                      <Icon name="lucide:check" class="size-3 text-primary" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          ))}
         </div>
-        
-        <!-- Features List -->
-        <ul class="space-y-2.5 mt-auto">
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>System hardening & security audits</span>
-          </li>
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>Performance tuning & optimization</span>
-          </li>
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>Docker & Kubernetes deployment</span>
-          </li>
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>Backup & disaster recovery</span>
-          </li>
-        </ul>
-      </div>
 
-      <!-- Service Card 2: Network Security -->
-      <div class="group flex flex-col p-6 rounded-lg border bg-card transition-all duration-200 hover:border-primary/50 hover:shadow-md">
-        <!-- Icon -->
-        <div class="mb-4">
-          <div class="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/5 text-primary mb-3">
-            <Icon name="lucide:shield" class="size-6" />
+        <!-- Action Area -->
+        <div class="pt-8 border-t border-border/20 flex flex-col sm:flex-row sm:items-center justify-between gap-8">
+          <div class="flex gap-10">
+            {[
+              { label: 'Experience', value: '9+ Years' },
+              { label: 'Managed', value: '400+ Nodes' },
+              { label: 'Certified', value: 'CCNA' }
+            ].map(stat => (
+              <div class="space-y-1">
+                <div class="text-xl font-black tracking-tighter text-foreground">{stat.value}</div>
+                <div class="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</div>
+              </div>
+            ))}
           </div>
-          <h3 class="text-lg font-semibold mb-2">Network Security</h3>
-          <p class="text-sm text-muted-foreground leading-relaxed">
-            Secure your network with proper firewall policies, VPNs, and vulnerability assessments.
-          </p>
+
+          <Link 
+            href="mailto:hello@merox.dev?subject=Infrastructure Consulting Inquiry" 
+            class={buttonVariants({ variant: 'default', size: 'lg', class: 'rounded-full px-10 font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-0.5 active:scale-95' })}
+          >
+            Start a project
+            <Icon name="lucide:arrow-right" class="ml-2 size-4" />
+          </Link>
         </div>
-        
-        <!-- Features List -->
-        <ul class="space-y-2.5 mt-auto">
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>Firewall architecture & policies</span>
-          </li>
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>Site-to-site VPN configuration</span>
-          </li>
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>Vulnerability scanning & remediation</span>
-          </li>
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>Network segmentation design</span>
-          </li>
-        </ul>
       </div>
-
-      <!-- Service Card 3: Infrastructure Automation -->
-      <div class="group flex flex-col p-6 rounded-lg border bg-card transition-all duration-200 hover:border-primary/50 hover:shadow-md">
-        <!-- Icon -->
-        <div class="mb-4">
-          <div class="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-primary/5 text-primary mb-3">
-            <Icon name="lucide:workflow" class="size-6" />
-          </div>
-          <h3 class="text-lg font-semibold mb-2">Infrastructure Automation</h3>
-          <p class="text-sm text-muted-foreground leading-relaxed">
-            Transform manual processes into reliable, repeatable Infrastructure as Code.
-          </p>
-        </div>
-        
-        <!-- Features List -->
-        <ul class="space-y-2.5 mt-auto">
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>Ansible & Terraform workflows</span>
-          </li>
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>CI/CD pipeline implementation</span>
-          </li>
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>Configuration management at scale</span>
-          </li>
-          <li class="flex items-start gap-2 text-sm text-muted-foreground">
-            <Icon name="lucide:check" class="size-4 mt-0.5 shrink-0 text-primary" />
-            <span>GitOps & Homelab as Code</span>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Trust Indicators -->
-    <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center sm:justify-center gap-6 sm:gap-8 mb-10 px-4 sm:px-6 py-6 rounded-lg bg-muted/30 border border-border/50">
-      <div class="text-center">
-        <div class="text-2xl sm:text-3xl font-bold text-foreground mb-1">9+</div>
-        <div class="text-xs sm:text-sm text-muted-foreground">Years Experience</div>
-      </div>
-      <div class="hidden sm:block h-10 w-px bg-border/50" aria-hidden="true"></div>
-      <div class="text-center">
-        <div class="text-2xl sm:text-3xl font-bold text-foreground mb-1">400+</div>
-        <div class="text-xs sm:text-sm text-muted-foreground">Servers Managed</div>
-      </div>
-      <div class="hidden sm:block h-10 w-px bg-border/50" aria-hidden="true"></div>
-      <div class="text-center">
-        <div class="text-2xl sm:text-3xl font-bold text-foreground mb-1">CCNA</div>
-        <div class="text-xs sm:text-sm text-muted-foreground">Certified</div>
-      </div>
-      <div class="hidden sm:block h-10 w-px bg-border/50" aria-hidden="true"></div>
-      <div class="text-center">
-        <div class="text-2xl sm:text-3xl font-bold text-foreground mb-1">Enterprise</div>
-        <div class="text-xs sm:text-sm text-muted-foreground">Security Experience</div>
-      </div>
-    </div>
-
-    <!-- CTA -->
-    <div class="text-center pt-6 border-t border-border/30">
-      <Link 
-        href="mailto:hello@merox.dev?subject=Infrastructure Consulting Inquiry" 
-        class="group inline-flex items-center gap-2.5 px-8 py-4 rounded-lg bg-foreground text-background text-base font-semibold hover:bg-foreground/90 transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
-      >
-        <Icon name="lucide:mail" class="size-5" />
-        <span>Start a conversation</span>
-        <Icon name="lucide:arrow-right" class="size-5 transition-transform group-hover:translate-x-1" />
-      </Link>
-      <p class="mt-4 text-sm text-muted-foreground flex items-center justify-center gap-2">
-        <span class="status-dot" aria-hidden="true"></span>
-        <span>Typical response time: within 24 hours</span>
-      </p>
     </div>
   </section>
 </Layout>

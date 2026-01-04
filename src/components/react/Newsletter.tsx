@@ -83,17 +83,17 @@ const Newsletter: React.FC<NewsletterProps> = ({ className }) => {
 
   return (
     <div className={cn('w-full', className)}>
-      <form onSubmit={handleSubmit} className="space-y-3">
-        <div className="flex flex-col sm:flex-row gap-3 items-start">
-          <div className="relative w-full sm:flex-1 sm:min-w-0 group">
-            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground transition-colors group-focus-within:text-primary pointer-events-none z-10 flex-shrink-0" />
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <div className="flex flex-row gap-2 items-center">
+          <div className="relative flex-1 group">
+            <Mail className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground transition-colors group-focus-within:text-primary pointer-events-none z-10 flex-shrink-0" />
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
               disabled={status === 'loading'}
-              className="w-full h-10 pl-10 pr-4 text-sm rounded-md border border-border/60 bg-background/80 backdrop-blur-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-9 pl-8 pr-3 text-xs rounded-lg border border-border/60 bg-background/80 backdrop-blur-sm text-foreground placeholder:text-muted-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               aria-label="Email address"
               required
             />
@@ -101,39 +101,35 @@ const Newsletter: React.FC<NewsletterProps> = ({ className }) => {
           <Button
             type="submit"
             disabled={status === 'loading'}
-            size="lg"
+            size="sm"
             variant="default"
-            className="w-full sm:w-auto sm:flex-shrink-0 group gap-2"
+            className="flex-shrink-0 h-9 px-4 rounded-lg font-bold text-[10px] uppercase tracking-widest gap-2"
           >
             {status === 'loading' ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Subscribing...</span>
-              </>
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : (
               <>
-                <Mail className="h-4 w-4" />
                 <span>Subscribe</span>
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
               </>
             )}
           </Button>
         </div>
         
         {/* GDPR Compliant Consent Checkbox */}
-        <div className="flex items-start gap-2.5 pl-1">
+        <div className="flex items-center gap-2 pl-1 h-4">
           <input
             type="checkbox"
             id="newsletter-consent-footer"
             checked={consent}
             onChange={(e) => setConsent(e.target.checked)}
             disabled={status === 'loading'}
-            className="mt-0.5 h-3.5 w-3.5 rounded border-border text-primary focus:ring-2 focus:ring-primary/20 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer"
+            className="h-3 w-3 rounded border-border text-primary focus:ring-0 focus:ring-offset-0 disabled:opacity-50 disabled:cursor-not-allowed shrink-0 cursor-pointer bg-background"
             required
           />
           <label
             htmlFor="newsletter-consent-footer"
-            className="text-xs text-muted-foreground leading-relaxed cursor-pointer"
+            className="text-[9px] font-medium text-muted-foreground leading-none cursor-pointer whitespace-nowrap"
           >
             {NEWSLETTER_CONSENT_TEXT.text}{' '}
             <a 
@@ -150,7 +146,7 @@ const Newsletter: React.FC<NewsletterProps> = ({ className }) => {
         {message && (
           <div
             className={cn(
-              'flex items-center gap-1.5 text-xs',
+              'flex items-center gap-1.5 text-[9px] font-bold leading-none',
               status === 'success' 
                 ? 'text-green-600 dark:text-green-400' 
                 : 'text-destructive'
@@ -158,9 +154,9 @@ const Newsletter: React.FC<NewsletterProps> = ({ className }) => {
             role="alert"
           >
             {status === 'success' ? (
-              <CheckCircle2 className="h-3 w-3 shrink-0" />
+              <CheckCircle2 className="h-2.5 w-2.5 shrink-0" />
             ) : (
-              <AlertCircle className="h-3 w-3 shrink-0" />
+              <AlertCircle className="h-2.5 w-2.5 shrink-0" />
             )}
             <span>{message}</span>
           </div>
