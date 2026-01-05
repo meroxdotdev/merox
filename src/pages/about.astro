@@ -63,37 +63,39 @@ const personSchema = {
             loading="eager"
           />
         </div>
-        <div class="mt-4 flex items-center justify-center gap-1.5 text-xs text-muted-foreground">
-          <Icon name="lucide:map-pin" class="size-3.5" />
-          <span>Timișoara, Romania</span>
-          <span class="text-sm">🇷🇴</span>
-        </div>
       </div>
       
-      <div class="flex-1 space-y-6">
-        <div class="space-y-1">
-          <h1 class="text-4xl font-bold tracking-tight text-foreground">Robert Melcher</h1>
-          <p class="text-primary font-mono text-sm flex items-center gap-1.5">
-            <Icon name="lucide:terminal" class="size-4" />
-            <span>@merox</span>
-          </p>
-        </div>
+      <div class="flex-1 space-y-4">
+        <div class="space-y-3">
+          <div>
+            <h1 class="text-4xl font-bold tracking-tight text-foreground">Robert Melcher</h1>
+            <p class="text-primary font-mono text-sm flex items-center gap-1.5 mt-1">
+              <Icon name="lucide:terminal" class="size-4" />
+              <span>@merox</span>
+            </p>
+            <div class="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
+              <Icon name="lucide:map-pin" class="size-3.5" />
+              <span>Timișoara, Romania</span>
+              <span class="text-sm">🇷🇴</span>
+            </div>
+          </div>
 
-        <!-- Identity Concept -->
-        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 py-3 border-y border-border/50">
-          <div class="flex items-center gap-1.5">
-            <span class="text-[10px] font-bold text-primary uppercase tracking-tighter">Me</span>
-            <span class="text-[11px] font-medium text-muted-foreground">Melcher</span>
-          </div>
-          <span class="text-muted-foreground/30 text-[10px]">•</span>
-          <div class="flex items-center gap-1.5">
-            <span class="text-[10px] font-bold text-primary uppercase tracking-tighter">Ro</span>
-            <span class="text-[11px] font-medium text-muted-foreground">Robert</span>
-          </div>
-          <span class="text-muted-foreground/30 text-[10px]">•</span>
-          <div class="flex items-center gap-1.5">
-            <span class="text-[10px] font-bold text-primary uppercase tracking-tighter italic">X</span>
-            <span class="text-[11px] font-medium text-muted-foreground">0x39 (Birthday: 5/7)</span>
+          <!-- Identity Concept -->
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 text-[11px]">
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-primary uppercase tracking-tighter">Me</span>
+              <span class="font-medium text-muted-foreground">Melcher</span>
+            </div>
+            <span class="text-muted-foreground/30">•</span>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-primary uppercase tracking-tighter">Ro</span>
+              <span class="font-medium text-muted-foreground">Robert</span>
+            </div>
+            <span class="text-muted-foreground/30">•</span>
+            <div class="flex items-center gap-1.5">
+              <span class="font-bold text-primary uppercase tracking-tighter">X</span>
+              <span class="font-medium text-muted-foreground font-mono">0x39 = 5/7</span>
+            </div>
           </div>
         </div>
 
@@ -127,38 +129,11 @@ const personSchema = {
       </div>
     </div>
 
-    <!-- Education & Background -->
-    <div class="grid md:grid-cols-2 gap-12 pt-8 border-t border-border">
-      <div class="space-y-4">
-        <h2 class="text-xl font-bold flex items-center gap-2">
-          <Icon name="lucide:graduation-cap" class="size-5 text-primary" />
-          Education
-        </h2>
-        <div class="pl-4 border-l-2 border-primary/10 space-y-1">
-          <h3 class="font-semibold text-foreground leading-tight">Computer Science</h3>
-          <p class="text-sm text-muted-foreground">West University of Timișoara</p>
-          <p class="text-xs text-primary/80 font-medium">2016 — 2018</p>
-        </div>
-      </div>
-      
-      <div class="space-y-4">
-        <h2 class="text-xl font-bold flex items-center gap-2">
-          <Icon name="lucide:award" class="size-5 text-primary" />
-          Certification
-        </h2>
-        <div class="pl-4 border-l-2 border-primary/10 space-y-1">
-          <h3 class="font-semibold text-foreground leading-tight">CCNA (Cisco Certified Network Associate)</h3>
-          <p class="text-sm text-muted-foreground">Cisco Systems</p>
-          <p class="text-xs text-primary/80 font-medium">2019 — 2020</p>
-        </div>
-      </div>
-    </div>
-
     <!-- Homelab Section -->
     <div class="space-y-4 pt-8 border-t border-border">
-      <h2 class="text-xl font-bold flex items-center gap-2 text-foreground">
+      <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground flex items-center gap-2">
         <Icon name="lucide:home" class="size-5 text-primary" />
-        Personal Passion
+        <span>Personal <span class="text-primary">Passion</span></span>
       </h2>
       <div class="prose prose-sm dark:prose-invert max-w-none">
         <p class="text-muted-foreground leading-relaxed">
