@@ -90,18 +90,20 @@ const structuredData = {
 
   <Breadcrumbs items={[{ label: 'Tools', icon: 'lucide:wrench' }]} />
 
-  <div class="flex flex-col gap-y-8 py-4">
-    <header class="space-y-2">
-      <h1 class="text-3xl sm:text-4xl font-bold tracking-tight">Tools</h1>
-      <p class="text-muted-foreground">
+  <div class="flex flex-col gap-12 pb-12">
+    <header class="space-y-3">
+      <h1 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground">
+        Free <span class="text-primary">Tools</span>.
+      </h1>
+      <p class="text-sm text-muted-foreground leading-relaxed max-w-xl">
         Privacy-focused, client-side tools for developers and system administrators.
       </p>
     </header>
 
-    <div class="grid gap-10">
+    <div class="space-y-12">
       {categories.map(category => (
         <section class="space-y-4">
-          <h2 class="text-xs font-bold uppercase tracking-widest text-muted-foreground/60">{category}</h2>
+          <h2 class="text-xs font-bold text-primary uppercase tracking-wider">{category}</h2>
           
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
             {tools.filter(t => t.category === category).map(tool => (
