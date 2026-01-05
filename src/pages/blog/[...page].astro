@@ -32,20 +32,24 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
     ]}
   />
 
-  <div class="flex min-h-[calc(100vh-18rem)] flex-col">
+  <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-20">
     {
       years.map((year) => (
-        <section class="flex flex-col">
-          <div class="text-muted-foreground/60 text-xs font-medium uppercase tracking-wider mb-2.5 mt-6 first:mt-0">
-            {year}
+        <section class="flex flex-col md:flex-row gap-6 md:gap-12">
+          <div class="md:w-20 shrink-0">
+            <h2 class="text-4xl md:text-3xl font-black tracking-tighter text-foreground uppercase md:sticky md:top-24 leading-none pt-1">
+              {year}
+            </h2>
           </div>
-          <ul class="flex flex-col gap-2">
-            {postsByYear[year].map((post) => (
-              <li>
-                <BlogCard entry={post} />
-              </li>
-            ))}
-          </ul>
+          <div class="flex-1">
+            <ul class="flex flex-col gap-2">
+              {postsByYear[year].map((post) => (
+                <li>
+                  <BlogCard entry={post} />
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
       ))
     }
