@@ -5,7 +5,6 @@ import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
 import Skills from '@/components/react/Skills'
 import { ErrorBoundary } from '@/components/react/ErrorBoundary'
-import { buttonVariants } from '@/components/ui/button'
 import { Icon } from 'astro-icon/components'
 import { SITE } from '@/consts'
 
@@ -114,24 +113,6 @@ const experience = [
               <span class="text-sm">🇷🇴</span>
             </div>
           </div>
-
-          <!-- Identity Concept -->
-          <div class="flex flex-wrap items-center gap-x-4 gap-y-2 pt-2 text-[11px]">
-            <div class="flex items-center gap-1.5">
-              <span class="font-bold text-primary uppercase tracking-tighter">Me</span>
-              <span class="font-medium text-muted-foreground">Melcher</span>
-            </div>
-            <span class="text-muted-foreground/30">•</span>
-            <div class="flex items-center gap-1.5">
-              <span class="font-bold text-primary uppercase tracking-tighter">Ro</span>
-              <span class="font-medium text-muted-foreground">Robert</span>
-            </div>
-            <span class="text-muted-foreground/30">•</span>
-            <div class="flex items-center gap-1.5">
-              <span class="font-bold text-primary uppercase tracking-tighter">X</span>
-              <span class="font-medium text-muted-foreground font-mono">0x39 = 5/7</span>
-            </div>
-          </div>
         </div>
 
         <div class="prose prose-sm dark:prose-invert max-w-none">
@@ -224,72 +205,5 @@ const experience = [
       </div>
     </section>
 
-    <!-- Built to Last Section -->
-    <section class="mt-12 pt-12 md:mt-16 md:pt-16 border-t border-border/50 pb-12">
-      <div class="flex flex-col md:flex-row gap-12 md:gap-16">
-        <div class="md:w-1/4">
-          <h2 class="text-3xl font-black tracking-tighter uppercase leading-none text-foreground md:sticky md:top-24">
-            Built to<br /><span class="text-primary">Last</span>.
-          </h2>
-        </div>
-        <div class="flex-1 space-y-12">
-          <div class="grid grid-cols-1 gap-8">
-            {[
-              {
-                title: 'Linux Infrastructure',
-                icon: 'lucide:server',
-                desc: 'From bare metal to containers, I optimize and secure Linux systems at scale.',
-                features: ['System hardening & security audits', 'Performance tuning & optimization', 'Docker & Kubernetes deployment', 'Backup & disaster recovery']
-              },
-              {
-                title: 'Network Security',
-                icon: 'lucide:shield',
-                desc: 'Secure your network with proper firewall policies, VPNs, and vulnerability assessments.',
-                features: ['Firewall architecture & policies', 'Site-to-site VPN configuration', 'Vulnerability scanning & remediation', 'Network segmentation design']
-              },
-              {
-                title: 'Infrastructure Automation',
-                icon: 'lucide:workflow',
-                desc: 'Transform manual processes into reliable, repeatable Infrastructure as Code.',
-                features: ['Ansible & Terraform workflows', 'CI/CD pipeline implementation', 'Configuration management at scale', 'GitOps & Homelab as Code']
-              }
-            ].map((service) => (
-              <div class="group space-y-4">
-                <div class="flex items-center gap-3">
-                  <div class="size-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10">
-                    <Icon name={service.icon} class="size-5" />
-                  </div>
-                  <h3 class="text-lg font-black uppercase tracking-tight text-foreground">{service.title}</h3>
-                </div>
-                <div class="grid sm:grid-cols-[1fr_auto] gap-8 items-start">
-                  <p class="text-sm text-muted-foreground leading-relaxed max-w-md">{service.desc}</p>
-                  <ul class="grid grid-cols-1 gap-x-8 gap-y-2 sm:min-w-[240px]">
-                    {service.features.map(feature => (
-                      <li class="flex items-center gap-2 text-[10px] font-bold text-foreground/70 uppercase tracking-wide">
-                        <Icon name="lucide:check" class="size-3 text-primary" /> {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div class="pt-8 border-t border-border/20 flex flex-col sm:flex-row sm:items-center justify-between gap-8">
-            <div class="flex gap-10">
-              {[ { label: 'Experience', value: '9+ Years' }, { label: 'Managed', value: '400+ Nodes' }, { label: 'Certified', value: 'CCNA' } ].map(stat => (
-                <div class="space-y-1">
-                  <div class="text-xl font-black tracking-tighter text-foreground">{stat.value}</div>
-                  <div class="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</div>
-                </div>
-              ))}
-            </div>
-            <Link href="mailto:hello@merox.dev" class={buttonVariants({ variant: 'default', size: 'lg', class: 'rounded-full px-10 font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-0.5 active:scale-95' })}>
-              Start a project <Icon name="lucide:arrow-right" class="ml-2 size-4" />
-            </Link>
-          </div>
-        </div>
-      </div>
-    </section>
   </section>
 </Layout>
