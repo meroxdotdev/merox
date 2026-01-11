@@ -3,6 +3,9 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import PageHead from '@/components/PageHead.astro'
 import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
+import Skills from '@/components/react/Skills'
+import { ErrorBoundary } from '@/components/react/ErrorBoundary'
+import { buttonVariants } from '@/components/ui/button'
 import { Icon } from 'astro-icon/components'
 import { SITE } from '@/consts'
 
@@ -39,6 +42,38 @@ const personSchema = {
   "email": "hello@merox.dev",
   "description": "System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security."
 }
+
+const experience = [
+  {
+    role: 'HPC System Administrator',
+    company: 'Forvia',
+    period: '2022 - Present',
+    current: true,
+    icon: 'lucide:server',
+    key: 'Led end-to-end deployment of HPC cluster on Dell infrastructure with PBS scheduling • Cross-team coordination with network and firewall teams for infrastructure provisioning'
+  },
+  {
+    role: 'Founder',
+    company: 'Dolphost',
+    period: '2022 - 2024',
+    icon: 'lucide:rocket',
+    key: 'Built secure WordPress hosting platform • Managed VPS infrastructure and implemented WHMCS/cPanel solutions'
+  },
+  {
+    role: 'Cyber Security Engineer',
+    company: 'Atos IT Solutions',
+    period: '2020 - 2022',
+    icon: 'lucide:shield',
+    key: 'Conducted vulnerability assessments with NESSUS • Implemented firewall policies across Cisco, Fortinet, Palo Alto, and Juniper platforms'
+  },
+  {
+    role: 'System Administrator',
+    company: 'Netex Romania',
+    period: '2018 - 2020',
+    icon: 'lucide:server',
+    key: 'Migrated Puppet infrastructure to Kubernetes • Managed BAREOS backups for 200+ servers • Configured IPsec site-to-site VPN connections'
+  }
+]
 ---
 
 <Layout class="max-w-3xl">
@@ -147,5 +182,114 @@ const personSchema = {
         </div>
       </div>
     </div>
+
+    <!-- Career Journey Section -->
+    <section class="mt-12 pt-12 md:mt-16 md:pt-16 border-t border-border/50">
+      <div class="flex flex-col md:flex-row gap-6 md:gap-16">
+        <div class="md:w-1/4">
+          <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground md:sticky md:top-24">
+            Career<br /><span class="text-primary">Journey</span>.
+          </h2>
+        </div>
+        <div class="flex-1 space-y-10">
+          {experience.map((exp) => (
+            <div class="group space-y-3">
+              <div class="space-y-1">
+                <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+                  <h3 class="text-lg font-bold text-foreground">{exp.role}</h3>
+                  <time class="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest tabular-nums">{exp.period}</time>
+                </div>
+                <div class="text-xs font-bold text-primary uppercase tracking-wider">{exp.company}</div>
+              </div>
+              <p class="text-sm text-muted-foreground leading-relaxed max-w-xl">{exp.key}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Stack & Skills Section -->
+    <section class="mt-12 pt-12 md:mt-16 md:pt-16 border-t border-border/50">
+      <div class="flex flex-col md:flex-row gap-8 md:gap-16">
+        <div class="md:w-1/4">
+          <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground md:sticky md:top-24">
+            Stack &<br /><span class="text-primary">Skills</span>.
+          </h2>
+        </div>
+        <div class="flex-1 overflow-hidden">
+          <ErrorBoundary client:load transition:persist="skills-error-boundary">
+            <Skills client:load transition:persist="skills-section" />
+          </ErrorBoundary>
+        </div>
+      </div>
+    </section>
+
+    <!-- Built to Last Section -->
+    <section class="mt-12 pt-12 md:mt-16 md:pt-16 border-t border-border/50 pb-12">
+      <div class="flex flex-col md:flex-row gap-12 md:gap-16">
+        <div class="md:w-1/4">
+          <h2 class="text-3xl font-black tracking-tighter uppercase leading-none text-foreground md:sticky md:top-24">
+            Built to<br /><span class="text-primary">Last</span>.
+          </h2>
+        </div>
+        <div class="flex-1 space-y-12">
+          <div class="grid grid-cols-1 gap-8">
+            {[
+              {
+                title: 'Linux Infrastructure',
+                icon: 'lucide:server',
+                desc: 'From bare metal to containers, I optimize and secure Linux systems at scale.',
+                features: ['System hardening & security audits', 'Performance tuning & optimization', 'Docker & Kubernetes deployment', 'Backup & disaster recovery']
+              },
+              {
+                title: 'Network Security',
+                icon: 'lucide:shield',
+                desc: 'Secure your network with proper firewall policies, VPNs, and vulnerability assessments.',
+                features: ['Firewall architecture & policies', 'Site-to-site VPN configuration', 'Vulnerability scanning & remediation', 'Network segmentation design']
+              },
+              {
+                title: 'Infrastructure Automation',
+                icon: 'lucide:workflow',
+                desc: 'Transform manual processes into reliable, repeatable Infrastructure as Code.',
+                features: ['Ansible & Terraform workflows', 'CI/CD pipeline implementation', 'Configuration management at scale', 'GitOps & Homelab as Code']
+              }
+            ].map((service) => (
+              <div class="group space-y-4">
+                <div class="flex items-center gap-3">
+                  <div class="size-10 rounded-xl bg-primary/5 flex items-center justify-center text-primary border border-primary/10">
+                    <Icon name={service.icon} class="size-5" />
+                  </div>
+                  <h3 class="text-lg font-black uppercase tracking-tight text-foreground">{service.title}</h3>
+                </div>
+                <div class="grid sm:grid-cols-[1fr_auto] gap-8 items-start">
+                  <p class="text-sm text-muted-foreground leading-relaxed max-w-md">{service.desc}</p>
+                  <ul class="grid grid-cols-1 gap-x-8 gap-y-2 sm:min-w-[240px]">
+                    {service.features.map(feature => (
+                      <li class="flex items-center gap-2 text-[10px] font-bold text-foreground/70 uppercase tracking-wide">
+                        <Icon name="lucide:check" class="size-3 text-primary" /> {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div class="pt-8 border-t border-border/20 flex flex-col sm:flex-row sm:items-center justify-between gap-8">
+            <div class="flex gap-10">
+              {[ { label: 'Experience', value: '9+ Years' }, { label: 'Managed', value: '400+ Nodes' }, { label: 'Certified', value: 'CCNA' } ].map(stat => (
+                <div class="space-y-1">
+                  <div class="text-xl font-black tracking-tighter text-foreground">{stat.value}</div>
+                  <div class="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">{stat.label}</div>
+                </div>
+              ))}
+            </div>
+            <Link href="mailto:hello@merox.dev" class={buttonVariants({ variant: 'default', size: 'lg', class: 'rounded-full px-10 font-black uppercase tracking-widest shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-0.5 active:scale-95' })}>
+              Start a project <Icon name="lucide:arrow-right" class="ml-2 size-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
   </section>
 </Layout>
