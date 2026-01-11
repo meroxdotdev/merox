@@ -12,7 +12,7 @@ import type { SocialLink } from '@/types'
 let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
 let postsWithReadingTime: Array<Awaited<ReturnType<typeof getRecentPosts>>[0] & { readingTime: string }> = []
 try {
-  latestPosts = await getRecentPosts(3)
+  latestPosts = await getRecentPosts(4)
   postsWithReadingTime = await Promise.all(
     latestPosts.map(async (post) => ({
       ...post,
@@ -61,7 +61,7 @@ const websiteSchema = {
 }
 ---
 
-<Layout class="max-w-3xl" transition:persist="home-layout">
+<Layout class="max-w-4xl" transition:persist="home-layout">
   <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true} />
 
   <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
@@ -140,15 +140,12 @@ const websiteSchema = {
   {postsWithReadingTime && postsWithReadingTime.length > 0 && (
     <section class="mt-8 pt-8 relative">
       <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent"></div>
-      <div class="flex items-baseline justify-between gap-4 mb-6">
+      <div class="mb-6">
         <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground">
           Latest <span class="text-primary">Insights</span>
         </h2>
-        <Link href="/blog" class="text-xs font-medium text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider">
-          View all
-        </Link>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {postsWithReadingTime.map((post) => (
           <Link
             href={`/${post.collection}/${post.id}`}
@@ -174,6 +171,11 @@ const websiteSchema = {
             </div>
           </Link>
         ))}
+      </div>
+      <div class="mt-6 flex justify-center">
+        <Link href="/blog" class={buttonVariants({ variant: 'outline', size: 'default', class: 'w-full sm:w-auto' })}>
+          Show more
+        </Link>
       </div>
     </section>
   )}
