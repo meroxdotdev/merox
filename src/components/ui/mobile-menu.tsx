@@ -97,7 +97,7 @@ const MobileMenu = () => {
           <span className="sr-only">Toggle menu</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-xl border-border/40 min-w-[240px] p-2 rounded-2xl shadow-2xl">
+      <DropdownMenuContent align="end" className="bg-popover/95 backdrop-blur-xl border-border/40 min-w-[240px] p-2 rounded-2xl shadow-2xl">
         <div className="flex flex-col gap-1">
           {NAV_LINKS.map((item) => {
             const isExternal = isExternalLink(item.href)
@@ -143,8 +143,8 @@ const MobileMenu = () => {
                 className={cn(
                   "flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium transition-all",
                   currentTheme === theme
-                    ? "bg-foreground text-background shadow-lg"
-                    : "bg-foreground/[0.03] text-foreground/60 hover:bg-foreground/[0.06]"
+                    ? "bg-popover text-popover-foreground shadow-lg ring-1 ring-border/50"
+                    : "bg-muted/30 text-foreground/60 hover:bg-muted/40"
                 )}
                 aria-label={`Switch to ${theme} theme`}
                 aria-pressed={currentTheme === theme}
