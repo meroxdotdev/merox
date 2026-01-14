@@ -23,6 +23,8 @@
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
 }
 
 @font-face {
@@ -61,6 +63,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(0 0% 89.8%);
   --ring: hsl(214 95% 52%);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
 }
 
 [data-theme='dark'][data-palette='blue'] {
@@ -81,6 +85,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(210 13% 22%);
   --ring: hsl(214 95% 62%);
+  --popover: hsl(210 20% 12%);
+  --popover-foreground: hsl(210 20% 85%);
 }
 
 /* Green Palette */
@@ -102,6 +108,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(120 10% 89.8%);
   --ring: hsl(142 76% 36%);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
 }
 
 [data-theme='dark'][data-palette='green'] {
@@ -122,6 +130,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(140 13% 22%);
   --ring: hsl(142 76% 46%);
+  --popover: hsl(140 20% 12%);
+  --popover-foreground: hsl(140 20% 85%);
 }
 
 /* Purple Palette */
@@ -143,6 +153,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(270 10% 89.8%);
   --ring: hsl(262 83% 58%);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
 }
 
 [data-theme='dark'][data-palette='purple'] {
@@ -163,6 +175,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(260 13% 22%);
   --ring: hsl(262 83% 68%);
+  --popover: hsl(260 20% 12%);
+  --popover-foreground: hsl(260 20% 85%);
 }
 
 /* Orange Palette */
@@ -184,6 +198,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(25 10% 89.8%);
   --ring: hsl(25 95% 53%);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
 }
 
 [data-theme='dark'][data-palette='orange'] {
@@ -204,6 +220,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(25 13% 22%);
   --ring: hsl(25 95% 63%);
+  --popover: hsl(25 20% 12%);
+  --popover-foreground: hsl(25 20% 85%);
 }
 
 /* Rose Palette */
@@ -225,6 +243,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(350 10% 89.8%);
   --ring: hsl(346 77% 50%);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
 }
 
 [data-theme='dark'][data-palette='rose'] {
@@ -245,6 +265,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(340 13% 22%);
   --ring: hsl(346 77% 60%);
+  --popover: hsl(340 20% 12%);
+  --popover-foreground: hsl(340 20% 85%);
 }
 
 /* Cyan Palette */
@@ -266,6 +288,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(180 10% 89.8%);
   --ring: hsl(188 94% 43%);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
 }
 
 [data-theme='dark'][data-palette='cyan'] {
@@ -286,6 +310,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(190 13% 22%);
   --ring: hsl(188 94% 53%);
+  --popover: hsl(190 20% 12%);
+  --popover-foreground: hsl(190 20% 85%);
 }
 
 /* Teal Palette */
@@ -307,6 +333,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(173 10% 89.8%);
   --ring: hsl(173 80% 40%);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
 }
 
 [data-theme='dark'][data-palette='teal'] {
@@ -327,6 +355,8 @@
   --destructive-foreground: hsl(0 0% 98%);
   --border: hsl(175 13% 22%);
   --ring: hsl(173 80% 50%);
+  --popover: hsl(175 20% 12%);
+  --popover-foreground: hsl(175 20% 85%);
 }
 
 /* Fallback for dark theme without palette - uses blue palette as default */

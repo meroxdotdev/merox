@@ -121,7 +121,7 @@ export default function ThemeSelector({ className }: ThemeSelectorProps = {}) {
       </DropdownMenuTrigger>
       <DropdownMenuContent 
         align="end" 
-        className="bg-background/95 backdrop-blur-xl border-border/40 min-w-[220px] p-3 rounded-2xl shadow-2xl"
+        className="bg-popover/95 backdrop-blur-xl border-border/40 min-w-[220px] p-3 rounded-2xl shadow-2xl"
       >
         {/* Theme Mode Section */}
         <div className="mb-4">
@@ -130,7 +130,7 @@ export default function ThemeSelector({ className }: ThemeSelectorProps = {}) {
               Appearance
             </span>
           </div>
-          <div className="grid grid-cols-2 gap-1.5 p-1 bg-foreground/[0.03] rounded-xl">
+          <div className="grid grid-cols-2 gap-1.5 p-1 bg-muted/30 rounded-xl">
             {THEMES.map((theme) => (
               <button
                 key={theme}
@@ -138,8 +138,8 @@ export default function ThemeSelector({ className }: ThemeSelectorProps = {}) {
                 className={cn(
                   "flex items-center justify-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium transition-all duration-200",
                   currentTheme === theme
-                    ? "bg-background text-foreground shadow-sm ring-1 ring-border/50"
-                    : "text-foreground/50 hover:text-foreground hover:bg-background/50"
+                    ? "bg-popover text-popover-foreground shadow-sm ring-1 ring-border/50"
+                    : "text-foreground/50 hover:text-foreground hover:bg-muted/20"
                 )}
                 aria-label={`Switch to ${theme} theme`}
                 aria-pressed={currentTheme === theme}
