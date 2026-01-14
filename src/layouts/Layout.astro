@@ -9,7 +9,6 @@ import Footer from '@/components/Footer.astro'
 import Head from '@/components/Head.astro'
 import Header from '@/components/Header.astro'
 import ThemeInit from '@/components/ThemeInit.astro'
-import ThemePromo from '@/components/ThemePromo.astro'
 import { SITE } from '@/consts'
 import { cn } from '@/lib/utils'
 
@@ -98,7 +97,6 @@ const { class: className, hideFloatingSidebar = false, contentPadding = 'pb-20' 
       <slot />
     </main>
     {false && !hideFloatingSidebar && <FloatingSidebar />}
-    <ThemePromo />
     <Footer />
   </body>
 </html>

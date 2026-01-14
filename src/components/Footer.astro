@@ -4,6 +4,7 @@ import SocialIcons from './SocialIcons.astro'
 import Link from '@/components/Link.astro'
 import Newsletter from './react/Newsletter'
 import { ErrorBoundary } from './react/ErrorBoundary'
+import ThemePromo from './react/ThemePromo'
 import { Icon } from 'astro-icon/components'
 ---
 
@@ -81,8 +82,9 @@ import { Icon } from 'astro-icon/components'
         <div>
           &copy; 2024&ndash;{new Date().getFullYear()} Merox. All rights reserved.
         </div>
-        <div class="text-xs">
-          Theme: <a href="https://github.com/meroxdotdev/merox-erudite" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors underline">merox-erudite</a>
+        <div class="text-xs flex items-center gap-2">
+          <span>Theme: <a href="https://github.com/meroxdotdev/merox-erudite" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors underline">merox-erudite</a></span>
+          <ThemePromo client:idle className="size-5" />
         </div>
       </div>
     </div>
