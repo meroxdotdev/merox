@@ -90,7 +90,7 @@ const ThemePromo: React.FC = () => {
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-                <span>Comments (Disqus)</span>
+                <span>Comments (Giscus)</span>
               </div>
               <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />

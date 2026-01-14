@@ -1,6 +1,6 @@
 ---
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
-import Disqus from '@/components/Disqus.astro'
+import Giscus from '@/components/Giscus.astro'
 import Link from '@/components/Link.astro'
 import PostHead from '@/components/PostHead.astro'
 import PostNavigation from '@/components/PostNavigation.astro'
@@ -320,13 +320,12 @@ try {
     }
 
     {
-      /* Only show Disqus on main posts, not subposts */
+      /* Only show Giscus comments on main posts, not subposts */
       !isCurrentSubpost && (
         <div class="col-start-2 mt-12">
-          <Disqus
-            identifier={`blog-${currentPostId}`}
+          <Giscus
+            identifier={`blog/${currentPostId}`}
             title={post.data.title}
-            url={new URL(`/blog/${currentPostId}`, SITE.href).href}
           />
         </div>
       )

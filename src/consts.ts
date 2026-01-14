@@ -23,11 +23,16 @@ export const UMAMI = {
   websiteId: import.meta.env.PUBLIC_UMAMI_WEBSITE_ID || '',
 }
 
-// Disqus Comments
-// Get your shortname from https://disqus.com/admin/settings/general/
-// Set it as an environment variable: PUBLIC_DISQUS_SHORTNAME=your-shortname
-export const DISQUS = {
-  shortname: import.meta.env.PUBLIC_DISQUS_SHORTNAME || '',
+// Giscus Comments (GitHub Discussions)
+// Setup: https://giscus.app
+// 1. Enable Discussions on your GitHub repository
+// 2. Install the Giscus app: https://github.com/apps/giscus
+// 3. Configure at https://giscus.app and copy the values below
+export const GISCUS = {
+  repo: import.meta.env.PUBLIC_GISCUS_REPO || '', // e.g., 'username/repo'
+  repoId: import.meta.env.PUBLIC_GISCUS_REPO_ID || '',
+  category: import.meta.env.PUBLIC_GISCUS_CATEGORY || 'Blog Comments',
+  categoryId: import.meta.env.PUBLIC_GISCUS_CATEGORY_ID || '',
 }
 
 // Brevo Newsletter

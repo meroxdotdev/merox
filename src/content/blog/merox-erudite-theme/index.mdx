@@ -59,16 +59,16 @@ export const BREVO = {
 }
 ```
 
-### Disqus Comments
+### Giscus Comments
 
-I wanted comments on my blog posts, so I integrated Disqus with:
+I wanted comments on my blog posts, so I integrated Giscus (GitHub Discussions) with:
 - Lazy loading (comments only load when visible)
 - View transition support for Astro
-- Proper error handling
-- Accessibility improvements
+- Automatic dark/light theme sync
+- No tracking or ads - privacy-friendly
 
 <Callout variant="tip">
-**Note:** Disqus is optional. If you don't configure it, the component simply won't render.
+**Note:** Giscus is optional. If you don't configure it, the component simply won't render. You'll need a public GitHub repository with Discussions enabled.
 </Callout>
 
 ### Analytics Support
@@ -118,7 +118,7 @@ const experience: ExperienceItem[] = [
 | Feature | astro-erudite | merox-erudite |
 |---------|---------------|---------------|
 | Newsletter | ❌ | ✅ Brevo integration |
-| Comments | ❌ | ✅ Disqus support |
+| Comments | ❌ | ✅ Giscus (GitHub) |
 | Analytics | ❌ | ✅ GA & Umami |
 | SEO Schemas | Basic | ✅ FAQ & HowTo |
 | Homepage | Standard | ✅ Enhanced with timeline |
@@ -184,10 +184,17 @@ PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX (can be Text)
 PUBLIC_UMAMI_WEBSITE_ID=your-umami-id (can be Text)
 ```
 
-**For Disqus:**
+**For Giscus (GitHub Comments):**
 ```
-PUBLIC_DISQUS_SHORTNAME=your-shortname (can be Text)
+PUBLIC_GISCUS_REPO=username/repo (can be Text)
+PUBLIC_GISCUS_REPO_ID=your-repo-id (can be Text)
+PUBLIC_GISCUS_CATEGORY=Blog Comments (can be Text)
+PUBLIC_GISCUS_CATEGORY_ID=your-category-id (can be Text)
 ```
+
+<Callout variant="tip">
+Get your Giscus configuration values from [giscus.app](https://giscus.app) after enabling Discussions on your repository.
+</Callout>
 
 <Callout variant="warning">
 **Important:** API keys like `BREVO_API_KEY` must be set as **Secret** (not Text) in Cloudflare Pages. This ensures they're encrypted and not exposed in logs or build outputs. Only set them as Text if they're truly public values (like `PUBLIC_*` variables that are meant to be exposed to the browser).

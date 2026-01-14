@@ -1,0 +1,279 @@
+---
+/**
+ * Giscus Comments Component
+ * A clean, GitHub-based comment system using GitHub Discussions
+ * 
+ * Setup:
+ * 1. Enable Discussions on your GitHub repository
+ * 2. Install the Giscus app: https://github.com/apps/giscus
+ * 3. Get your config from: https://giscus.app
+ * 4. Set environment variables (see consts.ts)
+ */
+
+interface Props {
+  /** Unique identifier for the discussion (usually the post slug) */
+  identifier?: string
+  /** Title shown in the discussion */
+  title?: string
+}
+
+const { identifier, title } = Astro.props
+
+// Get Giscus configuration from environment variables
+const giscusConfig = {
+  repo: import.meta.env.PUBLIC_GISCUS_REPO || '',
+  repoId: import.meta.env.PUBLIC_GISCUS_REPO_ID || '',
+  category: import.meta.env.PUBLIC_GISCUS_CATEGORY || 'Blog Comments',
+  categoryId: import.meta.env.PUBLIC_GISCUS_CATEGORY_ID || '',
+}
+
+// Check if Giscus is configured
+const isConfigured = giscusConfig.repo && giscusConfig.repoId && giscusConfig.categoryId
+
+// Use pathname for mapping, with optional title fallback
+const mapping = identifier || Astro.url.pathname
+---
+
+{isConfigured ? (
+  <section
+    id="giscus-section"
+    class="mt-12"
+    aria-label="Comments section"
+  >
+    <div id="giscus-container" class="min-h-[200px]">
+      <!-- Loading indicator -->
+      <div
+        id="giscus-loading"
+        class="flex items-center justify-center py-8 text-sm text-muted-foreground"
+        aria-live="polite"
+      >
+        <span>Loading comments...</span>
+      </div>
+    </div>
+  </section>
+
+  <script
+    is:inline
+    define:vars={{
+      giscusRepo: giscusConfig.repo,
+      giscusRepoId: giscusConfig.repoId,
+      giscusCategory: giscusConfig.category,
+      giscusCategoryId: giscusConfig.categoryId,
+      giscusMapping: mapping,
+      giscusTitle: title || '',
+    }}
+  >
+    (function() {
+      'use strict'
+
+      let isLoaded = false
+      let isLoading = false
+
+      const container = document.getElementById('giscus-container')
+      const loadingIndicator = document.getElementById('giscus-loading')
+
+      if (!container) return
+
+      // Get current theme (light or dark)
+      const getTheme = () => {
+        const isDark = document.documentElement.classList.contains('dark')
+        return isDark ? 'dark' : 'light'
+      }
+
+      // Hide loading indicator
+      const hideLoading = () => {
+        if (loadingIndicator) {
+          loadingIndicator.style.display = 'none'
+        }
+      }
+
+      // Show error message
+      const showError = (message) => {
+        if (loadingIndicator) {
+          loadingIndicator.innerHTML = `<span class="text-muted-foreground">${message}</span>`
+          loadingIndicator.setAttribute('role', 'alert')
+        }
+      }
+
+      // Create Giscus script element
+      const createGiscusScript = () => {
+        const script = document.createElement('script')
+        script.src = 'https://giscus.app/client.js'
+        script.async = true
+        script.crossOrigin = 'anonymous'
+        
+        // Giscus configuration attributes
+        script.setAttribute('data-repo', giscusRepo)
+        script.setAttribute('data-repo-id', giscusRepoId)
+        script.setAttribute('data-category', giscusCategory)
+        script.setAttribute('data-category-id', giscusCategoryId)
+        script.setAttribute('data-mapping', 'specific')
+        script.setAttribute('data-term', giscusMapping)
+        script.setAttribute('data-strict', '0')
+        script.setAttribute('data-reactions-enabled', '1')
+        script.setAttribute('data-emit-metadata', '0')
+        script.setAttribute('data-input-position', 'top')
+        script.setAttribute('data-theme', getTheme())
+        script.setAttribute('data-lang', 'en')
+        script.setAttribute('data-loading', 'lazy')
+        
+        return script
+      }
+
+      // Load Giscus
+      const loadGiscus = () => {
+        if (isLoading || isLoaded) return
+        
+        isLoading = true
+
+        try {
+          // Remove any existing Giscus elements
+          const existingScript = container.querySelector('script[src*="giscus"]')
+          const existingFrame = container.querySelector('.giscus')
+          if (existingScript) existingScript.remove()
+          if (existingFrame) existingFrame.remove()
+
+          // Create and append the Giscus script
+          const script = createGiscusScript()
+          
+          script.onload = () => {
+            isLoaded = true
+            hideLoading()
+            isLoading = false
+          }
+
+          script.onerror = () => {
+            isLoading = false
+            showError('Unable to load comments. Please try again later.')
+          }
+
+          container.appendChild(script)
+
+          // Fallback: hide loading after a delay if Giscus loads but doesn't trigger onload
+          setTimeout(() => {
+            if (container.querySelector('.giscus')) {
+              hideLoading()
+              isLoaded = true
+              isLoading = false
+            }
+          }, 3000)
+
+        } catch (error) {
+          console.error('Giscus initialization error:', error)
+          showError('Failed to initialize comments.')
+          isLoading = false
+        }
+      }
+
+      // Update Giscus theme when site theme changes
+      const updateGiscusTheme = () => {
+        const iframe = document.querySelector('iframe.giscus-frame')
+        if (iframe) {
+          iframe.contentWindow.postMessage(
+            { giscus: { setConfig: { theme: getTheme() } } },
+            'https://giscus.app'
+          )
+        }
+      }
+
+      // Intersection Observer for lazy loading
+      const initObserver = () => {
+        if (!('IntersectionObserver' in window)) {
+          loadGiscus()
+          return
+        }
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting && !isLoaded && !isLoading) {
+                loadGiscus()
+                observer.disconnect()
+              }
+            })
+          },
+          {
+            rootMargin: '200px',
+            threshold: 0.1,
+          }
+        )
+
+        observer.observe(container)
+      }
+
+      // Initialize on page load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initObserver)
+      } else {
+        initObserver()
+      }
+
+      // Handle theme changes
+      const themeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+          if (mutation.attributeName === 'class') {
+            updateGiscusTheme()
+          }
+        })
+      })
+
+      themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['class'],
+      })
+
+      // Handle Astro view transitions
+      document.addEventListener('astro:page-load', () => {
+        isLoaded = false
+        isLoading = false
+        if (loadingIndicator) {
+          loadingIndicator.style.display = 'flex'
+          loadingIndicator.innerHTML = '<span>Loading comments...</span>'
+        }
+        // Clear container and reinitialize
+        const existingFrame = container?.querySelector('.giscus')
+        const existingScript = container?.querySelector('script[src*="giscus"]')
+        if (existingFrame) existingFrame.remove()
+        if (existingScript) existingScript.remove()
+        setTimeout(initObserver, 100)
+      })
+
+      document.addEventListener('astro:after-swap', () => {
+        isLoaded = false
+        isLoading = false
+        if (loadingIndicator) {
+          loadingIndicator.style.display = 'flex'
+          loadingIndicator.innerHTML = '<span>Loading comments...</span>'
+        }
+        setTimeout(initObserver, 100)
+      })
+    })()
+  </script>
+) : (
+  <!-- Show message when Giscus is not configured -->
+  <section
+    id="giscus-section"
+    class="mt-12"
+    aria-label="Comments section"
+  >
+    <div class="flex items-center justify-center py-8 text-sm text-muted-foreground">
+      <span>Comments are not configured. Set up Giscus in your environment variables.</span>
+    </div>
+  </section>
+)}
+
+<noscript>
+  <div class="mt-12 rounded-lg border bg-muted/50 p-6 text-center text-sm text-muted-foreground">
+    <p>
+      Please enable JavaScript to view the comments powered by{' '}
+      <a
+        href="https://giscus.app"
+        class="underline hover:text-foreground"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        Giscus
+      </a>.
+    </p>
+  </div>
+</noscript>
