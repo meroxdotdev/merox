@@ -54,7 +54,7 @@ const websiteSchema = {
 }
 ---
 
-<Layout class="max-w-4xl" transition:persist="home-layout">
+<Layout class="max-w-4xl" contentPadding="pb-12" transition:persist="home-layout">
   <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true} />
 
   <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
@@ -143,7 +143,7 @@ const websiteSchema = {
           <BlogCard entry={post} variant="featured" />
         ))}
       </div>
-      <div class="mt-6 flex justify-center">
+      <div class="mt-12 flex justify-center">
         <Link href="/blog" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'w-auto h-12' })}>
           Show more
         </Link>
