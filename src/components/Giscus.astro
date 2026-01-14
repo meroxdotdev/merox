@@ -76,8 +76,8 @@ const mapping = identifier || Astro.url.pathname
 
       // Get current theme (light or dark)
       const getTheme = () => {
-        const isDark = document.documentElement.classList.contains('dark')
-        return isDark ? 'dark' : 'light'
+        const theme = document.documentElement.getAttribute('data-theme')
+        return theme === 'dark' ? 'dark' : 'light'
       }
 
       // Hide loading indicator
@@ -211,7 +211,7 @@ const mapping = identifier || Astro.url.pathname
       // Handle theme changes
       const themeObserver = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
-          if (mutation.attributeName === 'class') {
+          if (mutation.attributeName === 'data-theme') {
             updateGiscusTheme()
           }
         })
@@ -219,7 +219,14 @@ const mapping = identifier || Astro.url.pathname
 
       themeObserver.observe(document.documentElement, {
         attributes: true,
-        attributeFilter: ['class'],
+        attributeFilter: ['data-theme'],
+      })
+
+      // Also listen to custom theme-change event
+      window.addEventListener('theme-change', (event) => {
+        if (event.detail && event.detail.theme) {
+          updateGiscusTheme()
+        }
       })
 
       // Handle Astro view transitions
