@@ -1,24 +1,17 @@
 ---
+import BlogCard from '@/components/BlogCard.astro'
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
 import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
-import { getRecentPosts, getCombinedReadingTime } from '@/lib/data-utils'
-import { cn, formatDate, getTagVariant } from '@/lib/utils'
+import { getRecentPosts } from '@/lib/data-utils'
 import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
 import type { SocialLink } from '@/types'
 
 let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
-let postsWithReadingTime: Array<Awaited<ReturnType<typeof getRecentPosts>>[0] & { readingTime: string }> = []
 try {
   latestPosts = await getRecentPosts(3)
-  postsWithReadingTime = await Promise.all(
-    latestPosts.map(async (post) => ({
-      ...post,
-      readingTime: await getCombinedReadingTime(post.id)
-    }))
-  )
 } catch (error) {
   console.error('Error fetching recent posts:', error)
 }
@@ -137,7 +130,7 @@ const websiteSchema = {
     </div>
   </section>
 
-  {postsWithReadingTime && postsWithReadingTime.length > 0 && (
+  {latestPosts && latestPosts.length > 0 && (
     <section class="mt-8 pt-8 relative">
       <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent"></div>
       <div class="mb-6">
@@ -145,50 +138,13 @@ const websiteSchema = {
           Latest <span class="text-primary">Insights</span>
         </h2>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {postsWithReadingTime.map((post) => (
-          <Link
-            href={`/${post.collection}/${post.id}`}
-            class="group block p-[1.575rem] rounded-lg border border-border/50 hover:border-border bg-card/50 hover:bg-card transition-all duration-200 hover:shadow-sm h-full flex flex-col"
-          >
-            <div class="space-y-[1.125rem] flex-1 flex flex-col">
-              <h3 class="text-sm font-bold leading-tight text-foreground group-hover:text-primary transition-colors line-clamp-2">
-                {post.data.title}
-              </h3>
-              <p class="text-xs text-muted-foreground/70 leading-relaxed line-clamp-4 flex-1">
-                {post.data.description}
-              </p>
-              {post.data.tags && post.data.tags.length > 0 && (
-                <div class="flex flex-wrap items-center gap-1.5">
-                  {post.data.tags.slice(0, 2).map((tag) => {
-                    const { className } = getTagVariant(tag)
-                    return (
-                      <span class={cn(
-                        "px-1.5 py-0.5 rounded-md bg-muted/50 text-[10px] tracking-wide transition-colors",
-                        className
-                      )}>
-                        {tag}
-                      </span>
-                    )
-                  })}
-                </div>
-              )}
-              <div class="flex items-center gap-2 text-xs text-muted-foreground/50 pt-1">
-                <time datetime={post.data.date.toISOString()}>
-                  {formatDate(post.data.date)}
-                </time>
-                <span aria-hidden="true">·</span>
-                <span class="flex items-center gap-1">
-                  <Icon name="lucide:clock" class="size-3" />
-                  {post.readingTime}
-                </span>
-              </div>
-            </div>
-          </Link>
+      <div class="flex flex-col gap-5">
+        {latestPosts.map((post) => (
+          <BlogCard entry={post} variant="featured" />
         ))}
       </div>
       <div class="mt-6 flex justify-center">
-        <Link href="/blog" class={buttonVariants({ variant: 'outline', size: 'default', class: 'w-auto' })}>
+        <Link href="/blog" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'w-auto h-12' })}>
           Show more
         </Link>
       </div>

@@ -11,50 +11,90 @@ import Link from './Link.astro'
 
 interface Props {
   entry: CollectionEntry<'blog'>
+  variant?: 'default' | 'featured'
 }
 
-const { entry } = Astro.props
+const { entry, variant = 'default' } = Astro.props
 const formattedDate = formatDate(entry.data.date)
 const readTime = await getCombinedReadingTime(entry.id)
 const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
+
+const isFeatured = variant === 'featured'
 ---
 
 <Link
   href={`/${entry.collection}/${entry.id}`}
-  class="group block py-6 transition-all duration-300 hover:bg-muted/40 -mx-4 px-4 rounded-xl border border-transparent hover:border-border/50 shadow-none hover:shadow-sm"
+  class={cn(
+    "group block transition-all duration-200 w-full",
+    isFeatured
+      ? "p-6 rounded-lg border border-border/70 hover:border-primary/30 bg-card/80 hover:bg-card hover:shadow-lg hover:-translate-y-0.5"
+      : "py-6 -mx-4 px-4 rounded-xl border border-transparent hover:border-border/50 hover:bg-muted/40 shadow-none hover:shadow-sm transition-all duration-300"
+  )}
 >
-  <div class="flex flex-col gap-3">
-    <div class="space-y-2">
-      <div class="flex items-start justify-between gap-4">
-        <h3 class="text-lg font-bold leading-tight text-foreground/90 group-hover:text-primary transition-colors duration-300">
+  <div class={cn("flex flex-col", isFeatured ? "gap-5" : "gap-3")}>
+    <div class={cn(isFeatured ? "space-y-3" : "space-y-2")}>
+      <div class={cn("flex items-start", isFeatured ? "gap-4" : "justify-between gap-4")}>
+        <h3 class={cn(
+          "font-bold leading-tight text-foreground group-hover:text-primary transition-colors",
+          isFeatured
+            ? "text-xl"
+            : "text-lg text-foreground/90 duration-300"
+        )}>
           {entry.data.title}
         </h3>
-        <Icon 
-          name="lucide:arrow-up-right" 
-          class="size-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0 mt-1" 
-        />
+        {!isFeatured && (
+          <Icon 
+            name="lucide:arrow-up-right" 
+            class="size-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-300 shrink-0 mt-1" 
+          />
+        )}
       </div>
       
-      <p class="text-muted-foreground/80 text-sm leading-relaxed line-clamp-2">
+      <p class={cn(
+        "leading-relaxed text-muted-foreground transition-colors",
+        isFeatured
+          ? "text-base text-muted-foreground/90"
+          : "text-sm text-muted-foreground/80 line-clamp-2"
+      )}>
         {entry.data.description}
       </p>
     </div>
 
-    <div class="flex flex-wrap items-center gap-x-3 gap-y-2 text-[11px] font-medium text-muted-foreground/60">
-      <time datetime={entry.data.date.toISOString()} class="flex items-center gap-1.5 uppercase tracking-wider">
-        <Icon name="lucide:calendar" class="size-3" />
-        {formattedDate}
-      </time>
+    <div class={cn(
+      "flex flex-wrap items-center",
+      isFeatured
+        ? "gap-3 pt-2 border-t border-border/40"
+        : "gap-x-3 gap-y-2"
+    )}>
+      <div class={cn(
+        "flex items-center",
+        isFeatured
+          ? "text-sm text-muted-foreground/90 gap-3"
+          : "text-[11px] font-medium text-muted-foreground/60 gap-1.5 uppercase tracking-wider"
+      )}>
+        <time datetime={entry.data.date.toISOString()} class={cn(
+          "flex items-center",
+          isFeatured ? "gap-1.5" : "gap-1.5"
+        )}>
+          {!isFeatured && <Icon name="lucide:calendar" class="size-3" />}
+          {formattedDate}
+        </time>
 
-      <span class="text-muted-foreground/20" aria-hidden="true">/</span>
+        <span class={cn(
+          "aria-hidden",
+          isFeatured ? "text-muted-foreground/50" : "text-muted-foreground/20"
+        )}>
+          {isFeatured ? "·" : "/"}
+        </span>
 
-      <span class="flex items-center gap-1.5">
-        <Icon name="lucide:clock" class="size-3" />
-        {readTime}
-      </span>
+        <span class={cn("flex items-center", isFeatured ? "gap-1.5" : "gap-1.5")}>
+          <Icon name="lucide:clock" class={isFeatured ? "size-4" : "size-3"} />
+          {readTime}
+        </span>
+      </div>
 
       {
-        subpostCount > 0 && (
+        subpostCount > 0 && !isFeatured && (
           <>
             <span class="text-muted-foreground/20" aria-hidden="true">/</span>
             <span class="flex items-center gap-1.5">
@@ -68,13 +108,16 @@ const subpostCount = !isSubpost(entry.id) ? await getSubpostCount(entry.id) : 0
       {
         entry.data.tags && entry.data.tags.length > 0 && (
           <>
-            <span class="text-muted-foreground/20" aria-hidden="true">/</span>
-            <div class="flex flex-wrap items-center gap-1.5">
+            {!isFeatured && <span class="text-muted-foreground/20" aria-hidden="true">/</span>}
+            <div class={cn("flex flex-wrap items-center", isFeatured ? "gap-2" : "gap-1.5")}>
               {entry.data.tags.slice(0, 2).map((tag) => {
                 const { className } = getTagVariant(tag)
                 return (
                   <span class={cn(
-                    "px-1.5 py-0.5 rounded-md bg-muted/50 text-[10px] uppercase tracking-wide transition-colors",
+                    "rounded-md tracking-wide transition-colors",
+                    isFeatured
+                      ? "px-2.5 py-1.5 bg-muted/70 text-xs font-semibold"
+                      : "px-1.5 py-0.5 bg-muted/50 text-[10px] uppercase",
                     className
                   )}>
                     {tag}
