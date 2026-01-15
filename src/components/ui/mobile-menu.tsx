@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { NAV_LINKS } from '@/consts'
-import { Menu, ExternalLink, Palette, Sun, Moon, Check } from 'lucide-react'
+import { Menu, ExternalLink, Palette, Sun, Moon, Check, Newspaper } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
   COLOR_PALETTES,
@@ -124,6 +124,21 @@ const MobileMenu = () => {
               </DropdownMenuItem>
             )
           })}
+        </div>
+        
+        <DropdownMenuSeparator className="my-2 bg-border/40" />
+        
+        <div className="px-2 py-1">
+          <DropdownMenuItem asChild>
+            <a
+              href="/newsletter/"
+              className="flex items-center gap-3 w-full px-4 py-3 text-base font-medium transition-all rounded-xl text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+              onClick={() => setIsOpen(false)}
+            >
+              <Newspaper className="h-4 w-4" />
+              <span>Newsletter</span>
+            </a>
+          </DropdownMenuItem>
         </div>
         
         <DropdownMenuSeparator className="my-2 bg-border/40" />

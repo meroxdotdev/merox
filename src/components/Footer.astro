@@ -22,6 +22,8 @@ const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
           <span class="text-border/50">·</span>
           <Link href="/projects/" class="hover:text-foreground transition-colors">Projects</Link>
           <span class="text-border/50">·</span>
+          <Link href="/tags/" class="hover:text-foreground transition-colors">Tags</Link>
+          <span class="text-border/50">·</span>
           <Link href="/about/" class="hover:text-foreground transition-colors">About</Link>
         </nav>
       </div>
@@ -51,6 +53,14 @@ const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
               />
             </Link>
           ))}
+          <Link
+            href="/newsletter/"
+            aria-label="Newsletter"
+            title="Newsletter"
+            class="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <Icon name="lucide:newspaper" class="size-3.5" />
+          </Link>
           <Link
             href="/rss.xml"
             aria-label="RSS Feed"

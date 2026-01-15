@@ -131,6 +131,13 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
         <!-- Quick Links & Tags -->
         <div class="flex items-center gap-4">
           <Link
+            href="/newsletter/"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border/60 bg-background text-foreground text-xs font-medium transition-all duration-200 hover:bg-muted/50"
+          >
+            <Icon name="lucide:newspaper" class="w-3.5 h-3.5" />
+            <span>Newsletter</span>
+          </Link>
+          <Link
             href="/rss.xml"
             class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-border/60 bg-background text-foreground text-xs font-medium transition-all duration-200 hover:bg-muted/50"
           >
@@ -197,20 +204,29 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
         </a>
 
         <!-- Quick Actions -->
-        <div class="flex gap-2">
-          <Link
-            href="/rss.xml"
-            class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md border border-border/60 bg-background text-foreground text-xs font-medium transition-all duration-200 hover:bg-muted/50"
-          >
-            <Icon name="lucide:rss" class="w-3.5 h-3.5" />
-            <span>RSS</span>
-          </Link>
+        <div class="flex flex-col gap-2">
+          <div class="flex gap-2">
+            <Link
+              href="/newsletter/"
+              class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md border border-border/60 bg-background text-foreground text-xs font-medium transition-all duration-200 hover:bg-muted/50"
+            >
+              <Icon name="lucide:newspaper" class="w-3.5 h-3.5" />
+              <span>Newsletter</span>
+            </Link>
+            <Link
+              href="/rss.xml"
+              class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md border border-border/60 bg-background text-foreground text-xs font-medium transition-all duration-200 hover:bg-muted/50"
+            >
+              <Icon name="lucide:rss" class="w-3.5 h-3.5" />
+              <span>RSS</span>
+            </Link>
+          </div>
           <a
             href="mailto:hello@merox.dev?subject=Advertising Inquiry"
-            class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md border border-border/60 bg-background text-foreground text-xs font-medium transition-all duration-200 hover:bg-muted/50"
+            class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-md border border-border/60 bg-background text-foreground text-xs font-medium transition-all duration-200 hover:bg-muted/50"
           >
-            <Icon name="lucide:mail" class="w-3.5 h-3.5" />
-            <span>Ads</span>
+            <Icon name="lucide:megaphone" class="w-3.5 h-3.5" />
+            <span>Advertise</span>
           </a>
         </div>
 
