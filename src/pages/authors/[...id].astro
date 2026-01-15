@@ -18,7 +18,7 @@ const { author } = Astro.props
 const authorPosts = await getPostsByAuthor(author.id)
 ---
 
-<Layout class="max-w-3xl">
+<Layout class="max-w-4xl">
   <PageHead
     slot="head"
     title={`${author.data.name} (Author)`}

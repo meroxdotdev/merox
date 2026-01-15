@@ -89,7 +89,7 @@ try {
 }
 ---
 
-<Layout hideFloatingSidebar={hasChildPosts || isCurrentSubpost}>
+<Layout hideFloatingSidebar={hasChildPosts || isCurrentSubpost} class="px-0">
   <PostHead slot="head" post={post} />
   {
     (hasChildPosts || isCurrentSubpost) && (
@@ -109,9 +109,9 @@ try {
   }
 
   <section
-    class="grid grid-cols-[minmax(0px,1fr)_min(calc(var(--breakpoint-md)-2rem),100%)_minmax(0px,1fr)] gap-y-6"
+    class="grid grid-cols-[minmax(0px,1fr)_min(56rem,100%)_minmax(0px,1fr)] gap-y-6"
   >
-    <div class="col-start-2">
+    <div class="col-start-2 max-w-4xl mx-auto px-4 w-full">
       <Breadcrumbs
         items={[
           { href: '/blog', label: 'Blog', icon: 'lucide:library-big' },
@@ -152,7 +152,7 @@ try {
       )
     } */}
 
-    <section class="col-start-2 flex flex-col gap-y-6">
+    <section class="col-start-2 max-w-4xl mx-auto px-4 w-full flex flex-col gap-y-6">
       <div class="flex flex-col gap-5">
         {/* Title */}
         <h1
@@ -240,7 +240,7 @@ try {
       )
     }
 
-    <article class="prose col-start-2 max-w-none">
+    <article class="prose col-start-2 max-w-4xl mx-auto px-4 w-full">
       <Content />
     </article>
 
@@ -257,7 +257,7 @@ try {
 
     {
       /* Social sharing buttons - show on all posts */
-      <div class="col-start-2 mt-8">
+      <div class="col-start-2 max-w-4xl mx-auto px-4 w-full mt-8">
         <SocialShare
           title={post.data.title}
           url={new URL(`/blog/${currentPostId}/`, SITE.href).href}
@@ -268,7 +268,7 @@ try {
 
     {
       /* Post reactions - show on all posts */
-      <div class="col-start-2 mt-8">
+      <div class="col-start-2 max-w-4xl mx-auto px-4 w-full mt-8">
         <PostReactions postId={currentPostId} />
       </div>
     }
@@ -276,7 +276,7 @@ try {
     {
       /* Related posts - show on main posts only */
       !isCurrentSubpost && (
-        <div class="col-start-2 mt-12">
+        <div class="col-start-2 max-w-4xl mx-auto px-4 w-full mt-12">
           <RelatedPosts currentPostId={currentPostId} limit={3} />
         </div>
       )
@@ -285,7 +285,7 @@ try {
     {
       /* Only show Giscus comments on main posts, not subposts */
       !isCurrentSubpost && (
-        <div class="col-start-2 mt-12">
+        <div class="col-start-2 max-w-4xl mx-auto px-4 w-full mt-12">
           <Giscus
             identifier={`blog/${currentPostId}`}
             title={post.data.title}
