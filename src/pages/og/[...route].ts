@@ -22,7 +22,7 @@ export const { getStaticPaths, GET } = OGImageRoute({
         // Use Geist (sans-serif) to match site design, not Geist Mono
         families: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         // Use Medium weight (500) to match site headings (font-medium)
-        weight: 'wt500',
+        weight: 'Medium',
         size: 48,
         // Foreground color from dark mode theme: hsl(210 20% 85%) ≈ rgb(204, 211, 220)
         // Using white for better contrast on dark background
@@ -32,7 +32,7 @@ export const { getStaticPaths, GET } = OGImageRoute({
         // Use Geist for description to match site typography
         families: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         // Normal weight (400) for body text
-        weight: 'normal',
+        weight: 'Normal',
         size: 28,
         // Muted foreground from dark mode theme: hsl(210 15% 65%) ≈ rgb(155, 163, 175)
         color: [155, 163, 175],
