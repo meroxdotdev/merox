@@ -1,91 +1,164 @@
 ---
-import { SOCIAL_LINKS, NAV_LINKS } from '@/consts'
+import { SOCIAL_LINKS, NAV_LINKS, SITE } from '@/consts'
 import SocialIcons from './SocialIcons.astro'
 import Link from '@/components/Link.astro'
 import Newsletter from './react/Newsletter'
 import { ErrorBoundary } from './react/ErrorBoundary'
-import ThemePromo from './react/ThemePromo'
 import { Icon } from 'astro-icon/components'
+import { cn } from '@/lib/utils'
+
+const isExternalLink = (href: string) => href.startsWith('http')
 ---
 
-<footer class="bg-background/80 border-t border-border/50 backdrop-blur-md">
-  <div class="mx-auto max-w-3xl px-4 py-12 md:py-16">
-    <div class="flex flex-col gap-12">
-      <!-- Newsletter Section -->
-      <div class="space-y-4">
-        <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground text-center">
-          Stay <span class="text-primary">Updated</span>.
-        </h2>
-        <p class="text-sm text-muted-foreground leading-relaxed text-center max-w-xl mx-auto">
-          Get the latest posts about infrastructure, Kubernetes, and DevOps delivered to your inbox.
-        </p>
-        <ErrorBoundary client:load>
-          <Newsletter client:load />
-        </ErrorBoundary>
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    .footer-link-underline,
+    .footer-icon-transition,
+    .footer-brand-transition {
+      transition: none !important;
+    }
+  }
+</style>
+
+<footer class="relative border-t border-border/50 bg-gradient-to-b from-background to-background/95" role="contentinfo">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6">
+    <!-- Newsletter Section - Modern CTA -->
+    <section class="py-12 md:py-16" aria-labelledby="newsletter-heading">
+      <div class="mx-auto max-w-xl text-center space-y-4">
+        <div class="space-y-2">
+          <h2 id="newsletter-heading" class="text-2xl md:text-3xl font-black tracking-tighter uppercase leading-tight">
+            Stay <span class="text-primary">Connected</span>
+          </h2>
+          <p class="text-sm md:text-base text-muted-foreground leading-relaxed">
+            Get the latest insights on infrastructure, Kubernetes, and DevOps delivered straight to your inbox.
+          </p>
+        </div>
+        <div class="pt-2">
+          <ErrorBoundary client:load>
+            <Newsletter client:load />
+          </ErrorBoundary>
+        </div>
       </div>
+    </section>
 
-      <!-- Main Footer Content -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 border-t border-border/50 pt-12">
-        <!-- Navigation -->
-        <div class="space-y-3">
-          <h4 class="text-sm font-bold text-foreground">Navigation</h4>
-          <nav class="flex flex-col gap-2">
-            {NAV_LINKS.map((item) => {
-              const isExternal = item.href.startsWith('http')
-              const isInsideLink = item.label.toLowerCase() === 'inside'
-              return (
-                <Link 
-                  href={item.href}
-                  external={isExternal}
-                  class={isInsideLink 
-                    ? "text-sm text-primary hover:text-primary/80 capitalize transition-colors flex items-center gap-1.5 group font-medium" 
-                    : "text-sm text-muted-foreground hover:text-primary capitalize transition-colors flex items-center gap-1.5 group"}
-                >
-                  <span>{item.label}</span>
-                  {isExternal && (
-                    <Icon 
-                      name="lucide:external-link" 
-                      class={isInsideLink 
-                        ? "size-3 opacity-80 flex-shrink-0 text-primary group-hover:opacity-100 transition-opacity" 
-                        : "size-3 opacity-70 flex-shrink-0 group-hover:opacity-100 group-hover:text-primary transition-colors"} 
-                      aria-hidden="true"
-                    />
-                  )}
-                </Link>
-              )
-            })}
-          </nav>
+    <!-- Main Footer Grid - Modular Layout -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 pb-12 border-t border-border/40 pt-12">
+      <!-- Brand & Description -->
+      <div class="space-y-4 lg:col-span-2">
+        <div>
+          <Link href="/" class="inline-block group" data-astro-reload aria-label={`${SITE.title} - Home`}>
+            <span class="footer-brand-transition brand-logo group-hover:text-primary transition-colors">
+              {SITE.title}
+            </span>
+          </Link>
         </div>
-
-        <!-- Legal -->
-        <div class="space-y-3">
-          <h4 class="text-sm font-bold text-foreground">Legal</h4>
-          <nav class="flex flex-col gap-2">
-            <Link href="/privacy" class="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" class="text-sm text-muted-foreground hover:text-primary transition-colors">
-              Terms of Service
-            </Link>
-          </nav>
-        </div>
-
-        <!-- Connect -->
-        <div class="space-y-3">
-          <h4 class="text-sm font-bold text-foreground">Connect</h4>
+        <p class="text-sm text-muted-foreground leading-relaxed max-w-md">
+          {SITE.description}
+        </p>
+        <div class="pt-2">
           <SocialIcons links={SOCIAL_LINKS} />
         </div>
       </div>
 
-      <!-- Bottom Section -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-border/50 pt-8 text-sm text-muted-foreground">
-        <div>
-          &copy; 2024&ndash;{new Date().getFullYear()} Merox. All rights reserved.
-        </div>
-        <div class="text-xs flex items-center gap-2">
-          <span>Theme: <a href="https://github.com/meroxdotdev/merox-erudite" target="_blank" rel="noopener noreferrer" class="hover:text-primary transition-colors underline">merox-erudite</a></span>
-          <ThemePromo client:idle className="size-5" />
-        </div>
+      <!-- Navigation -->
+      <div class="space-y-4">
+        <h3 class="text-sm font-bold text-foreground uppercase tracking-wider">
+          Navigation
+        </h3>
+        <nav class="flex flex-col gap-2.5" aria-label="Footer navigation">
+          {NAV_LINKS.map((item) => {
+            const isExternal = isExternalLink(item.href)
+            const isInsideLink = item.label.toLowerCase() === 'inside'
+            return (
+              <Link 
+                href={item.href}
+                external={isExternal}
+                class={cn(
+                  "text-sm text-muted-foreground hover:text-foreground transition-all duration-200 flex items-center gap-1.5 group",
+                  isInsideLink && "text-primary hover:text-primary/80 font-medium"
+                )}
+              >
+                <span class="relative">
+                  {item.label}
+                  <span class="footer-link-underline absolute -bottom-0.5 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full"></span>
+                </span>
+                {isExternal && (
+                  <Icon 
+                    name="lucide:external-link" 
+                    class="footer-icon-transition size-3 opacity-60 group-hover:opacity-100 group-hover:text-primary transition-all" 
+                    aria-hidden="true"
+                  />
+                )}
+              </Link>
+            )
+          })}
+        </nav>
+      </div>
+
+      <!-- Legal & Resources -->
+      <div class="space-y-4">
+        <h3 class="text-sm font-bold text-foreground uppercase tracking-wider">
+          Resources
+        </h3>
+        <nav class="flex flex-col gap-2.5" aria-label="Footer resources">
+          <Link 
+            href="/privacy" 
+            class="text-sm text-muted-foreground hover:text-foreground transition-all duration-200 flex items-center gap-1.5 group"
+          >
+            <span class="relative">
+              Privacy Policy
+              <span class="absolute -bottom-0.5 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full motion-reduce:transition-none"></span>
+            </span>
+          </Link>
+          <Link 
+            href="/terms" 
+            class="text-sm text-muted-foreground hover:text-foreground transition-all duration-200 flex items-center gap-1.5 group"
+          >
+            <span class="relative">
+              Terms of Service
+              <span class="absolute -bottom-0.5 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full motion-reduce:transition-none"></span>
+            </span>
+          </Link>
+          <Link 
+            href="/rss.xml" 
+            class="text-sm text-muted-foreground hover:text-foreground transition-all duration-200 flex items-center gap-1.5 group"
+          >
+            <span class="relative">
+              RSS Feed
+              <span class="absolute -bottom-0.5 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full motion-reduce:transition-none"></span>
+            </span>
+            <Icon 
+              name="lucide:rss" 
+              class="size-3 opacity-60 group-hover:opacity-100 group-hover:text-primary transition-all motion-reduce:transition-none" 
+              aria-hidden="true"
+            />
+          </Link>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Bottom Bar - Brand & Copyright -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 py-6 border-t border-border/40">
+      <div class="text-xs text-muted-foreground">
+        <p>
+          &copy; {new Date().getFullYear()} <span class="font-semibold text-foreground">{SITE.title}</span>. All rights reserved.
+        </p>
+      </div>
+      <div class="flex items-center gap-4 text-xs">
+        <span class="text-muted-foreground">Built with</span>
+        <Link 
+          href="https://github.com/meroxdotdev/merox-erudite" 
+          external={true}
+          class="text-muted-foreground hover:text-primary font-medium transition-colors flex items-center gap-1.5 group"
+          aria-label="View merox-erudite theme on GitHub"
+        >
+          <span>merox-erudite</span>
+          <Icon 
+            name="lucide:external-link" 
+            class="size-3 opacity-60 group-hover:opacity-100 transition-opacity motion-reduce:transition-none" 
+            aria-hidden="true"
+          />
+        </Link>
       </div>
     </div>
   </div>
