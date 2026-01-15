@@ -49,85 +49,169 @@ const personSchema = {
   
   <Breadcrumbs items={[{ label: 'About', icon: 'lucide:user' }]} />
 
-  <section class="flex flex-col gap-12 pb-12">
+  <section class="flex flex-col gap-16 pb-12">
     <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
       <span class="text-primary">About</span>
     </h1>
-    <!-- Header/Hero Section -->
-    <div class="flex flex-col md:flex-row gap-8 items-start">
+    
+    <!-- Header/Hero Section - Apple-level professional layout -->
+    <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
+      <!-- Profile Photo - Left aligned, top-aligned with text -->
       <div class="relative shrink-0">
-        <div class="size-32 md:size-40 rounded-2xl overflow-hidden border border-border shadow-sm">
+        <div class="size-36 md:size-48 rounded-2xl overflow-hidden border border-border/50 shadow-sm bg-muted/30">
           <img
             src="/robert.webp"
             alt="Robert Melcher"
             width="1492"
             height="1864"
-            class="object-cover w-full h-full transition-transform duration-500 hover:scale-105"
+            class="object-cover w-full h-full transition-transform duration-300 hover:scale-[1.02]"
             loading="eager"
           />
         </div>
       </div>
       
-      <div class="flex-1 space-y-4">
-        <div class="space-y-3">
-          <div>
-            <h1 class="text-4xl font-bold tracking-tight text-foreground">Robert Melcher</h1>
-            <p class="text-primary font-mono text-sm flex items-center gap-1.5 mt-1">
-              <Icon name="lucide:terminal" class="size-4" />
-              <span>@merox</span>
-            </p>
-            <div class="flex items-center gap-1.5 mt-2 text-xs text-muted-foreground">
-              <Icon name="lucide:map-pin" class="size-3.5" />
-              <span>Timișoara, Romania</span>
-              <span class="text-sm">🇷🇴</span>
+      <!-- Content - Left-aligned, generous spacing -->
+      <div class="flex-1 min-w-0">
+        <div class="space-y-6">
+          <!-- Name & Meta -->
+          <div class="space-y-4">
+            <div>
+              <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
+                Robert Melcher
+              </h2>
+              <div class="mt-2">
+                <div class="relative inline-flex items-center gap-1.5">
+                  <p class="text-primary font-mono text-sm flex items-center gap-1.5">
+                    <Icon name="lucide:terminal" class="size-4" />
+                    <span>@merox</span>
+                  </p>
+                  <div class="relative group" id="username-origin-tooltip">
+                    <button
+                      type="button"
+                      id="username-origin-btn"
+                      class="text-muted-foreground/50 md:text-muted-foreground/40 hover:text-muted-foreground/70 active:text-muted-foreground/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-full p-1 md:p-0.5 bg-muted/30 md:bg-transparent"
+                      aria-label="Username origin"
+                      aria-expanded="false"
+                    >
+                      <Icon name="lucide:info" class="size-4 md:size-3.5" />
+                    </button>
+                    <!-- Tooltip -->
+                    <div 
+                      id="username-origin-content"
+                      class="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none group-hover:pointer-events-auto data-[open]:opacity-100 data-[open]:visible data-[open]:pointer-events-auto"
+                      role="tooltip"
+                    >
+                      <div class="bg-popover border border-border/60 rounded-lg shadow-xl p-4 text-xs space-y-2 backdrop-blur-sm">
+                        <p class="font-semibold text-foreground">Username origin</p>
+                        <p class="text-muted-foreground leading-relaxed">
+                          Combined <span class="font-mono text-foreground">me</span> (Melcher) + <span class="font-mono text-foreground">ro</span> (Robert) + <span class="font-mono text-foreground">x</span> from <span class="font-mono text-foreground">mer0x39</span>. <span class="font-mono text-foreground">0x39</span> (hex) = 57, representing birth date 5/7.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <script>
+                (function() {
+                  const btn = document.getElementById('username-origin-btn');
+                  const tooltip = document.getElementById('username-origin-content');
+                  const container = document.getElementById('username-origin-tooltip');
+                  
+                  if (!btn || !tooltip) return;
+
+                  let isOpen = false;
+
+                  function toggleTooltip() {
+                    isOpen = !isOpen;
+                    tooltip.setAttribute('data-open', isOpen ? 'true' : '');
+                    btn.setAttribute('aria-expanded', isOpen.toString());
+                  }
+
+                  function closeTooltip() {
+                    if (isOpen) {
+                      isOpen = false;
+                      tooltip.removeAttribute('data-open');
+                      btn.setAttribute('aria-expanded', 'false');
+                    }
+                  }
+
+                  // Click handler for mobile
+                  btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleTooltip();
+                  });
+
+                  // Close on outside click
+                  document.addEventListener('click', (e) => {
+                    if (!container.contains(e.target)) {
+                      closeTooltip();
+                    }
+                  });
+
+                  // Close on escape key
+                  document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && isOpen) {
+                      closeTooltip();
+                    }
+                  });
+                })();
+              </script>
+              <div class="flex items-center gap-1.5 mt-3 text-sm text-muted-foreground">
+                <Icon name="lucide:map-pin" class="size-4" />
+                <span>Timișoara, Romania</span>
+                <span class="text-base">🇷🇴</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="prose prose-sm dark:prose-invert max-w-none">
-          <p class="text-lg text-muted-foreground leading-relaxed">
-            I'm a seasoned <strong class="text-foreground">HPC System Administrator</strong> currently building large-scale infrastructure at <strong class="text-foreground">Forvia</strong>. With a background in cybersecurity engineering and deep roots in Linux systems, I bridge the gap between performance and security.
-          </p>
-          <p class="text-muted-foreground leading-relaxed">
-            I specialize in <strong class="text-foreground font-medium">HPC clusters</strong>, <strong class="text-foreground font-medium">Linux infrastructure</strong>, and <strong class="text-foreground font-medium">network security</strong>. My professional journey is driven by a simple philosophy: <strong class="text-foreground font-medium italic">Build things that scale, but keep them simple enough to understand.</strong>
-          </p>
-        </div>
+          <!-- Bio Text - Left-aligned, generous line height -->
+          <div class="space-y-4">
+            <p class="text-base md:text-lg text-muted-foreground leading-relaxed">
+              I'm a seasoned <strong class="text-foreground font-semibold">HPC System Administrator</strong> currently building large-scale infrastructure at <strong class="text-foreground font-semibold">Forvia</strong>. With a background in cybersecurity engineering and deep roots in Linux systems, I bridge the gap between performance and security.
+            </p>
+            <p class="text-base text-muted-foreground leading-relaxed">
+              I specialize in <strong class="text-foreground font-medium">HPC clusters</strong>, <strong class="text-foreground font-medium">Linux infrastructure</strong>, and <strong class="text-foreground font-medium">network security</strong>. My professional journey is driven by a simple philosophy: <strong class="text-foreground font-medium italic">Build things that scale, but keep them simple enough to understand.</strong>
+            </p>
+          </div>
 
-        <div class="flex flex-wrap gap-3 pt-2">
-          <Link 
-            href="/robert-melcher-cv.pdf" 
-            external 
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
-          >
-            <Icon name="lucide:file-text" class="size-4" />
-            <span>Download CV</span>
-          </Link>
-          <Link 
-            href="https://github.com/meroxdotdev" 
-            external 
-            class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-border bg-card text-foreground text-sm font-semibold hover:bg-muted transition-colors"
-          >
-            <Icon name="lucide:github" class="size-4" />
-            <span>GitHub</span>
-          </Link>
+          <!-- Actions - Consistent spacing -->
+          <div class="flex flex-wrap gap-3 pt-2">
+            <Link 
+              href="/robert-melcher-cv.pdf" 
+              external 
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
+            >
+              <Icon name="lucide:file-text" class="size-4" />
+              <span>Download CV</span>
+            </Link>
+            <Link 
+              href="https://github.com/meroxdotdev" 
+              external 
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-card text-foreground text-sm font-semibold hover:bg-muted transition-colors"
+            >
+              <Icon name="lucide:github" class="size-4" />
+              <span>GitHub</span>
+            </Link>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Homelab Section -->
-    <div class="space-y-4 pt-8 border-t border-border">
-      <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground flex items-center gap-2">
+    <!-- Homelab Section - Consistent spacing and hierarchy -->
+    <div class="space-y-5 pt-12 border-t border-border/50">
+      <h2 class="text-2xl md:text-3xl font-black tracking-tighter uppercase leading-none text-foreground flex items-center gap-3">
         <Icon name="lucide:home" class="size-5 text-primary" />
         <span>Personal <span class="text-primary">Passion</span></span>
       </h2>
-      <div class="prose prose-sm dark:prose-invert max-w-none">
-        <p class="text-muted-foreground leading-relaxed">
-          Beyond my professional roles, my <strong class="text-foreground">homelab</strong> is where I experiment with emerging technologies. It serves as a sandbox where "Infrastructure as Code" principles meet real-world experimentation, allowing me to refine automation and security strategies before they reach production.
+      <div class="space-y-4">
+        <p class="text-base text-muted-foreground leading-relaxed max-w-3xl">
+          Beyond my professional roles, my <strong class="text-foreground font-medium">homelab</strong> is where I experiment with emerging technologies. It serves as a sandbox where "Infrastructure as Code" principles meet real-world experimentation, allowing me to refine automation and security strategies before they reach production.
         </p>
-        <div class="pt-2">
-          <Link href="/blog/homelab-tour" class="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+        <div>
+          <Link href="/blog/homelab-tour" class="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary/80 transition-colors">
             <span>Explore the Homelab Tour</span>
-            <Icon name="lucide:arrow-right" class="size-3.5" />
+            <Icon name="lucide:arrow-right" class="size-4" />
           </Link>
         </div>
       </div>
