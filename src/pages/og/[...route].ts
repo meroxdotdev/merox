@@ -19,20 +19,32 @@ export const { getStaticPaths, GET } = OGImageRoute({
     },
     font: {
       title: {
-        families: ['Geist Mono'],
-        weight: 'Bold',
-        size: 48, // Redus de la 60
+        // Use Geist (sans-serif) to match site design, not Geist Mono
+        families: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        // Use Medium weight (500) to match site headings (font-medium)
+        weight: 'wt500',
+        size: 48,
+        // Foreground color from dark mode theme: hsl(210 20% 85%) ≈ rgb(204, 211, 220)
+        // Using white for better contrast on dark background
         color: [255, 255, 255],
       },
       description: {
-        families: ['Geist Mono'],
-        weight: 'Normal',
-        size: 28, // Redus de la 36
-        color: [156, 163, 175],
+        // Use Geist for description to match site typography
+        families: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        // Normal weight (400) for body text
+        weight: 'normal',
+        size: 28,
+        // Muted foreground from dark mode theme: hsl(210 15% 65%) ≈ rgb(155, 163, 175)
+        color: [155, 163, 175],
       },
     },
-    fonts: ['./public/fonts/GeistMonoVF.woff2'],
-    bgGradient: [[24, 24, 27]],
+    // Load both fonts for fallback support
+    fonts: [
+      './public/fonts/GeistVF.woff2',
+      './public/fonts/GeistMonoVF.woff2',
+    ],
+    // Background from dark mode theme: hsl(210 20% 10%) ≈ rgb(20, 26, 33)
+    bgGradient: [[20, 26, 33]],
     padding: 80,
   }),
 })
