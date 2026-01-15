@@ -3,7 +3,6 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import Giscus from '@/components/Giscus.astro'
 import Link from '@/components/Link.astro'
 import PostHead from '@/components/PostHead.astro'
-import PostNavigation from '@/components/PostNavigation.astro'
 import PostReactions from '@/components/PostReactions.astro'
 import RelatedPosts from '@/components/RelatedPosts.astro'
 import SocialShare from '@/components/SocialShare.astro'
@@ -16,7 +15,6 @@ import { Button } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { SITE } from '@/consts'
 import {
-  getAdjacentPosts,
   getAllPostsAndSubposts,
   getCombinedReadingTime,
   getParentId,
@@ -68,8 +66,7 @@ try {
 
 const isCurrentSubpost = isSubpost(currentPostId)
 
-// Error handling for navigation and metadata
-let navigation: Awaited<ReturnType<typeof getAdjacentPosts>> = { newer: null, older: null, parent: null }
+// Error handling for metadata
 let parentPost: Awaited<ReturnType<typeof getParentPost>> = null
 let hasChildPosts = false
 let subpostCount = 0
@@ -78,7 +75,6 @@ let combinedReadingTime: string | null = null
 let tocSections: Awaited<ReturnType<typeof getTOCSections>> = []
 
 try {
-  navigation = await getAdjacentPosts(currentPostId)
   parentPost = isCurrentSubpost ? await getParentPost(currentPostId) : null
   hasChildPosts = await hasSubposts(currentPostId)
   subpostCount = !isCurrentSubpost ? await getSubpostCount(currentPostId) : 0
@@ -257,12 +253,6 @@ try {
           }
         </div>
       </div>
-
-      <PostNavigation
-        newerPost={navigation.newer}
-        olderPost={navigation.older}
-        parentPost={isCurrentSubpost ? navigation.parent : undefined}
-      />
     </section>
 
     {
@@ -303,12 +293,6 @@ try {
         <PostReactions postId={currentPostId} />
       </div>
     }
-
-    <PostNavigation
-      newerPost={navigation.newer}
-      olderPost={navigation.older}
-      parentPost={isCurrentSubpost ? navigation.parent : undefined}
-    />
 
     {
       /* Related posts - show on main posts only */
