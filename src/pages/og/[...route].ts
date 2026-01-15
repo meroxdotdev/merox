@@ -43,8 +43,21 @@ export const { getStaticPaths, GET } = OGImageRoute({
       './public/fonts/GeistVF.woff2',
       './public/fonts/GeistMonoVF.woff2',
     ],
-    // Background from dark mode theme: hsl(210 20% 10%) ≈ rgb(20, 26, 33)
-    bgGradient: [[20, 26, 33]],
+    // Subtle gradient background matching dark mode theme
+    // Base: hsl(210 20% 10%) ≈ rgb(20, 26, 33)
+    // Slightly lighter variant for gradient: hsl(210 20% 12%) ≈ rgb(24, 30, 37)
+    // Creates a subtle depth effect
+    bgGradient: [
+      [20, 26, 33], // Dark blue-gray base
+      [24, 30, 37], // Slightly lighter for subtle gradient
+    ],
+    // Add a subtle accent border with primary color (blue) from dark mode theme
+    // Primary color: hsl(214 95% 62%) ≈ rgb(77, 144, 255)
+    border: {
+      color: [77, 144, 255], // Primary blue accent
+      width: 4,
+      side: 'bottom', // Bottom border for a modern look
+    },
     padding: 80,
   }),
 })

@@ -33,6 +33,9 @@ const years = Object.keys(postsByYear).sort((a, b) => parseInt(b) - parseInt(a))
   />
 
   <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-20">
+    <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
+      <span class="text-primary">Blog</span>
+    </h1>
     {
       years.map((year) => (
         <section class="flex flex-col md:flex-row gap-6 md:gap-12">

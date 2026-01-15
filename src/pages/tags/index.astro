@@ -15,6 +15,9 @@ const sortedTags = await getSortedTags()
   <Breadcrumbs items={[{ label: 'Tags', icon: 'lucide:tags' }]} />
 
   <div class="flex flex-col gap-4">
+    <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none mb-6">
+      <span class="text-primary">Tags</span>
+    </h1>
     <div class="flex flex-wrap gap-2">
       {
         sortedTags.map(({ tag, count }) => (

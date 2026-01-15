@@ -1,0 +1,78 @@
+---
+import Breadcrumbs from '@/components/Breadcrumbs.astro'
+import GitHubProjectCard from '@/components/GitHubProjectCard.astro'
+import PageHead from '@/components/PageHead.astro'
+import Layout from '@/layouts/Layout.astro'
+import { fetchMultipleRepos } from '@/lib/github'
+import { Icon } from 'astro-icon/components'
+
+// Define the repositories to fetch
+const repositories = [
+  { owner: 'meroxdotdev', repo: 'merox-erudite' },
+  { owner: 'meroxdotdev', repo: 'infrastructure' },
+  { owner: 'meroxdotdev', repo: 'homelab-as-code' },
+]
+
+// Fetch all repository data
+const repos = await fetchMultipleRepos(repositories)
+
+// Filter out null values and sort by stars (descending)
+const validRepos = repos
+  .filter((repo): repo is NonNullable<typeof repo> => repo !== null)
+  .sort((a, b) => b.stargazers_count - a.stargazers_count)
+
+// Calculate total stats
+const totalStars = validRepos.reduce((sum, repo) => sum + repo.stargazers_count, 0)
+const totalForks = validRepos.reduce((sum, repo) => sum + repo.forks_count, 0)
+---
+
+<Layout class="max-w-4xl">
+  <PageHead slot="head" title="Projects" />
+  <Breadcrumbs
+    items={[
+      { label: 'Projects', href: '/projects', icon: 'lucide:folder-git' },
+    ]}
+  />
+
+  <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-8">
+    <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
+      <span class="text-primary">Projects</span>
+    </h1>
+    {validRepos.length > 0 && (
+      <div class="flex flex-wrap items-center gap-6 p-4 rounded-xl border border-border/40 bg-muted/20">
+        <div class="flex items-center gap-2 text-sm text-muted-foreground">
+          <Icon name="lucide:folder-git" class="size-4" />
+          <span class="font-medium">{validRepos.length} {validRepos.length === 1 ? 'Repository' : 'Repositories'}</span>
+        </div>
+        <div class="h-4 w-px bg-border/40" aria-hidden="true"></div>
+        <div class="flex items-center gap-2 text-sm text-muted-foreground">
+          <Icon name="lucide:star" class="size-4" />
+          <span class="font-medium">{totalStars.toLocaleString()} Stars</span>
+        </div>
+        <div class="h-4 w-px bg-border/40" aria-hidden="true"></div>
+        <div class="flex items-center gap-2 text-sm text-muted-foreground">
+          <Icon name="lucide:git-fork" class="size-4" />
+          <span class="font-medium">{totalForks.toLocaleString()} Forks</span>
+        </div>
+      </div>
+    )}
+
+    {validRepos.length > 0 ? (
+      <div class="grid gap-6">
+        {validRepos.map((repo) => (
+          <GitHubProjectCard repo={repo} />
+        ))}
+      </div>
+    ) : (
+      <div class="rounded-xl border border-border/70 bg-card/80 p-12 text-center">
+        <Icon name="lucide:alert-circle" class="size-12 text-muted-foreground/50 mx-auto mb-4" />
+        <p class="text-muted-foreground mb-2 font-medium">
+          Unable to load projects at this time.
+        </p>
+        <p class="text-sm text-muted-foreground/70">
+          Please try again later or check the repositories directly on GitHub.
+        </p>
+      </div>
+    )}
+  </div>
+</Layout>
