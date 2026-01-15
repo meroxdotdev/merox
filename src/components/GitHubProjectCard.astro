@@ -61,12 +61,12 @@ const { repo } = Astro.props
     {repo.topics && repo.topics.length > 0 && (
       <div class="flex flex-wrap gap-2 pt-2">
         {repo.topics.slice(0, 5).map((topic) => (
-          <Badge variant="muted" class="text-xs">
+          <Badge variant="muted" className="text-xs">
             {topic}
           </Badge>
         ))}
         {repo.topics.length > 5 && (
-          <Badge variant="muted" class="text-xs">
+          <Badge variant="muted" className="text-xs">
             +{repo.topics.length - 5}
           </Badge>
         )}
