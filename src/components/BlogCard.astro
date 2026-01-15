@@ -4,7 +4,7 @@ import {
   getSubpostCount,
   isSubpost,
 } from '@/lib/data-utils'
-import { cn, formatDate, getTagVariant } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { Icon } from 'astro-icon/components'
 import type { CollectionEntry } from 'astro:content'
 import Link from './Link.astro'
@@ -101,30 +101,6 @@ const isFeatured = variant === 'featured'
               <Icon name="lucide:file-text" class="size-3" />
               {subpostCount} {subpostCount === 1 ? 'part' : 'parts'}
             </span>
-          </>
-        )
-      }
-
-      {
-        entry.data.tags && entry.data.tags.length > 0 && (
-          <>
-            {!isFeatured && <span class="text-muted-foreground/20" aria-hidden="true">/</span>}
-            <div class={cn("flex flex-wrap items-center", isFeatured ? "gap-2" : "gap-1.5")}>
-              {entry.data.tags.slice(0, 2).map((tag) => {
-                const { className } = getTagVariant(tag)
-                return (
-                  <span class={cn(
-                    "rounded-md tracking-wide transition-colors",
-                    isFeatured
-                      ? "px-2.5 py-1.5 bg-muted/70 text-xs font-semibold"
-                      : "px-1.5 py-0.5 bg-muted/50 text-[10px] uppercase",
-                    className
-                  )}>
-                    {tag}
-                  </span>
-                )
-              })}
-            </div>
           </>
         )
       }

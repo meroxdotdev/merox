@@ -92,6 +92,20 @@ const isExternalLink = (href: string) => href.startsWith('http')
               </Link>
             )
           })}
+          <Link 
+            href="/tags" 
+            class="text-sm text-muted-foreground hover:text-foreground transition-all duration-200 flex items-center gap-1.5 group"
+          >
+            <span class="relative">
+              Tags
+              <span class="footer-link-underline absolute -bottom-0.5 left-0 w-0 h-px bg-primary transition-all duration-200 group-hover:w-full"></span>
+            </span>
+            <Icon 
+              name="lucide:tags" 
+              class="size-3 opacity-60 group-hover:opacity-100 group-hover:text-primary transition-all" 
+              aria-hidden="true"
+            />
+          </Link>
         </nav>
       </div>
 
