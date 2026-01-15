@@ -150,16 +150,16 @@ const MobileMenu = () => {
             </span>
           </div>
           
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 p-1 bg-muted/20 rounded-xl">
             {THEMES.map((theme) => (
               <button
                 key={theme}
                 onClick={() => handleThemeChange(theme)}
                 className={cn(
-                  "flex items-center justify-center gap-2 px-3 py-2.5 rounded-xl text-xs font-medium transition-all",
+                  "flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all",
                   currentTheme === theme
-                    ? "bg-popover text-popover-foreground shadow-lg ring-1 ring-border/50"
-                    : "bg-muted/30 text-foreground/60 hover:bg-muted/40"
+                    ? "bg-primary text-primary-foreground shadow-md ring-1 ring-primary/20"
+                    : "bg-transparent text-foreground/50 hover:bg-foreground/5 hover:text-foreground/70"
                 )}
                 aria-label={`Switch to ${theme} theme`}
                 aria-pressed={currentTheme === theme}
