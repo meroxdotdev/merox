@@ -58,7 +58,7 @@ const personSchema = {
     <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
       <!-- Profile Photo - Left aligned, top-aligned with text -->
       <div class="relative shrink-0">
-        <div class="size-36 md:size-48 rounded-2xl overflow-hidden border border-border/50 shadow-sm bg-muted/30">
+        <div class="size-32 md:size-40 rounded-2xl overflow-hidden border border-border/50 shadow-sm bg-muted/30">
           <img
             src="/robert.webp"
             alt="Robert Melcher"
@@ -118,21 +118,21 @@ const personSchema = {
                   const tooltip = document.getElementById('username-origin-content');
                   const container = document.getElementById('username-origin-tooltip');
                   
-                  if (!btn || !tooltip) return;
+                  if (!btn || !tooltip || !container) return;
 
                   let isOpen = false;
 
                   function toggleTooltip() {
                     isOpen = !isOpen;
-                    tooltip.setAttribute('data-open', isOpen ? 'true' : '');
-                    btn.setAttribute('aria-expanded', isOpen.toString());
+                    tooltip!.setAttribute('data-open', isOpen ? 'true' : '');
+                    btn!.setAttribute('aria-expanded', isOpen.toString());
                   }
 
                   function closeTooltip() {
                     if (isOpen) {
                       isOpen = false;
-                      tooltip.removeAttribute('data-open');
-                      btn.setAttribute('aria-expanded', 'false');
+                      tooltip!.removeAttribute('data-open');
+                      btn!.setAttribute('aria-expanded', 'false');
                     }
                   }
 
@@ -144,9 +144,11 @@ const personSchema = {
 
                   // Close on outside click
                   document.addEventListener('click', (e) => {
-                    if (!container.contains(e.target)) {
-                      closeTooltip();
+                    const target = e.target;
+                    if (target && container!.contains(target as Node)) {
+                      return;
                     }
+                    closeTooltip();
                   });
 
                   // Close on escape key
