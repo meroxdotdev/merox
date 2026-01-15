@@ -95,13 +95,13 @@ const personSchema = {
                     >
                       <Icon name="lucide:info" class="size-4 md:size-3.5" />
                     </button>
-                    <!-- Tooltip -->
+                    <!-- Tooltip - Left-aligned on mobile, centered on desktop -->
                     <div 
                       id="username-origin-content"
-                      class="absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none group-hover:pointer-events-auto data-[open]:opacity-100 data-[open]:visible data-[open]:pointer-events-auto"
+                      class="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-full mt-2 z-50 w-[calc(100vw-2rem)] max-w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none group-hover:pointer-events-auto data-[open]:opacity-100 data-[open]:visible data-[open]:pointer-events-auto"
                       role="tooltip"
                     >
-                      <div class="bg-popover border border-border/60 rounded-lg shadow-xl p-4 text-xs space-y-2 backdrop-blur-sm">
+                      <div class="bg-popover border border-border/60 rounded-lg shadow-xl p-3 md:p-4 text-xs space-y-1.5 md:space-y-2 backdrop-blur-sm">
                         <p class="font-semibold text-foreground">Username origin</p>
                         <p class="text-muted-foreground leading-relaxed">
                           Combined <span class="font-mono text-foreground">me</span> (Melcher) + <span class="font-mono text-foreground">ro</span> (Robert) + <span class="font-mono text-foreground">x</span> from <span class="font-mono text-foreground">mer0x39</span>. <span class="font-mono text-foreground">0x39</span> (hex) = 57, representing birth date 5/7.
