@@ -41,10 +41,7 @@ const { tag, posts } = Astro.props
   />
 
   <div class="mb-8">
-    <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
-      Tag: <span class="text-primary">{tag}</span>
-    </h1>
-    <p class="text-muted-foreground mt-2">
+    <p class="text-muted-foreground">
       {posts.length} {posts.length === 1 ? 'post' : 'posts'} tagged with "{tag}"
     </p>
   </div>

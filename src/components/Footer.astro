@@ -9,15 +9,16 @@ const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
 ---
 
 <footer class="border-t border-border/40" role="contentinfo">
-  <div class="mx-auto max-w-4xl px-4 py-5">
-    <!-- Desktop: Single Row | Mobile: Stacked & Centered -->
-    <div class="flex flex-col items-center gap-4 sm:flex-row sm:justify-between sm:gap-6">
+  <div class="mx-auto max-w-4xl px-4 py-6 sm:py-5">
+    <div class="flex flex-col items-center gap-5 sm:flex-row sm:justify-between sm:items-center sm:gap-6">
       
-      <!-- Left: Copyright + Main Nav -->
-      <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:justify-start">
-        <span>&copy; {currentYear} {SITE.title}</span>
-        <span class="hidden sm:inline text-border/50">|</span>
-        <nav class="flex items-center gap-3" aria-label="Footer navigation">
+      <!-- Copyright + Navigation -->
+      <div class="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-4 sm:gap-y-0">
+        <span class="text-xs text-muted-foreground">&copy; {currentYear} {SITE.title}</span>
+        
+        <span class="hidden sm:inline text-border/50 text-xs">|</span>
+        
+        <nav class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:gap-3" aria-label="Footer navigation">
           <Link href="/blog/" class="hover:text-foreground transition-colors">Blog</Link>
           <span class="text-border/50">·</span>
           <Link href="/projects/" class="hover:text-foreground transition-colors">Projects</Link>
@@ -28,28 +29,28 @@ const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
         </nav>
       </div>
       
-      <!-- Right: Legal + Social -->
-      <div class="flex items-center gap-4">
+      <!-- Legal + Social -->
+      <div class="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-4 sm:gap-y-0">
         <div class="flex items-center gap-3 text-xs text-muted-foreground">
           <Link href="/privacy/" class="hover:text-foreground transition-colors">Privacy</Link>
           <span class="text-border/50">·</span>
           <Link href="/terms/" class="hover:text-foreground transition-colors">Terms</Link>
         </div>
         
-        <span class="text-border/30 hidden sm:inline">|</span>
+        <span class="hidden sm:inline text-border/30">|</span>
         
-        <div class="flex items-center">
+        <div class="flex items-center gap-1">
           {footerSocials.map(({ href, label }) => (
             <Link
               href={href}
               aria-label={label}
               title={label}
-              class="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+              class="p-2 sm:p-1.5 text-muted-foreground hover:text-foreground transition-colors"
               external
             >
               <Icon
                 name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:link'}
-                class="size-3.5"
+                class="size-4 sm:size-3.5"
               />
             </Link>
           ))}
@@ -57,17 +58,17 @@ const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
             href="/newsletter/"
             aria-label="Newsletter"
             title="Newsletter"
-            class="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+            class="p-2 sm:p-1.5 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <Icon name="lucide:newspaper" class="size-3.5" />
+            <Icon name="lucide:newspaper" class="size-4 sm:size-3.5" />
           </Link>
           <Link
             href="/rss.xml"
             aria-label="RSS Feed"
             title="RSS Feed"
-            class="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+            class="p-2 sm:p-1.5 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <Icon name="lucide:rss" class="size-3.5" />
+            <Icon name="lucide:rss" class="size-4 sm:size-3.5" />
           </Link>
         </div>
       </div>

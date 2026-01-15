@@ -35,9 +35,6 @@ const totalForks = validRepos.reduce((sum, repo) => sum + repo.forks_count, 0)
   />
 
   <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-8">
-    <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
-      <span class="text-primary">Projects</span>
-    </h1>
     {validRepos.length > 0 && (
       <div class="flex flex-wrap items-center gap-6 p-4 rounded-xl border border-border/40 bg-muted/20">
         <div class="flex items-center gap-2 text-sm text-muted-foreground">
