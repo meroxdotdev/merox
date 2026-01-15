@@ -23,7 +23,7 @@ export const GET: APIRoute = async () => {
         date: post.data.date?.toISOString() || new Date().toISOString(),
         tags: post.data.tags || [],
         authors: post.data.authors || [],
-        url: `/blog/${post.id}`,
+        url: `/blog/${post.id}/`,
         // Include full content for better search results
         content: textContent, // Full content for indexing
       }

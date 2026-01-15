@@ -76,3 +76,47 @@ export function getTagVariant(tag: string): {
       }
   }
 }
+
+/**
+ * Ensures that internal URLs have a trailing slash to avoid 301 redirects on GitHub Pages.
+ * Does not modify external URLs, anchor-only links, or files with extensions.
+ * @param href - The URL to process
+ * @returns The URL with a trailing slash if needed
+ */
+export function ensureTrailingSlash(href: string): string {
+  // Don't modify empty strings, external URLs, or anchor-only links
+  if (!href || href.startsWith('http') || href.startsWith('#')) {
+    return href
+  }
+
+  // Handle query strings and hash fragments
+  const queryIndex = href.indexOf('?')
+  const hashIndex = href.indexOf('#')
+  
+  let pathPart = href
+  let queryPart = ''
+  let hashPart = ''
+
+  // Extract query string and hash if present
+  if (queryIndex !== -1 && (hashIndex === -1 || queryIndex < hashIndex)) {
+    pathPart = href.substring(0, queryIndex)
+    const rest = href.substring(queryIndex)
+    if (hashIndex !== -1 && hashIndex > queryIndex) {
+      queryPart = href.substring(queryIndex, hashIndex)
+      hashPart = href.substring(hashIndex)
+    } else {
+      queryPart = rest
+    }
+  } else if (hashIndex !== -1) {
+    pathPart = href.substring(0, hashIndex)
+    hashPart = href.substring(hashIndex)
+  }
+
+  // Don't add trailing slash to files with extensions
+  if (pathPart.endsWith('/') || /\.[a-z]+$/i.test(pathPart)) {
+    return href
+  }
+
+  // Add trailing slash to the path part
+  return `${pathPart}/${queryPart}${hashPart}`
+}

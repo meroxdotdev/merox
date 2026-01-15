@@ -1,6 +1,6 @@
 ---
 // src/components/Link.astro
-import { cn } from '@/lib/utils'
+import { cn, ensureTrailingSlash } from '@/lib/utils'
 
 interface Props {
   href: string
@@ -20,9 +20,11 @@ interface Props {
   type?: string
 }
 
-const { href, external, class: className, underline, ...rest } = Astro.props
+const { href: rawHref, external, class: className, underline, ...rest } = Astro.props
 
-const isExternal = external || href.startsWith('http')
+const isExternal = external || rawHref.startsWith('http')
+// Ensure trailing slash for internal links to avoid 301 redirects on GitHub Pages
+const href = isExternal ? rawHref : ensureTrailingSlash(rawHref)
 ---
 
 <a

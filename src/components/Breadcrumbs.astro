@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/breadcrumb'
 import { Icon } from 'astro-icon/components'
 import { SITE } from '@/consts'
+import { ensureTrailingSlash } from '@/lib/utils'
 
 export interface BreadcrumbItem {
   href?: string
@@ -51,7 +52,7 @@ const breadcrumbSchema = {
 <Breadcrumb>
   <BreadcrumbList>
     <BreadcrumbItem>
-      <BreadcrumbLink href="/">
+      <BreadcrumbLink href={ensureTrailingSlash('/')}>
         <Icon name="lucide:home" class="size-4 shrink-0" />
       </BreadcrumbLink>
     </BreadcrumbItem>
@@ -70,7 +71,7 @@ const breadcrumbSchema = {
                 </span>
               </BreadcrumbPage>
             ) : (
-              <BreadcrumbLink href={item.href}>
+              <BreadcrumbLink href={item.href ? ensureTrailingSlash(item.href) : undefined}>
                 <span class="flex items-center gap-x-2">
                   {item.icon && (
                     <Icon name={item.icon} class="size-4 shrink-0" />

@@ -291,7 +291,7 @@ try {
       <div class="col-start-2 mt-8">
         <SocialShare
           title={post.data.title}
-          url={new URL(`/blog/${currentPostId}`, SITE.href).href}
+          url={new URL(`/blog/${currentPostId}/`, SITE.href).href}
           description={post.data.description}
         />
       </div>

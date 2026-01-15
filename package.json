@@ -10,7 +10,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "prettier": "prettier --write **/*.{ts,tsx,css,astro} --ignore-path .gitignore",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "test": "vitest",
+    "test:watch": "vitest --watch"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
@@ -54,10 +56,13 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@vitest/ui": "^4.0.17",
+    "glob": "^13.0.0",
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1",
     "prettier-plugin-astro-organize-imports": "^0.4.11",
-    "prettier-plugin-tailwindcss": "^0.7.1"
+    "prettier-plugin-tailwindcss": "^0.7.1",
+    "vitest": "^4.0.17"
   },
   "prettier": {
     "semi": false,
