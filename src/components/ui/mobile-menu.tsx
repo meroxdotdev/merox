@@ -20,7 +20,6 @@ const MobileMenu = () => {
   }, [])
 
   // Close menu when Astro view transition starts
-  // The viewTransitionName CSS property ensures the menu is part of the transition
   useEffect(() => {
     const handleViewTransitionStart = () => {
       if (isOpen) setIsOpen(false)
@@ -88,15 +87,11 @@ const MobileMenu = () => {
     
     // For external links, close menu immediately (no Astro view transition)
     // For internal links, let astro:before-swap event handle the closing
-    // This ensures the menu closes smoothly in sync with Astro's view transition
     if (isExternal) {
       setIsOpen(false)
     }
     // For internal links, do nothing - astro:before-swap will close the menu
   }, [])
-
-  // Stagger delay for menu items
-  const getDelay = (index: number) => isOpen ? `${index * 50}ms` : '0ms'
 
   return (
     <>
@@ -127,7 +122,7 @@ const MobileMenu = () => {
         </button>
       </div>
 
-      {/* Fullscreen Menu Overlay - Apple Style */}
+      {/* Fullscreen Menu Overlay */}
       <div
         className={cn(
           "fixed inset-0 z-[9999] md:hidden",
@@ -143,7 +138,7 @@ const MobileMenu = () => {
         }}
         aria-hidden={!isOpen}
       >
-        {/* Close Button - Same position as burger menu in header */}
+        {/* Close Button */}
         <button
           onClick={() => setIsOpen(false)}
           className="absolute top-4 right-4 z-10 flex items-center justify-center size-9 rounded-full hover:bg-foreground/5 transition-colors duration-200"
@@ -155,19 +150,10 @@ const MobileMenu = () => {
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto px-6 py-8 pt-16">
           <ul className="space-y-1">
-            {NAV_LINKS.map((item, index) => {
+            {NAV_LINKS.map((item) => {
               const isExternal = isExternalLink(item.href)
               return (
-                <li 
-                  key={item.href}
-                  className={cn(
-                    "transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
-                    isOpen 
-                      ? "opacity-100 translate-x-0" 
-                      : "opacity-0 -translate-x-3"
-                  )}
-                  style={{ transitionDelay: getDelay(index) }}
-                >
+                <li key={item.href}>
                   <a
                     href={isExternal ? item.href : ensureTrailingSlash(item.href)}
                     target={isExternal ? '_blank' : undefined}
@@ -188,16 +174,7 @@ const MobileMenu = () => {
         </nav>
 
         {/* Footer - Theme Toggle */}
-        <div 
-          className={cn(
-            "flex-shrink-0 px-6 py-6 border-t border-border/40",
-            "transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
-            isOpen 
-              ? "opacity-100 translate-y-0" 
-              : "opacity-0 translate-y-2"
-          )}
-          style={{ transitionDelay: getDelay(NAV_LINKS.length) }}
-        >
+        <div className="flex-shrink-0 px-6 py-6 border-t border-border/40">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-foreground/50 uppercase tracking-wider">
               Appearance
