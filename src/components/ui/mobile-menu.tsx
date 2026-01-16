@@ -20,12 +20,17 @@ const MobileMenu = () => {
   }, [])
 
   // Close menu when Astro view transition starts
+  // The viewTransitionName CSS property ensures the menu is part of the transition
   useEffect(() => {
     const handleViewTransitionStart = () => {
       if (isOpen) setIsOpen(false)
     }
+    
     document.addEventListener('astro:before-swap', handleViewTransitionStart)
-    return () => document.removeEventListener('astro:before-swap', handleViewTransitionStart)
+    
+    return () => {
+      document.removeEventListener('astro:before-swap', handleViewTransitionStart)
+    }
   }, [isOpen])
 
   // Listen for theme changes from other components
@@ -77,10 +82,17 @@ const MobileMenu = () => {
     applyTheme(newTheme)
   }, [currentTheme])
 
-  const handleLinkClick = useCallback(() => {
-    // Close menu immediately - CSS transitions handle the smooth animation
-    // Astro's view transitions will handle the page transition smoothly
-    setIsOpen(false)
+  const handleLinkClick = useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    const href = e.currentTarget.getAttribute('href')
+    const isExternal = href?.startsWith('http')
+    
+    // For external links, close menu immediately (no Astro view transition)
+    // For internal links, let astro:before-swap event handle the closing
+    // This ensures the menu closes smoothly in sync with Astro's view transition
+    if (isExternal) {
+      setIsOpen(false)
+    }
+    // For internal links, do nothing - astro:before-swap will close the menu
   }, [])
 
   // Stagger delay for menu items
@@ -125,7 +137,10 @@ const MobileMenu = () => {
             ? "opacity-100 pointer-events-auto" 
             : "opacity-0 pointer-events-none"
         )}
-        style={{ height: '100dvh' }}
+        style={{ 
+          height: '100dvh',
+          viewTransitionName: 'mobile-menu'
+        }}
         aria-hidden={!isOpen}
       >
         {/* Close Button - Same position as burger menu in header */}
