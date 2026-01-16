@@ -124,11 +124,9 @@ const ogImage = image || (cleanPathname ? new URL(`/og${cleanPathname}.png`, Ast
   <!-- Premium branding font for logo - Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <!-- Preload critical font weights (800 for desktop, 700 for mobile) for faster logo rendering -->
-  <!-- These URLs are extracted from Google Fonts CSS - they load the variable font covering all weights -->
-  <link rel="preload" href="https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_qU79TR_I.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
   <!-- Use block (best practice for critical brand logos) - prevents font flash -->
   <!-- Shows fallback until font loads, then swaps seamlessly -->
+  <!-- Google Fonts CSS will automatically include the correct font URLs -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=block" rel="stylesheet" />
   
   <!-- Google Analytics -->
