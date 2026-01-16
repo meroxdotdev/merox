@@ -580,6 +580,14 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
           {!isLoading && !isLoadingIndex && query.trim() && results.length === 0 && 'No results found'}
           {selectedIndex >= 0 && results[selectedIndex] && `Selected: ${results[selectedIndex].title}`}
         </div>
+        {/* Close button for mobile - same position and design as mobile menu */}
+        <button
+          onClick={() => onOpenChange(false)}
+          className="sm:hidden absolute top-4 right-4 z-10 flex items-center justify-center size-9 rounded-full hover:bg-foreground/5 transition-colors duration-200"
+          aria-label="Close search"
+        >
+          <X className="h-5 w-5" />
+        </button>
         <div className="flex shrink-0 items-center border-b border-border/50 px-4 pt-safe relative bg-muted/20">
           <Search className="mr-3 h-5 w-5 shrink-0 text-muted-foreground sm:h-4 sm:w-4" />
           <input
@@ -609,14 +617,6 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
                 <X className="h-4 w-4" />
               </button>
             )}
-            {/* Close button for mobile - positioned in header */}
-            <button
-              onClick={() => onOpenChange(false)}
-              className="sm:hidden rounded-lg p-2 opacity-70 transition-opacity active:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-              aria-label="Close search"
-            >
-              <X className="h-5 w-5" />
-            </button>
           </div>
         </div>
 
