@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { NAV_LINKS } from '@/consts'
 import { Menu, X, ExternalLink, Sun, Moon } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import { cn, ensureTrailingSlash } from '@/lib/utils'
 import {
   type Theme,
   getValidTheme,
@@ -19,12 +19,14 @@ const MobileMenu = () => {
     setCurrentTheme(getValidTheme(storedTheme))
   }, [])
 
-  // Close menu on navigation
+  // Close menu when Astro view transition starts
   useEffect(() => {
-    const handleViewTransitionStart = () => setIsOpen(false)
+    const handleViewTransitionStart = () => {
+      if (isOpen) setIsOpen(false)
+    }
     document.addEventListener('astro:before-swap', handleViewTransitionStart)
     return () => document.removeEventListener('astro:before-swap', handleViewTransitionStart)
-  }, [])
+  }, [isOpen])
 
   // Listen for theme changes from other components
   useEffect(() => {
@@ -75,7 +77,11 @@ const MobileMenu = () => {
     applyTheme(newTheme)
   }, [currentTheme])
 
-  const handleLinkClick = () => setIsOpen(false)
+  const handleLinkClick = useCallback(() => {
+    // Close menu immediately - CSS transitions handle the smooth animation
+    // Astro's view transitions will handle the page transition smoothly
+    setIsOpen(false)
+  }, [])
 
   // Stagger delay for menu items
   const getDelay = (index: number) => isOpen ? `${index * 50}ms` : '0ms'
@@ -112,7 +118,7 @@ const MobileMenu = () => {
       {/* Fullscreen Menu Overlay - Apple Style */}
       <div
         className={cn(
-          "fixed top-0 left-0 w-full h-full z-[9999] md:hidden",
+          "fixed inset-0 z-[9999] md:hidden",
           "flex flex-col bg-background",
           "transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
           isOpen 
@@ -148,9 +154,10 @@ const MobileMenu = () => {
                   style={{ transitionDelay: getDelay(index) }}
                 >
                   <a
-                    href={item.href}
+                    href={isExternal ? item.href : ensureTrailingSlash(item.href)}
                     target={isExternal ? '_blank' : undefined}
                     rel={isExternal ? 'noopener noreferrer' : undefined}
+                    data-internal-link={!isExternal ? 'true' : undefined}
                     onClick={handleLinkClick}
                     className="flex items-center justify-between py-4 text-2xl font-semibold text-foreground hover:text-primary transition-colors duration-200"
                   >
