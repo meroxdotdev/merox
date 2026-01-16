@@ -25,6 +25,8 @@ const isExternalLink = (href: string) => {
         {NAV_LINKS.map((item) => {
           const isExternal = isExternalLink(item.href)
           const isInsideLink = item.label.toLowerCase() === 'inside'
+          // Treat "Inside" as external link (always show external icon)
+          const showExternalIcon = isExternal || isInsideLink
           return (
             <Link 
               href={item.href} 
@@ -37,7 +39,7 @@ const isExternalLink = (href: string) => {
             >
               <span class="flex items-center gap-1.5">
                 {item.label}
-                {isExternal && (
+                {showExternalIcon && (
                   <Icon 
                     name="lucide:external-link" 
                     class="size-3 opacity-60 group-hover:opacity-100 transition-opacity" 

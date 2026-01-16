@@ -328,7 +328,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         }
       } catch (error) {
         if (!cancelled) {
-          console.error('Error loading search index:', error)
+          // Only log in development
+          if (import.meta.env.DEV) {
+            console.error('Error loading search index:', error)
+          }
           // Only show error if we don't have cached data
           if (!cached || !cached.data.length) {
             setError('Failed to load search index. Please try again later.')
@@ -412,7 +415,10 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         setSelectedIndex(0)
         setDisplayedResults(SEARCH.INITIAL_DISPLAY_RESULTS)
       } catch (error) {
-        console.error('Search error:', error)
+        // Only log in development
+        if (import.meta.env.DEV) {
+          console.error('Search error:', error)
+        }
         setError('An error occurred while searching. Please try again.')
         setResults([])
       } finally {
