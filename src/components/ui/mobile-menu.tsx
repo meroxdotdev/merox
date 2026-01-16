@@ -1,57 +1,38 @@
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+import { useState, useEffect, useCallback } from 'react'
 import { NAV_LINKS } from '@/consts'
-import { Menu, ExternalLink, Sun, Moon } from 'lucide-react'
+import { Menu, X, ExternalLink, Sun, Moon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
-  DEFAULT_PALETTE,
-  THEMES,
   type Theme,
   getValidTheme,
   getStorageItem,
-  applyPalette as applyPaletteUtil,
-  applyTheme as applyThemeUtil,
+  applyTheme,
 } from '@/lib/theme'
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<Theme>('light')
 
+  // Initialize theme
   useEffect(() => {
-    const handleViewTransitionStart = () => {
-      setIsOpen(false)
-    }
-    document.addEventListener('astro:before-swap', handleViewTransitionStart)
-    return () => {
-      document.removeEventListener('astro:before-swap', handleViewTransitionStart)
-    }
-  }, [])
-
-  useEffect(() => {
-    // Initialize theme and palette
     const storedTheme = getStorageItem('theme')
     setCurrentTheme(getValidTheme(storedTheme))
-    // Always use default blue palette
-    applyPaletteUtil(DEFAULT_PALETTE)
   }, [])
 
+  // Close menu on navigation
   useEffect(() => {
-    // Restore after navigation
+    const handleViewTransitionStart = () => setIsOpen(false)
+    document.addEventListener('astro:before-swap', handleViewTransitionStart)
+    return () => document.removeEventListener('astro:before-swap', handleViewTransitionStart)
+  }, [])
+
+  // Listen for theme changes from other components
+  useEffect(() => {
     const handleAfterSwap = () => {
       const storedTheme = getStorageItem('theme')
       setCurrentTheme(getValidTheme(storedTheme))
-      // Always use default blue palette
-      applyPaletteUtil(DEFAULT_PALETTE)
     }
     
-    // Listen for changes from other components
     const handleThemeChange = (e: CustomEvent<{ theme: Theme }>) => {
       setCurrentTheme(e.detail.theme)
     }
@@ -65,87 +46,161 @@ const MobileMenu = () => {
     }
   }, [])
 
-  const isExternalLink = (href: string) => {
-    return href.startsWith('http')
-  }
+  // Lock body scroll when menu is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
 
-  const handleThemeChange = (theme: Theme) => {
-    setCurrentTheme(theme)
-    applyThemeUtil(theme)
-  }
+  // Close on escape key
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) setIsOpen(false)
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [isOpen])
+
+  const isExternalLink = (href: string) => href.startsWith('http')
+
+  const handleThemeToggle = useCallback(() => {
+    const newTheme: Theme = currentTheme === 'dark' ? 'light' : 'dark'
+    setCurrentTheme(newTheme)
+    applyTheme(newTheme)
+  }, [currentTheme])
+
+  const handleLinkClick = () => setIsOpen(false)
+
+  // Stagger delay for menu items
+  const getDelay = (index: number) => isOpen ? `${index * 50}ms` : '0ms'
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden rounded-full hover:bg-foreground/5 size-9" title="Menu">
+    <>
+      {/* Menu Toggle Button - Fixed wrapper to prevent layout shift */}
+      <div 
+        className="md:hidden flex-shrink-0 flex items-center justify-center"
+        style={{ 
+          width: '36px',
+          height: '36px',
+          minWidth: '36px',
+          minHeight: '36px'
+        }}
+      >
+        <button
+          onClick={() => setIsOpen(true)}
+          className={cn(
+            "w-full h-full flex items-center justify-center rounded-full hover:bg-foreground/5",
+            !isOpen && "transition-colors duration-200"
+          )}
+          aria-label="Open menu"
+          aria-expanded={isOpen}
+          style={{ 
+            visibility: isOpen ? 'hidden' : 'visible',
+            pointerEvents: isOpen ? 'none' : 'auto'
+          }}
+        >
           <Menu className="h-5 w-5" />
-          <span className="sr-only">Toggle menu</span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="bg-popover/95 backdrop-blur-xl border-border/40 min-w-[240px] p-2 rounded-2xl shadow-2xl">
-        <div className="flex flex-col gap-1">
-          {NAV_LINKS.map((item) => {
-            const isExternal = isExternalLink(item.href)
-            const isInsideLink = item.label.toLowerCase() === 'inside'
-            return (
-              <DropdownMenuItem key={item.href} asChild>
-                <a
-                  href={item.href}
-                  target={isExternal ? '_blank' : '_self'}
-                  rel={isExternal ? 'noopener noreferrer' : undefined}
+        </button>
+      </div>
+
+      {/* Fullscreen Menu Overlay - Apple Style */}
+      <div
+        className={cn(
+          "fixed top-0 left-0 w-full h-full z-[9999] md:hidden",
+          "flex flex-col bg-background",
+          "transition-opacity duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+          isOpen 
+            ? "opacity-100 pointer-events-auto" 
+            : "opacity-0 pointer-events-none"
+        )}
+        style={{ height: '100dvh' }}
+        aria-hidden={!isOpen}
+      >
+        {/* Close Button - Same position as burger menu in header */}
+        <button
+          onClick={() => setIsOpen(false)}
+          className="absolute top-4 right-4 z-10 flex items-center justify-center size-9 rounded-full hover:bg-foreground/5 transition-colors duration-200"
+          aria-label="Close menu"
+        >
+          <X className="h-5 w-5" />
+        </button>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto px-6 py-8 pt-16">
+          <ul className="space-y-1">
+            {NAV_LINKS.map((item, index) => {
+              const isExternal = isExternalLink(item.href)
+              return (
+                <li 
+                  key={item.href}
                   className={cn(
-                    "flex items-center justify-between w-full px-4 py-3 text-base font-medium transition-all rounded-xl",
-                    isInsideLink 
-                      ? "bg-primary/5 text-primary" 
-                      : "text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
+                    "transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+                    isOpen 
+                      ? "opacity-100 translate-x-0" 
+                      : "opacity-0 -translate-x-3"
                   )}
-                  onClick={() => setIsOpen(false)}
+                  style={{ transitionDelay: getDelay(index) }}
                 >
-                  <span>{item.label}</span>
-                  {isExternal && (
-                    <ExternalLink className="h-4 w-4 opacity-50" aria-hidden="true" />
-                  )}
-                </a>
-              </DropdownMenuItem>
-            )
-          })}
-        </div>
-        
-        <DropdownMenuSeparator className="my-2 bg-border/40" />
-        
-        <div className="p-2">
-          <div className="px-2 mb-2">
-            <span className="text-[10px] font-bold text-foreground/30 uppercase tracking-[0.1em]">
+                  <a
+                    href={item.href}
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                    onClick={handleLinkClick}
+                    className="flex items-center justify-between py-4 text-2xl font-semibold text-foreground hover:text-primary transition-colors duration-200"
+                  >
+                    <span>{item.label}</span>
+                    {isExternal && (
+                      <ExternalLink className="h-5 w-5 opacity-40" aria-hidden="true" />
+                    )}
+                  </a>
+                </li>
+              )
+            })}
+          </ul>
+        </nav>
+
+        {/* Footer - Theme Toggle */}
+        <div 
+          className={cn(
+            "flex-shrink-0 px-6 py-6 border-t border-border/40",
+            "transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)]",
+            isOpen 
+              ? "opacity-100 translate-y-0" 
+              : "opacity-0 translate-y-2"
+          )}
+          style={{ transitionDelay: getDelay(NAV_LINKS.length) }}
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-foreground/50 uppercase tracking-wider">
               Appearance
             </span>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-2 p-1 bg-muted/20 rounded-xl">
-            {THEMES.map((theme) => (
-              <button
-                key={theme}
-                onClick={() => handleThemeChange(theme)}
-                className={cn(
-                  "flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-xs font-medium transition-all",
-                  currentTheme === theme
-                    ? "bg-primary text-primary-foreground shadow-md ring-1 ring-primary/20"
-                    : "bg-transparent text-foreground/50 hover:bg-foreground/5 hover:text-foreground/70"
-                )}
-                aria-label={`Switch to ${theme} theme`}
-                aria-pressed={currentTheme === theme}
-              >
-                {theme === 'dark' ? (
-                  <Moon className="h-3.5 w-3.5" />
-                ) : (
-                  <Sun className="h-3.5 w-3.5" />
-                )}
-                <span className="capitalize">{theme}</span>
-              </button>
-            ))}
+            <button
+              onClick={handleThemeToggle}
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-foreground/5 hover:bg-foreground/10 text-foreground transition-colors duration-200"
+              aria-label={currentTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            >
+              {currentTheme === 'dark' ? (
+                <>
+                  <Moon className="h-4 w-4" />
+                  <span className="text-sm font-medium">Dark</span>
+                </>
+              ) : (
+                <>
+                  <Sun className="h-4 w-4" />
+                  <span className="text-sm font-medium">Light</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </div>
+    </>
   )
 }
 
