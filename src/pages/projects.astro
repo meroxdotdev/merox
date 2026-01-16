@@ -36,19 +36,19 @@ const totalForks = validRepos.reduce((sum, repo) => sum + repo.forks_count, 0)
 
   <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-8">
     {validRepos.length > 0 && (
-      <div class="flex flex-wrap items-center gap-6 p-4 rounded-xl border border-border/40 bg-muted/20">
-        <div class="flex items-center gap-2 text-sm text-muted-foreground">
-          <Icon name="lucide:folder-git" class="size-4" />
+      <div class="flex flex-nowrap items-center gap-2 sm:gap-6 p-3 sm:p-4 rounded-xl border border-border/40 bg-muted/20 overflow-x-auto">
+        <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground whitespace-nowrap shrink-0">
+          <Icon name="lucide:folder-git" class="size-3.5 sm:size-4 shrink-0" />
           <span class="font-medium">{validRepos.length} {validRepos.length === 1 ? 'Repository' : 'Repositories'}</span>
         </div>
-        <div class="h-4 w-px bg-border/40" aria-hidden="true"></div>
-        <div class="flex items-center gap-2 text-sm text-muted-foreground">
-          <Icon name="lucide:star" class="size-4" />
+        <div class="h-3.5 sm:h-4 w-px bg-border/40 shrink-0" aria-hidden="true"></div>
+        <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground whitespace-nowrap shrink-0">
+          <Icon name="lucide:star" class="size-3.5 sm:size-4 shrink-0" />
           <span class="font-medium">{totalStars.toLocaleString()} Stars</span>
         </div>
-        <div class="h-4 w-px bg-border/40" aria-hidden="true"></div>
-        <div class="flex items-center gap-2 text-sm text-muted-foreground">
-          <Icon name="lucide:git-fork" class="size-4" />
+        <div class="h-3.5 sm:h-4 w-px bg-border/40 shrink-0" aria-hidden="true"></div>
+        <div class="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground whitespace-nowrap shrink-0">
+          <Icon name="lucide:git-fork" class="size-3.5 sm:size-4 shrink-0" />
           <span class="font-medium">{totalForks.toLocaleString()} Forks</span>
         </div>
       </div>
