@@ -187,7 +187,7 @@ Add custom event tracking for:
 
 ## 📈 Metrics to Track
 
-1. **Conversion by Source**: Which sources lead to newsletter signups, engagement?
+1. **Conversion by Source**: Which sources lead to engagement?
 2. **Bounce Rate by Source**: Are translation users bouncing more?
 3. **Time on Site by Source**: Which sources engage most?
 4. **Content Performance by Source**: What content works for each source?

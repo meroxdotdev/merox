@@ -8,15 +8,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { NAV_LINKS } from '@/consts'
-import { Menu, ExternalLink, Palette, Sun, Moon, Check, Newspaper } from 'lucide-react'
+import { Menu, ExternalLink, Sun, Moon } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
-  COLOR_PALETTES,
   DEFAULT_PALETTE,
   THEMES,
-  type PaletteId,
   type Theme,
-  getValidPalette,
   getValidTheme,
   getStorageItem,
   applyPalette as applyPaletteUtil,
@@ -25,7 +22,6 @@ import {
 
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [currentPalette, setCurrentPalette] = useState<PaletteId>(DEFAULT_PALETTE)
   const [currentTheme, setCurrentTheme] = useState<Theme>('light')
 
   useEffect(() => {
@@ -41,18 +37,18 @@ const MobileMenu = () => {
   useEffect(() => {
     // Initialize theme and palette
     const storedTheme = getStorageItem('theme')
-    const storedPalette = getStorageItem('color-palette')
     setCurrentTheme(getValidTheme(storedTheme))
-    setCurrentPalette(getValidPalette(storedPalette))
+    // Always use default blue palette
+    applyPaletteUtil(DEFAULT_PALETTE)
   }, [])
 
   useEffect(() => {
     // Restore after navigation
     const handleAfterSwap = () => {
       const storedTheme = getStorageItem('theme')
-      const storedPalette = getStorageItem('color-palette')
       setCurrentTheme(getValidTheme(storedTheme))
-      setCurrentPalette(getValidPalette(storedPalette))
+      // Always use default blue palette
+      applyPaletteUtil(DEFAULT_PALETTE)
     }
     
     // Listen for changes from other components
@@ -60,18 +56,12 @@ const MobileMenu = () => {
       setCurrentTheme(e.detail.theme)
     }
     
-    const handlePaletteChange = (e: CustomEvent<{ palette: PaletteId }>) => {
-      setCurrentPalette(e.detail.palette)
-    }
-    
     document.addEventListener('astro:after-swap', handleAfterSwap)
     window.addEventListener('theme-change', handleThemeChange as EventListener)
-    window.addEventListener('palette-change', handlePaletteChange as EventListener)
     
     return () => {
       document.removeEventListener('astro:after-swap', handleAfterSwap)
       window.removeEventListener('theme-change', handleThemeChange as EventListener)
-      window.removeEventListener('palette-change', handlePaletteChange as EventListener)
     }
   }, [])
 
@@ -82,11 +72,6 @@ const MobileMenu = () => {
   const handleThemeChange = (theme: Theme) => {
     setCurrentTheme(theme)
     applyThemeUtil(theme)
-  }
-
-  const handlePaletteChange = (palette: PaletteId) => {
-    setCurrentPalette(palette)
-    applyPaletteUtil(palette)
   }
 
   return (
@@ -128,21 +113,6 @@ const MobileMenu = () => {
         
         <DropdownMenuSeparator className="my-2 bg-border/40" />
         
-        <div className="px-2 py-1">
-          <DropdownMenuItem asChild>
-            <a
-              href="/newsletter/"
-              className="flex items-center gap-3 w-full px-4 py-3 text-base font-medium transition-all rounded-xl text-foreground/80 hover:bg-foreground/5 hover:text-foreground"
-              onClick={() => setIsOpen(false)}
-            >
-              <Newspaper className="h-4 w-4" />
-              <span>Newsletter</span>
-            </a>
-          </DropdownMenuItem>
-        </div>
-        
-        <DropdownMenuSeparator className="my-2 bg-border/40" />
-        
         <div className="p-2">
           <div className="px-2 mb-2">
             <span className="text-[10px] font-bold text-foreground/30 uppercase tracking-[0.1em]">
@@ -170,35 +140,6 @@ const MobileMenu = () => {
                   <Sun className="h-3.5 w-3.5" />
                 )}
                 <span className="capitalize">{theme}</span>
-              </button>
-            ))}
-          </div>
-          
-          <div className="grid grid-cols-4 gap-2 mt-2">
-            {COLOR_PALETTES.map((palette) => (
-              <button
-                key={palette.id}
-                onClick={() => handlePaletteChange(palette.id)}
-                className={cn(
-                  "relative flex items-center justify-center aspect-square rounded-full transition-all group",
-                  currentPalette === palette.id
-                    ? "ring-2 ring-primary ring-offset-2 ring-offset-background"
-                    : "hover:scale-110"
-                )}
-                title={palette.name}
-                aria-label={`Select ${palette.name} color palette`}
-                aria-pressed={currentPalette === palette.id}
-              >
-                <div
-                  className="size-full rounded-full border border-black/5 dark:border-white/5 shadow-inner"
-                  style={{ backgroundColor: palette.color }}
-                  aria-hidden="true"
-                />
-                {currentPalette === palette.id && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Check className="h-3 w-3 text-white mix-blend-difference" />
-                  </div>
-                )}
               </button>
             ))}
           </div>

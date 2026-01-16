@@ -35,17 +35,6 @@ export const GISCUS = {
   categoryId: import.meta.env.PUBLIC_GISCUS_CATEGORY_ID || '',
 }
 
-// Brevo Newsletter
-// Get your API key from https://app.brevo.com/settings/keys/api
-// Set it as an environment variable: BREVO_API_KEY=your-api-key
-// Optional: Set BREVO_LIST_ID to automatically add subscribers to a specific list
-// Optional: Set BREVO_TEMPLATE_ID for double opt-in confirmation email (default: 5)
-export const BREVO = {
-  apiKey: import.meta.env.BREVO_API_KEY || '',
-  listId: import.meta.env.BREVO_LIST_ID || '',
-  templateId: import.meta.env.BREVO_TEMPLATE_ID || '5',
-}
-
 export const NAV_LINKS: SocialLink[] = [
 
   {
@@ -96,11 +85,4 @@ export const ICON_MAP: IconMap = {
   Twitter: 'lucide:twitter',
   Email: 'lucide:mail',
   RSS: 'lucide:rss',
-}
-
-// Newsletter consent text (centralized for GDPR compliance)
-export const NEWSLETTER_CONSENT_TEXT = {
-  text: 'I agree to receive newsletter emails.',
-  privacyLink: '/privacy',
-  privacyText: 'Privacy Policy',
 }

@@ -16,28 +16,15 @@
       }
     }
 
-    // Palette initialization
-    const getPalette = () => {
-      try {
-        const stored = localStorage?.getItem('color-palette')
-        const validPalettes = ['blue', 'green', 'purple', 'orange', 'rose', 'cyan', 'teal']
-        return stored && validPalettes.includes(stored) ? stored : 'blue'
-      } catch {
-        return 'blue'
-      }
-    }
-
     const theme = getTheme()
-    const palette = getPalette()
+    const palette = 'blue' // Always use default blue palette
 
     document.documentElement.setAttribute('data-theme', theme)
     document.documentElement.setAttribute('data-palette', palette)
     
     try {
       localStorage.setItem('theme', theme)
-      if (!localStorage.getItem('color-palette')) {
-        localStorage.setItem('color-palette', palette)
-      }
+      localStorage.setItem('color-palette', palette)
     } catch {
       // localStorage unavailable - continue without persistence
     }
@@ -56,24 +43,20 @@
       }
     }
 
-    const getPalette = () => {
-      try {
-        const stored = localStorage.getItem('color-palette')
-        const validPalettes = ['blue', 'green', 'purple', 'orange', 'rose', 'cyan', 'teal']
-        return stored && validPalettes.includes(stored) ? stored : 'blue'
-      } catch {
-        return 'blue'
-      }
-    }
-
     const storedTheme = getTheme()
-    const storedPalette = getPalette()
+    const storedPalette = 'blue' // Always use default blue palette
     const element = document.documentElement
 
     element.classList.add('[&_*]:transition-none')
     window.getComputedStyle(element).getPropertyValue('opacity')
     element.setAttribute('data-theme', storedTheme)
     element.setAttribute('data-palette', storedPalette)
+    
+    try {
+      localStorage.setItem('color-palette', storedPalette)
+    } catch {
+      // localStorage unavailable
+    }
 
     requestAnimationFrame(() => {
       element.classList.remove('[&_*]:transition-none')

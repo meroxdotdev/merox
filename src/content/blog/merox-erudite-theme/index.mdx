@@ -1,6 +1,6 @@
 ---
 title: "Introducing merox-erudite: My Customized Astro Blogging Theme"
-description: "After months of customizing astro-erudite for my blog, I decided to share my fork with the community. A batteries-included Astro theme with newsletter, comments, analytics, and more."
+description: "After months of customizing astro-erudite for my blog, I decided to share my fork with the community. A batteries-included Astro theme with comments, analytics, and more."
 date: 2025-12-05
 tags: ["experimental", "astro", "theme", "blogging", "open-source"]
 image: './merox-erudite.svg'
@@ -10,7 +10,7 @@ draft: false
 import Callout from '@/components/Callout.astro'
 import AdSense from '@/components/AdSense.astro'
 
-When I started this blog, I chose [astro-erudite](https://github.com/jktrn/astro-erudite) as my base theme. It's an excellent, minimal template that gave me exactly what I needed to get started. But as I used it more, I found myself adding features that I needed for a production blog—newsletter integration, comments, analytics, and more.
+When I started this blog, I chose [astro-erudite](https://github.com/jktrn/astro-erudite) as my base theme. It's an excellent, minimal template that gave me exactly what I needed to get started. But as I used it more, I found myself adding features that I needed for a production blog—comments, analytics, and more.
 
 After several months of customizations, I realized I had made enough changes that it made sense to share my version as a separate theme: **merox-erudite**.
 
@@ -40,24 +40,6 @@ I considered contributing these features back to astro-erudite, but there were a
 <AdSense />
 
 ## What I Added
-
-### Newsletter Integration (Brevo)
-
-One of the first things I needed was newsletter functionality. I chose Brevo (formerly Sendinblue) because they offer a generous free tier and have a straightforward API.
-
-The integration includes:
-- GDPR-compliant consent checkbox
-- Double opt-in support
-- Centralized configuration
-
-```ts
-// Configure in src/consts.ts
-export const BREVO = {
-  apiKey: import.meta.env.BREVO_API_KEY || '',
-  listId: import.meta.env.BREVO_LIST_ID || '',
-  templateId: import.meta.env.BREVO_TEMPLATE_ID || '5',
-}
-```
 
 ### Giscus Comments
 
@@ -117,7 +99,6 @@ const experience: ExperienceItem[] = [
 
 | Feature | astro-erudite | merox-erudite |
 |---------|---------------|---------------|
-| Newsletter | ❌ | ✅ Brevo integration |
 | Comments | ❌ | ✅ Giscus (GitHub) |
 | Analytics | ❌ | ✅ GA & Umami |
 | SEO Schemas | Basic | ✅ FAQ & HowTo |
@@ -145,7 +126,7 @@ If you want to use merox-erudite for your blog:
    ```
    Your site will be available at `http://localhost:1234`
 5. **Configure** - Update `src/consts.ts` with your site information (title, description, author, etc.)
-6. **Optional features** - Set up newsletter, comments, or analytics if needed (see [Deployment](#deployment-on-cloudflare-pages) section for environment variables)
+6. **Optional features** - Set up comments or analytics if needed (see [Deployment](#deployment-on-cloudflare-pages) section for environment variables)
 
 <Callout variant="warning">
 **Important:** This theme is based on astro-erudite by [@jktrn](https://github.com/jktrn). For detailed documentation about the original theme's architecture and design philosophy, visit the [official astro-erudite repository](https://github.com/jktrn/astro-erudite).
@@ -153,7 +134,7 @@ If you want to use merox-erudite for your blog:
 
 ## Deployment on Cloudflare Pages
 
-I recommend deploying merox-erudite on [Cloudflare Pages](https://pages.cloudflare.com/)—it's free, fast, and makes handling environment variables (especially for Brevo) very straightforward.
+I recommend deploying merox-erudite on [Cloudflare Pages](https://pages.cloudflare.com/)—it's free, fast, and makes handling environment variables very straightforward.
 
 ### Why Cloudflare Pages?
 
@@ -170,13 +151,6 @@ After connecting your repository to Cloudflare Pages, you'll need to add environ
 1. Go to your project in Cloudflare Dashboard
 2. Navigate to **Settings** → **Environment Variables**
 3. Add the following variables:
-
-**For Newsletter (Brevo):**
-```
-BREVO_API_KEY=your-api-key-here (set as Secret)
-BREVO_LIST_ID=your-list-id-here (can be Text)
-BREVO_TEMPLATE_ID=5 (can be Text)
-```
 
 **For Analytics:**
 ```
@@ -196,9 +170,6 @@ PUBLIC_GISCUS_CATEGORY_ID=your-category-id (can be Text)
 Get your Giscus configuration values from [giscus.app](https://giscus.app) after enabling Discussions on your repository.
 </Callout>
 
-<Callout variant="warning">
-**Important:** API keys like `BREVO_API_KEY` must be set as **Secret** (not Text) in Cloudflare Pages. This ensures they're encrypted and not exposed in logs or build outputs. Only set them as Text if they're truly public values (like `PUBLIC_*` variables that are meant to be exposed to the browser).
-</Callout>
 
 <Callout variant="tip">
 **Pro Tip:** Cloudflare Pages makes it easy to have different variables for production and preview deployments. You can set production-only variables that won't be exposed in preview builds.

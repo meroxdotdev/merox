@@ -42,16 +42,12 @@ const ThemePromo: React.FC<ThemePromoProps> = ({ className }) => {
             merox-erudite
           </h3>
           <p className="text-xs text-muted-foreground leading-relaxed">
-            A batteries-included Astro blogging theme with newsletter, comments, analytics, and more.
+            A batteries-included Astro blogging theme with comments, analytics, and more.
           </p>
         </div>
 
         {/* Features List */}
         <div className="flex flex-col gap-2 mb-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
-            <span>Newsletter integration (Brevo)</span>
-          </div>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Check className="w-3.5 h-3.5 text-primary flex-shrink-0" />
             <span>Comments (Giscus)</span>
