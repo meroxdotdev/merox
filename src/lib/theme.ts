@@ -103,7 +103,20 @@ export function applyPalette(palette: PaletteId): void {
  */
 export function applyTheme(theme: Theme): void {
   if (typeof document === 'undefined') return
-  document.documentElement.setAttribute('data-theme', theme)
+  
+  const element = document.documentElement
+  
+  // Disable transitions during theme change for instant switch
+  element.classList.add('[&_*]:transition-none')
+  element.setAttribute('data-theme', theme)
+  // Force a reflow to ensure the class is applied
+  window.getComputedStyle(element).getPropertyValue('opacity')
+  
+  // Re-enable transitions after the change
+  requestAnimationFrame(() => {
+    element.classList.remove('[&_*]:transition-none')
+  })
+  
   setStorageItem(STORAGE_KEYS.THEME, theme)
   
   // Dispatch custom event to notify other components

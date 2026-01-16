@@ -401,6 +401,22 @@
     @apply transition-none!;
   }
 
+  /* Prevent color transitions during theme changes for better UX */
+  /* Header and navigation should change instantly with theme, but allow smooth hover transitions */
+  header {
+    /* Only transition non-color properties by default */
+    transition-property: transform, opacity, box-shadow, filter;
+    transition-duration: 300ms;
+    transition-timing-function: ease-in-out;
+  }
+
+  /* Allow color transitions on hover/interaction states */
+  header a,
+  header button {
+    transition-property: transform, opacity, box-shadow, filter, color, background-color, border-color;
+    transition-duration: 200ms;
+  }
+
   /* Enhanced focus indicators for accessibility */
   /* Only apply to links that don't have custom focus styles */
   a:focus-visible:not([class*='focus-visible']):not([class*='ring']) {
