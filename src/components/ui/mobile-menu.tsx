@@ -30,6 +30,34 @@ const MobileMenu = () => {
     return () => document.removeEventListener('astro:after-swap', initTheme)
   }, [])
 
+  // Close menu when switching from mobile to desktop
+  useEffect(() => {
+    // Only set up listener if menu is open
+    if (!isOpen) return
+
+    const mediaQuery = window.matchMedia('(min-width: 768px)') // md breakpoint
+    
+    const handleMediaChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      // Close menu if we switch to desktop viewport
+      if (e.matches) {
+        setIsOpen(false)
+      }
+    }
+
+    // Check immediately if already on desktop
+    if (mediaQuery.matches) {
+      setIsOpen(false)
+      return
+    }
+
+    // Listen for media query changes (more efficient than resize)
+    mediaQuery.addEventListener('change', handleMediaChange)
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleMediaChange)
+    }
+  }, [isOpen])
+
   const handleThemeChange = (theme: Theme) => {
     setCurrentTheme(theme)
     applyTheme(theme)
