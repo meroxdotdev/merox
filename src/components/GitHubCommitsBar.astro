@@ -1,0 +1,511 @@
+---
+import { fetchGitHubCommits, type GitHubCommit } from '@/lib/github'
+
+// Repository configuration
+const REPOSITORIES = [
+  { owner: 'meroxdotdev', repo: 'merox' },
+  { owner: 'meroxdotdev', repo: 'infrastructure' },
+] as const
+
+// Fetch latest commits from all repositories
+let latestCommit: GitHubCommit | null = null
+try {
+  const commitPromises = REPOSITORIES.map(({ owner, repo }) =>
+    fetchGitHubCommits(owner, repo, 1).catch(() => [] as GitHubCommit[])
+  )
+  
+  const commitArrays = await Promise.all(commitPromises)
+  const commits = commitArrays.flat().filter(Boolean) as GitHubCommit[]
+  
+  if (commits.length > 0) {
+    // Sort by date and get the most recent
+    commits.sort((a, b) => {
+      const dateA = new Date(a.commit.author.date).getTime()
+      const dateB = new Date(b.commit.author.date).getTime()
+      return dateB - dateA
+    })
+    latestCommit = commits[0]
+  }
+} catch (error) {
+  // Silently fail at build time - will fetch client-side
+  if (import.meta.env.DEV) {
+    console.error('Failed to fetch GitHub commits at build time:', error)
+  }
+}
+
+// Format commit message (remove newlines, truncate if too long)
+function formatCommitMessage(message: string, maxLength: number = 80): string {
+  const singleLine = message.split('\n')[0].trim()
+  return singleLine.length > maxLength 
+    ? `${singleLine.slice(0, maxLength)}...` 
+    : singleLine
+}
+
+// Format date to relative time in English
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+  
+  if (diffInSeconds < 60) return 'just now'
+  if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60)
+    return `${minutes}m ago`
+  }
+  if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600)
+    return `${hours}h ago`
+  }
+  const days = Math.floor(diffInSeconds / 86400)
+  if (days < 7) {
+    return `${days}d ago`
+  }
+  const weeks = Math.floor(days / 7)
+  return `${weeks}w ago`
+}
+---
+
+<div 
+  class="github-commits-bar border-b border-border bg-muted/30"
+  id="github-commits-bar"
+  data-visible="true"
+>
+  <div class="mx-auto max-w-4xl px-4 py-2.5 relative">
+    <button
+      type="button"
+      id="github-commits-bar-close"
+      class="absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-sm hover:bg-foreground/10 text-foreground/50 hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+      aria-label="Close commits bar"
+      title="Close"
+    >
+      <svg 
+        class="w-3.5 h-3.5" 
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    </button>
+    
+    {latestCommit ? (
+      <div class="flex items-center justify-center gap-3 text-xs pr-8">
+        <svg 
+          class="w-3.5 h-3.5 text-foreground/70" 
+          fill="currentColor" 
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        <a
+          href={latestCommit.html_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors group"
+          title={latestCommit.commit.message}
+        >
+          <span class="font-mono text-primary/80 group-hover:text-primary">
+            {latestCommit.sha.slice(0, 7)}
+          </span>
+          <span class="max-w-[600px] truncate">
+            {formatCommitMessage(latestCommit.commit.message)}
+          </span>
+          <span class="text-foreground/60 whitespace-nowrap">
+            {formatRelativeTime(latestCommit.commit.author.date)}
+          </span>
+        </a>
+      </div>
+    ) : (
+      <div class="flex items-center justify-center gap-3 text-xs text-foreground/50 pr-8" data-loading-placeholder>
+        <svg 
+          class="w-3.5 h-3.5 animate-pulse" 
+          fill="currentColor" 
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+        <span>Loading latest commit...</span>
+      </div>
+    )}
+  </div>
+</div>
+
+<script define:vars={{ repositories: REPOSITORIES }}>
+  (() => {
+    'use strict'
+    
+    // Constants
+    const STORAGE_KEY = 'github-commits-bar-dismissed'
+    const UPDATE_INTERVAL = 5 * 60 * 1000 // 5 minutes
+    const REQUEST_TIMEOUT = 10000 // 10 seconds
+    const GITHUB_API_BASE = 'https://api.github.com'
+    
+    // State
+    let updateIntervalId: number | null = null
+    let abortController: AbortController | null = null
+    
+    // Utility functions
+    function isBarDismissed(): boolean {
+      try {
+        return localStorage.getItem(STORAGE_KEY) === 'true'
+      } catch {
+        return false
+      }
+    }
+    
+    function dismissBar(): void {
+      try {
+        localStorage.setItem(STORAGE_KEY, 'true')
+      } catch {
+        // localStorage unavailable - continue silently
+      }
+      const bar = document.getElementById('github-commits-bar')
+      if (bar) {
+        bar.style.display = 'none'
+        bar.setAttribute('data-visible', 'false')
+      }
+    }
+    
+    function formatCommitMessage(message: string, maxLength: number = 80): string {
+      const singleLine = message.split('\n')[0].trim()
+      return singleLine.length > maxLength 
+        ? `${singleLine.slice(0, maxLength)}...` 
+        : singleLine
+    }
+    
+    function formatRelativeTime(dateString: string): string {
+      const date = new Date(dateString)
+      const now = new Date()
+      const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+      
+      if (diffInSeconds < 60) return 'just now'
+      if (diffInSeconds < 3600) {
+        const minutes = Math.floor(diffInSeconds / 60)
+        return `${minutes}m ago`
+      }
+      if (diffInSeconds < 86400) {
+        const hours = Math.floor(diffInSeconds / 3600)
+        return `${hours}h ago`
+      }
+      const days = Math.floor(diffInSeconds / 86400)
+      if (days < 7) {
+        return `${days}d ago`
+      }
+      const weeks = Math.floor(days / 7)
+      return `${weeks}w ago`
+    }
+    
+    function escapeHtml(text: string): string {
+      const div = document.createElement('div')
+      div.textContent = text
+      return div.innerHTML
+    }
+    
+    function isValidGitHubUrl(url: string): boolean {
+      try {
+        const parsed = new URL(url)
+        // Only allow HTTPS GitHub URLs
+        return (
+          parsed.protocol === 'https:' &&
+          (parsed.hostname === 'github.com' || parsed.hostname.endsWith('.github.com'))
+        )
+      } catch {
+        return false
+      }
+    }
+    
+    function isValidSha(sha: string): boolean {
+      // SHA should be 40 hex characters (we use first 7)
+      return /^[a-f0-9]{7,40}$/i.test(sha)
+    }
+    
+    function validateCommitData(commit: unknown): commit is {
+      sha: string
+      html_url: string
+      commit: { message: string; author: { date: string } }
+    } {
+      if (!commit || typeof commit !== 'object') return false
+      
+      const c = commit as Record<string, unknown>
+      
+      // Validate required fields
+      if (
+        typeof c.sha !== 'string' ||
+        typeof c.html_url !== 'string' ||
+        !c.commit ||
+        typeof c.commit !== 'object'
+      ) {
+        return false
+      }
+      
+      const commitData = c.commit as Record<string, unknown>
+      
+      if (
+        typeof commitData.message !== 'string' ||
+        !commitData.author ||
+        typeof commitData.author !== 'object'
+      ) {
+        return false
+      }
+      
+      const author = commitData.author as Record<string, unknown>
+      
+      if (typeof author.date !== 'string') {
+        return false
+      }
+      
+      // Validate URL is safe
+      if (!isValidGitHubUrl(c.html_url)) {
+        return false
+      }
+      
+      // Validate SHA format
+      if (!isValidSha(c.sha)) {
+        return false
+      }
+      
+      return true
+    }
+    
+    function createCommitElement(commit: {
+      sha: string
+      html_url: string
+      commit: { message: string; author: { date: string } }
+    }): HTMLElement {
+      const container = document.createElement('div')
+      container.className = 'flex items-center justify-center gap-3 text-xs pr-8'
+      
+      // Create SVG icon
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      svg.setAttribute('class', 'w-3.5 h-3.5 text-foreground/70')
+      svg.setAttribute('fill', 'currentColor')
+      svg.setAttribute('viewBox', '0 0 24 24')
+      svg.setAttribute('aria-hidden', 'true')
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+      path.setAttribute('d', 'M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z')
+      svg.appendChild(path)
+      
+      // Create link
+      const link = document.createElement('a')
+      link.href = commit.html_url
+      link.target = '_blank'
+      link.rel = 'noopener noreferrer'
+      link.className = 'flex items-center gap-2 text-foreground/80 hover:text-foreground transition-colors group'
+      link.title = commit.commit.message
+      
+      // Create SHA span
+      const shaSpan = document.createElement('span')
+      shaSpan.className = 'font-mono text-primary/80 group-hover:text-primary'
+      shaSpan.textContent = commit.sha.slice(0, 7)
+      
+      // Create message span
+      const messageSpan = document.createElement('span')
+      messageSpan.className = 'max-w-[600px] truncate'
+      messageSpan.textContent = formatCommitMessage(commit.commit.message)
+      
+      // Create time span
+      const timeSpan = document.createElement('span')
+      timeSpan.className = 'text-foreground/60 whitespace-nowrap'
+      timeSpan.textContent = formatRelativeTime(commit.commit.author.date)
+      
+      // Assemble
+      link.appendChild(shaSpan)
+      link.appendChild(messageSpan)
+      link.appendChild(timeSpan)
+      
+      container.appendChild(svg)
+      container.appendChild(link)
+      
+      return container
+    }
+    
+    function updateCommitElement(commit: {
+      sha: string
+      html_url: string
+      commit: { message: string; author: { date: string } }
+    }): void {
+      const bar = document.getElementById('github-commits-bar')
+      if (!bar) return
+      
+      const message = formatCommitMessage(commit.commit.message)
+      const timeAgo = formatRelativeTime(commit.commit.author.date)
+      
+      // Check if placeholder exists
+      const placeholder = bar.querySelector('[data-loading-placeholder]')
+      if (placeholder) {
+        const newElement = createCommitElement(commit)
+        placeholder.replaceWith(newElement)
+        return
+      }
+      
+      // Update existing commit
+      const link = bar.querySelector<HTMLAnchorElement>('a')
+      if (!link) return
+      
+      // Validate URL before setting
+      if (isValidGitHubUrl(commit.html_url)) {
+        link.href = commit.html_url
+      }
+      link.title = commit.commit.message
+      
+      const sha = link.querySelector('span:first-child')
+      const messageSpan = link.querySelector('span:nth-child(2)')
+      const timeSpan = link.querySelector('span:last-child')
+      
+      if (sha && isValidSha(commit.sha)) {
+        sha.textContent = commit.sha.slice(0, 7)
+      }
+      if (messageSpan) {
+        messageSpan.textContent = message
+      }
+      if (timeSpan) {
+        timeSpan.textContent = timeAgo
+      }
+    }
+    
+    async function fetchWithTimeout(
+      url: string,
+      timeout: number = REQUEST_TIMEOUT
+    ): Promise<Response> {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), timeout)
+      
+      try {
+        const response = await fetch(url, {
+          headers: {
+            Accept: 'application/vnd.github.v3+json',
+          },
+          signal: controller.signal,
+        })
+        clearTimeout(timeoutId)
+        return response
+      } catch (error) {
+        clearTimeout(timeoutId)
+        throw error
+      }
+    }
+    
+    async function fetchLatestCommit(): Promise<{
+      sha: string
+      html_url: string
+      commit: { message: string; author: { date: string } }
+    } | null> {
+      try {
+        abortController = new AbortController()
+        
+        const commitPromises = repositories.map(async ({ owner, repo }) => {
+          try {
+            const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/commits?per_page=1`
+            const response = await fetchWithTimeout(url, REQUEST_TIMEOUT)
+            
+            if (!response.ok) {
+              return null
+            }
+            
+            const commits = await response.json()
+            return commits[0] || null
+          } catch (error) {
+            // Silently fail individual requests
+            return null
+          }
+        })
+        
+        const commits = await Promise.all(commitPromises)
+        // Validate and filter commits
+        const validCommits = commits.filter((c): c is NonNullable<typeof c> => {
+          return c !== null && validateCommitData(c)
+        })
+        
+        if (validCommits.length === 0) {
+          return null
+        }
+        
+        // Sort by date and get the most recent
+        validCommits.sort((a, b) => {
+          const dateA = new Date(a.commit.author.date).getTime()
+          const dateB = new Date(b.commit.author.date).getTime()
+          return dateB - dateA
+        })
+        
+        return validCommits[0]
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.error('Failed to fetch latest commit:', error)
+        }
+        return null
+      }
+    }
+    
+    async function updateCommit(): Promise<void> {
+      // Skip if bar is dismissed
+      if (isBarDismissed()) {
+        return
+      }
+      
+      const commit = await fetchLatestCommit()
+      if (commit) {
+        updateCommitElement(commit)
+      }
+    }
+    
+    function setupCloseButton(): void {
+      const closeButton = document.getElementById('github-commits-bar-close')
+      if (closeButton) {
+        closeButton.addEventListener('click', dismissBar)
+      }
+    }
+    
+    function cleanup(): void {
+      if (updateIntervalId !== null) {
+        clearInterval(updateIntervalId)
+        updateIntervalId = null
+      }
+      if (abortController) {
+        abortController.abort()
+        abortController = null
+      }
+    }
+    
+    function init(): void {
+      // Hide bar if previously dismissed
+      if (isBarDismissed()) {
+        const bar = document.getElementById('github-commits-bar')
+        if (bar) {
+          bar.style.display = 'none'
+          bar.setAttribute('data-visible', 'false')
+        }
+        return
+      }
+      
+      // Setup close button
+      setupCloseButton()
+      
+      // Initial update
+      updateCommit()
+      
+      // Setup periodic updates
+      updateIntervalId = window.setInterval(updateCommit, UPDATE_INTERVAL)
+      
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', cleanup)
+      
+      // Handle Astro view transitions
+      document.addEventListener('astro:before-swap', cleanup)
+      document.addEventListener('astro:after-swap', () => {
+        setupCloseButton()
+        updateCommit()
+        updateIntervalId = window.setInterval(updateCommit, UPDATE_INTERVAL)
+      })
+    }
+    
+    // Initialize when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init)
+    } else {
+      init()
+    }
+  })()
+</script>
