@@ -143,32 +143,131 @@ function formatRelativeTime(dateString: string): string {
     const STORAGE_KEY = 'github-commits-bar-dismissed'
     const UPDATE_INTERVAL = 5 * 60 * 1000 // 5 minutes
     const REQUEST_TIMEOUT = 10000 // 10 seconds
+    const EXPIRY_DAYS = 7 // Reappear after 7 days even if no new commits
     const GITHUB_API_BASE = 'https://api.github.com'
     
     // State
     let updateIntervalId = null
     let abortController = null
+    let currentCommitSha = null // Track current displayed commit SHA
     
     // Utility functions
-    function isBarDismissed() {
+    function getDismissedState() {
       try {
-        return localStorage.getItem(STORAGE_KEY) === 'true'
+        const stored = localStorage.getItem(STORAGE_KEY)
+        if (!stored) return null
+        
+        const parsed = JSON.parse(stored)
+        
+        // Validate structure
+        if (!parsed || typeof parsed !== 'object') return null
+        
+        // Validate timestamp is a number
+        if (typeof parsed.timestamp !== 'number' || parsed.timestamp <= 0) return null
+        
+        // Validate SHA if present (should be valid SHA format)
+        if (parsed.sha && typeof parsed.sha === 'string' && !isValidSha(parsed.sha)) {
+          // Invalid SHA format - clear corrupted data
+          try {
+            localStorage.removeItem(STORAGE_KEY)
+          } catch {
+            // Ignore cleanup errors
+          }
+          return null
+        }
+        
+        return parsed
       } catch {
-        return false
+        // JSON parse failed or localStorage unavailable - clear corrupted data
+        try {
+          localStorage.removeItem(STORAGE_KEY)
+        } catch {
+          // Ignore cleanup errors
+        }
+        return null
       }
     }
     
-    function dismissBar() {
-      try {
-        localStorage.setItem(STORAGE_KEY, 'true')
-      } catch {
-        // localStorage unavailable - continue silently
+    function isBarDismissed(commitSha) {
+      const dismissed = getDismissedState()
+      if (!dismissed) return false
+      
+      // Validate timestamp is not too old (expired)
+      const dismissedTime = dismissed.timestamp
+      const daysSinceDismissed = (Date.now() - dismissedTime) / (1000 * 60 * 60 * 24)
+      
+      // If expired (more than 7 days), not dismissed anymore
+      if (daysSinceDismissed >= EXPIRY_DAYS) {
+        // Clean up expired data
+        try {
+          localStorage.removeItem(STORAGE_KEY)
+        } catch {
+          // Ignore cleanup errors
+        }
+        return false
       }
+      
+      // If no commit SHA provided, check if dismissed at all (within expiry)
+      if (!commitSha) {
+        return true
+      }
+      
+      // Validate commit SHA format
+      if (!isValidSha(commitSha)) {
+        return false
+      }
+      
+      // If same commit SHA, still dismissed (within expiry)
+      if (dismissed.sha && dismissed.sha === commitSha) {
+        return true
+      }
+      
+      // Different commit SHA - should reappear
+      return false
+    }
+    
+    function dismissBar(commitSha) {
+      // Validate SHA before saving
+      const shaToSave = commitSha || currentCommitSha
+      if (shaToSave && !isValidSha(shaToSave)) {
+        // Invalid SHA - don't save
+        return
+      }
+      
+      try {
+        const dismissedState = {
+          sha: shaToSave || '',
+          timestamp: Date.now()
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(dismissedState))
+      } catch (error) {
+        // Handle quota exceeded or other storage errors
+        if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+          // Try to clear old data and retry
+          try {
+            localStorage.removeItem(STORAGE_KEY)
+            const dismissedState = {
+              sha: shaToSave || '',
+              timestamp: Date.now()
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dismissedState))
+          } catch {
+            // If still fails, silently ignore
+          }
+        }
+        // Other errors (localStorage unavailable, etc.) - continue silently
+      }
+      
       const bar = document.getElementById('github-commits-bar')
       if (bar) {
         bar.style.display = 'none'
         bar.setAttribute('data-visible', 'false')
       }
+    }
+    
+    function shouldShowBar(commitSha) {
+      if (!commitSha) return false
+      return !isBarDismissed(commitSha)
     }
     
     function formatCommitMessage(message, maxLength = 80) {
@@ -433,21 +532,38 @@ function formatRelativeTime(dateString: string): string {
     }
     
     async function updateCommit() {
-      // Skip if bar is dismissed
-      if (isBarDismissed()) {
+      const commit = await fetchLatestCommit()
+      if (!commit) return
+      
+      const commitSha = commit.sha
+      currentCommitSha = commitSha
+      
+      // Check if bar should be shown for this commit
+      if (!shouldShowBar(commitSha)) {
+        // Bar is dismissed for this commit - keep it hidden
+        const bar = document.getElementById('github-commits-bar')
+        if (bar) {
+          bar.style.display = 'none'
+          bar.setAttribute('data-visible', 'false')
+        }
         return
       }
       
-      const commit = await fetchLatestCommit()
-      if (commit) {
-        updateCommitElement(commit)
+      // Show bar and update content
+      const bar = document.getElementById('github-commits-bar')
+      if (bar) {
+        bar.style.display = ''
+        bar.setAttribute('data-visible', 'true')
       }
+      updateCommitElement(commit)
     }
     
     function setupCloseButton() {
       const closeButton = document.getElementById('github-commits-bar-close')
       if (closeButton) {
-        closeButton.addEventListener('click', dismissBar)
+        closeButton.addEventListener('click', () => {
+          dismissBar(currentCommitSha)
+        })
       }
     }
     
@@ -463,20 +579,10 @@ function formatRelativeTime(dateString: string): string {
     }
     
     function init() {
-      // Hide bar if previously dismissed
-      if (isBarDismissed()) {
-        const bar = document.getElementById('github-commits-bar')
-        if (bar) {
-          bar.style.display = 'none'
-          bar.setAttribute('data-visible', 'false')
-        }
-        return
-      }
-      
       // Setup close button
       setupCloseButton()
       
-      // Initial update
+      // Initial update (will check if should show based on commit SHA)
       updateCommit()
       
       // Setup periodic updates
