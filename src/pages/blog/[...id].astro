@@ -108,6 +108,23 @@ try {
       ) && <TOCHeader slot="table-of-contents" headings={headings} />
   }
 
+  <!-- Desktop Scroll Progress Indicator -->
+  <div
+    id="desktop-scroll-progress"
+    class="fixed top-0 left-0 right-0 h-1 bg-primary/20 z-[60] hidden xl:block"
+    aria-hidden="true"
+    role="progressbar"
+    aria-valuemin="0"
+    aria-valuemax="100"
+    aria-valuenow="0"
+  >
+    <div
+      id="desktop-scroll-progress-bar"
+      class="h-full bg-primary transition-all duration-150 ease-out"
+      style="width: 0%"
+    />
+  </div>
+
   <section
     class="grid grid-cols-[minmax(0px,1fr)_min(56rem,100%)_minmax(0px,1fr)] gap-y-6"
   >
@@ -314,13 +331,32 @@ try {
     document.addEventListener('astro:page-load', () => {
       const scrollToTopButton = document.getElementById('scroll-to-top')
       const footer = document.querySelector('footer')
+      const desktopProgressBar = document.getElementById(
+        'desktop-scroll-progress-bar',
+      )
+      const desktopProgressContainer = document.getElementById(
+        'desktop-scroll-progress',
+      )
 
-      if (scrollToTopButton && footer) {
-        scrollToTopButton.addEventListener('click', () => {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        })
+      // Desktop scroll progress indicator
+      const updateDesktopScrollProgress = () => {
+        if (!desktopProgressBar || !desktopProgressContainer) return
 
-        window.addEventListener('scroll', () => {
+        const scrollableDistance =
+          document.documentElement.scrollHeight - window.innerHeight
+        const scrollProgress =
+          scrollableDistance > 0
+            ? Math.min(Math.max(window.scrollY / scrollableDistance, 0), 1)
+            : 0
+
+        const percentage = Math.round(scrollProgress * 100)
+        desktopProgressBar.style.width = `${percentage}%`
+        desktopProgressContainer.setAttribute('aria-valuenow', percentage.toString())
+      }
+
+      // Scroll handler for scroll-to-top button and progress bar
+      const handleScroll = () => {
+        if (scrollToTopButton && footer) {
           const footerRect = footer.getBoundingClientRect()
           const isFooterVisible = footerRect.top <= window.innerHeight
 
@@ -328,8 +364,26 @@ try {
             'hidden',
             window.scrollY <= 300 || isFooterVisible,
           )
+        }
+
+        updateDesktopScrollProgress()
+      }
+
+      // Initialize scroll-to-top button
+      if (scrollToTopButton) {
+        scrollToTopButton.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
         })
       }
+
+      // Attach event listeners
+      window.addEventListener('scroll', handleScroll, { passive: true })
+      window.addEventListener('resize', updateDesktopScrollProgress, {
+        passive: true,
+      })
+
+      // Update on initial load (handles back navigation with scroll position)
+      updateDesktopScrollProgress()
     })
   </script>
 </Layout>
