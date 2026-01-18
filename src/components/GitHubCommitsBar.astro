@@ -133,7 +133,7 @@ function formatRelativeTime(dateString: string): string {
   </div>
 </div>
 
-<script define:vars={{ repositories: REPOSITORIES }}>
+<script is:inline define:vars={{ repositories: REPOSITORIES }}>
   (() => {
     'use strict'
     
@@ -144,11 +144,11 @@ function formatRelativeTime(dateString: string): string {
     const GITHUB_API_BASE = 'https://api.github.com'
     
     // State
-    let updateIntervalId: number | null = null
-    let abortController: AbortController | null = null
+    let updateIntervalId = null
+    let abortController = null
     
     // Utility functions
-    function isBarDismissed(): boolean {
+    function isBarDismissed() {
       try {
         return localStorage.getItem(STORAGE_KEY) === 'true'
       } catch {
@@ -156,7 +156,7 @@ function formatRelativeTime(dateString: string): string {
       }
     }
     
-    function dismissBar(): void {
+    function dismissBar() {
       try {
         localStorage.setItem(STORAGE_KEY, 'true')
       } catch {
@@ -169,14 +169,14 @@ function formatRelativeTime(dateString: string): string {
       }
     }
     
-    function formatCommitMessage(message: string, maxLength: number = 80): string {
+    function formatCommitMessage(message, maxLength = 80) {
       const singleLine = message.split('\n')[0].trim()
       return singleLine.length > maxLength 
         ? `${singleLine.slice(0, maxLength)}...` 
         : singleLine
     }
     
-    function formatRelativeTime(dateString: string): string {
+    function formatRelativeTime(dateString) {
       const date = new Date(dateString)
       const now = new Date()
       const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
@@ -198,13 +198,7 @@ function formatRelativeTime(dateString: string): string {
       return `${weeks}w ago`
     }
     
-    function escapeHtml(text: string): string {
-      const div = document.createElement('div')
-      div.textContent = text
-      return div.innerHTML
-    }
-    
-    function isValidGitHubUrl(url: string): boolean {
+    function isValidGitHubUrl(url) {
       try {
         const parsed = new URL(url)
         // Only allow HTTPS GitHub URLs
@@ -217,19 +211,15 @@ function formatRelativeTime(dateString: string): string {
       }
     }
     
-    function isValidSha(sha: string): boolean {
+    function isValidSha(sha) {
       // SHA should be 40 hex characters (we use first 7)
       return /^[a-f0-9]{7,40}$/i.test(sha)
     }
     
-    function validateCommitData(commit: unknown): commit is {
-      sha: string
-      html_url: string
-      commit: { message: string; author: { date: string } }
-    } {
+    function validateCommitData(commit) {
       if (!commit || typeof commit !== 'object') return false
       
-      const c = commit as Record<string, unknown>
+      const c = commit
       
       // Validate required fields
       if (
@@ -241,7 +231,7 @@ function formatRelativeTime(dateString: string): string {
         return false
       }
       
-      const commitData = c.commit as Record<string, unknown>
+      const commitData = c.commit
       
       if (
         typeof commitData.message !== 'string' ||
@@ -251,7 +241,7 @@ function formatRelativeTime(dateString: string): string {
         return false
       }
       
-      const author = commitData.author as Record<string, unknown>
+      const author = commitData.author
       
       if (typeof author.date !== 'string') {
         return false
@@ -270,11 +260,7 @@ function formatRelativeTime(dateString: string): string {
       return true
     }
     
-    function createCommitElement(commit: {
-      sha: string
-      html_url: string
-      commit: { message: string; author: { date: string } }
-    }): HTMLElement {
+    function createCommitElement(commit) {
       const container = document.createElement('div')
       container.className = 'flex items-center justify-center gap-3 text-xs pr-8'
       
@@ -322,11 +308,7 @@ function formatRelativeTime(dateString: string): string {
       return container
     }
     
-    function updateCommitElement(commit: {
-      sha: string
-      html_url: string
-      commit: { message: string; author: { date: string } }
-    }): void {
+    function updateCommitElement(commit) {
       const bar = document.getElementById('github-commits-bar')
       if (!bar) return
       
@@ -342,7 +324,7 @@ function formatRelativeTime(dateString: string): string {
       }
       
       // Update existing commit
-      const link = bar.querySelector<HTMLAnchorElement>('a')
+      const link = bar.querySelector('a')
       if (!link) return
       
       // Validate URL before setting
@@ -366,10 +348,7 @@ function formatRelativeTime(dateString: string): string {
       }
     }
     
-    async function fetchWithTimeout(
-      url: string,
-      timeout: number = REQUEST_TIMEOUT
-    ): Promise<Response> {
+    async function fetchWithTimeout(url, timeout = REQUEST_TIMEOUT) {
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), timeout)
       
@@ -388,11 +367,7 @@ function formatRelativeTime(dateString: string): string {
       }
     }
     
-    async function fetchLatestCommit(): Promise<{
-      sha: string
-      html_url: string
-      commit: { message: string; author: { date: string } }
-    } | null> {
+    async function fetchLatestCommit() {
       try {
         abortController = new AbortController()
         
@@ -415,7 +390,7 @@ function formatRelativeTime(dateString: string): string {
         
         const commits = await Promise.all(commitPromises)
         // Validate and filter commits
-        const validCommits = commits.filter((c): c is NonNullable<typeof c> => {
+        const validCommits = commits.filter((c) => {
           return c !== null && validateCommitData(c)
         })
         
@@ -432,14 +407,12 @@ function formatRelativeTime(dateString: string): string {
         
         return validCommits[0]
       } catch (error) {
-        if (import.meta.env.DEV) {
-          console.error('Failed to fetch latest commit:', error)
-        }
+        // Silently fail - no console.error needed
         return null
       }
     }
     
-    async function updateCommit(): Promise<void> {
+    async function updateCommit() {
       // Skip if bar is dismissed
       if (isBarDismissed()) {
         return
@@ -451,14 +424,14 @@ function formatRelativeTime(dateString: string): string {
       }
     }
     
-    function setupCloseButton(): void {
+    function setupCloseButton() {
       const closeButton = document.getElementById('github-commits-bar-close')
       if (closeButton) {
         closeButton.addEventListener('click', dismissBar)
       }
     }
     
-    function cleanup(): void {
+    function cleanup() {
       if (updateIntervalId !== null) {
         clearInterval(updateIntervalId)
         updateIntervalId = null
@@ -469,7 +442,7 @@ function formatRelativeTime(dateString: string): string {
       }
     }
     
-    function init(): void {
+    function init() {
       // Hide bar if previously dismissed
       if (isBarDismissed()) {
         const bar = document.getElementById('github-commits-bar')
