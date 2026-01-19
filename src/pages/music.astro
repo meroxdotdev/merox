@@ -26,17 +26,37 @@ try {
   const username = import.meta.env.PUBLIC_LASTFM_USERNAME
   const apiKey = import.meta.env.PUBLIC_LASTFM_API_KEY
 
+  // Debug logging (works in both dev and build)
+  console.log('[Last.fm] Config check:', {
+    hasUsername: !!username,
+    hasApiKey: !!apiKey,
+    username: username || 'NOT SET',
+    envMode: import.meta.env.MODE,
+  })
+
   if (username && apiKey) {
     hasLastFm = true
+    console.log('[Last.fm] Fetching data for user:', username)
     ;[recentTracks, topArtists, topAlbums, userInfo] = await Promise.all([
       fetchRecentTracks(username, 10),
       fetchTopArtists(username, '1month', 10),
       fetchTopAlbums(username, '1month', 10),
       fetchUserInfo(username),
     ])
+    console.log('[Last.fm] Data fetched:', {
+      tracks: recentTracks.length,
+      artists: topArtists.length,
+      albums: topAlbums.length,
+      hasUserInfo: !!userInfo,
+    })
+  } else {
+    console.warn('[Last.fm] Missing configuration:', {
+      username: username || 'MISSING',
+      apiKey: apiKey ? 'SET' : 'MISSING',
+    })
   }
 } catch (error) {
-  console.error('Error fetching Last.fm data:', error)
+  console.error('[Last.fm] Error fetching data:', error)
 }
 ---
 
@@ -67,6 +87,12 @@ try {
         ) : (
           <>
             My music listening stats. Connect your Last.fm account by setting <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_USERNAME</code> and <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_API_KEY</code> environment variables.
+            {import.meta.env.DEV && (
+              <span class="block mt-2 text-xs">
+                Debug: Username={import.meta.env.PUBLIC_LASTFM_USERNAME ? 'SET' : 'NOT SET'}, 
+                API Key={import.meta.env.PUBLIC_LASTFM_API_KEY ? 'SET' : 'NOT SET'}
+              </span>
+            )}
           </>
         )}
       </p>
