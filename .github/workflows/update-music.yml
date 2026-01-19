@@ -1,4 +1,4 @@
-name: Update Music Page
+name: Update Tunes Page
 
 on:
   schedule:
@@ -22,5 +22,5 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit --allow-empty -m "chore: update music page"
+          git commit --allow-empty -m "chore: update tunes page"
           git push

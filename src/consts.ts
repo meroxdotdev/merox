@@ -53,7 +53,7 @@ export const NAV_LINKS: SocialLink[] = [
   },
 
   {
-    href: '/music/',
+    href: '/tunes/',
     label: 'Tunes',
   },
 
