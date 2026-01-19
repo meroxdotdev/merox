@@ -9,9 +9,10 @@ const currentYear = new Date().getFullYear()
 const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
 
 // Fetch latest commit from merox repo only
+// Using retry logic to handle rate limiting during build
 let latestCommit: GitHubCommit | null = null
 try {
-  const commits = await fetchGitHubCommits('meroxdotdev', 'merox', 1)
+  const commits = await fetchGitHubCommits('meroxdotdev', 'merox', 1, 2)
   if (commits.length > 0) {
     latestCommit = commits[0]
   } else if (import.meta.env.DEV) {
