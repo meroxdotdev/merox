@@ -30,9 +30,17 @@ try {
 
     recentTracks = tracksResult.status === 'fulfilled' ? tracksResult.value : []
     userInfo = userInfoResult.status === 'fulfilled' && userInfoResult.value ? userInfoResult.value : null
+
+    // Log in dev mode only if tracks failed to fetch (not if empty - that's normal)
+    if (import.meta.env.DEV && tracksResult.status === 'rejected') {
+      console.warn('Failed to fetch Last.fm tracks:', tracksResult.reason)
+    }
   }
 } catch (error) {
-  // Silently fail
+  // Silently fail in production, but log in dev
+  if (import.meta.env.DEV && error instanceof Error) {
+    console.warn('Error fetching Last.fm data:', error.message)
+  }
 }
 ---
 
@@ -89,14 +97,19 @@ try {
                   </p>
                   <div class="flex items-center gap-2 text-xs text-muted-foreground">
                     <span class="truncate">{track.artist['#text']}</span>
-                    {track.date && (
+                    {track.date ? (
                       <>
                         <span>·</span>
                         <time class="font-mono">
                           {formatLastFmDate(track.date.uts)}
                         </time>
                       </>
-                    )}
+                    ) : track['@attr']?.nowplaying === 'true' ? (
+                      <>
+                        <span>·</span>
+                        <span class="font-mono text-primary">now playing</span>
+                      </>
+                    ) : null}
                   </div>
                 </div>
                 <Icon

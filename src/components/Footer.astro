@@ -14,9 +14,14 @@ try {
   const commits = await fetchGitHubCommits('meroxdotdev', 'merox', 1)
   if (commits.length > 0) {
     latestCommit = commits[0]
+  } else if (import.meta.env.DEV) {
+    console.warn('No commits found for meroxdotdev/merox - this might be due to rate limiting or API issues')
   }
 } catch (error) {
-  // Silently fail - fetchGitHubCommits already handles errors gracefully
+  // Silently fail in production, but log in dev
+  if (import.meta.env.DEV && error instanceof Error) {
+    console.warn('Error fetching GitHub commits:', error.message)
+  }
 }
 
 // Format relative time

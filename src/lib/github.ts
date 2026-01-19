@@ -109,8 +109,12 @@ export async function fetchGitHubCommits(
     clearTimeout(timeoutId)
 
     if (!response.ok) {
-      if (import.meta.env.DEV && (response.status === 403 || response.status === 429)) {
-        console.warn(`GitHub API rate limit reached for ${owner}/${repo}`)
+      if (import.meta.env.DEV) {
+        if (response.status === 403 || response.status === 429) {
+          console.warn(`GitHub API rate limit reached for ${owner}/${repo}. Consider setting GITHUB_TOKEN for higher rate limits.`)
+        } else {
+          console.warn(`GitHub API error for ${owner}/${repo}: ${response.status} ${response.statusText}`)
+        }
       }
       return []
     }

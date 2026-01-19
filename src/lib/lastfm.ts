@@ -12,6 +12,9 @@ export interface LastFmTrack {
     uts: string
     '#text': string
   }
+  '@attr'?: {
+    nowplaying?: string
+  }
   url: string
   image?: Array<{
     '#text': string
@@ -112,12 +115,18 @@ async function lastFmRequest(params: Record<string, string>): Promise<any> {
     const data = await response.json()
     
     if (data.error) {
+      if (import.meta.env.DEV) {
+        console.warn(`Last.fm API error: ${data.error} - ${data.message || 'Unknown error'}`)
+      }
       return null
     }
 
     return data
   } catch (error) {
-    // Silently handle errors - timeout and network errors are expected
+    // Silently handle errors in production, but log in dev
+    if (import.meta.env.DEV && error instanceof Error && error.name !== 'AbortError') {
+      console.warn('Last.fm API request failed:', error.message)
+    }
     return null
   }
 }
@@ -148,7 +157,8 @@ export async function fetchRecentTracks(
     ? data.recenttracks.track
     : [data.recenttracks.track]
 
-  return tracks.filter((track: any) => track.date)
+  // Include tracks that have a date (played) OR are currently playing
+  return tracks.filter((track: any) => track.date || track['@attr']?.nowplaying === 'true')
 }
 
 /**
