@@ -3,22 +3,16 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import PageHead from '@/components/PageHead.astro'
 import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
-import { Icon } from 'astro-icon/components'
 import {
   fetchRecentTracks,
-  fetchTopArtists,
-  fetchTopAlbums,
   fetchUserInfo,
   getImageUrl,
+  formatLastFmDate,
   type LastFmTrack,
-  type LastFmArtist,
-  type LastFmAlbum,
 } from '@/lib/lastfm'
 
 // Fetch Last.fm data at build time
 let recentTracks: LastFmTrack[] = []
-let topArtists: LastFmArtist[] = []
-let topAlbums: LastFmAlbum[] = []
 let userInfo: Awaited<ReturnType<typeof fetchUserInfo>> = null
 let hasLastFm = false
 
@@ -28,41 +22,16 @@ try {
 
   if (username && apiKey) {
     hasLastFm = true
-    // Fetch with timeout to prevent build hanging
-    const fetchWithTimeout = async <T,>(promise: Promise<T>, timeoutMs: number = 10000): Promise<T | null> => {
-      try {
-        return await Promise.race([
-          promise,
-          new Promise<null>((_, reject) => 
-            setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
-          )
-        ])
-      } catch (error) {
-        if (import.meta.env.DEV) {
-          console.warn('[Last.fm] Request failed:', error)
-        }
-        return null
-      }
-    }
-
-    // Fetch all data with individual timeouts
-    const [tracksResult, artistsResult, albumsResult, userInfoResult] = await Promise.allSettled([
-      fetchWithTimeout(fetchRecentTracks(username, 10), 8000),
-      fetchWithTimeout(fetchTopArtists(username, '1month', 10), 8000),
-      fetchWithTimeout(fetchTopAlbums(username, '1month', 10), 8000),
-      fetchWithTimeout(fetchUserInfo(username), 8000),
+    const [tracksResult, userInfoResult] = await Promise.allSettled([
+      fetchRecentTracks(username, 10),
+      fetchUserInfo(username),
     ])
 
-    recentTracks = tracksResult.status === 'fulfilled' && tracksResult.value ? tracksResult.value : []
-    topArtists = artistsResult.status === 'fulfilled' && artistsResult.value ? artistsResult.value : []
-    topAlbums = albumsResult.status === 'fulfilled' && albumsResult.value ? albumsResult.value : []
+    recentTracks = tracksResult.status === 'fulfilled' ? tracksResult.value : []
     userInfo = userInfoResult.status === 'fulfilled' && userInfoResult.value ? userInfoResult.value : null
   }
 } catch (error) {
-  // Silently fail - page will show "not configured" message
-  if (import.meta.env.DEV) {
-    console.error('[Last.fm] Error:', error)
-  }
+  // Silently fail
 }
 ---
 
@@ -74,199 +43,66 @@ try {
     ]}
   />
 
-  <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-12 pb-12">
+  <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-6 sm:gap-8 pb-6 sm:pb-8">
     <!-- Header -->
-    <div class="space-y-4">
-      <h1 class="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none text-foreground">
+    <div class="space-y-1">
+      <p class="text-sm sm:text-base text-foreground">
         What I'm <span class="text-primary">Listening To</span>
-      </h1>
-      <p class="text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl">
-        {hasLastFm && userInfo ? (
-          <>
-            My music listening stats from <Link href={userInfo.url} external class="text-primary hover:text-primary/80 underline">Last.fm</Link>.
-            {userInfo.playcount && (
-              <span class="block mt-2">
-                Total scrobbles: <strong class="text-foreground font-semibold">{parseInt(userInfo.playcount).toLocaleString()}</strong>
-              </span>
-            )}
-          </>
-        ) : (
-          <>
-            My music listening stats. Connect your Last.fm account by setting <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_USERNAME</code> and <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_API_KEY</code> environment variables.
-            {import.meta.env.DEV && (
-              <span class="block mt-2 text-xs">
-                Debug: Username={import.meta.env.PUBLIC_LASTFM_USERNAME ? 'SET' : 'NOT SET'}, 
-                API Key={import.meta.env.PUBLIC_LASTFM_API_KEY ? 'SET' : 'NOT SET'}
-              </span>
-            )}
-          </>
-        )}
       </p>
+      {!hasLastFm && (
+        <p class="text-xs text-muted-foreground">
+          Connect your Last.fm account to display music stats.
+        </p>
+      )}
     </div>
 
-    {hasLastFm ? (
-      <>
-        <!-- Recent Tracks -->
-        {recentTracks.length > 0 && (
-          <section class="space-y-6">
-            <div class="flex items-center gap-3">
-              <Icon name="lucide:headphones" class="size-6 text-primary" />
-              <h2 class="text-2xl md:text-3xl font-black tracking-tighter uppercase leading-none text-foreground">
-                Recent Tracks
-              </h2>
-            </div>
-            <div class="space-y-3">
-              {recentTracks.slice(0, 10).map((track) => {
-                const imageUrl = getImageUrl(track.image)
-                return (
-                  <Link
-                    href={track.url}
-                    external
-                    class="group flex items-center gap-4 rounded-lg border border-border/40 bg-card/50 p-4 hover:bg-card/80 hover:border-border transition-all"
-                  >
-                    {imageUrl && (
-                      <img
-                        src={imageUrl}
-                        alt={`${track.artist['#text']} - ${track.name}`}
-                        class="size-16 rounded object-cover shrink-0"
-                        loading="lazy"
-                      />
-                    )}
-                    <div class="flex-1 min-w-0">
-                      <h3 class="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-                        {track.name}
-                      </h3>
-                      <p class="text-sm text-muted-foreground truncate">
-                        {track.artist['#text']}
-                        {track.album?.['#text'] && ` • ${track.album['#text']}`}
-                      </p>
-                      {track.date && (
-                        <p class="text-xs text-muted-foreground/70 mt-1">
-                          {new Date(parseInt(track.date.uts) * 1000).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </p>
-                      )}
-                    </div>
-                    <Icon name="lucide:external-link" class="size-4 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0" />
-                  </Link>
-                )
-              })}
-            </div>
-          </section>
-        )}
-
-        <!-- Top Artists -->
-        {topArtists.length > 0 && (
-          <section class="space-y-6">
-            <div class="flex items-center gap-3">
-              <Icon name="lucide:mic" class="size-6 text-primary" />
-              <h2 class="text-2xl md:text-3xl font-black tracking-tighter uppercase leading-none text-foreground">
-                Top Artists <span class="text-sm font-normal text-muted-foreground normal-case">(Last Month)</span>
-              </h2>
-            </div>
-            <div class="grid gap-4 md:grid-cols-2">
-              {topArtists.map((artist, index) => {
-                const imageUrl = getImageUrl(artist.image)
-                return (
-                  <Link
-                    href={artist.url}
-                    external
-                    class="group flex items-center gap-4 rounded-lg border border-border/40 bg-card/50 p-4 hover:bg-card/80 hover:border-border transition-all"
-                  >
-                    {imageUrl && (
-                      <img
-                        src={imageUrl}
-                        alt={artist.name}
-                        class="size-16 rounded-full object-cover shrink-0"
-                        loading="lazy"
-                      />
-                    )}
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center gap-2 mb-1">
-                        <span class="text-xs font-bold text-primary tabular-nums">#{index + 1}</span>
-                        <h3 class="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-                          {artist.name}
-                        </h3>
-                      </div>
-                      <p class="text-sm text-muted-foreground">
-                        {parseInt(artist.playcount).toLocaleString()} {parseInt(artist.playcount) === 1 ? 'play' : 'plays'}
-                      </p>
-                    </div>
-                    <Icon name="lucide:external-link" class="size-4 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0" />
-                  </Link>
-                )
-              })}
-            </div>
-          </section>
-        )}
-
-        <!-- Top Albums -->
-        {topAlbums.length > 0 && (
-          <section class="space-y-6">
-            <div class="flex items-center gap-3">
-              <Icon name="lucide:disc" class="size-6 text-primary" />
-              <h2 class="text-2xl md:text-3xl font-black tracking-tighter uppercase leading-none text-foreground">
-                Top Albums <span class="text-sm font-normal text-muted-foreground normal-case">(Last Month)</span>
-              </h2>
-            </div>
-            <div class="grid gap-4 md:grid-cols-2">
-              {topAlbums.map((album, index) => {
-                const imageUrl = getImageUrl(album.image)
-                return (
-                  <Link
-                    href={album.url}
-                    external
-                    class="group flex items-center gap-4 rounded-lg border border-border/40 bg-card/50 p-4 hover:bg-card/80 hover:border-border transition-all"
-                  >
-                    {imageUrl && (
-                      <img
-                        src={imageUrl}
-                        alt={`${album.artist.name} - ${album.name}`}
-                        class="size-16 rounded object-cover shrink-0"
-                        loading="lazy"
-                      />
-                    )}
-                    <div class="flex-1 min-w-0">
-                      <div class="flex items-center gap-2 mb-1">
-                        <span class="text-xs font-bold text-primary tabular-nums">#{index + 1}</span>
-                        <h3 class="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
-                          {album.name}
-                        </h3>
-                      </div>
-                      <p class="text-sm text-muted-foreground truncate">
-                        {album.artist.name}
-                      </p>
-                      <p class="text-xs text-muted-foreground/70 mt-1">
-                        {parseInt(album.playcount).toLocaleString()} {parseInt(album.playcount) === 1 ? 'play' : 'plays'}
-                      </p>
-                    </div>
-                    <Icon name="lucide:external-link" class="size-4 text-muted-foreground/50 group-hover:text-primary transition-colors shrink-0" />
-                  </Link>
-                )
-              })}
-            </div>
-          </section>
-        )}
-      </>
+    {hasLastFm && recentTracks.length > 0 ? (
+      <div class="space-y-0.5">
+        {recentTracks.map((track) => {
+          const imageUrl = getImageUrl(track.image, 'medium')
+          return (
+            <Link
+              href={track.url}
+              external
+              class="group flex items-center gap-2.5 sm:gap-3 rounded-md p-2.5 sm:p-3 -mx-2 sm:-mx-0 hover:bg-muted/40 active:bg-muted/50 transition-colors"
+            >
+              {imageUrl && (
+                <img
+                  src={imageUrl}
+                  alt=""
+                  class="size-12 sm:size-14 rounded shrink-0"
+                  loading="lazy"
+                  width="56"
+                  height="56"
+                />
+              )}
+              <div class="flex-1 min-w-0">
+                <p class="text-sm sm:text-base font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                  {track.name}
+                </p>
+                <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                  <p class="text-xs sm:text-sm text-muted-foreground truncate">
+                    {track.artist['#text']}
+                  </p>
+                  {track.date && (
+                    <>
+                      <span class="text-muted-foreground/30 hidden sm:inline">•</span>
+                      <time class="text-xs text-muted-foreground/60">
+                        {formatLastFmDate(track.date.uts)}
+                      </time>
+                    </>
+                  )}
+                </div>
+              </div>
+            </Link>
+          )
+        })}
+      </div>
     ) : (
-      <!-- No Last.fm configured -->
-      <div class="rounded-xl border border-border/70 bg-card/80 p-12 text-center">
-        <Icon name="lucide:music" class="size-12 text-muted-foreground/50 mx-auto mb-4" />
-        <p class="text-muted-foreground mb-2 font-medium">
-          Last.fm not configured
+      <div class="rounded-lg border border-border/40 bg-card/30 p-4 sm:p-6 text-center">
+        <p class="text-xs sm:text-sm text-muted-foreground">
+          Configure <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_USERNAME</code> and <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_API_KEY</code> environment variables.
         </p>
-        <p class="text-sm text-muted-foreground/70 max-w-md mx-auto">
-          To display your music stats, you need to:
-        </p>
-        <ol class="text-sm text-muted-foreground/70 max-w-md mx-auto mt-4 text-left list-decimal list-inside space-y-2">
-          <li>Get a free Last.fm API key from <Link href="https://www.last.fm/api/account/create" external class="text-primary hover:text-primary/80 underline">last.fm/api</Link></li>
-          <li>Set <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_USERNAME</code> environment variable</li>
-          <li>Set <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_API_KEY</code> environment variable</li>
-        </ol>
       </div>
     )}
   </div>

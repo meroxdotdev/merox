@@ -60,10 +60,10 @@ export interface LastFmUserInfo {
 }
 
 const LASTFM_API_BASE = 'https://ws.audioscrobbler.com/2.0/'
+const REQUEST_TIMEOUT_MS = 8000
 
 /**
  * Get Last.fm API key from environment variable
- * Set PUBLIC_LASTFM_API_KEY in your .env file
  */
 const getApiKey = (): string | null => {
   return import.meta.env.PUBLIC_LASTFM_API_KEY || null
@@ -71,19 +71,17 @@ const getApiKey = (): string | null => {
 
 /**
  * Get Last.fm username from environment variable
- * Set PUBLIC_LASTFM_USERNAME in your .env file
  */
 const getUsername = (): string | null => {
   return import.meta.env.PUBLIC_LASTFM_USERNAME || null
 }
 
 /**
- * Make a request to Last.fm API
+ * Make a request to Last.fm API with timeout
  */
 async function lastFmRequest(params: Record<string, string>): Promise<any> {
   const apiKey = getApiKey()
   if (!apiKey) {
-    console.warn('Last.fm API key not configured')
     return null
   }
 
@@ -95,11 +93,17 @@ async function lastFmRequest(params: Record<string, string>): Promise<any> {
     })
 
     const url = `${LASTFM_API_BASE}?${searchParams.toString()}`
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+
     const response = await fetch(url, {
       headers: {
         'User-Agent': 'merox.dev/1.0',
       },
+      signal: controller.signal,
     })
+
+    clearTimeout(timeoutId)
 
     if (!response.ok) {
       return null
@@ -107,24 +111,19 @@ async function lastFmRequest(params: Record<string, string>): Promise<any> {
 
     const data = await response.json()
     
-    // Check for API errors
     if (data.error) {
-      console.error('Last.fm API error:', data.message)
       return null
     }
 
     return data
   } catch (error) {
-    console.error('Last.fm API request failed:', error)
+    // Silently handle errors - timeout and network errors are expected
     return null
   }
 }
 
 /**
  * Fetches recent tracks from Last.fm
- * @param username - Last.fm username
- * @param limit - Number of tracks to fetch (default: 10, max: 200)
- * @returns Array of recent tracks or empty array if fetch fails
  */
 export async function fetchRecentTracks(
   username?: string,
@@ -149,15 +148,11 @@ export async function fetchRecentTracks(
     ? data.recenttracks.track
     : [data.recenttracks.track]
 
-  return tracks.filter((track: any) => track.date) // Only return played tracks (exclude now playing if not scrobbled)
+  return tracks.filter((track: any) => track.date)
 }
 
 /**
  * Fetches top artists from Last.fm
- * @param username - Last.fm username
- * @param period - Time period: overall, 7day, 1month, 3month, 6month, 12month (default: overall)
- * @param limit - Number of artists to fetch (default: 10, max: 1000)
- * @returns Array of top artists or empty array if fetch fails
  */
 export async function fetchTopArtists(
   username?: string,
@@ -189,10 +184,6 @@ export async function fetchTopArtists(
 
 /**
  * Fetches top albums from Last.fm
- * @param username - Last.fm username
- * @param period - Time period: overall, 7day, 1month, 3month, 6month, 12month (default: overall)
- * @param limit - Number of albums to fetch (default: 10, max: 1000)
- * @returns Array of top albums or empty array if fetch fails
  */
 export async function fetchTopAlbums(
   username?: string,
@@ -224,8 +215,6 @@ export async function fetchTopAlbums(
 
 /**
  * Fetches user info from Last.fm
- * @param username - Last.fm username
- * @returns User info or null if fetch fails
  */
 export async function fetchUserInfo(
   username?: string,
@@ -260,4 +249,24 @@ export function getImageUrl(
 
   const image = images.find((img) => img.size === size)
   return image?.['#text'] || images[images.length - 1]?.['#text'] || null
+}
+
+/**
+ * Format play count with proper pluralization
+ */
+export function formatPlayCount(count: string | number): string {
+  const num = typeof count === 'string' ? parseInt(count, 10) : count
+  return `${num.toLocaleString()} ${num === 1 ? 'play' : 'plays'}`
+}
+
+/**
+ * Format date from Last.fm timestamp
+ */
+export function formatLastFmDate(uts: string): string {
+  return new Date(parseInt(uts, 10) * 1000).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
 }

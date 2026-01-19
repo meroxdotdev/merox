@@ -1,0 +1,26 @@
+name: Update Music Page
+
+on:
+  schedule:
+    # Run daily at 10:30 UTC (12:30 PM Romania time - EET/EEST)
+    - cron: '30 10 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Trigger Cloudflare Pages rebuild
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git commit --allow-empty -m "chore: update music page"
+          git push
