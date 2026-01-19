@@ -6,7 +6,6 @@ import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
-import { fetchGitHubCommits, type GitHubCommit } from '@/lib/github'
 import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
 import type { SocialLink } from '@/types'
 
@@ -17,58 +16,6 @@ try {
   console.error('Error fetching recent posts:', error)
 }
 
-// Fetch latest GitHub commit
-const REPOSITORIES = [
-  { owner: 'meroxdotdev', repo: 'merox' },
-  { owner: 'meroxdotdev', repo: 'infrastructure' },
-] as const
-
-let latestCommit: GitHubCommit | null = null
-try {
-  const commitPromises = REPOSITORIES.map(({ owner, repo }) =>
-    fetchGitHubCommits(owner, repo, 1)
-  )
-  
-  const commitArrays = await Promise.all(commitPromises)
-  const commits = commitArrays.flat().filter(Boolean) as GitHubCommit[]
-  
-  if (commits.length > 0) {
-    commits.sort((a, b) => {
-      const dateA = new Date(a.commit.author.date).getTime()
-      const dateB = new Date(b.commit.author.date).getTime()
-      return dateB - dateA
-    })
-    latestCommit = commits[0]
-  }
-} catch (error) {
-  // Silently fail - fetchGitHubCommits already handles errors gracefully
-  if (import.meta.env.DEV) {
-    console.error('Failed to fetch GitHub commits:', error)
-  }
-}
-
-// Format relative time
-function formatRelativeTime(dateString: string): string {
-  const date = new Date(dateString)
-  const now = new Date()
-  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
-  
-  if (diffInSeconds < 60) return 'just now'
-  if (diffInSeconds < 3600) {
-    const minutes = Math.floor(diffInSeconds / 60)
-    return `${minutes}m ago`
-  }
-  if (diffInSeconds < 86400) {
-    const hours = Math.floor(diffInSeconds / 3600)
-    return `${hours}h ago`
-  }
-  const days = Math.floor(diffInSeconds / 86400)
-  if (days < 7) {
-    return `${days}d ago`
-  }
-  const weeks = Math.floor(days / 7)
-  return `${weeks}w ago`
-}
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -150,24 +97,6 @@ const websiteSchema = {
           <p class="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mx-auto md:mx-0">
             System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security.
           </p>
-          
-          {latestCommit && (
-            <div class="flex items-center gap-2 text-xs text-muted-foreground">
-              <Icon name="lucide:git-commit" class="size-3.5 shrink-0" aria-hidden="true" />
-              <span class="truncate">
-                Latest update: <a 
-                  href={latestCommit.html_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  class="text-primary hover:underline font-mono"
-                >
-                  {latestCommit.sha.slice(0, 7)}
-                </a>
-                {' '}
-                <span class="text-muted-foreground/70">{formatRelativeTime(latestCommit.commit.author.date)}</span>
-              </span>
-            </div>
-          )}
         </div>
 
         <div class="flex flex-col items-center md:items-start gap-6">

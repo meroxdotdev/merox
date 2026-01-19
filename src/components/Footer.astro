@@ -3,56 +3,112 @@ import { SOCIAL_LINKS, SITE } from '@/consts'
 import Link from '@/components/Link.astro'
 import { Icon } from 'astro-icon/components'
 import { ICON_MAP } from '@/consts'
+import { fetchGitHubCommits, type GitHubCommit } from '@/lib/github'
 
 const currentYear = new Date().getFullYear()
 const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
+
+// Fetch latest commit from merox repo only
+let latestCommit: GitHubCommit | null = null
+try {
+  const commits = await fetchGitHubCommits('meroxdotdev', 'merox', 1)
+  if (commits.length > 0) {
+    latestCommit = commits[0]
+  }
+} catch (error) {
+  // Silently fail - fetchGitHubCommits already handles errors gracefully
+}
+
+// Format relative time
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+  
+  if (diffInSeconds < 60) return 'just now'
+  if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60)
+    return `${minutes}m ago`
+  }
+  if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600)
+    return `${hours}h ago`
+  }
+  const days = Math.floor(diffInSeconds / 86400)
+  if (days < 7) {
+    return `${days}d ago`
+  }
+  const weeks = Math.floor(days / 7)
+  return `${weeks}w ago`
+}
 ---
 
 <footer class="border-t border-border/60 dark:border-border/40" role="contentinfo">
-  <div class="mx-auto max-w-4xl px-4 py-6 sm:py-5">
-    <div class="flex flex-col items-center gap-5 sm:flex-row sm:justify-between sm:items-center sm:gap-6">
+  <div class="mx-auto max-w-4xl px-4 py-6 sm:py-8">
+    <!-- Main Footer Content -->
+    <div class="flex flex-col gap-6 sm:gap-8">
       
-      <!-- Copyright + Navigation -->
-      <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-4 sm:gap-y-0">
-        <span class="text-xs text-muted-foreground">&copy; {currentYear} Robert Melcher</span>
+      <!-- Top Row: Copyright + Navigation + Commit Info -->
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <!-- Left: Copyright + Navigation -->
+        <div class="flex flex-col items-center gap-3 sm:flex-row sm:items-center sm:gap-4">
+          <span class="text-xs text-muted-foreground whitespace-nowrap">&copy; {currentYear} Robert Melcher</span>
+          
+          <span class="hidden sm:inline text-border/40 text-xs">·</span>
+          
+          <nav class="flex flex-wrap items-center justify-center gap-x-2.5 gap-y-1.5 text-xs text-muted-foreground sm:gap-x-3" aria-label="Footer navigation">
+            <Link href="/blog/" class="hover:text-foreground transition-colors">Blog</Link>
+            <span class="text-border/40">·</span>
+            <Link href="/projects/" class="hover:text-foreground transition-colors">Projects</Link>
+            <span class="text-border/40">·</span>
+            <Link href="/tunes/" class="hover:text-foreground transition-colors">Tunes</Link>
+            <span class="text-border/40">·</span>
+            <Link href="/tags/" class="hover:text-foreground transition-colors">Tags</Link>
+            <span class="text-border/40">·</span>
+            <Link href="/about/" class="hover:text-foreground transition-colors">About</Link>
+          </nav>
+        </div>
         
-        <span class="hidden sm:inline text-border/50 text-xs">|</span>
-        
-        <nav class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-muted-foreground sm:gap-3" aria-label="Footer navigation">
-          <Link href="/blog/" class="hover:text-foreground transition-colors">Blog</Link>
-          <span class="text-border/50">·</span>
-          <Link href="/projects/" class="hover:text-foreground transition-colors">Projects</Link>
-          <span class="text-border/50">·</span>
-          <Link href="/tunes/" class="hover:text-foreground transition-colors">Tunes</Link>
-          <span class="text-border/50">·</span>
-          <Link href="/tags/" class="hover:text-foreground transition-colors">Tags</Link>
-          <span class="text-border/50">·</span>
-          <Link href="/about/" class="hover:text-foreground transition-colors">About</Link>
-        </nav>
+        <!-- Right: Latest Commit Info -->
+        {latestCommit && (
+          <div class="flex items-center justify-center sm:justify-end">
+            <a
+              href={latestCommit.html_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md bg-muted/40 hover:bg-muted/60 border border-border/40 hover:border-border/60 transition-all duration-200 text-xs text-muted-foreground hover:text-foreground"
+              title={`Latest commit: ${latestCommit.commit.message.split('\n')[0]}`}
+            >
+              <Icon name="lucide:git-commit" class="size-3 shrink-0" aria-hidden="true" />
+              <span class="font-mono text-[10px] sm:text-xs">{latestCommit.sha.slice(0, 7)}</span>
+              <span class="hidden sm:inline text-muted-foreground/70 group-hover:text-muted-foreground">
+                {formatRelativeTime(latestCommit.commit.author.date)}
+              </span>
+            </a>
+          </div>
+        )}
       </div>
       
-      <!-- Legal + Social -->
-      <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-4 sm:gap-y-0">
-        <div class="flex items-center gap-3 text-xs text-muted-foreground">
+      <!-- Bottom Row: Legal + Social -->
+      <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:justify-between pt-4 border-t border-border/30">
+        <div class="flex items-center gap-2.5 text-xs text-muted-foreground">
           <Link href="/privacy/" class="hover:text-foreground transition-colors">Privacy</Link>
-          <span class="text-border/50">·</span>
+          <span class="text-border/40">·</span>
           <Link href="/terms/" class="hover:text-foreground transition-colors">Terms</Link>
         </div>
         
-        <span class="hidden sm:inline text-border/30">|</span>
-        
-        <div class="flex items-center gap-1">
+        <div class="flex items-center gap-0.5">
           {footerSocials.map(({ href, label }) => (
             <Link
               href={href}
               aria-label={label}
               title={label}
-              class="p-2 sm:p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+              class="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-sm hover:bg-muted/40"
               external
             >
               <Icon
                 name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:link'}
-                class="size-4 sm:size-3.5"
+                class="size-4"
               />
             </Link>
           ))}
@@ -60,9 +116,9 @@ const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
             href="/rss.xml"
             aria-label="RSS Feed"
             title="RSS Feed"
-            class="p-2 sm:p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+            class="p-2 text-muted-foreground hover:text-foreground transition-colors rounded-sm hover:bg-muted/40"
           >
-            <Icon name="lucide:rss" class="size-4 sm:size-3.5" />
+            <Icon name="lucide:rss" class="size-4" />
           </Link>
         </div>
       </div>
