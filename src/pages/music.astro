@@ -3,6 +3,7 @@ import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import PageHead from '@/components/PageHead.astro'
 import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
+import { Icon } from 'astro-icon/components'
 import {
   fetchRecentTracks,
   fetchUserInfo,
@@ -35,7 +36,7 @@ try {
 }
 ---
 
-<Layout class="max-w-4xl">
+<Layout class="max-w-3xl">
   <PageHead slot="head" title="Music" />
   <Breadcrumbs
     items={[
@@ -43,98 +44,94 @@ try {
     ]}
   />
 
-  <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-6 sm:gap-8 pb-6 sm:pb-8">
+  <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-8 pb-12">
     <!-- Header -->
-    <div class="space-y-1">
-      <p class="text-sm sm:text-base text-foreground">
-        What I'm <span class="text-primary">Listening To</span>
-      </p>
+    <div class="space-y-2">
+      <h1 class="text-xl font-medium text-foreground">
+        recently played
+      </h1>
       {hasLastFm && (
-        <p class="text-xs text-muted-foreground/60">
-          Updated daily at 10:30 UTC
-        </p>
-      )}
-      {!hasLastFm && (
-        <p class="text-xs text-muted-foreground">
-          Connect your Last.fm account to display music stats.
+        <p class="text-xs text-muted-foreground font-mono">
+          updated daily at 10:30 UTC
         </p>
       )}
     </div>
 
     {hasLastFm && recentTracks.length > 0 ? (
       <>
-        <div class="space-y-0.5">
+        <!-- Tracks List -->
+        <div class="space-y-1">
           {recentTracks.map((track) => {
             const imageUrl = getImageUrl(track.image, 'medium')
             return (
               <Link
                 href={track.url}
                 external
-                class="group flex items-center gap-2.5 sm:gap-3 rounded-md p-2.5 sm:p-3 -mx-2 sm:-mx-0 hover:bg-muted/40 active:bg-muted/50 transition-colors"
+                class="group flex items-center gap-3 py-2.5 border-b border-border/20 last:border-0 hover:bg-muted/20 transition-colors"
               >
-                {imageUrl && (
+                {imageUrl ? (
                   <img
                     src={imageUrl}
                     alt=""
-                    class="size-12 sm:size-14 rounded shrink-0"
+                    class="size-10 rounded shrink-0"
                     loading="lazy"
-                    width="56"
-                    height="56"
+                    width="40"
+                    height="40"
                   />
+                ) : (
+                  <div class="size-10 rounded shrink-0 bg-muted/30 flex items-center justify-center border border-border/20">
+                    <Icon name="lucide:music" class="h-4 w-4 text-muted-foreground/40" />
+                  </div>
                 )}
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm sm:text-base font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                  <p class="text-sm font-medium text-foreground truncate group-hover:text-primary transition-colors">
                     {track.name}
                   </p>
-                  <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                    <p class="text-xs sm:text-sm text-muted-foreground truncate">
-                      {track.artist['#text']}
-                    </p>
+                  <div class="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span class="truncate">{track.artist['#text']}</span>
                     {track.date && (
                       <>
-                        <span class="text-muted-foreground/30 hidden sm:inline">•</span>
-                        <time class="text-xs text-muted-foreground/60">
+                        <span>·</span>
+                        <time class="font-mono">
                           {formatLastFmDate(track.date.uts)}
                         </time>
                       </>
                     )}
                   </div>
                 </div>
+                <Icon
+                  name="lucide:external-link"
+                  class="h-3.5 w-3.5 text-muted-foreground/40 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                />
               </Link>
             )
           })}
         </div>
+
+        <!-- View All -->
         {userInfo?.url && (
-          <div class="pt-2">
+          <div class="pt-4">
             <Link
               href={userInfo.url}
               external
-              class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors"
+              class="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-mono"
             >
-              View all
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="shrink-0"
-              >
-                <path d="M7 7h10v10" />
-                <path d="M7 17L17 7" />
-              </svg>
+              view all
+              <Icon name="lucide:arrow-up-right" class="h-3 w-3" />
             </Link>
           </div>
         )}
       </>
+    ) : hasLastFm ? (
+      <div class="py-12 text-center">
+        <p class="text-sm text-muted-foreground">
+          No recent tracks found.
+        </p>
+      </div>
     ) : (
-      <div class="rounded-lg border border-border/40 bg-card/30 p-4 sm:p-6 text-center">
-        <p class="text-xs sm:text-sm text-muted-foreground">
-          Configure <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_USERNAME</code> and <code class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono">PUBLIC_LASTFM_API_KEY</code> environment variables.
+      <div class="py-12 text-center">
+        <p class="text-xs text-muted-foreground font-mono">
+          Configure PUBLIC_LASTFM_USERNAME and PUBLIC_LASTFM_API_KEY
         </p>
       </div>
     )}
