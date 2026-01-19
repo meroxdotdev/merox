@@ -6,7 +6,6 @@ import 'katex/dist/katex.min.css'
 
 import FloatingSidebar from '@/components/FloatingSidebar.astro'
 import Footer from '@/components/Footer.astro'
-import GitHubCommitsBar from '@/components/GitHubCommitsBar.astro'
 import Head from '@/components/Head.astro'
 import Header from '@/components/Header.astro'
 import ThemeInit from '@/components/ThemeInit.astro'
@@ -84,7 +83,6 @@ const { class: className, hideFloatingSidebar = false, contentPadding = 'pb-20' 
         document.addEventListener('click', handleClick, true)
       })()
     </script>
-    <GitHubCommitsBar />
     <header
       class="bg-background/50 sticky top-0 z-50 backdrop-blur-sm xl:backdrop-blur-none xl:bg-transparent divide-y divide-border xl:divide-none"
     >

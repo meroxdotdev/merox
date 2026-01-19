@@ -6,6 +6,7 @@ import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
+import { fetchGitHubCommits, type GitHubCommit } from '@/lib/github'
 import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
 import type { SocialLink } from '@/types'
 
@@ -14,6 +15,59 @@ try {
   latestPosts = await getRecentPosts(3)
 } catch (error) {
   console.error('Error fetching recent posts:', error)
+}
+
+// Fetch latest GitHub commit
+const REPOSITORIES = [
+  { owner: 'meroxdotdev', repo: 'merox' },
+  { owner: 'meroxdotdev', repo: 'infrastructure' },
+] as const
+
+let latestCommit: GitHubCommit | null = null
+try {
+  const commitPromises = REPOSITORIES.map(({ owner, repo }) =>
+    fetchGitHubCommits(owner, repo, 1)
+  )
+  
+  const commitArrays = await Promise.all(commitPromises)
+  const commits = commitArrays.flat().filter(Boolean) as GitHubCommit[]
+  
+  if (commits.length > 0) {
+    commits.sort((a, b) => {
+      const dateA = new Date(a.commit.author.date).getTime()
+      const dateB = new Date(b.commit.author.date).getTime()
+      return dateB - dateA
+    })
+    latestCommit = commits[0]
+  }
+} catch (error) {
+  // Silently fail - fetchGitHubCommits already handles errors gracefully
+  if (import.meta.env.DEV) {
+    console.error('Failed to fetch GitHub commits:', error)
+  }
+}
+
+// Format relative time
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
+  
+  if (diffInSeconds < 60) return 'just now'
+  if (diffInSeconds < 3600) {
+    const minutes = Math.floor(diffInSeconds / 60)
+    return `${minutes}m ago`
+  }
+  if (diffInSeconds < 86400) {
+    const hours = Math.floor(diffInSeconds / 3600)
+    return `${hours}h ago`
+  }
+  const days = Math.floor(diffInSeconds / 86400)
+  if (days < 7) {
+    return `${days}d ago`
+  }
+  const weeks = Math.floor(days / 7)
+  return `${weeks}w ago`
 }
 
 const personSchema = {
@@ -54,7 +108,7 @@ const websiteSchema = {
 }
 ---
 
-<Layout class="max-w-4xl" contentPadding="pb-12" transition:persist="home-layout">
+<Layout class="max-w-4xl">
   <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true} />
 
   <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
@@ -64,7 +118,10 @@ const websiteSchema = {
   <link rel="preload" as="image" href="/meroxindc1.webp" type="image/webp" fetchpriority="high" media="(min-width: 768px)" />
   
   <style>
-    .hero-glow { animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    .hero-glow { 
+      animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      contain: layout style paint;
+    }
     .status-dot {
       display: inline-block;
       width: 8px;
@@ -72,6 +129,7 @@ const websiteSchema = {
       border-radius: 50%;
       background-color: rgb(34, 197, 94);
       animation: status-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      contain: layout style paint;
     }
     @keyframes status-pulse {
       0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); opacity: 1; }
@@ -82,7 +140,7 @@ const websiteSchema = {
     }
   </style>
 
-  <section class="hero-section relative pt-4 pb-8 md:pt-12 md:pb-20" transition:animate="none">
+  <section class="hero-section relative pt-4 pb-8 md:pt-12 md:pb-20">
     <div class="flex flex-col-reverse md:flex-row items-center gap-6 md:gap-8">
       <div class="flex-1 space-y-6 text-center md:text-left">
         <div class="space-y-4">
@@ -92,6 +150,24 @@ const websiteSchema = {
           <p class="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mx-auto md:mx-0">
             System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security.
           </p>
+          
+          {latestCommit && (
+            <div class="flex items-center gap-2 text-xs text-muted-foreground">
+              <Icon name="lucide:git-commit" class="size-3.5 shrink-0" aria-hidden="true" />
+              <span class="truncate">
+                Latest update: <a 
+                  href={latestCommit.html_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  class="text-primary hover:underline font-mono"
+                >
+                  {latestCommit.sha.slice(0, 7)}
+                </a>
+                {' '}
+                <span class="text-muted-foreground/70">{formatRelativeTime(latestCommit.commit.author.date)}</span>
+              </span>
+            </div>
+          )}
         </div>
 
         <div class="flex flex-col items-center md:items-start gap-6">

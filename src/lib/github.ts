@@ -29,6 +29,7 @@ export interface GitHubCommit {
 }
 
 const GITHUB_API_BASE = 'https://api.github.com'
+const REQUEST_TIMEOUT_MS = 10000 // 10 seconds
 
 /**
  * Fetches repository data from GitHub API (public repos, no auth required)
@@ -86,18 +87,47 @@ export async function fetchGitHubCommits(
 ): Promise<GitHubCommit[]> {
   try {
     const url = `${GITHUB_API_BASE}/repos/${owner}/${repo}/commits?per_page=${Math.min(perPage, 100)}`
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+
+    const headers: HeadersInit = {
+      Accept: 'application/vnd.github.v3+json',
+      'User-Agent': 'merox.dev/1.0',
+    }
+
+    // Add GitHub token if available (for higher rate limits)
+    const githubToken = import.meta.env.GITHUB_TOKEN
+    if (githubToken) {
+      headers['Authorization'] = `token ${githubToken}`
+    }
+
     const response = await fetch(url, {
-      headers: {
-        Accept: 'application/vnd.github.v3+json',
-      },
+      headers,
+      signal: controller.signal,
     })
 
+    clearTimeout(timeoutId)
+
     if (!response.ok) {
+      if (import.meta.env.DEV && (response.status === 403 || response.status === 429)) {
+        console.warn(`GitHub API rate limit reached for ${owner}/${repo}`)
+      }
       return []
     }
 
-    return (await response.json()) as GitHubCommit[]
-  } catch {
+    const data = await response.json()
+    
+    // Validate response is an array
+    if (!Array.isArray(data)) {
+      return []
+    }
+
+    return data as GitHubCommit[]
+  } catch (error) {
+    // Silently handle errors - timeout and network errors are expected
+    if (import.meta.env.DEV && error instanceof Error && error.name !== 'AbortError') {
+      console.warn(`Error fetching commits from ${owner}/${repo}:`, error.message)
+    }
     return []
   }
 }

@@ -32,7 +32,7 @@
   src: url('/fonts/GeistVF.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
-  font-display: optional;
+  font-display: swap;
 }
 
 @font-face {
@@ -40,7 +40,7 @@
   src: url('/fonts/GeistMonoVF.woff2') format('woff2-variations');
   font-weight: 100 900;
   font-style: normal;
-  font-display: optional;
+  font-display: swap;
 }
 
 /* Default Blue Palette */
@@ -387,10 +387,29 @@
 
   html {
     @apply bg-background text-foreground scheme-light;
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
 
   html[data-theme='dark'] {
     @apply scheme-dark;
+  }
+
+  body {
+    @apply text-base;
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  main {
+    font-size: inherit;
+    line-height: inherit;
   }
 
   ::-webkit-scrollbar-corner {
@@ -504,6 +523,10 @@
   will-change: auto;
   /* Prevent view transition animations from causing shifts */
   view-transition-name: none;
+  /* Lock font rendering for consistency */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* Prevent text shifting during font load in hero section */
@@ -513,6 +536,20 @@
   text-rendering: optimizeLegibility;
   /* Ensure stable rendering */
   contain: layout;
+  /* Lock font rendering */
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+}
+
+/* Ensure consistent font-size in hero section paragraphs */
+.hero-section p {
+  font-size: 1rem; /* text-base */
+}
+
+@media (min-width: 768px) {
+  .hero-section p {
+    font-size: 1.125rem; /* text-lg */
+  }
 }
 
 /* On mobile, ensure hero content doesn't shift during navigation */
@@ -546,6 +583,16 @@
 /* Exclude from Astro view transitions for instant display */
 .hero-bg-picture {
   view-transition-name: none;
+}
+
+/* Ensure consistent typography during view transitions */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    font-size: 16px;
+    line-height: 1.5;
+    letter-spacing: -0.011em;
+  }
 }
 
 
