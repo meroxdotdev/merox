@@ -2,10 +2,33 @@ import { OGImageRoute } from 'astro-og-canvas'
 
 // Content pages (blog posts, etc.)
 const contentPages = import.meta.glob('/src/content/**/*.{md,mdx}', { eager: true })
-const allPages = Object.entries(contentPages).reduce((acc, [path, page]) => {
+const contentPagesMap = Object.entries(contentPages).reduce((acc, [path, page]) => {
   const newPath = path.replace('/src/content', '')
   return { ...acc, [newPath]: page }
 }, {})
+
+// Static pages configuration (tunes, projects, etc.)
+// These need to match the structure expected by getImageOptions
+const staticPages = {
+  '/tunes': {
+    frontmatter: {
+      title: 'Tunes',
+      description: 'Recently played tracks from Last.fm',
+    },
+  },
+  '/projects': {
+    frontmatter: {
+      title: 'Projects',
+      description: 'Open source projects and repositories',
+    },
+  },
+}
+
+// Merge content pages and static pages
+const allPages = {
+  ...contentPagesMap,
+  ...staticPages,
+}
 
 export const { getStaticPaths, GET } = OGImageRoute({
   param: 'route',
