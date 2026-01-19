@@ -26,37 +26,43 @@ try {
   const username = import.meta.env.PUBLIC_LASTFM_USERNAME
   const apiKey = import.meta.env.PUBLIC_LASTFM_API_KEY
 
-  // Debug logging (works in both dev and build)
-  console.log('[Last.fm] Config check:', {
-    hasUsername: !!username,
-    hasApiKey: !!apiKey,
-    username: username || 'NOT SET',
-    envMode: import.meta.env.MODE,
-  })
-
   if (username && apiKey) {
     hasLastFm = true
-    console.log('[Last.fm] Fetching data for user:', username)
-    ;[recentTracks, topArtists, topAlbums, userInfo] = await Promise.all([
-      fetchRecentTracks(username, 10),
-      fetchTopArtists(username, '1month', 10),
-      fetchTopAlbums(username, '1month', 10),
-      fetchUserInfo(username),
+    // Fetch with timeout to prevent build hanging
+    const fetchWithTimeout = async <T,>(promise: Promise<T>, timeoutMs: number = 10000): Promise<T | null> => {
+      try {
+        return await Promise.race([
+          promise,
+          new Promise<null>((_, reject) => 
+            setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
+          )
+        ])
+      } catch (error) {
+        if (import.meta.env.DEV) {
+          console.warn('[Last.fm] Request failed:', error)
+        }
+        return null
+      }
+    }
+
+    // Fetch all data with individual timeouts
+    const [tracksResult, artistsResult, albumsResult, userInfoResult] = await Promise.allSettled([
+      fetchWithTimeout(fetchRecentTracks(username, 10), 8000),
+      fetchWithTimeout(fetchTopArtists(username, '1month', 10), 8000),
+      fetchWithTimeout(fetchTopAlbums(username, '1month', 10), 8000),
+      fetchWithTimeout(fetchUserInfo(username), 8000),
     ])
-    console.log('[Last.fm] Data fetched:', {
-      tracks: recentTracks.length,
-      artists: topArtists.length,
-      albums: topAlbums.length,
-      hasUserInfo: !!userInfo,
-    })
-  } else {
-    console.warn('[Last.fm] Missing configuration:', {
-      username: username || 'MISSING',
-      apiKey: apiKey ? 'SET' : 'MISSING',
-    })
+
+    recentTracks = tracksResult.status === 'fulfilled' && tracksResult.value ? tracksResult.value : []
+    topArtists = artistsResult.status === 'fulfilled' && artistsResult.value ? artistsResult.value : []
+    topAlbums = albumsResult.status === 'fulfilled' && albumsResult.value ? albumsResult.value : []
+    userInfo = userInfoResult.status === 'fulfilled' && userInfoResult.value ? userInfoResult.value : null
   }
 } catch (error) {
-  console.error('[Last.fm] Error fetching data:', error)
+  // Silently fail - page will show "not configured" message
+  if (import.meta.env.DEV) {
+    console.error('[Last.fm] Error:', error)
+  }
 }
 ---
 
