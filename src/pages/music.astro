@@ -109,10 +109,10 @@ try {
         </div>
 
         <!-- View All -->
-        {userInfo?.url && (
+        {(userInfo?.url || (hasLastFm && import.meta.env.PUBLIC_LASTFM_USERNAME)) && (
           <div class="pt-4">
             <Link
-              href={userInfo.url}
+              href={userInfo?.url || `https://www.last.fm/user/${import.meta.env.PUBLIC_LASTFM_USERNAME}`}
               external
               class="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors font-mono"
             >

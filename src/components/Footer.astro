@@ -13,15 +13,17 @@ const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
     <div class="flex flex-col items-center gap-5 sm:flex-row sm:justify-between sm:items-center sm:gap-6">
       
       <!-- Copyright + Navigation -->
-      <div class="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-4 sm:gap-y-0">
-        <span class="text-xs text-muted-foreground">&copy; {currentYear} {SITE.title}</span>
+      <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-4 sm:gap-y-0">
+        <span class="text-xs text-muted-foreground">&copy; {currentYear} Robert Melcher</span>
         
         <span class="hidden sm:inline text-border/50 text-xs">|</span>
         
-        <nav class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground sm:gap-3" aria-label="Footer navigation">
+        <nav class="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs text-muted-foreground sm:gap-3" aria-label="Footer navigation">
           <Link href="/blog/" class="hover:text-foreground transition-colors">Blog</Link>
           <span class="text-border/50">·</span>
           <Link href="/projects/" class="hover:text-foreground transition-colors">Projects</Link>
+          <span class="text-border/50">·</span>
+          <Link href="/music/" class="hover:text-foreground transition-colors">Music</Link>
           <span class="text-border/50">·</span>
           <Link href="/tags/" class="hover:text-foreground transition-colors">Tags</Link>
           <span class="text-border/50">·</span>
@@ -30,7 +32,7 @@ const footerSocials = SOCIAL_LINKS.filter(link => link.label !== 'RSS')
       </div>
       
       <!-- Legal + Social -->
-      <div class="flex flex-col items-center gap-5 sm:flex-row sm:items-center sm:gap-4 sm:gap-y-0">
+      <div class="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-4 sm:gap-y-0">
         <div class="flex items-center gap-3 text-xs text-muted-foreground">
           <Link href="/privacy/" class="hover:text-foreground transition-colors">Privacy</Link>
           <span class="text-border/50">·</span>
