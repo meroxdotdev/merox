@@ -53,6 +53,11 @@ export const NAV_LINKS: SocialLink[] = [
   },
 
   {
+    href: '/music/',
+    label: 'Music',
+  },
+
+  {
     href: 'https://inside.merox.dev',
     label: 'Inside',
   },
