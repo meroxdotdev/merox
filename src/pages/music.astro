@@ -49,6 +49,11 @@ try {
       <p class="text-sm sm:text-base text-foreground">
         What I'm <span class="text-primary">Listening To</span>
       </p>
+      {hasLastFm && (
+        <p class="text-xs text-muted-foreground/60">
+          Updated daily at 10:30 UTC
+        </p>
+      )}
       {!hasLastFm && (
         <p class="text-xs text-muted-foreground">
           Connect your Last.fm account to display music stats.
@@ -57,47 +62,75 @@ try {
     </div>
 
     {hasLastFm && recentTracks.length > 0 ? (
-      <div class="space-y-0.5">
-        {recentTracks.map((track) => {
-          const imageUrl = getImageUrl(track.image, 'medium')
-          return (
-            <Link
-              href={track.url}
-              external
-              class="group flex items-center gap-2.5 sm:gap-3 rounded-md p-2.5 sm:p-3 -mx-2 sm:-mx-0 hover:bg-muted/40 active:bg-muted/50 transition-colors"
-            >
-              {imageUrl && (
-                <img
-                  src={imageUrl}
-                  alt=""
-                  class="size-12 sm:size-14 rounded shrink-0"
-                  loading="lazy"
-                  width="56"
-                  height="56"
-                />
-              )}
-              <div class="flex-1 min-w-0">
-                <p class="text-sm sm:text-base font-medium text-foreground truncate group-hover:text-primary transition-colors">
-                  {track.name}
-                </p>
-                <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                  <p class="text-xs sm:text-sm text-muted-foreground truncate">
-                    {track.artist['#text']}
+      <>
+        <div class="space-y-0.5">
+          {recentTracks.map((track) => {
+            const imageUrl = getImageUrl(track.image, 'medium')
+            return (
+              <Link
+                href={track.url}
+                external
+                class="group flex items-center gap-2.5 sm:gap-3 rounded-md p-2.5 sm:p-3 -mx-2 sm:-mx-0 hover:bg-muted/40 active:bg-muted/50 transition-colors"
+              >
+                {imageUrl && (
+                  <img
+                    src={imageUrl}
+                    alt=""
+                    class="size-12 sm:size-14 rounded shrink-0"
+                    loading="lazy"
+                    width="56"
+                    height="56"
+                  />
+                )}
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm sm:text-base font-medium text-foreground truncate group-hover:text-primary transition-colors">
+                    {track.name}
                   </p>
-                  {track.date && (
-                    <>
-                      <span class="text-muted-foreground/30 hidden sm:inline">•</span>
-                      <time class="text-xs text-muted-foreground/60">
-                        {formatLastFmDate(track.date.uts)}
-                      </time>
-                    </>
-                  )}
+                  <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    <p class="text-xs sm:text-sm text-muted-foreground truncate">
+                      {track.artist['#text']}
+                    </p>
+                    {track.date && (
+                      <>
+                        <span class="text-muted-foreground/30 hidden sm:inline">•</span>
+                        <time class="text-xs text-muted-foreground/60">
+                          {formatLastFmDate(track.date.uts)}
+                        </time>
+                      </>
+                    )}
+                  </div>
                 </div>
-              </div>
+              </Link>
+            )
+          })}
+        </div>
+        {userInfo?.url && (
+          <div class="pt-2">
+            <Link
+              href={userInfo.url}
+              external
+              class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              View all
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="shrink-0"
+              >
+                <path d="M7 7h10v10" />
+                <path d="M7 17L17 7" />
+              </svg>
             </Link>
-          )
-        })}
-      </div>
+          </div>
+        )}
+      </>
     ) : (
       <div class="rounded-lg border border-border/40 bg-card/30 p-4 sm:p-6 text-center">
         <p class="text-xs sm:text-sm text-muted-foreground">
