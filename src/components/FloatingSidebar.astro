@@ -22,7 +22,7 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
     aria-label="Support and advertising"
     data-floating-sidebar
   >
-    <div class="w-56 rounded-lg border border-border/40 bg-background/80 backdrop-blur-md shadow-sm hover:shadow-md transition-all duration-300">
+    <div class="w-56 rounded-lg border border-border/60 dark:border-border/40 bg-background/80 backdrop-blur-md shadow-sm hover:shadow-md transition-all duration-300">
       <div class="p-4 flex flex-col gap-4">
         <!-- Support Section -->
         <div>
@@ -44,7 +44,7 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
         </div>
 
         <!-- Quick Links -->
-        <div class="pt-3 border-t border-border/40">
+        <div class="pt-3 border-t border-border/60 dark:border-border/40">
           <div class="flex gap-2">
             <Link
               href="/rss.xml"
@@ -59,7 +59,7 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
 
         <!-- Popular Tags -->
         {popularTags.length > 0 && (
-          <div class="pt-3 border-t border-border/40">
+          <div class="pt-3 border-t border-border/60 dark:border-border/40">
             <h3 class="text-xs font-medium text-foreground mb-2">
               Popular Tags
             </h3>
@@ -78,7 +78,7 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
         )}
 
         <!-- Advertising Section -->
-        <div class="pt-3 border-t border-border/40">
+        <div class="pt-3 border-t border-border/60 dark:border-border/40">
           <h3 class="text-xs font-medium text-foreground mb-1.5">
             Advertise Here
           </h3>
@@ -104,7 +104,7 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
 {position === 'bottom-bar' && (
   <div
     id="floating-sidebar"
-    class="fixed bottom-0 left-0 right-0 z-40 hidden xl:block opacity-0 animate-fade-in border-t border-border/40 bg-background/95 backdrop-blur-md shadow-lg"
+    class="fixed bottom-0 left-0 right-0 z-40 hidden xl:block opacity-0 animate-fade-in border-t border-border/60 dark:border-border/40 bg-background/95 backdrop-blur-md shadow-lg"
     aria-label="Support and advertising"
   >
     <div class="mx-auto max-w-7xl px-6 py-3">
@@ -177,7 +177,7 @@ const position: Position = 'right-fixed' as Position // Change this to test diff
     class="fixed bottom-6 right-6 z-40 hidden xl:block opacity-0 animate-fade-in"
     aria-label="Support and advertising"
   >
-    <div class="w-64 rounded-lg border border-border/40 bg-background/95 backdrop-blur-md shadow-lg">
+    <div class="w-64 rounded-lg border border-border/60 dark:border-border/40 bg-background/95 backdrop-blur-md shadow-lg">
       <div class="p-4 flex flex-col gap-3">
         <!-- Support -->
         <a
