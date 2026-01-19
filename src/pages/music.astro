@@ -36,18 +36,18 @@ try {
 }
 ---
 
-<Layout class="max-w-3xl">
+<Layout class="max-w-4xl">
   <PageHead slot="head" title="Music" />
   <Breadcrumbs
     items={[
-      { label: 'Music', icon: 'lucide:music' },
+      { label: 'Music', href: '/music', icon: 'lucide:music' },
     ]}
   />
 
-  <div class="flex min-h-[calc(100vh-18rem)] flex-col gap-8 pb-12">
+  <section class="flex min-h-[calc(100vh-18rem)] flex-col gap-8 pb-12">
     <!-- Header -->
     <div class="space-y-2">
-      <h1 class="text-xl font-medium text-foreground">
+      <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
         recently played
       </h1>
       {hasLastFm && (
@@ -123,17 +123,25 @@ try {
         )}
       </>
     ) : hasLastFm ? (
-      <div class="py-12 text-center">
-        <p class="text-sm text-muted-foreground">
+      <div class="rounded-xl border border-border/70 bg-card/80 p-12 text-center">
+        <Icon name="lucide:music" class="size-12 text-muted-foreground/50 mx-auto mb-4" />
+        <p class="text-muted-foreground mb-2 font-medium">
           No recent tracks found.
+        </p>
+        <p class="text-sm text-muted-foreground/70">
+          Check back later for updates.
         </p>
       </div>
     ) : (
-      <div class="py-12 text-center">
-        <p class="text-xs text-muted-foreground font-mono">
+      <div class="rounded-xl border border-border/70 bg-card/80 p-12 text-center">
+        <Icon name="lucide:music" class="size-12 text-muted-foreground/50 mx-auto mb-4" />
+        <p class="text-muted-foreground mb-2 font-medium">
+          Music integration not configured.
+        </p>
+        <p class="text-sm text-muted-foreground/70 font-mono">
           Configure PUBLIC_LASTFM_USERNAME and PUBLIC_LASTFM_API_KEY
         </p>
       </div>
     )}
-  </div>
+  </section>
 </Layout>
