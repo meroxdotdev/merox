@@ -6,17 +6,14 @@ main = "./src/index.ts"
 directory = "./dist"
 binding = "ASSETS"
 
-# KV namespace binding and environment variables should be configured in Cloudflare Dashboard:
-# - Workers & Pages → meroxdotdev → Settings → Variables and Secrets
-# - Add KV Namespace Binding: Variable name = "REACTIONS_KV", KV namespace = "REACTIONS_KV"
-# - Add environment variables: UMAMI_API_KEY, GISCUS_REPO_ID, LASTFM_API_KEY, etc.
-#
-# For local development, you can add them here:
-# [[kv_namespaces]]
-# binding = "REACTIONS_KV"
-# id = "your-kv-namespace-id"
-#
-# [vars]
-# UMAMI_API_KEY = "your-key"
-# GISCUS_REPO_ID = "your-id"
-# LASTFM_API_KEY = "your-key"
+# KV namespace binding - use environment variable to avoid exposing ID in git
+# Set CLOUDFLARE_KV_NAMESPACE_ID environment variable in Cloudflare Pages Build settings
+# Or add it locally for development: export CLOUDFLARE_KV_NAMESPACE_ID="your-id"
+[[kv_namespaces]]
+binding = "REACTIONS_KV"
+id = "${CLOUDFLARE_KV_NAMESPACE_ID}"
+
+# Environment variables should be configured in Cloudflare Dashboard:
+# - Workers & Pages → meroxdotdev → Settings → Build → Variables and secrets
+#   Add all PUBLIC_* variables as Secrets for build time
+# - Also add: CLOUDFLARE_KV_NAMESPACE_ID = "your-kv-namespace-id"

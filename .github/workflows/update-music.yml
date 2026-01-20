@@ -24,10 +24,12 @@ jobs:
           fi
           
           echo "Triggering Cloudflare Pages rebuild via API..."
+          # Try without branch first (uses production branch)
           RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
             "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${CLOUDFLARE_PROJECT_NAME}/deployments" \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-            -H "Content-Type: application/json")
+            -H "Content-Type: application/json" \
+            -d '{}')
           
           HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
           BODY=$(echo "$RESPONSE" | sed '$d')
@@ -36,7 +38,28 @@ jobs:
             echo "✅ Successfully triggered Cloudflare Pages rebuild!"
             echo "$BODY" | jq '.' 2>/dev/null || echo "$BODY"
           else
-            echo "❌ Failed to trigger rebuild. HTTP Status: $HTTP_CODE"
-            echo "$BODY"
-            exit 1
+            echo "⚠️  First attempt failed, trying with explicit branch..."
+            # Try with explicit branch
+            RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
+              "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${CLOUDFLARE_PROJECT_NAME}/deployments" \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d '{"branch":"main"}')
+            
+            HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+            BODY=$(echo "$RESPONSE" | sed '$d')
+            
+            if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 201 ]; then
+              echo "✅ Successfully triggered Cloudflare Pages rebuild!"
+              echo "$BODY" | jq '.' 2>/dev/null || echo "$BODY"
+            else
+              echo "❌ Failed to trigger rebuild. HTTP Status: $HTTP_CODE"
+              echo "$BODY"
+              echo ""
+              echo "💡 Tip: Check that:"
+              echo "   1. CLOUDFLARE_PROJECT_NAME matches your Pages project name exactly"
+              echo "   2. Your API token has 'Pages Write' permission"
+              echo "   3. The production branch is set correctly in Cloudflare Pages settings"
+              exit 1
+            fi
           fi
