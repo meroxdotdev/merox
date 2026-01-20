@@ -1,0 +1,21 @@
+name = "meroxdotdev"
+compatibility_date = "2026-01-20"
+main = "./src/index.ts"
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+
+# KV namespace binding
+# Get the real ID from Cloudflare Dashboard → Workers & Pages → KV
+[[kv_namespaces]]
+binding = "REACTIONS_KV"
+id = "YOUR_KV_NAMESPACE_ID_HERE"
+
+# Environment variables can be added in Cloudflare Dashboard:
+# - Workers & Pages → Your Worker → Settings → Variables and Secrets
+# Or via wrangler.toml (for local development):
+# [vars]
+# UMAMI_API_KEY = "your-key"
+# GISCUS_REPO_ID = "your-id"
+# LASTFM_API_KEY = "your-key"

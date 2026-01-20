@@ -6,14 +6,16 @@ main = "./src/index.ts"
 directory = "./dist"
 binding = "ASSETS"
 
-# KV namespace binding
-[[kv_namespaces]]
-binding = "REACTIONS_KV"
-id = "REACTIONS_KV"
-
-# Environment variables can be added in Cloudflare Dashboard:
-# - Workers & Pages → Your Worker → Settings → Variables and Secrets
-# Or via wrangler.toml (for local development):
+# KV namespace binding and environment variables should be configured in Cloudflare Dashboard:
+# - Workers & Pages → meroxdotdev → Settings → Variables and Secrets
+# - Add KV Namespace Binding: Variable name = "REACTIONS_KV", KV namespace = "REACTIONS_KV"
+# - Add environment variables: UMAMI_API_KEY, GISCUS_REPO_ID, LASTFM_API_KEY, etc.
+#
+# For local development, you can add them here:
+# [[kv_namespaces]]
+# binding = "REACTIONS_KV"
+# id = "your-kv-namespace-id"
+#
 # [vars]
 # UMAMI_API_KEY = "your-key"
 # GISCUS_REPO_ID = "your-id"
