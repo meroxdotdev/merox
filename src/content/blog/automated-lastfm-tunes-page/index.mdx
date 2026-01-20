@@ -1,10 +1,9 @@
 ---
 title: "Building an Automated Last.fm Tunes Page with GitHub Actions"
 description: "Learn how I built a self-updating music page for my website using Last.fm API, Astro, GitHub Actions, and Cloudflare Pages. Includes setup for Web Scrobbler on iOS/Mac."
-date: 2026-01-19
+date: 2026-01-20
 tags: ["web-development", "automation", "github-actions", "lastfm", "astro", "cloudflare"]
 image: './tunes.svg'
-draft: true
 ---
 
 import Callout from '@/components/Callout.astro'
@@ -186,7 +185,7 @@ Here's how the final Tunes page looks on my site:
 
 ## Configuring Environment Variables in Cloudflare Pages
 
-Since I'm hosting on **Cloudflare Pages**, I need to set environment variables securely:
+Since I'm hosting on **Cloudflare Pages**, I need to set environment variables:
 
 1. Go to your Cloudflare Pages project
 2. Navigate to **Settings** → **Environment Variables**
@@ -259,6 +258,9 @@ The beauty of this approach is that it requires **no secrets configuration**:
 2. **Cloudflare** is already connected to your repository (via the Pages integration)
 3. Just add the workflow file and you're done!
 
+
+
+
 <Callout variant="note">
 **Manual trigger**: The `workflow_dispatch` option lets you trigger the workflow manually from GitHub's Actions tab. Useful for testing or forcing an immediate update.
 </Callout>
@@ -321,6 +323,18 @@ The whole process is fully automated with zero maintenance. No API tokens to man
 ### GitHub Actions Workflow Failing
 
 - Ensure the workflow has `permissions: contents: write` to push commits
+<Callout variant="warning">
+### Important: Enable Write Permissions
+For the workflow to successfully push the trigger commit, you must grant write access to the `GITHUB_TOKEN`:
+
+1. Go to your GitHub repository **Settings**.
+2. Navigate to **Actions** > **General**.
+3. Scroll down to **Workflow permissions**.
+4. Select **Read and write permissions** and click **Save**.
+
+![GitHub Actions Workflow Permissions](src/content/blog/automated-lastfm-tunes-page/ghactions.png)
+</Callout>
+
 - Check if branch protection rules are blocking the push
 - Verify the repository is connected to Cloudflare Pages
 
