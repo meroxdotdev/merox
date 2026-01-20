@@ -6,14 +6,16 @@ main = "./src/index.ts"
 directory = "./dist"
 binding = "ASSETS"
 
-# KV namespace binding - use environment variable to avoid exposing ID in git
-# Set CLOUDFLARE_KV_NAMESPACE_ID environment variable in Cloudflare Pages Build settings
-# Or add it locally for development: export CLOUDFLARE_KV_NAMESPACE_ID="your-id"
-[[kv_namespaces]]
-binding = "REACTIONS_KV"
-id = "${CLOUDFLARE_KV_NAMESPACE_ID}"
+# KV namespace binding should be configured in Cloudflare Dashboard:
+# - Workers & Pages → meroxdotdev → Bindings → Add KV Namespace Binding
+#   Variable name = "REACTIONS_KV", KV namespace = "REACTIONS_KV"
+#
+# DO NOT add KV namespace here - it will be managed by Dashboard
+# For local development, uncomment and add your KV namespace ID:
+# [[kv_namespaces]]
+# binding = "REACTIONS_KV"
+# id = "your-kv-namespace-id"
 
 # Environment variables should be configured in Cloudflare Dashboard:
 # - Workers & Pages → meroxdotdev → Settings → Build → Variables and secrets
 #   Add all PUBLIC_* variables as Secrets for build time
-# - Also add: CLOUDFLARE_KV_NAMESPACE_ID = "your-kv-namespace-id"
