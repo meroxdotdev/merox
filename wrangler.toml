@@ -6,6 +6,11 @@ main = "./src/index.ts"
 directory = "./dist"
 binding = "ASSETS"
 
+# KV namespace binding for reactions
+[[kv_namespaces]]
+binding = "REACTIONS_KV"
+id = "0a2710e93af14c73862037ddd09b6659"
+
 # KV namespace binding should be configured in Cloudflare Dashboard:
 # - Workers & Pages → meroxdotdev → Bindings → Add KV Namespace Binding
 #   Variable name = "REACTIONS_KV", KV namespace = "REACTIONS_KV"
