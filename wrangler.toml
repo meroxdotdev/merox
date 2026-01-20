@@ -5,3 +5,16 @@ main = "./src/index.ts"
 [assets]
 directory = "./dist"
 binding = "ASSETS"
+
+# KV namespace binding
+[[kv_namespaces]]
+binding = "REACTIONS_KV"
+id = "REACTIONS_KV"
+
+# Environment variables can be added in Cloudflare Dashboard:
+# - Workers & Pages → Your Worker → Settings → Variables and Secrets
+# Or via wrangler.toml (for local development):
+# [vars]
+# UMAMI_API_KEY = "your-key"
+# GISCUS_REPO_ID = "your-id"
+# LASTFM_API_KEY = "your-key"
