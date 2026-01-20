@@ -5,11 +5,16 @@ on:
     - cron: '0 14 * * *'  # 14:00 UTC daily
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   trigger-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Trigger rebuild
         run: |
