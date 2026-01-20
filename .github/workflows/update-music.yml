@@ -2,8 +2,8 @@ name: Update Tunes Page
 
 on:
   schedule:
-    # Run daily at 12:00 UTC (15:00 Romania time - EEST / 14:00 EET)
-    - cron: '0 12 * * *'
+    # Run daily at 12:00 UTC (15:30 Romania time - EEST / 14:30 EET)
+    - cron: '30 13 * * *'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
