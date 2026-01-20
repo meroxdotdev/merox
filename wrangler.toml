@@ -10,17 +10,3 @@ binding = "ASSETS"
 [[kv_namespaces]]
 binding = "REACTIONS_KV"
 id = "0a2710e93af14c73862037ddd09b6659"
-
-# KV namespace binding should be configured in Cloudflare Dashboard:
-# - Workers & Pages → meroxdotdev → Bindings → Add KV Namespace Binding
-#   Variable name = "REACTIONS_KV", KV namespace = "REACTIONS_KV"
-#
-# DO NOT add KV namespace here - it will be managed by Dashboard
-# For local development, uncomment and add your KV namespace ID:
-# [[kv_namespaces]]
-# binding = "REACTIONS_KV"
-# id = "your-kv-namespace-id"
-
-# Environment variables should be configured in Cloudflare Dashboard:
-# - Workers & Pages → meroxdotdev → Settings → Build → Variables and secrets
-#   Add all PUBLIC_* variables as Secrets for build time

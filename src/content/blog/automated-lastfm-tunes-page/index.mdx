@@ -160,7 +160,7 @@ try {
   <section>
     <h1>▶ recently played</h1>
     {hasLastFm && (
-      <p>[updated daily at 15:30 Romania time]</p>
+      <p>[updated daily at 20:00 Romania time]</p>
     )}
 
     {recentTracks.map((track, index) => (
@@ -206,106 +206,61 @@ These variables are only accessible during the build process and won't be expose
 
 ## Automating Daily Updates with GitHub Actions
 
-The tricky part was getting Cloudflare Pages to rebuild daily. Initially, I tried triggering rebuilds via Git commits, but Cloudflare Pages doesn't always detect empty commits or small file changes reliably. The most reliable solution is to use **Cloudflare Pages API** to trigger rebuilds directly.
+The key is getting Cloudflare to rebuild your site daily so it fetches fresh data from Last.fm. The simplest approach is to create a small commit that Cloudflare detects and triggers a rebuild automatically.
 
 Here's my `.github/workflows/update-music.yml`:
 
 ```yaml
-name: Update Tunes Page
+name: Daily Site Rebuild
 
 on:
   schedule:
-    # Run daily at 13:30 UTC (15:30 Romania time - EET / 16:30 EEST)
-    - cron: '30 13 * * *'
-  workflow_dispatch: # Allow manual trigger
+    - cron: '0 18 * * *'  # 18:00 UTC daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
-  update:
+  trigger-build:
     runs-on: ubuntu-latest
-    
     steps:
-      - name: Trigger Cloudflare Pages rebuild via API
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          CLOUDFLARE_PROJECT_NAME: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Trigger rebuild
         run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$CLOUDFLARE_PROJECT_NAME" ]; then
-            echo "Error: Cloudflare API credentials are missing!"
-            echo "Please set CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, and CLOUDFLARE_PROJECT_NAME as GitHub secrets."
-            exit 1
-          fi
-          
-          echo "Triggering Cloudflare Pages rebuild via API..."
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
-            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${CLOUDFLARE_PROJECT_NAME}/deployments" \
-            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-            -H "Content-Type: application/json" \
-            -d '{"branch":"main"}')
-          
-          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-          BODY=$(echo "$RESPONSE" | sed '$d')
-          
-          if [ "$HTTP_CODE" -eq 200 ] || [ "$HTTP_CODE" -eq 201 ]; then
-            echo "✅ Successfully triggered Cloudflare Pages rebuild!"
-            echo "$BODY" | jq '.' 2>/dev/null || echo "$BODY"
-          else
-            echo "❌ Failed to trigger rebuild. HTTP Status: $HTTP_CODE"
-            echo "$BODY"
-            exit 1
-          fi
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > .last-build-trigger
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .last-build-trigger
+          git commit -m "chore: daily rebuild trigger"
+          git push
 ```
 
+### How It Works
+
+1. **Schedule**: Runs daily at 18:00 UTC (20:00 Romania time in winter, 21:00 in summer)
+2. **Checkout**: Clones the repository using the built-in `GITHUB_TOKEN`
+3. **Trigger file**: Writes the current UTC timestamp to `.last-build-trigger`
+4. **Commit & Push**: Commits the change and pushes to main branch
+5. **Cloudflare detects**: The push triggers Cloudflare to rebuild the site
+
 <Callout variant="tip">
-**Why Cloudflare API?** Using the API is more reliable than Git commits because it directly triggers a rebuild without depending on Cloudflare detecting file changes. It's also faster and doesn't clutter your Git history with timestamp commits.
+**Why a trigger file?** This is the simplest approach—no API tokens needed. The `.last-build-trigger` file creates a real commit that Cloudflare reliably detects. The `GITHUB_TOKEN` is automatically provided by GitHub Actions, so there's zero configuration required.
 </Callout>
 
-### Setting Up Cloudflare API Credentials
+### Setting Up the Workflow
 
-You'll need three pieces of information from Cloudflare:
+The beauty of this approach is that it requires **no secrets configuration**:
 
-#### 1. Get Your Account ID
+1. **`GITHUB_TOKEN`** is automatically provided by GitHub Actions
+2. **Cloudflare** is already connected to your repository (via the Pages integration)
+3. Just add the workflow file and you're done!
 
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/) → **Account home**
-2. Select the menu button at the end of the account row
-3. Select **Copy account ID**
-
-![Cloudflare Account ID](accid.png)
-
-#### 2. Get Your Project Name
-
-1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
-2. Navigate to **Workers & Pages** → **Pages**
-3. Click on your project
-4. Your **Project Name** is displayed in the project overview page
-   - You can also find it in the URL: `https://dash.cloudflare.com/.../pages/view/your-project-name`
-   - Make sure to use the exact name as shown (it's case-sensitive)
-
-#### 3. Create an API Token
-
-1. Go to [Cloudflare API Tokens](https://dash.cloudflare.com/profile/api-tokens)
-2. Click **Create Token**
-3. Click **Create Custom Token**
-4. Configure the token:
-   - **Token name**: `GitHub Actions - Pages Deploy`
-   - **Permissions**:
-     - **Account** → **Cloudflare Pages** → **Edit**
-   - **Account Resources**:
-     - **Include** → **Specific account** → Select your account
-5. Click **Continue to summary** → **Create Token**
-6. **Copy the token immediately** (you won't be able to see it again!)
-
-#### 4. Add Secrets to GitHub
-
-1. Go to your GitHub repository
-2. Navigate to **Settings** → **Secrets and variables** → **Actions**
-3. Click **New repository secret** and add:
-   - `CLOUDFLARE_API_TOKEN` → Paste your API token
-   - `CLOUDFLARE_ACCOUNT_ID` → Paste your Account ID
-   - `CLOUDFLARE_PROJECT_NAME` → Paste your project name (e.g., `merox`)
-
-<Callout variant="warning">
-**Important:** Make sure your project name matches exactly. It's case-sensitive and should be the same as shown in your Cloudflare Pages dashboard.
+<Callout variant="note">
+**Manual trigger**: The `workflow_dispatch` option lets you trigger the workflow manually from GitHub's Actions tab. Useful for testing or forcing an immediate update.
 </Callout>
 
 <AdSense />
@@ -347,12 +302,12 @@ Safari doesn't support extensions the same way, but here's what I do:
 Here's the complete flow:
 
 1. **You listen to music** → Last.fm tracks it (via Spotify, Apple Music, Web Scrobbler, etc.)
-2. **GitHub Actions runs daily** → Creates a commit with updated timestamp
-3. **Cloudflare Pages detects the change** → Triggers a new build
-4. **During build** → Astro fetches fresh data from Last.fm API
+2. **GitHub Actions runs daily at 18:00 UTC** → Updates `.last-build-trigger` with current timestamp
+3. **Commit pushed to main** → Cloudflare detects the new commit
+4. **Cloudflare rebuilds** → Astro fetches fresh data from Last.fm API during build
 5. **Site updates** → Your Tunes page shows the latest tracks
 
-The whole process is automated—you don't need to do anything after the initial setup.
+The whole process is fully automated with zero maintenance. No API tokens to manage, no secrets to rotate—just a simple Git commit that keeps your music page fresh.
 
 ## Troubleshooting
 
@@ -361,6 +316,13 @@ The whole process is automated—you don't need to do anything after the initial
 - Check that your Last.fm account is actually receiving scrobbles
 - Verify environment variables are set correctly in Cloudflare Pages
 - Check GitHub Actions logs to see if the workflow ran successfully
+- Verify the `.last-build-trigger` file is being updated (check recent commits)
+
+### GitHub Actions Workflow Failing
+
+- Ensure the workflow has `permissions: contents: write` to push commits
+- Check if branch protection rules are blocking the push
+- Verify the repository is connected to Cloudflare Pages
 
 ### Build Failing
 
