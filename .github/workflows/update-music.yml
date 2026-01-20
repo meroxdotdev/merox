@@ -2,7 +2,7 @@ name: Daily Site Rebuild
 
 on:
   schedule:
-    - cron: '0 18 * * *'  # 18:00 UTC daily
+    - cron: '44 08 * * *'  # 18:00 UTC daily
   workflow_dispatch:
 
 permissions:
