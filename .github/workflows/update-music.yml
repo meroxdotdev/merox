@@ -2,8 +2,8 @@ name: Update Tunes Page
 
 on:
   schedule:
-    # Run daily at 10:30 UTC (12:30 PM Romania time - EET/EEST)
-    - cron: '30 10 * * *'
+    # Run daily at 12:00 UTC (15:00 Romania time - EEST / 14:00 EET)
+    - cron: '0 12 * * *'
   workflow_dispatch: # Allow manual trigger
 
 jobs:
@@ -17,10 +17,52 @@ jobs:
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
       
-      - name: Trigger Cloudflare Pages rebuild
+      - name: Configure Git
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git commit --allow-empty -m "chore: update tunes page"
-          git push
+      
+      - name: Trigger Cloudflare Pages rebuild via Git
+        run: |
+          # Fetch latest changes
+          git fetch origin
+          
+          # Ensure we're on main branch
+          git checkout main
+          git pull origin main || true
+          
+          # Create/update a timestamp file to ensure Cloudflare detects the change
+          TIMESTAMP=$(date -u +%Y%m%d-%H%M%S)
+          echo "$TIMESTAMP" > .last-build-trigger
+          
+          # Stage and commit the change
+          git add .last-build-trigger
+          if git diff --staged --quiet; then
+            # If no changes (shouldn't happen, but just in case), create empty commit
+            git commit --allow-empty -m "chore: update tunes page [${TIMESTAMP}]"
+          else
+            git commit -m "chore: update tunes page [${TIMESTAMP}]"
+          fi
+          
+          # Push to main branch
+          git push origin HEAD:main
+      
+      - name: Trigger Cloudflare Pages rebuild via API (optional)
+        continue-on-error: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_PROJECT_NAME: ${{ secrets.CLOUDFLARE_PROJECT_NAME }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ] && [ -n "$CLOUDFLARE_ACCOUNT_ID" ] && [ -n "$CLOUDFLARE_PROJECT_NAME" ]; then
+            echo "Triggering Cloudflare Pages rebuild via API..."
+            curl -X POST \
+              "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${CLOUDFLARE_PROJECT_NAME}/deployments" \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              -H "Content-Type: application/json" \
+              -d '{"branch":"main"}' || echo "API trigger failed, git push should still trigger rebuild"
+          else
+            echo "Cloudflare API credentials not set, skipping API trigger (git push will trigger rebuild)"
+          fi
