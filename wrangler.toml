@@ -1,5 +1,7 @@
-name = "merox-dev"
+name = "meroxdotdev"
 compatibility_date = "2026-01-20"
+main = "./src/index.ts"
 
 [assets]
 directory = "./dist"
+binding = "ASSETS"
