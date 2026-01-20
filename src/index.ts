@@ -5,6 +5,14 @@ type Fetcher = {
   fetch(request: Request): Promise<Response>;
 };
 
+// KV Namespace type definition
+type KVNamespace = {
+  get(key: string): Promise<string | null>;
+  put(key: string, value: string): Promise<void>;
+  delete(key: string): Promise<void>;
+  list(options?: { prefix?: string; limit?: number; cursor?: string }): Promise<{ keys: Array<{ name: string }>; list_complete: boolean; cursor?: string }>;
+};
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     // Defer to static assets - Cloudflare Pages will handle routing
