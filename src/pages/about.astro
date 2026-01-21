@@ -87,49 +87,6 @@ const personSchema = {
                 </div>
               </div>
 
-              <script>
-                (function() {
-                  const btn = document.getElementById('username-origin-btn');
-                  const tooltip = document.getElementById('username-origin-content');
-                  const container = document.getElementById('username-origin-tooltip');
-                  
-                  if (!btn || !tooltip || !container) return;
-                  
-                  let isOpen = false;
-
-                  function toggleTooltip() {
-                    isOpen = !isOpen;
-                    tooltip.setAttribute('data-open', isOpen ? 'true' : '');
-                    btn.setAttribute('aria-expanded', isOpen.toString());
-                  }
-
-                  function closeTooltip() {
-                    if (isOpen) {
-                      isOpen = false;
-                      tooltip.removeAttribute('data-open');
-                      btn.setAttribute('aria-expanded', 'false');
-                    }
-                  }
-
-                  btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    toggleTooltip();
-                  });
-
-                  document.addEventListener('click', (e) => {
-                    const target = e.target;
-                    if (target && container.contains(target)) return;
-                    closeTooltip();
-                  });
-
-                  document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape' && isOpen) {
-                      closeTooltip();
-                    }
-                  });
-                })();
-              </script>
-
               <div class="flex items-center gap-1.5 mt-3 text-sm text-muted-foreground">
                 <Icon name="lucide:map-pin" class="size-4" />
                 <span>Timișoara, Romania</span>
@@ -184,3 +141,46 @@ const personSchema = {
     </Link>
   </section>
 </Layout>
+
+<script>
+  (function() {
+    const btn = document.getElementById('username-origin-btn');
+    const tooltip = document.getElementById('username-origin-content');
+    const container = document.getElementById('username-origin-tooltip');
+    
+    if (!btn || !tooltip || !container) return;
+    
+    let isOpen = false;
+
+    function toggleTooltip() {
+      isOpen = !isOpen;
+      tooltip.setAttribute('data-open', isOpen ? 'true' : '');
+      btn.setAttribute('aria-expanded', isOpen.toString());
+    }
+
+    function closeTooltip() {
+      if (isOpen) {
+        isOpen = false;
+        tooltip.removeAttribute('data-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleTooltip();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!container.contains(e.target as Node)) {
+        closeTooltip();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isOpen) {
+        closeTooltip();
+      }
+    });
+  })();
+</script>
