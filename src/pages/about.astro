@@ -6,60 +6,61 @@ import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { SITE } from '@/consts'
 
+// Enhanced Person Schema for About page
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Robert Melcher",
+  "alternateName": "merox",
   "url": SITE.href,
+  "image": new URL('/robert.webp', Astro.site).href,
   "jobTitle": "HPC System Administrator",
-  "worksFor": { "@type": "Organization", "name": "Forvia" }
+  "worksFor": {
+    "@type": "Organization",
+    "name": "Forvia"
+  },
+  "alumniOf": {
+    "@type": "EducationalOrganization",
+    "name": "West University of Timișoara"
+  },
+  "hasCredential": {
+    "@type": "EducationalOccupationalCredential",
+    "credentialCategory": "Professional Certification",
+    "recognizedBy": {
+      "@type": "Organization",
+      "name": "Cisco"
+    },
+    "name": "CCNA"
+  },
+  "sameAs": [
+    "https://github.com/meroxdotdev",
+    "https://www.linkedin.com/in/robert-melcher-92a1a9157"
+  ],
+  "email": "hello@merox.dev",
+  "description": "System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security."
 }
 ---
 
 <Layout class="max-w-4xl">
   <PageHead slot="head" title="About | Robert Melcher" />
+  
   <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+  
   <Breadcrumbs items={[{ label: 'About', icon: 'lucide:user' }]} />
 
   <section class="flex flex-col gap-16 pb-12">
     <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
-      
-      <div class="flex flex-row md:flex-col items-center gap-4 md:gap-5 shrink-0 group">
-        <div class="relative">
-          <div class="size-24 md:size-40 rounded-2xl overflow-hidden border border-border/50 bg-muted/30 shadow-sm transition-all duration-500 group-hover:border-primary/30">
-            <img
-              src="/robert.webp"
-              alt="Robert Melcher"
-              class="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-              loading="eager"
-            />
-          </div>
-          <div class="absolute -bottom-1 -right-1 size-4 rounded-full bg-background flex items-center justify-center md:hidden">
-            <span class="size-2 rounded-full bg-green-500 animate-pulse"></span>
-          </div>
+      <div class="relative shrink-0">
+        <div class="size-32 md:size-40 rounded-2xl overflow-hidden border border-border/50 shadow-sm bg-muted/30">
+          <img
+            src="/robert.webp"
+            alt="Robert Melcher"
+            width="1492"
+            height="1864"
+            class="object-cover w-full h-full transition-transform duration-300 hover:scale-[1.02]"
+            loading="eager"
+          />
         </div>
-
-        <Link 
-          href="/blog/homelab-tour" 
-          class="flex flex-col gap-1 px-1 md:w-full group/lab"
-        >
-          <div class="flex items-center gap-2">
-            <span class="hidden md:flex relative h-2 w-2">
-              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-            </span>
-            <span class="text-[10px] font-black uppercase tracking-[0.15em] text-muted-foreground/60 group-hover/lab:text-primary transition-colors">
-              Node: Homelab
-            </span>
-          </div>
-          <div class="flex items-center justify-between group-hover/lab:translate-x-1 transition-transform duration-300">
-            <span class="text-sm font-medium text-foreground/80">View Infrastructure</span>
-            <Icon name="lucide:chevron-right" class="size-3.5 text-muted-foreground group-hover/lab:text-primary" />
-          </div>
-          <div class="h-[2px] w-full bg-border/40 mt-1 overflow-hidden">
-             <div class="h-full bg-primary/40 w-1/3 group-hover/lab:w-full transition-all duration-700"></div>
-          </div>
-        </Link>
       </div>
       
       <div class="flex-1 min-w-0">
@@ -69,42 +70,99 @@ const personSchema = {
               <h2 class="text-3xl md:text-4xl font-bold tracking-tight text-foreground leading-tight">
                 Robert Melcher
               </h2>
-              <div class="mt-2 flex items-center gap-3">
-                <p class="text-primary font-mono text-sm flex items-center gap-1.5">
-                  <Icon name="lucide:terminal" class="size-4" />
-                  <span>@merox</span>
-                </p>
-                <div class="h-4 w-[1px] bg-border/60"></div>
-                <div class="flex items-center gap-1.5 text-sm text-muted-foreground">
-                  <Icon name="lucide:map-pin" class="size-3.5" />
-                  <span>Timișoara</span>
+              <div class="mt-2">
+                <div class="relative inline-flex items-center gap-1.5">
+                  <p class="text-primary font-mono text-sm flex items-center gap-1.5">
+                    <Icon name="lucide:terminal" class="size-4" />
+                    <span>@merox</span>
+                  </p>
+                  <div class="relative group" id="username-origin-tooltip">
+                    <button
+                      type="button"
+                      id="username-origin-btn"
+                      class="text-muted-foreground/50 md:text-muted-foreground/40 hover:text-muted-foreground/70 active:text-muted-foreground/80 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 rounded-full p-1 md:p-0.5 bg-muted/30 md:bg-transparent"
+                      aria-label="Username origin"
+                      aria-expanded="false"
+                    >
+                      <Icon name="lucide:info" class="size-4 md:size-3.5" />
+                    </button>
+                    <div 
+                      id="username-origin-content"
+                      class="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-full mt-2 z-50 w-[calc(100vw-2rem)] max-w-72 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none group-hover:pointer-events-auto data-[open]:opacity-100 data-[open]:visible data-[open]:pointer-events-auto"
+                      role="tooltip"
+                    >
+                      <div class="bg-popover border border-border/60 rounded-lg shadow-xl p-3 md:p-4 text-xs space-y-1.5 md:space-y-2 backdrop-blur-sm">
+                        <p class="font-semibold text-foreground">Username origin</p>
+                        <p class="text-muted-foreground leading-relaxed">
+                          Combined <span class="font-mono text-foreground">me</span> (Melcher) + <span class="font-mono text-foreground">ro</span> (Robert) + <span class="font-mono text-foreground">x</span> from <span class="font-mono text-foreground">mer0x39</span>. <span class="font-mono text-foreground">0x39</span> (hex) = 57, representing birth date 5/7.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
+
+              <script>
+                (function() {
+                  const btn = document.getElementById('username-origin-btn');
+                  const tooltip = document.getElementById('username-origin-content');
+                  const container = document.getElementById('username-origin-tooltip');
+                  
+                  if (!btn || !tooltip || !container) return;
+                  let isOpen = false;
+                  function toggleTooltip() {
+                    isOpen = !isOpen;
+                    tooltip!.setAttribute('data-open', isOpen ? 'true' : '');
+                    btn!.setAttribute('aria-expanded', isOpen.toString());
+                  }
+                  function closeTooltip() {
+                    if (isOpen) {
+                      isOpen = false;
+                      tooltip!.removeAttribute('data-open');
+                      btn!.setAttribute('aria-expanded', 'false');
+                    }
+                  }
+                  btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleTooltip();
+                  });
+                  document.addEventListener('click', (e) => {
+                    const target = e.target;
+                    if (target && container!.contains(target as Node)) return;
+                    closeTooltip();
+                  });
+                  document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && isOpen) closeTooltip();
+                  });
+                })();
+              </script>
+              <div class="flex items-center gap-1.5 mt-3 text-sm text-muted-foreground">
+                <Icon name="lucide:map-pin" class="size-4" />
+                <span>Timișoara, Romania</span>
+                <span class="text-base">🇷🇴</span>
               </div>
             </div>
           </div>
 
-          <div class="space-y-4 max-w-2xl">
+          <div class="space-y-4">
             <p class="text-base md:text-lg text-muted-foreground leading-relaxed">
-              I'm a seasoned <strong class="text-foreground font-semibold">HPC System Administrator</strong> building large-scale infrastructure at <strong class="text-foreground font-semibold">Forvia</strong>. I bridge the gap between high-performance computing and iron-clad security.
-            </p>
-            <p class="text-base text-muted-foreground leading-relaxed">
-              My philosophy is simple: <span class="text-foreground/80 italic italic underline decoration-primary/20 decoration-2 underline-offset-4">"Build for scale, design for clarity."</span>
+              I'm a seasoned <strong class="text-foreground font-semibold">HPC System Administrator</strong> currently building large-scale infrastructure at <strong class="text-foreground font-semibold">Forvia</strong>. With a background in cybersecurity engineering and deep roots in Linux systems, I bridge the gap between performance and security.
             </p>
           </div>
 
-          <div class="flex flex-wrap gap-3 pt-4">
+          <div class="flex flex-wrap gap-3 pt-2">
             <Link 
               href="/robert-melcher-cv.pdf" 
               external 
-              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-foreground text-background text-sm font-semibold hover:opacity-90 transition-all active:scale-95"
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-colors"
             >
               <Icon name="lucide:file-text" class="size-4" />
-              <span>Resume</span>
+              <span>Download CV</span>
             </Link>
             <Link 
               href="https://github.com/meroxdotdev" 
               external 
-              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-border bg-transparent text-foreground text-sm font-semibold hover:bg-muted transition-all active:scale-95"
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-border bg-card text-foreground text-sm font-semibold hover:bg-muted transition-colors"
             >
               <Icon name="lucide:github" class="size-4" />
               <span>GitHub</span>
@@ -113,5 +171,42 @@ const personSchema = {
         </div>
       </div>
     </div>
+
+    <div class="space-y-6 pt-12 border-t border-border/50">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-bold uppercase tracking-widest text-muted-foreground">Infrastructure Sandbox</h3>
+      </div>
+      
+      <Link 
+        href="/blog/homelab-tour" 
+        class="group relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 rounded-2xl border border-border/60 bg-muted/20 hover:bg-muted/40 hover:border-primary/30 transition-all duration-300"
+      >
+        <div class="flex gap-5 items-center">
+          <div class="flex size-12 shrink-0 items-center justify-center rounded-xl bg-background border border-border group-hover:scale-110 group-hover:border-primary/50 transition-all duration-300">
+            <Icon name="lucide:server" class="size-6 text-primary" />
+          </div>
+          <div class="space-y-1">
+            <h4 class="text-xl font-bold text-foreground">Personal Homelab</h4>
+            <p class="text-sm text-muted-foreground leading-relaxed max-w-md">
+              A high-performance sandbox for IaC, virtualization, and networking experiments.
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+          <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-background border border-border/50">
+            <span class="relative flex h-2 w-2">
+              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Online</span>
+          </div>
+          <div class="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+            <Icon name="lucide:arrow-right" class="size-5" />
+          </div>
+        </div>
+      </Link>
+    </div>
+
   </section>
 </Layout>
