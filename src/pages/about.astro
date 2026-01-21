@@ -142,16 +142,3 @@ const personSchema = {
     </Link>
   </section>
 </Layout>
-
-<script>
-  (function() {
-    const btn = document.getElementById('username-origin-btn');
-    const tooltip = document.getElementById('username-origin-content');
-    if (!btn || !tooltip) return;
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      tooltip.classList.toggle('invisible');
-      tooltip.classList.toggle('opacity-0');
-    });
-  })();
-</script>
