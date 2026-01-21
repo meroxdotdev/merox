@@ -1,3 +1,4 @@
+---
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import PageHead from '@/components/PageHead.astro'
 import Link from '@/components/Link.astro'
@@ -73,11 +74,11 @@ const personSchema = {
                     <Icon name="lucide:terminal" class="size-4" />
                     <span>@merox</span>
                   </p>
-                  <div class="relative group" id="username-origin-tooltip">
-                    <button type="button" id="username-origin-btn" class="text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors p-1" aria-label="Username origin" aria-expanded="false">
+                  <div class="relative group">
+                    <button type="button" class="text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors p-1" aria-label="Username origin: Combined me (Melcher) + ro (Robert) + x. 0x39 (hex) = 57 (5/7).">
                       <Icon name="lucide:info" class="size-3.5" />
                     </button>
-                    <div id="username-origin-content" class="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-full mt-2 z-50 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none group-hover:pointer-events-auto data-[open]:opacity-100 data-[open]:visible data-[open]:pointer-events-auto" role="tooltip">
+                    <div class="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-full mt-2 z-50 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 pointer-events-none" role="tooltip">
                       <div class="bg-popover border border-border/60 rounded-lg shadow-xl p-3 text-xs space-y-2 backdrop-blur-sm">
                         <p class="font-semibold text-foreground">Username origin</p>
                         <p class="text-muted-foreground leading-relaxed">Combined <span class="font-mono text-foreground">me</span> (Melcher) + <span class="font-mono text-foreground">ro</span> (Robert) + <span class="font-mono text-foreground">x</span>. <span class="font-mono text-foreground">0x39</span> (hex) = 57 (5/7).</p>
@@ -141,46 +142,3 @@ const personSchema = {
     </Link>
   </section>
 </Layout>
-
-<script>
-  (function() {
-    const btn = document.getElementById('username-origin-btn');
-    const tooltip = document.getElementById('username-origin-content');
-    const container = document.getElementById('username-origin-tooltip');
-    
-    if (!btn || !tooltip || !container) return;
-    
-    let isOpen = false;
-
-    function toggleTooltip() {
-      isOpen = !isOpen;
-      tooltip.setAttribute('data-open', isOpen ? 'true' : '');
-      btn.setAttribute('aria-expanded', isOpen.toString());
-    }
-
-    function closeTooltip() {
-      if (isOpen) {
-        isOpen = false;
-        tooltip.removeAttribute('data-open');
-        btn.setAttribute('aria-expanded', 'false');
-      }
-    }
-
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      toggleTooltip();
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!container.contains(e.target as Node)) {
-        closeTooltip();
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && isOpen) {
-        closeTooltip();
-      }
-    });
-  })();
-</script>
