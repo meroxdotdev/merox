@@ -1,21 +1,24 @@
 ---
-import BlogCard from '@/components/BlogCard.astro'
-import Link from '@/components/Link.astro'
-import PageHead from '@/components/PageHead.astro'
-import { buttonVariants } from '@/components/ui/button'
-import Layout from '@/layouts/Layout.astro'
-import { Icon } from 'astro-icon/components'
-import { getRecentPosts } from '@/lib/data-utils'
-import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
-import type { SocialLink } from '@/types'
+import { Image } from 'astro:assets';
+import BlogCard from '@/components/BlogCard.astro';
+import Link from '@/components/Link.astro';
+import PageHead from '@/components/PageHead.astro';
+import { buttonVariants } from '@/components/ui/button';
+import Layout from '@/layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+import { getRecentPosts } from '@/lib/data-utils';
+import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts';
+import type { SocialLink } from '@/types';
 
-let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
+// Importă imaginea pentru procesare automată (AVIF, WebP, Resize)
+import profileImg from '../assets/meroxindc1.webp';
+
+let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = [];
 try {
-  latestPosts = await getRecentPosts(3)
+  latestPosts = await getRecentPosts(3);
 } catch (error) {
-  console.error('Error fetching recent posts:', error)
+  console.error('Error fetching recent posts:', error);
 }
-
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -28,7 +31,7 @@ const personSchema = {
   "worksFor": { "@type": "Organization", "name": "Forvia" },
   "sameAs": ["https://github.com/meroxdotdev", "https://www.linkedin.com/in/robert-melcher-92a1a9157"],
   "description": SITE.description
-}
+};
 
 const organizationSchema = {
   "@context": "https://schema.org",
@@ -38,7 +41,7 @@ const organizationSchema = {
   "logo": new URL('/reworkedmeroxdc1.webp', Astro.site).href,
   "description": SITE.description,
   "founder": { "@type": "Person", "name": "Robert Melcher" }
-}
+};
 
 const websiteSchema = {
   "@context": "https://schema.org",
@@ -52,7 +55,7 @@ const websiteSchema = {
     "target": { "@type": "EntryPoint", "urlTemplate": `${SITE.href}/blog?q={search_term_string}` },
     "query-input": "required name=search_term_string"
   }
-}
+};
 ---
 
 <Layout class="max-w-4xl">
@@ -61,8 +64,6 @@ const websiteSchema = {
   <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
-  
-  <link rel="preload" as="image" href="/meroxindc1.webp" type="image/webp" fetchpriority="high" media="(min-width: 768px)" />
   
   <style>
     .hero-glow { 
@@ -127,10 +128,21 @@ const websiteSchema = {
       
       <div class="relative flex-shrink-0 w-full max-w-[160px] md:max-w-none md:w-[220px] lg:w-[250px]">
         <div class="hero-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 rounded-full blur-[60px] md:blur-[80px] -z-10" aria-hidden="true"></div>
-        <picture>
-          <source srcset="/meroxindc1.webp" type="image/webp" />
-          <img src="/meroxindc1.webp" alt="Robert Melcher" width="320" height="400" loading="eager" decoding="async" class="w-full h-auto" />
-        </picture>
+        
+        {/* Optimizare Corectă Astro: AVIF pentru bandwidth mic + srcset pentru rezoluție */}
+        <Image 
+          src={profileImg} 
+          alt="Robert Melcher" 
+          width={500} 
+          height={625}
+          widths={[250, 500]}
+          sizes="(max-width: 768px) 160px, 250px"
+          formats={['avif', 'webp']}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="w-full h-auto object-cover"
+        />
       </div>
     </div>
   </section>
