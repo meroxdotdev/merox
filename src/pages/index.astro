@@ -1,5 +1,4 @@
 ---
-// 1. Am eliminat importul local pentru a folosi Google Fonts (fără flicker)
 import BlogCard from '@/components/BlogCard.astro'
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
@@ -85,7 +84,7 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
   >
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=block" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=block" rel="stylesheet">
   </PageHead>
 
   <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
@@ -99,8 +98,14 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
     }
     
     @keyframes pulse {
-      0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-      50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+      0%, 100% { 
+        opacity: 0.5; 
+        transform: translate(-50%, -50%) scale(1); 
+      }
+      50% { 
+        opacity: 0.8; 
+        transform: translate(-50%, -50%) scale(1.1); 
+      }
     }
 
     .grid-pattern {
@@ -111,7 +116,7 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
 
     .polaroid {
       padding: 10px;
-      padding-bottom: 48px;
+      padding-bottom: 44px; /* Ajustat pentru fontul de terminal mai compact */
       border-radius: 2px;
       transition: all 0.5s ease-in-out;
       transform: rotate(2deg);
@@ -122,17 +127,19 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
     }
 
     .polaroid-caption {
-      font-family: 'Caveat', cursive;
+      /* Font de terminal JetBrains Mono */
+      font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
       font-synthesis: none;
       color: rgb(39 39 42);
-      /* Mărime mai mică și efect de îngroșare extra prin text-shadow subtil */
-      font-size: 1.1rem; 
-      text-shadow: 0.2px 0 0 rgb(39 39 42), -0.2px 0 0 rgb(39 39 42); 
-      line-height: 1.75rem;
-      letter-spacing: 0.025em;
+      
+      /* Mărime mică și clară tip Terminal */
+      font-size: 0.85rem; 
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+      
       transform: rotate(-1deg);
-      opacity: 0.95;
+      opacity: 0.85;
     }
   </style>
 
@@ -203,9 +210,9 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
         </div>
         
         <div 
-          class="polaroid relative p-2.5 pb-12 border transition-all duration-500 ease-in-out shadow-xl
+          class="polaroid relative p-2.5 pb-11 border transition-all duration-500 ease-in-out shadow-xl
                  bg-white border-zinc-200/50 
-                 dark:bg-gray-300 dark:border-zinc-300"
+                 dark:bg-zinc-200 dark:border-zinc-300"
         >
           <div class="relative overflow-hidden w-[190px] h-[226px] sm:w-[220px] sm:h-[256px] rounded-sm border border-black/10 bg-green-900/20 dark:bg-green-900/20">
             <Image 
@@ -221,7 +228,7 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
           
           <div class="absolute bottom-2.5 left-0 right-0 text-center">
             <span class="polaroid-caption">
-              ./merox.sh --live
+              {` ./merox.sh --live`}
             </span>
           </div>
         </div>
