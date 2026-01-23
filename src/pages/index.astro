@@ -12,23 +12,34 @@ import type { SocialLink } from '@/types'
 import { Image } from 'astro:assets'
 import heroImage from '../assets/meroxindc1.webp'
 
+// Data fetching with error handling
 let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
+let hasError = false
+
 try {
-  latestPosts = await getRecentPosts(3)
+  latestPosts = await getRecentPosts(SITE.featuredPostCount)
 } catch (error) {
   console.error('Error fetching recent posts:', error)
+  hasError = true
 }
+
+// Structured data schemas
+const baseUrl = Astro.site?.href || SITE.href
+const logoUrl = new URL('/reworkedmeroxdc1.webp', baseUrl).href
 
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Robert Melcher",
   "alternateName": "merox",
-  "url": SITE.href,
-  "image": new URL('/reworkedmeroxdc1.webp', Astro.site).href,
+  "url": baseUrl,
+  "image": logoUrl,
   "jobTitle": "HPC System Administrator",
   "worksFor": { "@type": "Organization", "name": "Forvia" },
-  "sameAs": ["https://github.com/meroxdotdev", "https://www.linkedin.com/in/robert-melcher-92a1a9157"],
+  "sameAs": [
+    "https://github.com/meroxdotdev",
+    "https://www.linkedin.com/in/robert-melcher-92a1a9157"
+  ],
   "description": SITE.description
 }
 
@@ -36,8 +47,8 @@ const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": SITE.title,
-  "url": SITE.href,
-  "logo": new URL('/reworkedmeroxdc1.webp', Astro.site).href,
+  "url": baseUrl,
+  "logo": logoUrl,
   "description": SITE.description,
   "founder": { "@type": "Person", "name": "Robert Melcher" }
 }
@@ -46,19 +57,32 @@ const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": SITE.title,
-  "url": SITE.href,
+  "url": baseUrl,
   "description": SITE.description,
   "author": { "@type": "Person", "name": "Robert Melcher" },
   "potentialAction": {
     "@type": "SearchAction",
-    "target": { "@type": "EntryPoint", "urlTemplate": `${SITE.href}/blog?q={search_term_string}` },
+    "target": { 
+      "@type": "EntryPoint", 
+      "urlTemplate": `${baseUrl}/blog?q={search_term_string}` 
+    },
     "query-input": "required name=search_term_string"
   }
 }
+
+// Reusable class configurations
+const primaryButtonClasses = 'rounded-full px-6 h-12 text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95'
+const outlineButtonClasses = 'rounded-full px-6 h-12 text-sm font-bold transition-all hover:-translate-y-0.5 active:scale-95'
+const socialIconClasses = 'group p-2.5 rounded-full hover:bg-primary/10 transition-all duration-300'
+const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-primary transition-colors'
 ---
 
 <Layout class="max-w-4xl">
-  <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true} />
+  <PageHead 
+    slot="head" 
+    title="Merox - Insights from my tech journey" 
+    fullTitle={true} 
+  />
 
   <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
@@ -69,19 +93,53 @@ const websiteSchema = {
       animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       contain: layout style paint;
     }
+    
     @keyframes pulse {
-      0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-      50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
+      0%, 100% { 
+        opacity: 0.5; 
+        transform: translate(-50%, -50%) scale(1); 
+      }
+      50% { 
+        opacity: 0.8; 
+        transform: translate(-50%, -50%) scale(1.1); 
+      }
+    }
+
+    .grid-pattern {
+      background-size: 40px 40px;
+      mask-image: radial-gradient(farthest-side at 50% 50%, black 0%, transparent 100%);
+      -webkit-mask-image: radial-gradient(farthest-side at 50% 50%, black 0%, transparent 100%);
+    }
+
+    .polaroid {
+      padding: 10px;
+      padding-bottom: 48px;
+      border-radius: 2px;
+      transition: all 0.5s ease-in-out;
+      transform: rotate(2deg);
+    }
+
+    .polaroid:hover {
+      transform: rotate(2deg) scale(1.05);
+    }
+
+    .polaroid-caption {
+      font-family: 'Caveat', cursive;
+      color: rgb(39 39 42);
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+      letter-spacing: 0.025em;
+      transform: rotate(-1deg);
+      opacity: 0.95;
     }
   </style>
 
   <section class="hero-section relative pt-4 pb-8 md:pt-12 md:pb-20">
     <div 
-      class="absolute inset-0 -z-20 h-full w-[100vw] left-1/2 -translate-x-1/2 
+      class="grid-pattern absolute inset-0 -z-20 h-full w-[100vw] left-1/2 -translate-x-1/2 
              bg-[linear-gradient(to_right,#00000015_1px,transparent_1px),linear-gradient(to_bottom,#00000015_1px,transparent_1px)] 
-             dark:bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff18_1px,transparent_1px)] 
-             bg-[size:40px_40px]"
-      style="mask-image: radial-gradient(farthest-side at 50% 50%, black 0%, transparent 100%); -webkit-mask-image: radial-gradient(farthest-side at 50% 50%, black 0%, transparent 100%);"
+             dark:bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff18_1px,transparent_1px)]"
+      aria-hidden="true"
     >
     </div>
 
@@ -98,11 +156,17 @@ const websiteSchema = {
 
         <div class="flex flex-col items-center md:items-start gap-6">
           <div class="flex flex-wrap justify-center md:justify-start items-center gap-3">
-            <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95' })}>
+            <Link 
+              href="/blog" 
+              class={buttonVariants({ variant: 'default', size: 'lg', class: primaryButtonClasses })}
+            >
               Read the blog
               <Icon name="lucide:arrow-right" class="ml-2 size-4" aria-hidden="true" />
             </Link>
-            <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold transition-all hover:-translate-y-0.5 active:scale-95' })}>
+            <Link 
+              href="/about" 
+              class={buttonVariants({ variant: 'outline', size: 'lg', class: outlineButtonClasses })}
+            >
               About me
             </Link>
           </div>
@@ -111,8 +175,16 @@ const websiteSchema = {
             <ul class="flex items-center gap-1.5" role="list">
               {SOCIAL_LINKS.map(({ href, label }: SocialLink) => (
                 <li>
-                  <Link href={href} aria-label={label} title={label} class="group p-2.5 rounded-full hover:bg-primary/10 transition-all duration-300">
-                    <Icon name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:message-circle'} class="size-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <Link 
+                    href={href} 
+                    aria-label={label} 
+                    title={label} 
+                    class={socialIconClasses}
+                  >
+                    <Icon 
+                      name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:message-circle'} 
+                      class={socialIconSvgClasses} 
+                    />
                   </Link>
                 </li>
               ))}
@@ -122,17 +194,18 @@ const websiteSchema = {
       </div>
       
       <div class="relative flex-shrink-0 mb-8 md:mb-0 select-none group">
-        <div class="hero-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 rounded-full blur-[60px] md:blur-[80px] -z-10" aria-hidden="true"></div>
+        <div 
+          class="hero-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 rounded-full blur-[60px] md:blur-[80px] -z-10" 
+          aria-hidden="true"
+        >
+        </div>
         
         <div 
-          class="relative p-2.5 pb-12 border transition-all duration-500 ease-in-out shadow-xl
+          class="polaroid relative p-2.5 pb-12 border transition-all duration-500 ease-in-out shadow-xl
                  bg-white border-zinc-200/50 
-                 dark:bg-gray-300 dark:border-zinc-300
-                 rotate-2 hover:scale-105"
-          style="border-radius: 2px;"
+                 dark:bg-gray-300 dark:border-zinc-300"
         >
-          <div class="relative overflow-hidden w-[190px] h-[226px] sm:w-[220px] sm:h-[256px] rounded-sm border border-black/10
-                      bg-green-900/20 dark:bg-green-900/20">
+          <div class="relative overflow-hidden w-[190px] h-[226px] sm:w-[220px] sm:h-[256px] rounded-sm border border-black/10 bg-green-900/20 dark:bg-green-900/20">
             <Image 
               src={heroImage} 
               alt="Robert Melcher" 
@@ -145,37 +218,57 @@ const websiteSchema = {
           </div>
           
           <div class="absolute bottom-2.5 left-0 right-0 text-center">
-            <span 
-              class="text-zinc-800 text-xl tracking-wide -rotate-1 inline-block opacity-95" 
-              style="font-family: 'Caveat', cursive;"
-            >
+            <span class="polaroid-caption">
               ./merox.sh --live
             </span>
           </div>
         </div>
-        <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[85%] h-3 bg-black/20 dark:bg-black/50 blur-lg rounded-[100%] -z-10 transition-transform duration-500 group-hover:scale-110"></div>
+        
+        <div 
+          class="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[85%] h-3 bg-black/20 dark:bg-black/50 blur-lg rounded-[100%] -z-10 transition-transform duration-500 group-hover:scale-110"
+          aria-hidden="true"
+        >
+        </div>
       </div>
     </div>
   </section>
 
   {latestPosts && latestPosts.length > 0 && (
     <section class="mt-8 pt-8 relative">
-      <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent"></div>
+      <div 
+        class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent"
+        aria-hidden="true"
+      >
+      </div>
+      
       <div class="mb-6">
         <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground">
           Latest <span class="text-primary">Insights</span>
         </h2>
       </div>
+      
       <div class="flex flex-col gap-5">
         {latestPosts.map((post) => (
           <BlogCard entry={post} variant="featured" />
         ))}
       </div>
+      
       <div class="mt-12 flex justify-center">
-        <Link href="/blog" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'w-auto h-12 px-8' })}>
+        <Link 
+          href="/blog" 
+          class={buttonVariants({ variant: 'outline', size: 'lg', class: 'w-auto h-12 px-8' })}
+        >
           Show more
         </Link>
       </div>
+    </section>
+  )}
+
+  {hasError && (
+    <section class="mt-8 pt-8">
+      <p class="text-muted-foreground text-center">
+        Unable to load recent posts. Please try refreshing the page.
+      </p>
     </section>
   )}
 </Layout>
