@@ -69,39 +69,19 @@ const websiteSchema = {
       animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       contain: layout style paint;
     }
-    .status-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: rgb(34, 197, 94);
-      animation: status-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-      contain: layout style paint;
-    }
-    @keyframes status-pulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); opacity: 1; }
-      50% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0); opacity: 0.8; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .hero-glow, .status-dot { animation: none; }
-    }
-
-    /* Stilul pentru Grid-ul Interactiv */
-    #interactive-grid {
-      --mouse-x: 50%;
-      --mouse-y: 50%;
-      mask-image: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
-      -webkit-mask-image: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
+    @keyframes pulse {
+      0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.1); }
     }
   </style>
 
-  <section class="hero-section relative pt-4 pb-8 md:pt-12 md:pb-20 overflow-visible">
+  <section class="hero-section relative pt-4 pb-8 md:pt-12 md:pb-20">
     <div 
-      id="interactive-grid"
       class="absolute inset-0 -z-20 h-full w-[100vw] left-1/2 -translate-x-1/2 
              bg-[linear-gradient(to_right,#00000015_1px,transparent_1px),linear-gradient(to_bottom,#00000015_1px,transparent_1px)] 
-             dark:bg-[linear-gradient(to_right,#ffffff18_1px,transparent_1px),linear-gradient(to_bottom,#ffffff18_1px,transparent_1px)] 
-             bg-[size:40px_40px] pointer-events-none"
+             dark:bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff18_1px,transparent_1px)] 
+             bg-[size:40px_40px]"
+      style="mask-image: radial-gradient(farthest-side at 50% 50%, black 0%, transparent 100%); -webkit-mask-image: radial-gradient(farthest-side at 50% 50%, black 0%, transparent 100%);"
     >
     </div>
 
@@ -118,11 +98,11 @@ const websiteSchema = {
 
         <div class="flex flex-col items-center md:items-start gap-6">
           <div class="flex flex-wrap justify-center md:justify-start items-center gap-3">
-            <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-0.5 active:scale-95' })}>
+            <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95' })}>
               Read the blog
               <Icon name="lucide:arrow-right" class="ml-2 size-4" aria-hidden="true" />
             </Link>
-            <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold hover:bg-muted transition-all hover:-translate-y-0.5 active:scale-95' })}>
+            <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold transition-all hover:-translate-y-0.5 active:scale-95' })}>
               About me
             </Link>
           </div>
@@ -131,9 +111,8 @@ const websiteSchema = {
             <ul class="flex items-center gap-1.5" role="list">
               {SOCIAL_LINKS.map(({ href, label }: SocialLink) => (
                 <li>
-                  <Link href={href} aria-label={label} title={label} class="group p-2.5 rounded-full hover:bg-primary/10 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" external={href.startsWith('http') || href.startsWith('mailto:')}>
-                    <Icon name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:message-circle-question'} class="size-5 text-muted-foreground group-hover:text-primary transition-colors" aria-hidden="true" />
-                    <span class="sr-only">{label}</span>
+                  <Link href={href} aria-label={label} title={label} class="group p-2.5 rounded-full hover:bg-primary/10 transition-all duration-300">
+                    <Icon name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:message-circle'} class="size-5 text-muted-foreground group-hover:text-primary transition-colors" />
                   </Link>
                 </li>
               ))}
@@ -200,30 +179,3 @@ const websiteSchema = {
     </section>
   )}
 </Layout>
-
-<script>
-  // Script minimal pentru spotlight grid
-  function initGrid() {
-    const grid = document.getElementById('interactive-grid');
-    const hero = document.querySelector('.hero-section');
-    
-    if (!grid || !hero) return;
-
-    window.addEventListener('mousemove', (e) => {
-      // Calculăm poziția mouse-ului relativ la viewport pentru a fi precis
-      const x = (e.clientX / window.innerWidth) * 100;
-      const y = (e.clientY / window.innerHeight) * 100;
-      
-      // Update variabile CSS folosind RequestAnimationFrame pentru fluiditate maxima
-      requestAnimationFrame(() => {
-        grid.style.setProperty('--mouse-x', `${x}%`);
-        grid.style.setProperty('--mouse-y', `${y}%`);
-      });
-    });
-  }
-
-  // Executăm la încărcare
-  initGrid();
-  // Document listener pentru Astro view transitions (dacă le folosești)
-  document.addEventListener('astro:after-swap', initGrid);
-</script>
