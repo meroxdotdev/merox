@@ -85,15 +85,23 @@ const websiteSchema = {
     @media (prefers-reduced-motion: reduce) {
       .hero-glow, .status-dot { animation: none; }
     }
+
+    /* Stilul pentru Grid-ul Interactiv */
+    #interactive-grid {
+      --mouse-x: 50%;
+      --mouse-y: 50%;
+      mask-image: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
+      -webkit-mask-image: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
+    }
   </style>
 
-  <section class="hero-section relative pt-4 pb-8 md:pt-12 md:pb-20">
+  <section class="hero-section relative pt-4 pb-8 md:pt-12 md:pb-20 overflow-visible">
     <div 
+      id="interactive-grid"
       class="absolute inset-0 -z-20 h-full w-[100vw] left-1/2 -translate-x-1/2 
              bg-[linear-gradient(to_right,#00000015_1px,transparent_1px),linear-gradient(to_bottom,#00000015_1px,transparent_1px)] 
              dark:bg-[linear-gradient(to_right,#ffffff18_1px,transparent_1px),linear-gradient(to_bottom,#ffffff18_1px,transparent_1px)] 
-             bg-[size:40px_40px]"
-      style="mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%); -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);"
+             bg-[size:40px_40px] pointer-events-none"
     >
     </div>
 
@@ -168,7 +176,6 @@ const websiteSchema = {
         </div>
         <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 w-[85%] h-3 bg-black/20 dark:bg-black/50 blur-lg rounded-[100%] -z-10 transition-transform duration-500 group-hover:scale-110"></div>
       </div>
-
     </div>
   </section>
 
@@ -193,3 +200,30 @@ const websiteSchema = {
     </section>
   )}
 </Layout>
+
+<script>
+  // Script minimal pentru spotlight grid
+  function initGrid() {
+    const grid = document.getElementById('interactive-grid');
+    const hero = document.querySelector('.hero-section');
+    
+    if (!grid || !hero) return;
+
+    window.addEventListener('mousemove', (e) => {
+      // Calculăm poziția mouse-ului relativ la viewport pentru a fi precis
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
+      
+      // Update variabile CSS folosind RequestAnimationFrame pentru fluiditate maxima
+      requestAnimationFrame(() => {
+        grid.style.setProperty('--mouse-x', `${x}%`);
+        grid.style.setProperty('--mouse-y', `${y}%`);
+      });
+    });
+  }
+
+  // Executăm la încărcare
+  initGrid();
+  // Document listener pentru Astro view transitions (dacă le folosești)
+  document.addEventListener('astro:after-swap', initGrid);
+</script>
