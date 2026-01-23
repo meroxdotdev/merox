@@ -1,17 +1,16 @@
 ---
-import { Image } from 'astro:assets'
-import Layout from '@/layouts/Layout.astro'
-import PageHead from '@/components/PageHead.astro'
 import BlogCard from '@/components/BlogCard.astro'
 import Link from '@/components/Link.astro'
-import { Icon } from 'astro-icon/components'
+import PageHead from '@/components/PageHead.astro'
 import { buttonVariants } from '@/components/ui/button'
-
+import Layout from '@/layouts/Layout.astro'
+import { Icon } from 'astro-icon/components'
 import { getRecentPosts } from '@/lib/data-utils'
 import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
 import type { SocialLink } from '@/types'
 
-// IMPORTĂ IMAGINEA DE AICI (Asigură-te că fișierul este în src/assets/)
+// 1. IMPORTUL COMPONENTEI ȘI IMAGINII (Asigură-te că e în src/assets)
+import { Image } from 'astro:assets'
 import heroImage from '../assets/meroxindc1.webp'
 
 let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
@@ -21,16 +20,13 @@ try {
   console.error('Error fetching recent posts:', error)
 }
 
-// Folosim imaginea procesată pentru SEO dacă este posibil
-const heroImageUrl = new URL('/reworkedmeroxdc1.webp', Astro.site).href
-
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Robert Melcher",
   "alternateName": "merox",
   "url": SITE.href,
-  "image": heroImageUrl,
+  "image": new URL('/reworkedmeroxdc1.webp', Astro.site).href,
   "jobTitle": "HPC System Administrator",
   "worksFor": { "@type": "Organization", "name": "Forvia" },
   "sameAs": ["https://github.com/meroxdotdev", "https://www.linkedin.com/in/robert-melcher-92a1a9157"],
@@ -42,7 +38,7 @@ const organizationSchema = {
   "@type": "Organization",
   "name": SITE.title,
   "url": SITE.href,
-  "logo": heroImageUrl,
+  "logo": new URL('/reworkedmeroxdc1.webp', Astro.site).href,
   "description": SITE.description,
   "founder": { "@type": "Person", "name": "Robert Melcher" }
 }
@@ -136,8 +132,8 @@ const websiteSchema = {
         <Image 
           src={heroImage} 
           alt="Robert Melcher" 
-          width={500} 
-          height={625}
+          widths={[280, 500, heroImage.width]}
+          sizes="(max-width: 768px) 280px, 250px"
           loading="eager"
           fetchpriority="high"
           decoding="async"
