@@ -5,8 +5,10 @@ import Link from '@/components/Link.astro'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { SITE } from '@/consts'
+// 1. Importă componenta de imagine și resursa
+import { Image } from 'astro:assets'
+import robertImg from '../assets/robert.webp' 
 
-// Enhanced Person Schema for About page
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -15,21 +17,12 @@ const personSchema = {
   "url": SITE.href,
   "image": new URL('/robert.webp', Astro.site).href,
   "jobTitle": "HPC System Administrator",
-  "worksFor": {
-    "@type": "Organization",
-    "name": "Forvia"
-  },
-  "alumniOf": {
-    "@type": "EducationalOrganization",
-    "name": "West University of Timișoara"
-  },
+  "worksFor": { "@type": "Organization", "name": "Forvia" },
+  "alumniOf": { "@type": "EducationalOrganization", "name": "West University of Timișoara" },
   "hasCredential": {
     "@type": "EducationalOccupationalCredential",
     "credentialCategory": "Professional Certification",
-    "recognizedBy": {
-      "@type": "Organization",
-      "name": "Cisco"
-    },
+    "recognizedBy": { "@type": "Organization", "name": "Cisco" },
     "name": "CCNA"
   },
   "sameAs": [
@@ -52,13 +45,14 @@ const personSchema = {
     <div class="flex flex-col md:flex-row gap-8 md:gap-12 items-start">
       <div class="relative shrink-0">
         <div class="size-32 md:size-40 rounded-2xl overflow-hidden border border-border/50 shadow-sm bg-muted/30">
-          <img
-            src="/robert.webp"
+          <Image
+            src={robertImg}
             alt="Robert Melcher"
-            width="1492"
-            height="1864"
-            class="object-cover w-full h-full transition-transform duration-300 hover:scale-[1.02]"
+            width={320} 
+            height={320}
             loading="eager"
+            fetchpriority="high"
+            class="object-cover w-full h-full transition-transform duration-300 hover:scale-[1.05]"
           />
         </div>
       </div>
@@ -186,6 +180,5 @@ const personSchema = {
         </div>
       </div>
     </div>
-
   </section>
 </Layout>
