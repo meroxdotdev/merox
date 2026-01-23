@@ -19,15 +19,13 @@ try {
   console.error('Error fetching recent posts:', error)
 }
 
-const heroImageUrl = new URL('/reworkedmeroxdc1.webp', Astro.site).href
-
 const personSchema = {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Robert Melcher",
   "alternateName": "merox",
   "url": SITE.href,
-  "image": heroImageUrl,
+  "image": new URL('/reworkedmeroxdc1.webp', Astro.site).href,
   "jobTitle": "HPC System Administrator",
   "worksFor": { "@type": "Organization", "name": "Forvia" },
   "sameAs": ["https://github.com/meroxdotdev", "https://www.linkedin.com/in/robert-melcher-92a1a9157"],
@@ -39,7 +37,7 @@ const organizationSchema = {
   "@type": "Organization",
   "name": SITE.title,
   "url": SITE.href,
-  "logo": heroImageUrl,
+  "logo": new URL('/reworkedmeroxdc1.webp', Astro.site).href,
   "description": SITE.description,
   "founder": { "@type": "Person", "name": "Robert Melcher" }
 }
@@ -66,7 +64,30 @@ const websiteSchema = {
   <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
   
-  <section class="hero-section relative pt-4 pb-8 lg:pt-12 lg:pb-20">
+  <style>
+    .hero-glow { 
+      animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      contain: layout style paint;
+    }
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: rgb(34, 197, 94);
+      animation: status-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+      contain: layout style paint;
+    }
+    @keyframes status-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); opacity: 1; }
+      50% { box-shadow: 0 0 0 4px rgba(34, 197, 94, 0); opacity: 0.8; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-glow, .status-dot { animation: none; }
+    }
+  </style>
+
+  <section class="hero-section relative pt-4 pb-8 md:pt-12 md:pb-20">
     <div 
       class="absolute inset-0 -z-20 h-full w-[100vw] left-1/2 -translate-x-1/2 
              bg-[linear-gradient(to_right,#00000015_1px,transparent_1px),linear-gradient(to_bottom,#00000015_1px,transparent_1px)] 
@@ -76,25 +97,24 @@ const websiteSchema = {
     >
     </div>
 
-    <div class="flex flex-col-reverse lg:flex-row items-center gap-8 lg:gap-14 px-4 md:px-0">
-      
-      <div class="flex-1 space-y-6 text-center lg:text-left">
+    <div class="flex flex-col-reverse md:flex-row items-center gap-6 md:gap-8">
+      <div class="flex-1 space-y-6 text-center md:text-left">
         <div class="space-y-4">
-          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter uppercase leading-[0.9] text-balance">
+          <h1 class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] text-balance">
             Building<br />infrastructure<br /><span class="text-primary">that scales</span>.
           </h1>
-          <p class="text-base lg:text-lg text-muted-foreground leading-relaxed max-w-[480px] mx-auto lg:mx-0 font-medium">
+          <p class="text-base md:text-lg text-muted-foreground leading-relaxed max-w-lg mx-auto md:mx-0">
             System Administrator and former Cybersecurity Engineer with expertise in Linux-based technologies, networking, and security.
           </p>
         </div>
 
-        <div class="flex flex-col items-center lg:items-start gap-6">
-          <div class="flex flex-wrap justify-center lg:justify-start items-center gap-3">
-            <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5' })}>
+        <div class="flex flex-col items-center md:items-start gap-6">
+          <div class="flex flex-wrap justify-center md:justify-start items-center gap-3">
+            <Link href="/blog" class={buttonVariants({ variant: 'default', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all hover:-translate-y-0.5 active:scale-95' })}>
               Read the blog
               <Icon name="lucide:arrow-right" class="ml-2 size-4" aria-hidden="true" />
             </Link>
-            <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold transition-all hover:-translate-y-0.5' })}>
+            <Link href="/about" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'rounded-full px-6 h-12 text-sm font-bold hover:bg-muted transition-all hover:-translate-y-0.5 active:scale-95' })}>
               About me
             </Link>
           </div>
@@ -103,8 +123,9 @@ const websiteSchema = {
             <ul class="flex items-center gap-1.5" role="list">
               {SOCIAL_LINKS.map(({ href, label }: SocialLink) => (
                 <li>
-                  <Link href={href} aria-label={label} class="p-2 text-muted-foreground hover:text-primary transition-colors">
-                    <Icon name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:message-circle'} class="size-5" />
+                  <Link href={href} aria-label={label} title={label} class="group p-2.5 rounded-full hover:bg-primary/10 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" external={href.startsWith('http') || href.startsWith('mailto:')}>
+                    <Icon name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:message-circle-question'} class="size-5 text-muted-foreground group-hover:text-primary transition-colors" aria-hidden="true" />
+                    <span class="sr-only">{label}</span>
                   </Link>
                 </li>
               ))}
@@ -113,7 +134,9 @@ const websiteSchema = {
         </div>
       </div>
       
-      <div class="relative flex-shrink-0 mb-8 lg:mb-0 select-none group">
+      <div class="relative flex-shrink-0 mb-8 md:mb-0 select-none group">
+        <div class="hero-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-primary/5 rounded-full blur-[60px] md:blur-[80px] -z-10" aria-hidden="true"></div>
+        
         <div 
           class="relative p-2.5 pb-12 border transition-all duration-500 ease-in-out shadow-xl
                  bg-white border-zinc-200/50 
@@ -153,7 +176,7 @@ const websiteSchema = {
     <section class="mt-8 pt-8 relative">
       <div class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent"></div>
       <div class="mb-6">
-        <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground text-center lg:text-left">
+        <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground">
           Latest <span class="text-primary">Insights</span>
         </h2>
       </div>
@@ -163,7 +186,7 @@ const websiteSchema = {
         ))}
       </div>
       <div class="mt-12 flex justify-center">
-        <Link href="/blog" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'rounded-full h-12' })}>
+        <Link href="/blog" class={buttonVariants({ variant: 'outline', size: 'lg', class: 'w-auto h-12 px-8' })}>
           Show more
         </Link>
       </div>
