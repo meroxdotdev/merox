@@ -23,6 +23,7 @@
     "@astrojs/sitemap": "^3.6.0",
     "@expressive-code/plugin-collapsible-sections": "^0.41.3",
     "@expressive-code/plugin-line-numbers": "^0.41.3",
+    "@fontsource/caveat": "^5.2.8",
     "@iconify-json/lucide": "^1.2.73",
     "@iconify-json/simple-icons": "^1.2.59",
     "@radix-ui/react-dialog": "^1.1.15",
