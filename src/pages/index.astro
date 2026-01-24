@@ -84,7 +84,6 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
   >
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&display=block" rel="stylesheet">
   </PageHead>
 
   <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
@@ -92,6 +91,14 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
   <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
   
   <style>
+    @font-face {
+      font-family: 'Love';
+      src: url('/fonts/Love.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
     .hero-glow { 
       animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
       contain: layout style paint;
@@ -116,7 +123,7 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
 
     .polaroid {
       padding: 10px;
-      padding-bottom: 44px; /* Ajustat pentru fontul de terminal mai compact */
+      padding-bottom: 44px;
       border-radius: 2px;
       transition: all 0.5s ease-in-out;
       transform: rotate(2deg);
@@ -127,19 +134,14 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
     }
 
     .polaroid-caption {
-      /* Font de terminal JetBrains Mono */
-      font-family: 'JetBrains Mono', monospace;
-      font-weight: 700;
-      font-synthesis: none;
+      font-family: 'Love', cursive;
       color: rgb(39 39 42);
-      
-      /* Mărime mică și clară tip Terminal */
-      font-size: 0.85rem; 
-      line-height: 1.2;
-      letter-spacing: -0.01em;
-      
-      transform: rotate(-1deg);
+      font-size: 1.3rem; 
+      line-height: 1;
+      letter-spacing: 0.02em;
+      transform: rotate(-2deg);
       opacity: 0.85;
+      font-weight: normal;
     }
   </style>
 
