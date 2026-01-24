@@ -1,294 +1,259 @@
-![Showcase Card](/public/static/twitter-card.png)
+# Merox.dev
 
-<div align="center">
+Personal blog and portfolio website for Robert Melcher (merox), sharing insights on system administration, cybersecurity, homelab infrastructure, and Kubernetes.
 
-## astro-erudite
+**Live Site:** [merox.dev](https://merox.dev)
 
-![Stargazers]
-[![License]](LICENSE)
+## About
 
-</div>
+Merox.dev is a static blog built with [Astro](https://astro.build/) that showcases technical writing, projects, and professional experience. The site focuses on practical guides for Linux-based technologies, Kubernetes, homelab infrastructure, and security topics.
 
-astro-erudite is an opinionated, unstyled static blogging template built with [Astro](https://astro.build/), [Tailwind](https://tailwindcss.com/), and [shadcn/ui](https://ui.shadcn.com/). Extraordinarily loosely based off the [Astro Micro](https://astro-micro.vercel.app/) theme by [trevortylerlee](https://github.com/trevortylerlee).
+### Author
 
-| ![Preview 1](/public/static/preview-1.png) | ![Preview 2](/public/static/preview-2.png) |
-| ------------------------------------------ | ------------------------------------------ |
-| ![Preview 3](/public/static/preview-3.png) | ![Preview 4](/public/static/preview-4.png) |
-
-> [!NOTE]
-> To learn more about why this template exists, read [The State of Static Blogs in 2024](https://astro-erudite.vercel.app/blog/the-state-of-static-blogs), where I share my take on what constitutes a great blogging template and my goals while developing this one.
-
----
-
-## Community Examples
-
-Below are some fantastic examples of websites based on this template. If you wish to add your site to this list, open a pull request!
-
-| Site                                                 | Author                                                 | Description/Features                                                                                                                                      | Source                                                  |
-| ---------------------------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| [enscribe.dev](https://enscribe.dev)                 | [@jktrn](https://github.com/jktrn)                     | Heavily modified bento-style homepage with client interactivity, with custom MDX components!                                                              | [→](https://github.com/jktrn/enscribe.dev)              |
-| [emile.sh](https://emile.sh)                         | [@echoghi](https://github.com/echoghi)                 | A minimalist personal blog using the [flexoki](https://stephango.com/flexoki) theme                                                                       | [→](https://github.com/echoghi/v5)                      |
-| [decentparadox.me](https://decentparadox.me)         | [@decentparadox](https://github.com/decentparadox)     | A heavily customized personal portfolio with a sci-fi theme!                                                                                              | [→](https://github.com/decentparadox/decentparadox.me)  |
-| [flocto.github.io](https://flocto.github.io/)        | [@flocto](https://github.com/flocto)                   | A slightly modified personal blog                                                                                                                         | [→](https://github.com/flocto/flocto.github.io)         |
-| [dumbprism.me](https://www.dumbprism.me/)            | [@dumbprism](https://github.com/dumbprism)             | A customized portfolio inspired by enscribe's bento grid style adding my gist of UI                                                                       | [→](https://github.com/dumbprism/dumbprism-portfolio)   |
-| [hyuki.dev](https://hyuki.dev/)                      | [@snow0406](https://github.com/snow0406)               | A minimalist blog with a blue color scheme, focusing on simplicity!                                                                                       | [→](https://github.com/Snow0406/hyuki.dev)              |
-| [ldd.cc](https://ldd.cc/)                            | [@xJoyLu](https://github.com/xjoylu)                   | The cream of the idlers.                                                                                                                                  | [→](https://ldd.cc/)                                    |
-| [rezarezvan.com](https://rezarezvan.com/)            | [@rezaarezvan](https://github.com/rezaarezvan)         | A academic blog with personal touches :).                                                                                                                 | [→](https://rezarezvan.com/)                            |
-| [blog.z0x.ca](https://blog.z0x.ca/)                  | [@z0x](https://z0x.ca)                                 | _Very_ minimal version of erudite, stripping it down to the bare essentials                                                                               | [→](https://git.z0x.ca/z0x/blog.z0x.ca/)                |
-| [angelaytchan.net](https://angelaytchan.net/)        | [@wispyplant](https://github.com/wispyplant)           | An artist portfolio and activities archive                                                                                                                | [→](https://github.com/wispyplant/wispyplant.github.io) |
-| [kaezr.xyz](https://kaezr.xyz/)                      | [@kaezrr](https://github.com/kaezrr)                   | A minimal porfolio and blog website with slight tweaks to the original.                                                                                   | [→](https://github.com/kaezrr/webfolio)                 |
-| [worldwidewong](https://worldwidewong.vercel.app)    | [@brendanwong-web](https://github.com/brendanwong-web) | A slightly funky portfolio, blog, and resume site with an added photo gallery.                                                                            | [→](https://github.com/brendanwong-web/worldwidewong)   |
-| [bgajjala.dev](https://bgajjala.dev)                 | [@bgajjala8](https://github.com/bgajjala8)             | A minimal blog featuring a paper-color inspired color scheme                                                                                              | [→](https://github.com/bgajjala8/bgajjala.dev)          |
-| [ankitz007.vercel.app](https://ankitz007.vercel.app) | [@ankitz007](https://github.com/ankitz007)             | A personal blog with a few modifications and updates to the original.                                                                                     | [→](https://github.com/ankitz007/webfolio)              |
-| [sadman.ca](https://sadman.ca)                       | [@sadmanca](https://github.com/sadmanca)               | A customized personal blog with: Goodreads reading progress tracker, SVG thumbnails, custom heading styles, and dynamic media grids (books, movies, etc.) | [→](https://github.com/sadmanca/blogv3)                 |
-| [marcel-to.vercel.app](https://marcel-to.vercel.app) | [@Marcel-TO](https://github.com/Marcel-TO)             | A content‑driven personal portfolio showcasing software projects, deep–dive blog series and multi-part project documentation.                             | [→](https://github.com/Marcel-TO/marcel-to-website)     |
+**Robert Melcher** (@merox)
+- **Role:** HPC System Administrator at Forvia
+- **Background:** Former Cybersecurity Engineer
+- **Expertise:** Linux, Kubernetes, networking, security, infrastructure automation
+- **Location:** Based in Europe
 
 ## Features
 
-- [Astro](https://astro.build/)'s [Islands](https://docs.astro.build/en/concepts/islands/) architecture for selective hydration and client-side interactivity while maintaining fast static site rendering.
-- [shadcn/ui](https://ui.shadcn.com/) with [Tailwind](https://tailwindcss.com/) color conventions for automatic light and dark theme styling. Features accessible, theme-aware UI components for navigation, buttons, and more.
-- [Expressive Code](https://expressive-code.com/) for enhanced code block styling, syntax highlighting, and code block titles.
-- Blog authoring with [MDX](https://mdxjs.com/) for component-rich content and $\LaTeX$ math rendering via [KaTeX](https://katex.org/).
-- Astro [View Transitions](https://docs.astro.build/en/guides/view-transitions/) in <abbr title="Single Page Application">SPA</abbr> mode for smooth route animations.
-- SEO optimization with granular metadata and [Open Graph](https://ogp.me/) tag control for each post.
-- [RSS](https://en.wikipedia.org/wiki/RSS) feed and sitemap generation.
-- Subpost support for breaking long content into digestible parts and organizing related series.
-- Author profiles with a dedicated authors page and multi-author post support.
-- Project tags with a dedicated tags page for post categorization and discovery.
-- Custom Callout component variants for enhanced technical writing.
+### Content & Writing
+- **MDX Blog Posts** - Rich content authoring with component support
+- **Math Rendering** - LaTeX math equations via KaTeX
+- **Code Highlighting** - Enhanced code blocks with Expressive Code
+- **Subposts** - Multi-part series support for long-form content
+- **Tags & Categories** - Organized content discovery
+- **Author Profiles** - Multi-author support with dedicated author pages
+
+### User Experience
+- **Dark/Light Theme** - System preference detection with manual toggle
+- **Search Functionality** - Full-text search powered by FlexSearch
+- **View Transitions** - Smooth SPA-like navigation
+- **Responsive Design** - Mobile-first approach with Tailwind CSS
+- **Accessibility** - Semantic HTML and ARIA labels throughout
+
+### Interactive Features
+- **Post Reactions** - Emoji reactions (like, love, fire, celebrate, clap) stored in Cloudflare KV
+- **Giscus Comments** - GitHub Discussions-based commenting system
+- **RSS Feed** - Automatic feed generation at `/rss.xml`
+- **Sitemap** - Auto-generated XML sitemap for SEO
+
+### Analytics & SEO
+- **Google Analytics** - Optional integration via environment variables
+- **Umami Analytics** - Privacy-focused analytics option
+- **Open Graph** - Rich social media previews
+- **Structured Data** - JSON-LD schemas for Person, Organization, and WebSite
+- **IndexNow API** - Search engine indexing support
+
+### Pages
+- **Home** - Featured posts and hero section
+- **Blog** - Paginated blog listing with search
+- **Projects** - Showcase of technical projects
+- **About** - Professional background and experience
+- **Tunes** - Automated Last.fm listening history (updated via GitHub Actions)
 
 ## Technology Stack
 
-This is a list of the various technologies used to build this template:
+### Core
+- **Framework:** [Astro](https://astro.build/) 5.x
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) 4.x
+- **Components:** [shadcn/ui](https://ui.shadcn.com/) with Radix UI
+- **Content:** [MDX](https://mdxjs.com/) for rich markdown
 
-| Category   | Technology Name                                                                            |
-| ---------- | ------------------------------------------------------------------------------------------ |
-| Framework  | [Astro](https://astro.build/)                                                              |
-| Styling    | [Tailwind](https://tailwindcss.com)                                                        |
-| Components | [shadcn/ui](https://ui.shadcn.com/)                                                        |
-| Content    | [MDX](https://mdxjs.com/)                                                                  |
-| Codeblocks | [Expressive Code](https://expressive-code.com/), [Shiki](https://github.com/shikijs/shiki) |
-| Graphics   | [Figma](https://www.figma.com/)                                                            |
-| Deployment | [Vercel](https://vercel.com)                                                               |
+### Integrations
+- **Code Blocks:** [Expressive Code](https://expressive-code.com/) with collapsible sections and line numbers
+- **Math:** [rehype-katex](https://github.com/remarkjs/remark-math) for LaTeX rendering
+- **Icons:** [astro-icon](https://www.astroicon.dev/) with Lucide and Simple Icons
+- **Search:** [FlexSearch](https://github.com/nextapps-de/flexsearch)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/) for React components
+
+### Deployment
+- **Hosting:** [Cloudflare Pages](https://pages.cloudflare.com/)
+- **API:** Cloudflare Pages Functions for post reactions
+- **Storage:** Cloudflare KV for reaction data persistence
+- **CDN:** Global edge network for fast content delivery
+
+### Development Tools
+- **TypeScript** - Full type safety
+- **Prettier** - Code formatting
+- **Vitest** - Unit testing framework
+- **GitHub Actions** - CI/CD and automated updates
+
+## Project Structure
+
+```
+merox/
+├── src/
+│   ├── assets/          # Images and media
+│   ├── components/      # Astro and React components
+│   │   ├── react/      # Interactive React components
+│   │   └── ui/         # shadcn/ui components
+│   ├── content/        # MDX blog posts and content
+│   │   ├── blog/       # Blog post entries
+│   │   ├── authors/    # Author profiles
+│   │   └── projects/   # Project listings
+│   ├── layouts/        # Page layouts
+│   ├── lib/            # Utility functions
+│   ├── pages/          # Route pages
+│   ├── scripts/        # Client-side scripts
+│   ├── styles/         # Global CSS
+│   ├── consts.ts       # Site configuration
+│   └── types.ts        # TypeScript types
+├── functions/          # Cloudflare Pages Functions
+│   └── api/
+│       └── reactions/  # Post reactions API
+├── public/             # Static assets
+├── astro.config.ts     # Astro configuration
+├── wrangler.toml       # Cloudflare Workers config
+└── package.json        # Dependencies
+```
 
 ## Getting Started
 
-1. Hit &ldquo;Use this template&rdquo;, the big green button on the top right, to create a new repository in your own GitHub account with this template.
+### Prerequisites
 
-2. Clone the repository:
+- Node.js 20.x or later
+- npm or pnpm
 
-   ```bash
-   git clone https://github.com/[YOUR_USERNAME]/[YOUR_REPO_NAME].git
-   cd [YOUR_REPO_NAME]
-   ```
+### Installation
 
-3. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-4. Start the development server:
-
-   ```bash
-   npm run dev
-   ```
-
-5. Open your browser and visit `http://localhost:1234` to get started. The following commands are also available:
-
-   | Command            | Description                                                     |
-   | ------------------ | --------------------------------------------------------------- |
-   | `npm run start`    | Alias for `npm run dev`                                         |
-   | `npm run build`    | Run type checking and build the project                         |
-   | `npm run preview`  | Previews the built project                                      |
-   | `npm run astro`    | Run Astro CLI commands                                          |
-   | `npm run prettier` | Blanket format all files using [Prettier](https://prettier.io/) |
-
-## Customization
-
-### Site Configuration
-
-Edit the `src/consts.ts` file to update your site's metadata, navigation links, and social links:
-
-```ts
-export const SITE: Site = {
-  title: 'astro-erudite',
-  description: // ...
-  href: 'https://merox.dev',
-  featuredPostCount: 2,
-  postsPerPage: 3,
-}
-
-export const NAV_LINKS: SocialLink[] = [
-  {
-    href: '/blog',
-    label: 'blog',
-  },
-  // ...
-]
-
-export const SOCIAL_LINKS: SocialLink[] = [
-  {
-    href: 'https://github.com/jktrn',
-    label: 'GitHub',
-  },
-  // ...
-]
+1. Clone the repository:
+```bash
+git clone https://github.com/meroxdotdev/merox.git
+cd merox
 ```
 
-### Color Palette
-
-Colors are defined in `src/styles/global.css` in [OKLCH format](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value/oklch), using the [shadcn/ui](https://ui.shadcn.com/) convention:
-
-```css
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-}
-
-[data-theme='dark'] {
-  /* ... */
-}
+2. Install dependencies:
+```bash
+npm install
 ```
 
-### Favicons
-
-Favicons are generated using [RealFaviconGenerator](https://realfavicongenerator.net/). To adjust the favicons, replace the files in the `public/` directory (such as `favicon.ico`, `favicon.svg`, `apple-touch-icon.png`, etc.) with your own. After updating the favicon files, you'll also need to adjust the references in `src/components/Favicons.astro` to match your new favicon filenames and paths:
-
-```html
-<!-- Replace these with the generated meta tags -->
-<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="shortcut icon" href="/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<meta name="apple-mobile-web-app-title" content="astro-erudite" />
-<link rel="manifest" href="/site.webmanifest" />
+3. Start the development server:
+```bash
+npm run dev
 ```
 
-## Adding Content
+4. Open `http://localhost:1234` in your browser
+
+### Available Scripts
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build locally |
+| `npm run astro` | Run Astro CLI commands |
+| `npm run prettier` | Format all files with Prettier |
+| `npm test` | Run tests with Vitest |
+
+## Configuration
+
+### Site Settings
+
+Edit `src/consts.ts` to customize:
+
+- Site title and description
+- Navigation links
+- Social media links
+- Featured post count
+- Posts per page
+
+### Environment Variables
+
+Configure optional features via environment variables (set in Cloudflare Pages dashboard):
+
+**Analytics:**
+```
+PUBLIC_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
+PUBLIC_UMAMI_WEBSITE_ID=your-umami-id
+```
+
+**Giscus Comments:**
+```
+PUBLIC_GISCUS_REPO=username/repo
+PUBLIC_GISCUS_REPO_ID=your-repo-id
+PUBLIC_GISCUS_CATEGORY=Blog Comments
+PUBLIC_GISCUS_CATEGORY_ID=your-category-id
+```
+
+### Cloudflare KV Setup
+
+For post reactions to work:
+
+1. Create a KV namespace in Cloudflare Dashboard
+2. Update `wrangler.toml` with your KV namespace ID
+3. Bind the namespace in Cloudflare Pages project settings
+
+## Content Authoring
 
 ### Blog Posts
 
-Add new blog posts as MDX files in the `src/content/blog/` directory. Use the following frontmatter structure:
+Create new posts in `src/content/blog/[post-name]/index.mdx`:
 
-```yml
+```yaml
 ---
 title: 'Your Post Title'
-description: 'A brief description of your post!'
+description: 'A brief description (≤155 characters)'
 date: 2024-01-01
 tags: ['tag1', 'tag2']
 image: './image.png'
-authors: ['author1', 'author2']
+authors: ['merox']
 draft: false
 ---
 ```
 
-The blog post schema is defined as follows:
-
-| Field         | Type (Zod)      | Requirements                                                                                                                                                                    | Required |
-| ------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
-| `title`       | `string`        | Should be ≤60 characters.                                                                                                                                                       | Yes      |
-| `description` | `string`        | Should be ≤155 characters.                                                                                                                                                      | Yes      |
-| `date`        | `coerce.date()` | Must be in `YYYY-MM-DD` format.                                                                                                                                                 | Yes      |
-| `order`       | `number`        | Sort order for subposts with the same `date`. Defaults to `0` if not provided.                                                                                                  | Optional |
-| `image`       | `image()`       | Should be exactly 1200px &times; 630px.                                                                                                                                         | Optional |
-| `tags`        | `string[]`      | Preferably use kebab-case for these.                                                                                                                                            | Optional |
-| `authors`     | `string[]`      | If the author has a profile, use the id associated with their Markdown file in `src/content/authors/` (e.g. if their file is named `jane-doe.md`, use `jane-doe` in the array). | Optional |
-| `draft`       | `boolean`       | Defaults to `false` if not provided.                                                                                                                                            | Optional |
-
-### Authors
-
-Add author information in `src/content/authors/` as Markdown files. A file named `[author-name].md` can be associated with a blog post if `"author-name"` (the id) is added to the `authors` field:
-
-```yml
----
-name: 'enscribe'
-pronouns: 'he/him'
-avatar: 'https://gravatar.com/avatar/9bfdc4ec972793cf05cb91efce5f4aaaec2a0da1bf4ec34dad0913f1d845faf6.webp?size=256'
-bio: 'd(-_-)b'
-website: 'https://enscribe.dev'
-twitter: 'https://twitter.com/enscry'
-github: 'https://github.com/jktrn'
-mail: 'jason@enscribe.dev'
----
-```
-
-The author schema is defined as follows:
-
-| Field      | Type (Zod)                                 | Requirements                                                                                                                                                             | Required |
-| ---------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------- |
-| `name`     | `string`                                   | n/a                                                                                                                                                                      | Yes      |
-| `pronouns` | `string`                                   | n/a                                                                                                                                                                      | Optional |
-| `avatar`   | `string.url()` or `string.startsWith('/')` | Should be either a valid URL or a path starting with `/`. Preferably use [Gravatar](https://en.gravatar.com/site/implement/images/) with the `?size=256` size parameter. | Yes      |
-| `bio`      | `string`                                   | n/a                                                                                                                                                                      | Optional |
-| `mail`     | `string.email()`                           | Must be a valid email address.                                                                                                                                           | Optional |
-| `website`  | `string.url()`                             | Must be a valid URL.                                                                                                                                                     | Optional |
-| `twitter`  | `string.url()`                             | Must be a valid URL.                                                                                                                                                     | Optional |
-| `github`   | `string.url()`                             | Must be a valid URL.                                                                                                                                                     | Optional |
-| `linkedin` | `string.url()`                             | Must be a valid URL.                                                                                                                                                     | Optional |
-| `discord`  | `string.url()`                             | Must be a valid URL.                                                                                                                                                     | Optional |
-
-> [!TIP]
-> You can add as many social media links as you want, as long as you adjust the schema! Make sure you also support the new field in the `src/components/SocialIcons.astro` component.
-
 ### Projects
 
-Add projects in `src/content/projects/` as Markdown files:
+Add projects in `src/content/projects/[project-name].mdx`:
 
-```yml
+```yaml
 ---
-name: 'Project A'
-description: 'This is an example project description! You should replace this with a description of your own project.'
-tags: ['Framework A', 'Library B', 'Tool C', 'Resource D']
-image: '/static/1200x630.png'
+name: 'Project Name'
+description: 'Project description'
+tags: ['Technology', 'Stack']
+image: '/static/project.png'
 link: 'https://example.com'
 startDate: '2024-01-01'
 endDate: '2024-01-01'
 ---
 ```
 
-The project schema is defined as follows:
+## Deployment
 
-| Field         | Type (Zod)      | Requirements                            | Required |
-| ------------- | --------------- | --------------------------------------- | -------- |
-| `name`        | `string`        | n/a                                     | Yes      |
-| `description` | `string`        | n/a                                     | Yes      |
-| `tags`        | `string[]`      | n/a                                     | Yes      |
-| `image`       | `image()`       | Should be exactly 1200px &times; 630px. | Yes      |
-| `link`        | `string.url()`  | Must be a valid URL.                    | Yes      |
-| `startDate`   | `coerce.date()` | Must be in `YYYY-MM-DD` format.         | Optional |
-| `endDate`     | `coerce.date()` | Must be in `YYYY-MM-DD` format.         | Optional |
+### Cloudflare Pages
+
+1. Connect your GitHub repository to Cloudflare Pages
+2. Configure build settings:
+   - **Build command:** `npm run build`
+   - **Build output directory:** `dist`
+   - **Node version:** 20.x
+3. Add environment variables in the dashboard
+4. Deploy automatically on push to main branch
+
+### Custom Domain
+
+1. Add your domain in Cloudflare Pages project settings
+2. Update DNS records as instructed
+3. SSL certificates are automatically provisioned
+
+## Development Notes
+
+- **Trailing Slashes:** Site uses `trailingSlash: 'always'` for consistent URLs
+- **Static Output:** Site is fully static except for API routes in `/functions`
+- **Theme System:** Custom theme implementation with OKLCH color format
+- **Fonts:** Custom fonts loaded from `/public/fonts/`
 
 ## License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is private and not licensed for public use.
+
+## Contact
+
+- **Email:** hello@merox.dev
+- **GitHub:** [@meroxdotdev](https://github.com/meroxdotdev)
+- **LinkedIn:** [Robert Melcher](https://www.linkedin.com/in/robert-melcher-92a1a9157)
 
 ---
 
-### Star History
-
-<a href="https://star-history.com/#jktrn/astro-erudite&Date">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=jktrn/astro-erudite&type=Date&theme=dark" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=jktrn/astro-erudite&type=Date" />
-   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=jktrn/astro-erudite&type=Date" />
- </picture>
-</a>
-
----
-
-Built with &hearts; by [enscribe](https://enscribe.dev)!
-
-[Stargazers]: https://img.shields.io/github/stars/jktrn/astro-erudite?color=fafafa&logo=github&logoColor=fff&style=for-the-badge
-[License]: https://img.shields.io/github/license/jktrn/astro-erudite?color=0a0a0a&logo=github&logoColor=fff&style=for-the-badge
+Built with [Astro](https://astro.build/) and deployed on [Cloudflare Pages](https://pages.cloudflare.com/)
