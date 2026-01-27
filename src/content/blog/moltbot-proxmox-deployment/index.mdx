@@ -1,0 +1,325 @@
+---
+title: "Deploying Moltbot on Proxmox: Your Self-Hosted AI Assistant"
+description: "Learn how to deploy Moltbot, the open-source AI assistant that actually does things, on your Proxmox homelab. From email management to calendar automation, discover what makes Moltbot worth self-hosting."
+date: 2026-01-27
+tags: ["infrastructure", "ai", "automation", "proxmox", "self-hosted", "docker"]
+image: './moltbot.svg'
+---
+
+import Callout from '@/components/Callout.astro'
+import AdSense from '@/components/AdSense.astro'
+
+I've been watching the AI assistant space for a while now, and most solutions are either cloud-only, expensive, or just don't do enough. When I discovered **Moltbot** (formerly Clawdbot), I was intrigued—here's an open-source AI assistant that actually performs actions, not just answers questions. It clears your inbox, manages your calendar, sends emails, and integrates with WhatsApp, Telegram, and Slack. Best of all? You can self-host it.
+
+After deploying it on my Proxmox homelab, I wanted to share what makes Moltbot worth the setup effort and how to get it running efficiently.
+
+**Here's what I'll cover:**
+- What Moltbot is and why it's different
+- Key features that make it worth self-hosting
+- Deploying on Proxmox using the official installer
+- Basic Proxmox setup considerations
+- Real-world use cases and limitations
+
+<AdSense />
+
+## What Makes Moltbot Different?
+
+Most AI assistants are glorified chatbots. They answer questions, maybe help with writing, but they don't actually *do* things. Moltbot is different—it's designed to be an **AI agent** that performs actions across your digital life.
+
+### Core Capabilities
+
+- **Email Management**: Clears inboxes, sends emails, organizes messages
+- **Calendar Automation**: Manages your schedule, books meetings, sends reminders
+- **Task Management**: Creates and tracks tasks across platforms
+- **Multi-Platform Integration**: Works through WhatsApp, Telegram, Slack, or any chat app
+- **Workflow Engine**: Features "Lobster," a workflow system for composable automations
+- **Persistent Memory**: Remembers context and preferences across conversations
+
+<Callout variant="tip">
+**Why Self-Host?** Self-hosting Moltbot means your data stays on your infrastructure. No API calls to third-party services for sensitive operations, and you control exactly what the AI can access. For homelab enthusiasts, this is the way to go.
+</Callout>
+
+## Why Deploy on Proxmox?
+
+Proxmox is perfect for this because:
+
+- **Isolation**: Run Moltbot in a dedicated VM or LXC container
+- **Resource Management**: Easy to allocate CPU, RAM, and storage
+- **Backup Integration**: Leverage Proxmox Backup Server for automated backups
+- **Network Control**: Configure firewall rules and network isolation
+- **Snapshots**: Test configurations without breaking production
+
+I'm running Moltbot in an **Ubuntu 22.04 LXC container** with 4GB RAM and 2 CPU cores, which handles my personal use case perfectly. For heavier workloads or multiple users, you might want to allocate more resources.
+
+<AdSense />
+
+## Prerequisites
+
+Before we start, make sure you have:
+
+- **Proxmox** installed and accessible
+- **Basic networking** configured (static IP recommended)
+- **An AI model provider** (OpenAI API, Anthropic Claude, or self-hosted Ollama)
+- **Node.js/Bun runtime** (Moltbot runs on Bun or Node.js)
+
+<Callout variant="note">
+**Model Provider Options**: Moltbot supports multiple AI providers. You can use OpenAI's API, Anthropic's Claude API, or connect to a self-hosted Ollama instance. For homelab setups, Ollama is the most cost-effective option since it runs entirely on your hardware.
+</Callout>
+
+## Setting Up the Container
+
+Create an Ubuntu 22.04 LXC container in Proxmox with:
+- **Disk**: 20GB
+- **CPU**: 2 cores  
+- **Memory**: 4096 MB
+- **Network**: Static IP or DHCP
+
+Start the container and SSH into it.
+
+### Step 2: Install Bun Runtime
+
+Moltbot runs on Bun (a fast JavaScript runtime). Install it in your container:
+
+```bash
+# Update system
+apt update && apt upgrade -y
+
+# Install required dependencies
+apt install -y curl unzip
+
+# Install Bun
+curl -fsSL https://bun.sh/install | bash
+
+# Add Bun to PATH (add to ~/.bashrc or ~/.zshrc)
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Verify installation
+bun --version
+```
+
+<Callout variant="tip">
+**Alternative: Node.js**: If you prefer Node.js over Bun, you can install Node.js 20+ instead. However, Bun is recommended by the Moltbot team for better performance.
+</Callout>
+
+<AdSense />
+
+## Installing Moltbot
+
+### Option 1: Using the Official Installer
+
+The official installer is the recommended method. Run the installer script:
+
+```bash
+curl -fsSL https://molt.bot/install.sh | bash
+```
+
+This installer will:
+- Install Clawdbot globally via npm (requires root/sudo)
+- Set up the necessary configuration directories
+- Make the `clawdbot` command available system-wide
+
+**For non-root installations**, use the CLI-only installer:
+
+```bash
+curl -fsSL https://molt.bot/install-cli.sh | bash
+```
+
+After installation, the onboarding wizard starts automatically. If it doesn't, run:
+
+```bash
+clawdbot onboard
+```
+
+<Callout variant="tip">
+**Alternative Installation Methods**: Moltbot also supports installation via Docker, Ansible, Nix, Bun, and cloud platforms (Railway, Render, Northflank). See the [official installation documentation](https://docs.clawd.bot/install) for all available methods.
+</Callout>
+
+<AdSense />
+
+## Configuration
+
+After installation, the onboarding wizard starts automatically. If it doesn't, run:
+
+```bash
+clawdbot onboard
+```
+
+### Onboarding Process
+
+The wizard guides you through:
+
+1. **Security Warning**: Read and acknowledge the security notice
+2. **Onboarding Mode**: Choose **QuickStart** (recommended)
+3. **Model Provider**: 
+   - **OpenAI**: Uses OAuth (browser opens automatically)
+   - **Anthropic**: API key
+   - **Ollama**: Self-hosted URL (e.g., `http://your-ollama-server:11434`)
+4. **Channel Setup**: Choose your messaging platform:
+   - **Telegram**: Get bot token from [@BotFather](https://t.me/BotFather) (`/newbot`)
+   - **WhatsApp**: QR code pairing
+   - **Discord**: Bot token
+   - **Slack**: Socket Mode token
+5. **Skills**: Configure optional skills (skip for now)
+6. **Hooks**: Enable automation hooks (optional)
+7. **Agent Setup**: Configure your first agent in the TUI
+
+### For Telegram (Easiest)
+
+1. Open Telegram and message [@BotFather](https://t.me/BotFather)
+2. Run `/newbot` and follow instructions
+3. Copy the bot token (format: `123456:ABC...`)
+4. Paste it when prompted in the wizard
+
+### Starting Moltbot
+
+After onboarding, the Gateway service starts automatically. Access:
+
+- **TUI**: `clawdbot tui` (recommended)
+- **Web UI**: `clawdbot dashboard` (opens browser)
+- **Check status**: `clawdbot status`
+
+Send a message to your Telegram bot (or other configured channel) to start chatting.
+
+<Callout variant="tip">
+**Configuration Location**: Moltbot stores config in `~/.clawdbot/clawdbot.json`. Gateway logs are in `~/.clawdbot/logs/gateway.log`.
+</Callout>
+
+## Proxmox Notes
+
+- Ensure container has **outbound internet access** for API calls
+- Set up **automated backups** via Proxmox Backup (backup `~/.clawdbot/` directory)
+- Monitor resource usage through Proxmox web UI
+
+## What You Can Actually Do
+
+Here are some real-world use cases I've been testing:
+
+### Email Management
+- "Clear my inbox of newsletters"
+- "Send an email to [person] about [topic]"
+- "What emails need my attention today?"
+
+### Calendar Automation
+- "Schedule a meeting with [person] next Tuesday at 2 PM"
+- "What's on my calendar this week?"
+- "Move my 3 PM meeting to tomorrow"
+
+### Task Management
+- "Create a task to review the quarterly report"
+- "What tasks are due this week?"
+- "Mark 'buy groceries' as complete"
+
+### Multi-Platform Access
+The beauty of Moltbot is that you can interact with it through WhatsApp, Telegram, or Slack—whatever you already use. No need to learn a new interface.
+
+<AdSense />
+
+## Troubleshooting
+
+**Gateway won't start:**
+```bash
+# Check logs
+cat ~/.clawdbot/logs/gateway.log
+
+# Check status
+clawdbot status
+
+# Restart gateway
+clawdbot gateway restart
+```
+
+**Telegram bot not responding:**
+- Verify bot token is correct
+- Ensure bot is started in Telegram (message `/start` to your bot)
+- Check Gateway is running: `clawdbot status`
+
+**OAuth issues (OpenAI):**
+- Ensure browser can access `localhost:1455` for callback
+- If callback fails, paste the redirect URL manually when prompted
+
+**Container networking:**
+- Verify outbound internet: `ping 8.8.8.8`
+- Check Proxmox firewall allows outbound connections
+- For Ollama: `curl http://your-ollama-server:11434/api/tags`
+
+### Running as a Service
+
+The Gateway service installs automatically as a LaunchAgent (macOS) or systemd service (Linux). Check status:
+
+```bash
+clawdbot status
+```
+
+For manual systemd setup on Linux:
+
+```bash
+sudo nano /etc/systemd/system/clawdbot-gateway.service
+```
+
+```ini
+[Unit]
+Description=Clawdbot Gateway
+After=network.target
+
+[Service]
+Type=simple
+User=your-username
+ExecStart=/usr/local/bin/clawdbot gateway start
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl enable --now clawdbot-gateway
+```
+
+## Limitations and Considerations
+
+Moltbot is powerful, but it's not perfect:
+
+- **API Costs**: If using OpenAI or Anthropic APIs, costs can add up with heavy usage
+- **Learning Curve**: Setting up integrations requires some technical knowledge
+- **Privacy**: Even self-hosted, you're still calling external APIs unless using Ollama
+- **Reliability**: Self-hosted means you're responsible for uptime and troubleshooting
+- **Platform Support**: Some integrations may require additional setup or have limitations
+- **Resource Usage**: Ollama models require significant RAM (8GB+ for larger models)
+
+<Callout variant="warning">
+**Cost Awareness**: If you're using OpenAI's API, monitor your usage. A few hundred requests can quickly add up. Consider setting up usage alerts or using Ollama for cost-free local inference. Ollama is the best option for homelab setups—it's free and keeps everything local.
+</Callout>
+
+## Next Steps
+
+Once you have Moltbot running:
+
+1. **Pair with Messaging Platforms**: Connect WhatsApp, Telegram, or Slack
+2. **Configure Skills**: Explore the ClawdHub skill directory for extensions
+3. **Set Up Workflows**: Use Lobster to create custom automation pipelines
+4. **Monitor Usage**: Track API costs and resource usage
+5. **Join the Community**: Check out the [Moltbot GitHub](https://github.com/moltbot/moltbot) for updates and support
+
+## Final Thoughts
+
+Moltbot isn't just another AI chatbot—it's a practical automation tool that actually does things. Deploying it on Proxmox gives you full control over your AI assistant while keeping costs predictable and data private.
+
+The setup isn't trivial, but it's worth it if you want an AI assistant that integrates with your existing tools and workflows. For homelab enthusiasts, this is a perfect project to add to your infrastructure.
+
+If you're interested in seeing Moltbot in action or have questions about the deployment, feel free to reach out. The community is active and helpful, and there's plenty of documentation to get you started.
+
+<Callout variant="tip">
+**Want to Learn More?** Check out the [official Moltbot documentation](https://docs.clawd.bot/) for detailed setup guides, API references, and community resources. The project is actively developed, so new features are added regularly. For installation-specific questions, refer to the [installation documentation](https://docs.clawd.bot/install).
+</Callout>
+
+## Resources
+
+- [Moltbot GitHub Repository](https://github.com/moltbot/moltbot) - Official source code and issues
+- [Moltbot Documentation](https://docs.clawd.bot/) - Complete documentation site
+- [Getting Started Guide](https://docs.clawd.bot/getting-started) - Step-by-step setup
+- [Installation Options](https://docs.clawd.bot/install) - All available installation methods
+- [Setup Guide](https://docs.clawd.bot/start/setup) - Post-installation configuration
+- [Moltbot Website](https://molt.bot) - Official website
+- [Proxmox Documentation](https://pve.proxmox.com/pve-docs/) - Proxmox VE documentation
+- [Bun Runtime Documentation](https://bun.sh/docs) - Bun runtime documentation
