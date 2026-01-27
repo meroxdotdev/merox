@@ -44,9 +44,6 @@ Most AI assistants are glorified chatbots. They answer questions, maybe help wit
 - **Workflow Engine**: Features "Lobster," a workflow system for composable automations
 - **Persistent Memory**: Remembers context and preferences across conversations
 
-<Callout variant="tip">
-**Why Self-Host?** Self-hosting Moltbot means your data stays on your infrastructure. No API calls to third-party services for sensitive operations, and you control exactly what the AI can access. For homelab enthusiasts, this is the way to go.
-</Callout>
 
 ## Why Deploy on Proxmox?
 
@@ -252,38 +249,6 @@ clawdbot gateway restart
 - Check Proxmox firewall allows outbound connections
 - For Ollama: `curl http://your-ollama-server:11434/api/tags`
 
-### Running as a Service
-
-The Gateway service installs automatically as a LaunchAgent (macOS) or systemd service (Linux). Check status:
-
-```bash
-clawdbot status
-```
-
-For manual systemd setup on Linux:
-
-```bash
-sudo nano /etc/systemd/system/clawdbot-gateway.service
-```
-
-```ini
-[Unit]
-Description=Clawdbot Gateway
-After=network.target
-
-[Service]
-Type=simple
-User=your-username
-ExecStart=/usr/local/bin/clawdbot gateway start
-Restart=always
-
-[Install]
-WantedBy=multi-user.target
-```
-
-```bash
-sudo systemctl enable --now clawdbot-gateway
-```
 
 ## Limitations and Considerations
 
