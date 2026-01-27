@@ -21,6 +21,16 @@ After deploying it on my Proxmox homelab, I wanted to share what makes Moltbot w
 
 <AdSense />
 
+<Callout variant="warning">
+### ⚠️ Important: Rebranding & Critical Security Alert (Jan 2026)
+As of late January 2026, **Clawdbot has officially rebranded to Moltbot** following trademark disputes. If you see "Clawdbot" in commands or older docs, it is the same project.
+
+**Security Risks You Must Know:**
+* **Exposed Credentials:** [Bitdefender has reported](https://www.bitdefender.com/en-us/blog/hotforsecurity/moltbot-security-alert-exposed-clawdbot-control-panels-risk-credential-leaks-and-account-takeovers) that hundreds of misconfigured Moltbot instances are leaking API keys, OAuth tokens, and chat histories. **Do not expose your dashboard to the public internet.**
+* **Prompt Injection:** Attackers can potentially exfiltrate your emails by sending a malicious message that triggers the AI agent.
+* **Shell Access:** Running an AI with local shell access is, as the developers put it, "spicy." Always deploy this in a strictly isolated Proxmox LXC/VM.
+</Callout>
+
 ## What Makes Moltbot Different?
 
 Most AI assistants are glorified chatbots. They answer questions, maybe help with writing, but they don't actually *do* things. Moltbot is different—it's designed to be an **AI agent** that performs actions across your digital life.
