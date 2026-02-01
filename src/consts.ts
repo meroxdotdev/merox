@@ -7,7 +7,7 @@ export const SITE: Site = {
   href: 'https://merox.dev',
   author: 'merox',
   locale: 'en-US',
-  featuredPostCount: 2,
+  featuredPostCount: 3,
   postsPerPage: 6,
 }
 
