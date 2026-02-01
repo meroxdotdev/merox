@@ -7,15 +7,9 @@ const contentPagesMap = Object.entries(contentPages).reduce((acc, [path, page]) 
   return { ...acc, [newPath]: page }
 }, {})
 
-// Static pages configuration (tunes, projects, etc.)
+// Static pages configuration (projects, etc.)
 // These need to match the structure expected by getImageOptions
 const staticPages = {
-  '/tunes': {
-    frontmatter: {
-      title: 'Tunes',
-      description: 'Recently played tracks from Last.fm',
-    },
-  },
   '/projects': {
     frontmatter: {
       title: 'Projects',

@@ -51,7 +51,6 @@ Merox.dev is a static blog built with [Astro](https://astro.build/) that showcas
 - **Blog** - Paginated blog listing with search
 - **Projects** - Showcase of technical projects
 - **About** - Professional background and experience
-- **Tunes** - Automated Last.fm listening history (updated via GitHub Actions)
 
 ## Technology Stack
 
