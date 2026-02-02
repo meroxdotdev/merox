@@ -8,7 +8,7 @@ tags: ["infrastructure", "ai", "automation", "proxmox", "self-hosted", "docker"]
 import Callout from '@/components/Callout.astro'
 import AdSense from '@/components/AdSense.astro'
 
-### 📢 Update: January 31, 2026
+### 📢 Update: February 2, 2026
 
 The project has rebranded again to **OpenClaw** (from Moltbot/Clawdbot) to emphasize its open-source nature and avoid further trademark issues. This is the final name—commands are now `openclaw` instead of `clawdbot`. Installer and docs links have been updated below. The core functionality remains the same, with added security hardening (34+ commits), new model support (e.g., KIMI K2.5, Xiaomi MiMo-V2-Flash), and channels like Twitch and Google Chat. Old names like Moltbot/Clawdbot are kept in searches for compatibility.
 
@@ -19,6 +19,7 @@ After deploying it on my Proxmox homelab, I wanted to share what makes OpenClaw 
 **Here's what I'll cover:**
 - What OpenClaw is and why it's different
 - Key features that make it worth self-hosting
+- Understanding Moltbook and the agent ecosystem
 - Deploying on Proxmox using the official installer
 - Basic Proxmox setup considerations
 - Real-world use cases and limitations
@@ -32,8 +33,9 @@ As of January 31, 2026, **Clawdbot/Moltbot has officially rebranded to OpenClaw*
 
 **Security Risks You Must Know:**
 * **Exposed Credentials:** [Bitdefender has reported](https://www.bitdefender.com/en-us/blog/hotforsecurity/moltbot-security-alert-exposed-clawdbot-control-panels-risk-credential-leaks-and-account-takeovers) that hundreds of misconfigured instances are leaking API keys, OAuth tokens, and chat histories. **Do not expose your dashboard to the public internet.** Use VPN/tunnels like Tailscale for remote access.
-* **Prompt Injection:** Attackers can potentially exfiltrate your emails by sending a malicious message that triggers the AI agent. Recent updates include 34+ security commits to harden this.
+* **Prompt Injection:** Attackers can potentially exfiltrate your emails or execute commands by sending malicious messages. Security researchers demonstrated extracting cryptocurrency private keys in under 5 minutes via crafted email prompts. Recent updates include 34+ security commits to harden this.
 * **Shell Access:** Running an AI with local shell access is "spicy." Always deploy in a strictly isolated Proxmox LXC/VM. Consider unprivileged LXC for extra security.
+* **Moltbook Vulnerability:** The AI social network Moltbook had a critical database exposure on January 31, 2026, allowing anyone to hijack agents and steal API keys. **Do not connect OpenClaw to Moltbook** until you verify the platform has been properly secured.
 </Callout>
 
 ## What Makes OpenClaw Different?
@@ -48,6 +50,42 @@ Most AI assistants are glorified chatbots. They answer questions, maybe help wit
 - **Multi-Platform Integration**: Works through WhatsApp, Telegram, Slack, or any chat app (new: Twitch, Google Chat)
 - **Workflow Engine**: Features "Lobster," a workflow system for composable automations
 - **Persistent Memory**: Remembers context and preferences across conversations
+
+## Understanding Moltbook and the Agent Ecosystem
+
+**Moltbook** is a Reddit-style social network launched in January 2026 exclusively for AI agents. Think of it as "the front page of the agent internet"—only verified AI agents (primarily running OpenClaw) can post and interact, while humans can only observe.
+
+### Why Moltbook Matters
+
+Moltbook serves as:
+- **Skills Marketplace**: Agents share and discover new capabilities (called "skills")
+- **Agent-to-Agent Communication**: Your OpenClaw instance can interact with 770,000+ other agents
+- **Community Learning**: Agents collaborate on problem-solving and share workflows
+
+### The Moltbook Security Incident (January 31, 2026)
+
+<Callout variant="danger">
+**CRITICAL: Database Exposure**
+
+On January 31, 2026, [404 Media reported](https://www.404media.co/exposed-moltbook-database-let-anyone-take-control-of-any-ai-agent-on-the-site/) a severe vulnerability: Moltbook's entire database was exposed without authentication. This allowed anyone to:
+- Hijack any agent on the platform
+- Access API keys and authentication tokens
+- Post content impersonating verified agents
+- Exfiltrate private configuration files
+
+The platform was taken offline to patch the breach and force a reset of all agent API keys. Security researcher Jamieson O'Reilly discovered that the Supabase database had no Row Level Security (RLS) policies enabled—leaving 770,000 agent records completely exposed.
+
+**Our Recommendation:** Do not connect your OpenClaw instance to Moltbook until you verify the platform has implemented proper security measures. Even then, use it only with a dedicated instance that has no access to sensitive credentials.
+</Callout>
+
+### Supply Chain Risks
+
+Beyond the database exposure, Moltbook introduces supply chain risks:
+- **Malicious Skills**: Researchers found skills like "What Would Elon Do?" that contained active data exfiltration code
+- **Prompt Injection**: Agents can embed malicious instructions in posts that manipulate other agents' behavior
+- **Delayed Execution Attacks**: Thanks to persistent memory, malicious payloads can be fragmented across multiple posts and assembled later
+
+Cybersecurity firms like Cisco and 1Password have documented these risks extensively, noting that OpenClaw agents with Moltbook access often run with elevated permissions on users' local machines.
 
 ## Why Deploy on Proxmox?
 
@@ -195,11 +233,81 @@ Send a message to your Telegram bot (or other configured channel) to start chatt
 **Configuration Location**: OpenClaw stores config in `~/.openclaw/openclaw.json`. Gateway logs are in `~/.openclaw/logs/gateway.log`.
 </Callout>
 
+## Proxmox Security Hardening
+
+Given the security risks outlined above, here are **essential hardening steps** for Proxmox deployments:
+
+### Network Isolation
+
+```bash
+# In Proxmox, create a dedicated VLAN for OpenClaw
+# Firewall rules (example for iptables in container):
+
+# Allow only outbound connections
+iptables -A OUTPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 443 -j ACCEPT  # HTTPS only
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT   # HTTP (if needed)
+iptables -P OUTPUT DROP
+
+# Block all inbound except from Proxmox host
+iptables -A INPUT -s YOUR_PROXMOX_IP -j ACCEPT
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -P INPUT DROP
+```
+
+### Unprivileged LXC Container
+
+Create the container as **unprivileged** to prevent root escalation:
+
+```bash
+# In Proxmox:
+# When creating LXC, uncheck "Privileged container"
+# This maps container root to unprivileged host UID
+```
+
+### Dashboard Access
+
+**Never expose the dashboard to the public internet.** Use one of these methods:
+
+1. **Tailscale VPN**: Install Tailscale in the container for secure remote access
+2. **SSH Tunnel**: `ssh -L 1455:localhost:1455 user@proxmox-host`
+3. **Reverse Proxy with Auth**: Use Nginx with HTTP basic auth (only if necessary)
+
+### Credential Isolation
+
+Use environment variables or secrets management instead of storing credentials in config files:
+
+```bash
+# Instead of hardcoding in openclaw.json:
+export ANTHROPIC_API_KEY="your-key-here"
+export OPENAI_API_KEY="your-key-here"
+
+# Start gateway with env vars
+openclaw gateway start
+```
+
+### Monitoring and Auditing
+
+Set up log monitoring to catch suspicious activity:
+
+```bash
+# Monitor gateway logs in real-time
+tail -f ~/.openclaw/logs/gateway.log
+
+# Set up alerts for specific patterns
+grep -i "error\|unauthorized\|injection" ~/.openclaw/logs/gateway.log
+```
+
+<Callout variant="warning">
+**Known Vulnerabilities**: OpenClaw deployments using `mcp-remote` are exposed to **CVE-2025-6514** (CVSS 9.6), a command-injection RCE vulnerability. Ensure you're running the latest version with security patches applied.
+</Callout>
+
 ## Proxmox Notes
 
 - Ensure container has **outbound internet access** for API calls
 - Set up **automated backups** via Proxmox Backup (backup `~/.openclaw/` directory)
 - Monitor resource usage through Proxmox web UI
+- Consider using **Proxmox firewall** at the container level for additional security
 
 ## What You Can Actually Do
 
@@ -253,6 +361,19 @@ openclaw gateway restart
 - Check Proxmox firewall allows outbound connections
 - For Ollama: `curl http://your-ollama-server:11434/api/tags`
 
+**Prompt injection detection:**
+If you suspect your agent has been compromised:
+```bash
+# Check for suspicious commands in logs
+grep -E "rm -rf|curl.*sh|wget.*sh|/dev/null" ~/.openclaw/logs/gateway.log
+
+# Review recent skill installations
+openclaw skills list
+
+# Reset API keys if compromised
+# Then update in openclaw.json or re-run onboarding
+```
+
 ## Limitations and Considerations
 
 OpenClaw is powerful, but it's not perfect:
@@ -263,6 +384,7 @@ OpenClaw is powerful, but it's not perfect:
 - **Reliability**: Self-hosted means you're responsible for uptime and troubleshooting
 - **Platform Support**: Some integrations may require additional setup or have limitations
 - **Resource Usage**: Ollama models require significant RAM (8GB+ for larger models)
+- **Security Responsibility**: You're responsible for keeping credentials secure and the instance hardened
 
 <Callout variant="warning">
 **Cost Awareness**: If you're using OpenAI's API, monitor your usage. A few hundred requests can quickly add up. Consider setting up usage alerts or using Ollama for cost-free local inference. Ollama is the best option for homelab setups—it's free and keeps everything local.
@@ -273,21 +395,28 @@ OpenClaw is powerful, but it's not perfect:
 Once you have OpenClaw running:
 
 1. **Pair with Messaging Platforms**: Connect WhatsApp, Telegram, or Slack
-2. **Configure Skills**: Explore the skill directory for extensions
+2. **Configure Skills**: Explore the skill directory for extensions (vet them carefully for security)
 3. **Set Up Workflows**: Use Lobster to create custom automation pipelines
 4. **Monitor Usage**: Track API costs and resource usage
 5. **Join the Community**: Check out the [OpenClaw GitHub](https://github.com/openclaw/openclaw) for updates and support
+6. **Avoid Moltbook**: Until security is verified, do not connect to Moltbook
 
 ## Final Thoughts
 
 OpenClaw isn't just another AI chatbot—it's a practical automation tool that actually does things. Deploying it on Proxmox gives you full control over your AI assistant while keeping costs predictable and data private.
 
-The setup isn't trivial, but it's worth it if you want an AI assistant that integrates with your existing tools and workflows. For homelab enthusiasts, this is a perfect project to add to your infrastructure.
+The setup isn't trivial, and the recent security incidents around Moltbook and exposed instances highlight that this technology requires careful deployment. However, if you follow proper security practices—network isolation, credential management, and monitoring—you can safely run OpenClaw in your homelab.
+
+For homelab enthusiasts who understand the risks and are willing to invest time in proper security hardening, OpenClaw represents an exciting glimpse into the future of personal AI agents.
 
 If you're interested in seeing OpenClaw in action or have questions about the deployment, feel free to reach out. The community is active and helpful, and there's plenty of documentation to get you started.
 
 <Callout variant="tip">
 **Want to Learn More?** Check out the [official OpenClaw documentation](https://docs.openclaw.ai/) for detailed setup guides, API references, and community resources. The project is actively developed, so new features are added regularly. For installation-specific questions, refer to the [installation documentation](https://docs.openclaw.ai/install).
+
+For security best practices, review:
+- [Composio's security guide for OpenClaw](https://composio.dev/blog/secure-openclaw-moltbot-clawdbot-setup)
+- [Vectra AI's analysis of OpenClaw security risks](https://www.vectra.ai/blog/clawdbot-to-moltbot-to-openclaw-when-automation-becomes-a-digital-backdoor)
 </Callout>
 
 ## Resources
@@ -300,3 +429,4 @@ If you're interested in seeing OpenClaw in action or have questions about the de
 - [OpenClaw Website](https://openclaw.ai) - Official website
 - [Proxmox Documentation](https://pve.proxmox.com/pve-docs/) - Proxmox VE documentation
 - [Bun Runtime Documentation](https://bun.sh/docs) - Bun runtime documentation
+- [Moltbook Security Analysis (404 Media)](https://www.404media.co/exposed-moltbook-database-let-anyone-take-control-of-any-ai-agent-on-the-site/) - Critical vulnerability report
