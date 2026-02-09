@@ -260,9 +260,17 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
       </div>
       
       <div class="flex flex-col gap-5">
-        {latestPosts.map((post) => (
-          <BlogCard entry={post} variant="featured" />
-        ))}
+        {latestPosts[0] && (
+          <BlogCard entry={latestPosts[0]} variant="featured" />
+        )}
+        
+        {latestPosts.length > 1 && (
+          <div class="grid grid-cols-1 md:grid-cols-2 md:auto-rows-fr gap-5">
+            {latestPosts.slice(1).map((post) => (
+              <BlogCard entry={post} variant="featured" />
+            ))}
+          </div>
+        )}
       </div>
       
       <div class="mt-12 flex justify-center">

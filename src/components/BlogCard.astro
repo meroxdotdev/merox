@@ -37,7 +37,7 @@ const isFeatured = variant === 'featured'
         <h3 class={cn(
           "font-bold leading-tight text-foreground group-hover:text-primary transition-colors",
           isFeatured
-            ? "text-xl"
+            ? "text-xl line-clamp-2"
             : "text-lg text-foreground/90 duration-300"
         )}>
           {entry.data.title}
@@ -53,7 +53,7 @@ const isFeatured = variant === 'featured'
       <p class={cn(
         "leading-relaxed text-muted-foreground transition-colors",
         isFeatured
-          ? "text-base text-muted-foreground/90"
+          ? "text-base text-muted-foreground/90 line-clamp-3"
           : "text-sm text-muted-foreground/80 line-clamp-2"
       )}>
         {entry.data.description}
