@@ -115,10 +115,32 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
       }
     }
 
-    .grid-pattern {
-      background-size: 40px 40px;
-      mask-image: radial-gradient(farthest-side at 50% 50%, black 0%, transparent 100%);
-      -webkit-mask-image: radial-gradient(farthest-side at 50% 50%, black 0%, transparent 100%);
+    /* 3D BOX GRID STYLES */
+    .perspective-container {
+      perspective: 1000px;
+      perspective-origin: 50% 50%;
+      overflow: hidden;
+    }
+
+    .grid-3d-box {
+      position: absolute;
+      inset: -100% -50%;
+      width: 200%;
+      height: 300%;
+      transform: rotateX(60deg);
+      transform-origin: center center;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+    }
+
+    :global(.dark) .grid-3d-box {
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
     }
 
     .polaroid {
@@ -145,30 +167,23 @@ const socialIconSvgClasses = 'size-5 text-muted-foreground group-hover:text-prim
     }
   </style>
 
-  <section class="hero-section relative pt-4 pb-8 md:pt-12 md:pb-20">
-    <div 
-      class="grid-pattern absolute inset-0 -z-20 h-full w-[100vw] left-1/2 -translate-x-1/2 
-             bg-[linear-gradient(to_right,#00000015_1px,transparent_1px),linear-gradient(to_bottom,#00000015_1px,transparent_1px)] 
-             dark:bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff18_1px,transparent_1px)]"
-      aria-hidden="true"
-    >
-    </div>
+  <section class="hero-section perspective-container relative pt-4 pb-8 md:pt-12 md:pb-20">
+    <div class="grid-3d-box -z-20" aria-hidden="true"></div>
 
-    <div class="flex flex-col-reverse md:flex-row items-center gap-6 md:gap-8">
+    <div class="flex flex-col-reverse md:flex-row items-center gap-6 md:gap-8 relative z-10">
       <div class="flex-1 space-y-6 text-center md:text-left">
         <div class="space-y-4">
           <h1 class="text-4xl sm:text-5xl md:text-6xl font-black tracking-tighter uppercase leading-[0.9] text-balance">
             Building<br />infrastructure<br /><span class="text-primary">that scales</span>.
           </h1>
          <p class="text-base md:text-lg leading-relaxed max-w-lg mx-auto md:mx-0">
-  <span class="block font-bold text-foreground text-lg md:text-xl mb-1">
-    HPC System Administrator @ Forvia
-  </span>
-  <span class="text-muted-foreground italic">
-    Works in theory — now let’s see what doesn’t
-  </span>
-</p>
-
+          <span class="block font-bold text-foreground text-lg md:text-xl mb-1">
+            HPC System Administrator @ Forvia
+          </span>
+          <span class="text-muted-foreground italic">
+            Works in theory — now let’s see what doesn’t
+          </span>
+        </p>
         </div>
 
         <div class="flex flex-col items-center md:items-start gap-6">
