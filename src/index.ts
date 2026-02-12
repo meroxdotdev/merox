@@ -74,9 +74,9 @@ async function handle404(
   }
 
   try {
-    // Try to fetch the 404 page (with trailing slash due to trailingSlash: 'always')
+    // Fetch the 404 page (Astro always builds 404.astro to 404.html regardless of trailingSlash)
     const notFoundUrl = new URL(request.url)
-    notFoundUrl.pathname = '/404/'
+    notFoundUrl.pathname = '/404.html'
     const notFoundResponse = await env.ASSETS.fetch(
       new Request(notFoundUrl, request)
     )
