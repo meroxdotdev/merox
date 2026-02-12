@@ -10,29 +10,30 @@ import {
   applyTheme,
 } from '@/lib/theme'
 
-const OVERLAY_Z = 'z-[100]' // above header's z-50, intentional and documented
-
 const MobileMenu = () => {
   const [isOpen, setIsOpen] = useState(false)
   const [currentTheme, setCurrentTheme] = useState<Theme>('light')
   const [mounted, setMounted] = useState(false)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const hasBeenOpenRef = useRef(false)
 
   // SSR guard — portal needs document.body
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  // Sync theme from storage / Astro view transitions
+  // Sync theme & reset menu after Astro view transitions
   useEffect(() => {
-    const initTheme = () => {
+    const onSwap = () => {
+      setIsOpen(false)
       const stored = getStorageItem('theme')
       setCurrentTheme(getValidTheme(stored))
     }
-    initTheme()
-    document.addEventListener('astro:after-swap', initTheme)
-    return () => document.removeEventListener('astro:after-swap', initTheme)
+    onSwap() // init on mount
+    document.addEventListener('astro:after-swap', onSwap)
+    return () => document.removeEventListener('astro:after-swap', onSwap)
   }, [])
 
   // Lock body scroll while overlay is open
@@ -66,13 +67,17 @@ const MobileMenu = () => {
     return () => mq.removeEventListener('change', onChange)
   }, [isOpen])
 
-  // Move focus into the overlay when opened, return it when closed
+  // Focus management: move focus into overlay on open, return on close.
+  // Only return focus if the menu has been opened at least once (avoids
+  // stealing focus on initial mount).
   useEffect(() => {
     if (isOpen) {
-      // Small delay to let the transition start before focusing
+      hasBeenOpenRef.current = true
       const id = setTimeout(() => closeRef.current?.focus(), 100)
       return () => clearTimeout(id)
-    } else {
+    }
+
+    if (hasBeenOpenRef.current) {
       triggerRef.current?.focus()
     }
   }, [isOpen])
@@ -85,12 +90,57 @@ const MobileMenu = () => {
     applyTheme(theme)
   }, [])
 
-  // Handle keyboard inside the overlay
+  // Navigate from menu link.
+  // Same page → just close. Different page → navigate instantly via Astro.
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      // External links: let the browser handle them normally
+      if (href.startsWith('http')) return
+
+      // Already on this page — just close, skip navigation entirely
+      const currentPath = window.location.pathname
+      if (currentPath === href || currentPath === href.replace(/\/$/, '')) {
+        e.preventDefault()
+        close()
+        return
+      }
+
+      // Different internal page: let the <a> navigate normally.
+      // Astro view transitions handle the smooth page change.
+      // Menu state is reset by the astro:after-swap listener above.
+    },
+    [close],
+  )
+
+  // Keyboard handler: Escape to close + focus trap (Tab / Shift+Tab)
   const handleOverlayKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation()
         close()
+        return
+      }
+
+      // Focus trap — keep Tab cycling within the overlay
+      if (e.key === 'Tab') {
+        const container = overlayRef.current
+        if (!container) return
+
+        const focusable = container.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        )
+        if (focusable.length === 0) return
+
+        const first = focusable[0]
+        const last = focusable[focusable.length - 1]
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first.focus()
+        }
       }
     },
     [close],
@@ -101,11 +151,12 @@ const MobileMenu = () => {
   /* ------------------------------------------------------------------ */
   const overlay = (
     <div
+      ref={overlayRef}
       role="dialog"
       aria-modal="true"
       aria-label="Navigation menu"
       className={cn(
-        `fixed inset-0 ${OVERLAY_Z} bg-background transition-[opacity,visibility] duration-500 ease-out md:hidden`,
+        'fixed inset-0 z-[100] bg-background transition-[opacity,visibility] duration-500 ease-out md:hidden',
         isOpen ? 'visible opacity-100' : 'invisible opacity-0',
       )}
       onKeyDown={handleOverlayKeyDown}
@@ -135,7 +186,7 @@ const MobileMenu = () => {
               <a
                 key={item.href}
                 href={item.href}
-                onClick={close}
+                onClick={(e) => handleNavClick(e, item.href)}
                 className={cn(
                   'group flex items-center gap-3 rounded-2xl px-4 py-4 transition-all duration-300 ease-out',
                   isOpen
