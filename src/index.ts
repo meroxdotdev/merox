@@ -74,9 +74,10 @@ async function handle404(
   }
 
   try {
-    // Fetch the 404 page (Astro always builds 404.astro to 404.html regardless of trailingSlash)
+    // Fetch the 404 page - use /404 (not /404.html) because Cloudflare's
+    // html_handling (auto-trailing-slash) redirects /404.html → /404 with a 307
     const notFoundUrl = new URL(request.url)
-    notFoundUrl.pathname = '/404.html'
+    notFoundUrl.pathname = '/404'
     const notFoundResponse = await env.ASSETS.fetch(
       new Request(notFoundUrl, request)
     )
