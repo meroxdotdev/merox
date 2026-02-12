@@ -24,11 +24,11 @@ const allPages = {
   ...staticPages,
 }
 
-export const { getStaticPaths, GET } = OGImageRoute({
+export const { getStaticPaths, GET } = await OGImageRoute({
   param: 'route',
   pages: allPages,
   getImageOptions: (_path, page) => ({
-    title: page.frontmatter.title || page.frontmatter.name || '',
+    title: page.frontmatter.title || (page.frontmatter as any).name || '',
     description: page.frontmatter.description || '',
     logo: {
       path: './public/static/logo.png',
