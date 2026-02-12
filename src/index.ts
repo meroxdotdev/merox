@@ -40,6 +40,62 @@ const corsHeaders = {
 // Valid reaction keys
 const validReactions = ['like', 'love', 'fire', 'celebrate', 'clap']
 
+// Check if a request is likely an HTML page request
+function isHtmlPageRequest(pathname: string, acceptHeader: string): boolean {
+  // Check if pathname has a file extension (e.g., .css, .js, .png)
+  const hasFileExtension = /\.[a-zA-Z0-9]+$/.test(pathname)
+  
+  // It's an HTML request if:
+  // - Accept header includes text/html, OR
+  // - Pathname has no file extension and doesn't start with /api
+  return (
+    acceptHeader.includes('text/html') ||
+    (!hasFileExtension && !pathname.startsWith('/api'))
+  )
+}
+
+// Handle 404 errors by serving custom 404 page for HTML requests
+async function handle404(
+  request: Request,
+  env: Env,
+  originalResponse: Response
+): Promise<Response> {
+  // Only handle GET requests
+  if (request.method !== 'GET') {
+    return originalResponse
+  }
+
+  const url = new URL(request.url)
+  const acceptHeader = request.headers.get('accept') || ''
+  
+  // Check if this is an HTML page request
+  if (!isHtmlPageRequest(url.pathname, acceptHeader)) {
+    return originalResponse
+  }
+
+  try {
+    // Try to fetch the 404 page (with trailing slash due to trailingSlash: 'always')
+    const notFoundUrl = new URL(request.url)
+    notFoundUrl.pathname = '/404/'
+    const notFoundResponse = await env.ASSETS.fetch(
+      new Request(notFoundUrl, request)
+    )
+
+    // If the 404 page exists, return it with 404 status
+    if (notFoundResponse.status === 200) {
+      return new Response(notFoundResponse.body, {
+        status: 404,
+        headers: notFoundResponse.headers,
+      })
+    }
+  } catch (error) {
+    // If fetching the 404 page fails, log and return the original 404 response
+    console.error('Error fetching 404 page:', error)
+  }
+
+  return originalResponse
+}
+
 // Handle OPTIONS preflight
 function handleOptions(): Response {
   return new Response(null, {
@@ -187,7 +243,14 @@ export default {
       })
     }
 
-    // Defer to static assets for everything else
-    return env.ASSETS.fetch(request)
+    // Try to fetch the requested asset
+    const response = await env.ASSETS.fetch(request)
+
+    // If the asset wasn't found, try to serve custom 404 page for HTML requests
+    if (response.status === 404) {
+      return handle404(request, env, response)
+    }
+
+    return response
   },
 }
