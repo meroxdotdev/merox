@@ -156,7 +156,7 @@ const MobileMenu = () => {
       aria-modal="true"
       aria-label="Navigation menu"
       className={cn(
-        'fixed inset-0 z-[100] bg-background transition-[opacity,visibility] duration-500 ease-out md:hidden',
+        'fixed inset-0 z-[100] bg-background transition-[opacity,visibility] duration-150 ease-out md:hidden',
         isOpen ? 'visible opacity-100' : 'invisible opacity-0',
       )}
       onKeyDown={handleOverlayKeyDown}
@@ -188,7 +188,7 @@ const MobileMenu = () => {
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
                 className={cn(
-                  'group flex items-center gap-3 rounded-2xl px-4 py-4 transition-all duration-300 ease-out',
+                  'group flex items-center gap-3 rounded-2xl px-4 py-4 transition-all duration-150 ease-out',
                   isOpen
                     ? 'translate-y-0 opacity-100'
                     : 'translate-y-8 opacity-0',
@@ -197,7 +197,7 @@ const MobileMenu = () => {
                     : 'text-foreground hover:bg-foreground/5',
                 )}
                 style={{
-                  transitionDelay: isOpen ? `${150 + index * 75}ms` : '0ms',
+                  transitionDelay: isOpen ? `${50 + index * 40}ms` : '0ms',
                 }}
               >
                 <span className="text-3xl font-semibold tracking-tight">
@@ -217,14 +217,14 @@ const MobileMenu = () => {
         {/* Theme toggle */}
         <div
           className={cn(
-            'transition-all duration-500 ease-out',
+            'transition-all duration-150 ease-out',
             isOpen
               ? 'translate-y-0 opacity-100'
               : 'translate-y-4 opacity-0',
           )}
           style={{
             transitionDelay: isOpen
-              ? `${150 + NAV_LINKS.length * 75 + 75}ms`
+              ? `${50 + NAV_LINKS.length * 40 + 40}ms`
               : '0ms',
           }}
         >

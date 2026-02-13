@@ -675,7 +675,7 @@ const SearchDialog: React.FC<SearchDialogProps> = ({ open, onOpenChange }) => {
         aria-modal="true"
         aria-label="Search"
         className={cn(
-          'fixed inset-0 z-[100] bg-background transition-[opacity,visibility] duration-500 ease-out',
+          'fixed inset-0 z-[100] bg-background transition-[opacity,visibility] duration-150 ease-out',
           open ? 'visible opacity-100' : 'invisible opacity-0',
         )}
         onKeyDown={handleMobileKeyDown}
