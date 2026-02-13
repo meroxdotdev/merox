@@ -54,11 +54,23 @@ const isExternalLink = (href: string) => {
 
       <div class="flex items-center gap-2">
         <div class="hidden h-5 w-px bg-border/40 md:block" aria-hidden="true"></div>
-        <SearchButton client:idle />
+        <SearchButton client:load />
         <div class="hidden md:flex items-center">
           <ThemeSelector client:idle />
         </div>
-        <MobileMenu client:idle transition:persist />
+
+        {/* No-JS fallback: plain HTML nav links visible until React hydrates */}
+        <noscript>
+          <nav class="md:hidden flex items-center gap-3 text-sm font-medium">
+            {NAV_LINKS.map((item) => (
+              <Link href={item.href} class="text-foreground/80 hover:text-foreground">
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+        </noscript>
+
+        <MobileMenu client:load transition:persist />
       </div>
     </div>
   </div>
