@@ -215,7 +215,7 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       font-weight: 500;
       background: color-mix(in srgb, var(--muted) 60%, transparent);
       border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
-      color: var(--muted-foreground);
+      color: color-mix(in srgb, var(--foreground) 88%, var(--muted-foreground));
       transition: all 0.25s ease;
     }
 
@@ -344,21 +344,21 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
 
       <!-- Quote card -->
       <div class="bento-card bento-quote p-5 md:p-6 flex items-center" style="--delay: 160">
-        <blockquote class="text-lg md:text-xl italic leading-snug text-muted-foreground/80">
-          <span class="text-primary/40 not-italic">&ldquo;</span>Works in theory &mdash;<br />now let&rsquo;s see what <span class="text-foreground font-semibold not-italic">doesn&rsquo;t</span><span class="text-primary/40 not-italic">&rdquo;</span>
+        <blockquote class="text-lg md:text-xl italic leading-snug text-foreground/90">
+          <span class="text-primary/60 not-italic">&ldquo;</span>Works in theory &mdash;<br />now let&rsquo;s see what <span class="text-foreground font-semibold not-italic">doesn&rsquo;t</span><span class="text-primary/60 not-italic">&rdquo;</span>
         </blockquote>
       </div>
 
       <!-- Connect card -->
       <div class="bento-card bento-connect p-4" style="--delay: 240">
         <div class="flex items-center justify-between mb-3">
-          <span class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground/60">Connect</span>
+          <span class="text-[10px] font-mono uppercase tracking-widest text-foreground/80">Connect</span>
           <div class="flex items-center gap-1.5">
             <span class="relative flex size-1.5">
               <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-additive/50"></span>
               <span class="relative inline-flex size-1.5 rounded-full bg-additive"></span>
             </span>
-            <span class="text-[10px] font-mono text-muted-foreground/60">online</span>
+            <span class="text-[10px] font-mono text-foreground/80">online</span>
           </div>
         </div>
         <nav aria-label="Social links">
@@ -368,7 +368,7 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
                 <Link href={href} aria-label={label} title={label} class="social-chip">
                   <Icon 
                     name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:message-circle'} 
-                    class="size-3.5 social-chip-icon text-muted-foreground transition-colors" 
+                    class="size-3.5 social-chip-icon text-foreground/80 transition-colors" 
                   />
                   <span>{label}</span>
                 </Link>
@@ -376,7 +376,7 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
             ))}
           </ul>
         </nav>
-        <a href="mailto:hello@merox.dev" class="inline-flex items-center gap-1.5 text-xs font-mono text-muted-foreground/60 hover:text-primary transition-colors mt-3">
+        <a href="mailto:hello@merox.dev" class="inline-flex items-center gap-1.5 text-xs font-mono text-foreground/85 hover:text-primary transition-colors mt-3">
           <Icon name="lucide:mail" class="size-3" aria-hidden="true" />
           hello@merox.dev
         </a>
@@ -388,8 +388,8 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
           <Icon name="lucide:terminal" class="size-10 md:size-12" aria-hidden="true" />
         </div>
         <div>
-          <span class="text-sm font-medium text-foreground/80">Powered by Linux</span>
-          <span class="block text-xs text-muted-foreground/50 mt-0.5 font-mono">uptime: since forever</span>
+          <span class="text-sm font-medium text-foreground">Powered by Linux</span>
+          <span class="block text-xs text-muted-foreground/85 mt-0.5 font-mono">uptime: since forever</span>
         </div>
       </div>
 
@@ -399,8 +399,8 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
           <Icon name="lucide:mountain-snow" class="size-10 md:size-12" aria-hidden="true" />
         </div>
         <div>
-          <span class="text-sm font-medium text-foreground/80">Trail therapy</span>
-          <span class="block text-xs text-muted-foreground/50 mt-0.5">Weekend reset protocol</span>
+          <span class="text-sm font-medium text-foreground">Trail therapy</span>
+          <span class="block text-xs text-muted-foreground/85 mt-0.5">Weekend reset protocol</span>
         </div>
       </div>
     </div>
