@@ -9,7 +9,8 @@ import { getRecentPosts } from '@/lib/data-utils'
 import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
 import type { SocialLink } from '@/types'
 import { Image } from 'astro:assets'
-import heroImage from '../assets/meroxindc1.webp'
+import heroImageLight from '../assets/meroxindatacenterwhite.webp'
+import heroImageDark from '../assets/meroxindatacenterdark.webp'
 
 // Data fetching with error handling
 let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
@@ -22,9 +23,9 @@ try {
   hasError = true
 }
 
-// Structured data schemas
+// Structured data schemas (use light variant as default for crawlers/schema)
 const baseUrl = Astro.site?.href || SITE.href
-const logoUrl = new URL('/reworkedmeroxdc1.webp', baseUrl).href
+const logoUrl = new URL(heroImageLight.src, baseUrl).href
 
 const personSchema = {
   "@context": "https://schema.org",
@@ -82,6 +83,9 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
   >
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Preload LCP hero images (theme-aware) for fast paint -->
+    <link rel="preload" as="image" href={heroImageLight.src}>
+    <link rel="preload" as="image" href={heroImageDark.src}>
   </PageHead>
 
   <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
@@ -97,13 +101,48 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       font-display: swap;
     }
 
+    /* Soft gradient at bottom: no hard edge, disperses into the image */
+    .photo-caption-bg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(
+        ellipse 120% 70% at 50% 110%,
+        rgba(0, 0, 0, 0.65) 0%,
+        rgba(0, 0, 0, 0.4) 30%,
+        rgba(0, 0, 0, 0.15) 55%,
+        transparent 75%
+      );
+    }
+
     .photo-caption {
       font-family: 'Love', cursive;
-      color: white;
+      color: #fff;
       font-size: 1.1rem;
       line-height: 1;
       letter-spacing: 0.02em;
-      text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+      font-weight: 500;
+      /* Crisp + halo for mobile readability, no geometric shape */
+      text-shadow:
+        0 0 1px rgba(0, 0, 0, 1),
+        0 0 2px rgba(0, 0, 0, 1),
+        0 1px 3px rgba(0, 0, 0, 0.95),
+        0 2px 6px rgba(0, 0, 0, 0.9),
+        0 0 16px rgba(0, 0, 0, 0.8),
+        0 0 28px rgba(0, 0, 0, 0.5);
+    }
+
+    @media (max-width: 768px) {
+      .photo-caption {
+        font-size: 1.2rem;
+        text-shadow:
+          0 0 2px rgba(0, 0, 0, 1),
+          0 0 4px rgba(0, 0, 0, 1),
+          0 1px 4px rgba(0, 0, 0, 1),
+          0 2px 8px rgba(0, 0, 0, 0.95),
+          0 0 20px rgba(0, 0, 0, 0.85),
+          0 0 32px rgba(0, 0, 0, 0.55);
+      }
     }
 
     /* ── Dot-grid background ── */
@@ -274,23 +313,30 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
         </div>
       </div>
 
-      <!-- Photo card -->
+      <!-- Photo card: theme-aware datacenter image (light/dark), one visible by theme -->
       <div class="bento-card bento-photo overflow-hidden relative group h-60 md:h-auto" style="--delay: 80">
-        <Image 
-          src={heroImage} 
-          alt="Robert Melcher" 
-          widths={[300, 500, heroImage.width]}
-          sizes="(max-width: 768px) 100vw, 280px"
-          loading="eager"
-          fetchpriority="high"
-          class="w-full h-full object-cover object-[center_25%] md:object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-        />
-        <!-- Bottom gradient -->
-        <div 
-          class="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/60 via-black/25 to-transparent" 
-          aria-hidden="true"
-        ></div>
-        <!-- Caption -->
+        <div class="relative w-full h-full">
+          <Image
+            src={heroImageLight}
+            alt="Robert Melcher in datacenter"
+            widths={[300, 500, heroImageLight.width]}
+            sizes="(max-width: 768px) 100vw, 280px"
+            loading="eager"
+            fetchpriority="high"
+            class="w-full h-full object-cover object-[center_25%] md:object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] dark:opacity-0 dark:pointer-events-none"
+          />
+          <Image
+            src={heroImageDark}
+            alt="Robert Melcher in datacenter"
+            widths={[300, 500, heroImageDark.width]}
+            sizes="(max-width: 768px) 100vw, 280px"
+            loading="eager"
+            fetchpriority="high"
+            class="absolute inset-0 w-full h-full object-cover object-[center_25%] md:object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
+          />
+        </div>
+        <!-- Soft dark gradient from bottom, no hard edge -->
+        <div class="photo-caption-bg" aria-hidden="true"></div>
         <div class="absolute bottom-3 inset-x-0 text-center">
           <span class="photo-caption select-none">./merox.sh --live</span>
         </div>
