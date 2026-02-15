@@ -290,7 +290,7 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       </div>
 
       <!-- Photo card: theme-aware datacenter image (light/dark), one visible by theme -->
-      <div class="bento-card bento-photo overflow-hidden relative group h-60 md:h-auto" style="--delay: 80">
+      <div class="bento-card bento-photo overflow-hidden relative group h-72 md:h-auto" style="--delay: 80">
         <div class="relative w-full h-full">
           <Image
             src={heroImageLight}
@@ -299,7 +299,7 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
             sizes="(max-width: 768px) 100vw, 280px"
             loading="eager"
             fetchpriority="high"
-            class="w-full h-full object-cover object-[center_25%] md:object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] dark:opacity-0 dark:pointer-events-none"
+            class="w-full h-full object-cover object-[center_15%] md:object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] dark:opacity-0 dark:pointer-events-none"
           />
           <Image
             src={heroImageDark}
@@ -308,7 +308,7 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
             sizes="(max-width: 768px) 100vw, 280px"
             loading="eager"
             fetchpriority="high"
-            class="absolute inset-0 w-full h-full object-cover object-[center_25%] md:object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
+            class="absolute inset-0 w-full h-full object-cover object-[center_15%] md:object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
           />
         </div>
       </div>
