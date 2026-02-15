@@ -124,11 +124,17 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       font-display: swap;
     }
 
-    /* ── Bento spacing system (Apple-style: one rhythm = clear panels) ── */
+    /* ── Bento spacing (2026: one rhythm, generous whitespace on desktop) ── */
     .hero-section {
-      --bento-gap: 1.5rem;           /* space between panels: defines “separate block” */
+      --bento-gap: 1.25rem;           /* mobile: compact but clear */
       --bento-inner: 1.25rem;        /* default content inset */
       --bento-inner-lg: 1.5rem;     /* hero blocks (identity, quote) */
+    }
+
+    @media (min-width: 768px) {
+      .hero-section {
+        --bento-gap: 1.75rem;       /* desktop: more air between panels (2026 trend) */
+      }
     }
 
     .bento-grid {
@@ -151,29 +157,19 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       .bento-bike       { grid-column: 3;     grid-row: 3; }
     }
 
-    /* ── Card base: one inner padding = one content zone ── */
-    /* Edge: thin line (0.5px), light mode = dark edge, dark mode = light edge (reverse) */
+    /* ── Card: 1px border (reliable), one subtle inner highlight (no per-panel tweaks) ── */
     .bento-card {
-      --edge-x: 0.5px;
-      --edge-y: 0.5px;
       padding: var(--bento-inner);
       border-radius: 12px;
-      border: 0.5px solid color-mix(in srgb, var(--border) 50%, transparent);
+      border: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
       background: color-mix(in srgb, var(--card) 85%, transparent);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
+      /* Single top-left inner highlight for depth; same for all panels = consistent rhythm */
       box-shadow:
-        inset var(--edge-x) var(--edge-y) 0 0 color-mix(in srgb, black 7%, transparent),
+        inset 1px 1px 0 0 color-mix(in srgb, white 8%, transparent),
         0 1px 2px rgba(0, 0, 0, 0.04);
     }
-
-    /* Edge per panel: TL, TR, BL, BR */
-    .bento-identity { --edge-x: 0.5px;  --edge-y: 0.5px; }
-    .bento-photo    { --edge-x: -0.5px; --edge-y: 0.5px; }
-    .bento-quote    { --edge-x: 0.5px;  --edge-y: -0.5px; }
-    .bento-connect  { --edge-x: -0.5px; --edge-y: 0.5px; }
-    .bento-insight  { --edge-x: -0.5px; --edge-y: -0.5px; }
-    .bento-bike     { --edge-x: 0.5px;  --edge-y: -0.5px; }
 
     /* Hero blocks: more breath */
     .bento-identity,
@@ -188,26 +184,28 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
 
     @media (prefers-reduced-motion: no-preference) {
       .bento-card {
-        transition: box-shadow 0.25s ease;
+        transition: box-shadow 0.25s ease, border-color 0.2s ease;
       }
     }
 
     .bento-card:hover {
       box-shadow:
-        inset var(--edge-x) var(--edge-y) 0 0 color-mix(in srgb, black 10%, transparent),
+        inset 1px 1px 0 0 color-mix(in srgb, white 12%, transparent),
         0 4px 12px rgba(0, 0, 0, 0.06);
+      border-color: color-mix(in srgb, var(--border) 75%, transparent);
     }
 
-    /* Dark mode: reverse = light edge, thin + more luminous */
+    /* Dark: light inner highlight, slightly stronger for contrast */
     :global(html[data-theme="dark"]) .bento-card {
       box-shadow:
-        inset var(--edge-x) var(--edge-y) 0 0 rgba(255, 255, 255, 0.12),
+        inset 1px 1px 0 0 rgba(255, 255, 255, 0.06),
         0 1px 2px rgba(0, 0, 0, 0.2);
     }
     :global(html[data-theme="dark"]) .bento-card:hover {
       box-shadow:
-        inset var(--edge-x) var(--edge-y) 0 0 rgba(255, 255, 255, 0.18),
+        inset 1px 1px 0 0 rgba(255, 255, 255, 0.1),
         0 4px 12px rgba(0, 0, 0, 0.25);
+      border-color: color-mix(in srgb, var(--border) 80%, transparent);
     }
 
     /* ── Connect card (2026) ── */
@@ -690,10 +688,10 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
             <span class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Latest Insight</span>
             {latestPostsEnriched.length > 1 ? (
               <nav class="insight-carousel-nav" aria-label="Navigate insights">
-                <button type="button" class="insight-carousel-nav-btn insight-prev" aria-label="Previous" disabled={latestPostsEnriched.length <= 1}>
+                <button type="button" id="insight-prev" class="insight-carousel-nav-btn" aria-label="Previous insight" disabled={latestPostsEnriched.length <= 1}>
                   <Icon name="lucide:chevron-left" class="size-4" aria-hidden="true" />
                 </button>
-                <button type="button" class="insight-carousel-nav-btn insight-next" aria-label="Next" disabled={latestPostsEnriched.length <= 1}>
+                <button type="button" id="insight-next" class="insight-carousel-nav-btn" aria-label="Next insight" disabled={latestPostsEnriched.length <= 1}>
                   <Icon name="lucide:chevron-right" class="size-4" aria-hidden="true" />
                 </button>
               </nav>
@@ -733,23 +731,13 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
               <p class="text-sm text-muted-foreground/80">No posts yet.</p>
             </div>
           )}
-          {latestPostsEnriched.length > 0 ? (
-            <div class="insight-carousel-footer">
-              <Link href="/blog" class="text-xs font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
-                Explore all posts
-                <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
-              </Link>
-              <span class="insight-signature" aria-hidden="true">./merox.sh --live</span>
-            </div>
-          ) : (
-            <div class="insight-carousel-footer">
-              <Link href="/blog" class="text-xs font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
-                Go to blog
-                <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
-              </Link>
-              <span class="insight-signature" aria-hidden="true">./merox.sh --live</span>
-            </div>
-          )}
+          <div class="insight-carousel-footer">
+            <Link href="/blog" class="text-xs font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
+              {latestPostsEnriched.length > 0 ? 'Explore all posts' : 'Go to blog'}
+              <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
+            </Link>
+            <span class="insight-signature" aria-hidden="true">./merox.sh --live</span>
+          </div>
         </div>
       </div>
 
@@ -797,27 +785,27 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
     <script define:vars={{ slideCount: latestPostsEnriched.length }}>
       (function () {
         const track = document.getElementById('insight-track')
-        if (!track) return
+        const prevBtn = document.getElementById('insight-prev')
+        const nextBtn = document.getElementById('insight-next')
+        if (!track || !prevBtn || !nextBtn) return
+
         const slides = track.querySelectorAll('.insight-slide')
-        const prevBtn = document.querySelector('.insight-prev')
-        const nextBtn = document.querySelector('.insight-next')
         let current = 0
 
-        function goTo (index) {
+        function goTo(index) {
           current = (index + slideCount) % slideCount
           slides.forEach((el, i) => {
             const visible = i === current
             el.setAttribute('data-visible', visible ? 'true' : 'false')
-            el.setAttribute('aria-hidden', visible ? 'false' : 'true')
-            if (visible) el.removeAttribute('hidden')
-            else el.setAttribute('hidden', '')
+            el.setAttribute('aria-hidden', String(!visible))
+            el.toggleAttribute('hidden', !visible)
           })
-          if (prevBtn) prevBtn.disabled = false
-          if (nextBtn) nextBtn.disabled = false
+          prevBtn.disabled = false
+          nextBtn.disabled = false
         }
 
-        if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1))
-        if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1))
+        prevBtn.addEventListener('click', () => goTo(current - 1))
+        nextBtn.addEventListener('click', () => goTo(current + 1))
       })()
     </script>
   )}
