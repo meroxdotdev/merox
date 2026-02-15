@@ -2,14 +2,15 @@
   <style>
     /* Light Mode: Hexagon Negru, M Alb */
     .hex { fill: #000000; }
-    .txt { fill: #ffffff; }
+    .txt { fill: none; stroke: #ffffff; }
 
     /* Dark Mode: Hexagon Alb, M Negru */
     @media (prefers-color-scheme: dark) {
       .hex { fill: #ffffff; }
-      .txt { fill: #000000; }
+      .txt { fill: none; stroke: #000000; }
     }
   </style>
   <polygon class="hex" points="150,25 260,88 260,212 150,275 40,212 40,88" />
-  <text class="txt" x="150" y="165" font-family="Arial, sans-serif" font-size="160" font-weight="bold" text-anchor="middle" dominant-baseline="middle">M</text>
+  <!-- M ca path (centrat geometric) - randare identica pe Windows/macOS/Linux -->
+  <path class="txt" d="M 95 245 L 95 85 L 150 165 L 205 85 L 205 245" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
