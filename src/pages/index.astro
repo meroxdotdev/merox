@@ -124,83 +124,90 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       font-display: swap;
     }
 
-    /* ── Dot-grid background ── */
-    .hero-grid {
-      background-size: 24px 24px;
-      mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 10%, transparent 100%);
-      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 10%, transparent 100%);
+    /* ── Bento spacing system (Apple-style: one rhythm = clear panels) ── */
+    .hero-section {
+      --bento-gap: 1.5rem;           /* space between panels: defines “separate block” */
+      --bento-inner: 1.25rem;        /* default content inset */
+      --bento-inner-lg: 1.5rem;     /* hero blocks (identity, quote) */
     }
 
-    .hero-grid::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(ellipse 50% 70% at 50% 100%, color-mix(in srgb, var(--primary) 4%, transparent) 0%, transparent 100%);
-      pointer-events: none;
-    }
-
-    [data-theme='dark'] .hero-grid::before {
-      background: radial-gradient(ellipse 50% 70% at 50% 100%, color-mix(in srgb, var(--primary) 6%, transparent) 0%, transparent 100%);
-    }
-
-    /* ── Bento grid layout ── */
     .bento-grid {
       display: grid;
-      gap: 10px;
+      gap: var(--bento-gap);
       grid-template-columns: 1fr;
     }
 
     @media (min-width: 768px) {
       .bento-grid {
         grid-template-columns: 5fr 3fr 4fr;
-        grid-template-rows: auto auto auto auto;
-        gap: 10px;
+        grid-template-rows: auto auto auto;
       }
 
-      .bento-identity   { grid-column: 1 / 3; grid-row: 1; }   /* wide left */
+      .bento-identity   { grid-column: 1 / 3; grid-row: 1; }
       .bento-photo      { grid-column: 3;     grid-row: 1; }
       .bento-quote      { grid-column: 1;     grid-row: 2; }
-      .bento-connect    { grid-column: 2 / 4; grid-row: 2; }   /* wide right */
-      .bento-insight    { grid-column: 1 / 3; grid-row: 3; min-height: 10rem; }  /* carousel */
+      .bento-connect    { grid-column: 2 / 4; grid-row: 2; }
+      .bento-insight    { grid-column: 1 / 3; grid-row: 3; min-height: 10rem; }
       .bento-bike       { grid-column: 3;     grid-row: 3; }
-      .bento-signature  { grid-column: 1 / -1; grid-row: 4; }  /* full width */
     }
 
-    .bento-signature {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.75rem 1rem;
-      min-height: auto;
-    }
-
-    .signature-text {
-      font-family: 'Love', cursive;
-      font-size: 1.05rem;
-      letter-spacing: 0.04em;
-      color: color-mix(in srgb, var(--foreground) 75%, var(--primary));
-    }
-
-    @media (min-width: 768px) {
-      .signature-text { font-size: 1.15rem; }
-    }
-
-    /* ── Card base ── */
+    /* ── Card base: one inner padding = one content zone ── */
+    /* Edge: thin line (0.5px), light mode = dark edge, dark mode = light edge (reverse) */
     .bento-card {
-      border-radius: 1.125rem;
-      border: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
-      background: color-mix(in srgb, var(--card) 60%, transparent);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 0.08), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
-      transition: border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+      --edge-x: 0.5px;
+      --edge-y: 0.5px;
+      padding: var(--bento-inner);
+      border-radius: 12px;
+      border: 0.5px solid color-mix(in srgb, var(--border) 50%, transparent);
+      background: color-mix(in srgb, var(--card) 85%, transparent);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow:
+        inset var(--edge-x) var(--edge-y) 0 0 color-mix(in srgb, black 7%, transparent),
+        0 1px 2px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Edge per panel: TL, TR, BL, BR */
+    .bento-identity { --edge-x: 0.5px;  --edge-y: 0.5px; }
+    .bento-photo    { --edge-x: -0.5px; --edge-y: 0.5px; }
+    .bento-quote    { --edge-x: 0.5px;  --edge-y: -0.5px; }
+    .bento-connect  { --edge-x: -0.5px; --edge-y: 0.5px; }
+    .bento-insight  { --edge-x: -0.5px; --edge-y: -0.5px; }
+    .bento-bike     { --edge-x: 0.5px;  --edge-y: -0.5px; }
+
+    /* Hero blocks: more breath */
+    .bento-identity,
+    .bento-quote {
+      padding: var(--bento-inner-lg);
+    }
+
+    /* Photo: full bleed, no inset — panel reads as “different” */
+    .bento-photo {
+      padding: 0;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .bento-card {
+        transition: box-shadow 0.25s ease;
+      }
     }
 
     .bento-card:hover {
-      border-color: color-mix(in srgb, var(--border) 90%, transparent);
-      box-shadow: 0 4px 20px -6px color-mix(in srgb, var(--primary) 12%, transparent),
-                  0 1px 3px -1px rgba(0, 0, 0, 0.08);
-      transform: translateY(-1px);
+      box-shadow:
+        inset var(--edge-x) var(--edge-y) 0 0 color-mix(in srgb, black 10%, transparent),
+        0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Dark mode: reverse = light edge, thin + more luminous */
+    :global(html[data-theme="dark"]) .bento-card {
+      box-shadow:
+        inset var(--edge-x) var(--edge-y) 0 0 rgba(255, 255, 255, 0.12),
+        0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+    :global(html[data-theme="dark"]) .bento-card:hover {
+      box-shadow:
+        inset var(--edge-x) var(--edge-y) 0 0 rgba(255, 255, 255, 0.18),
+        0 4px 12px rgba(0, 0, 0, 0.25);
     }
 
     /* ── Connect card (2026) ── */
@@ -248,17 +255,22 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.3rem 0;
+      padding: 0.35rem 0.5rem;
+      margin: 0 -0.5rem;
       font-size: 0.8125rem;
       font-weight: 500;
       color: var(--foreground);
       text-decoration: none;
-      border-radius: 0.5rem;
+      border-radius: 0.375rem;
       transition: color 0.2s ease, background 0.2s ease;
     }
     .connect-card__link:hover {
       color: var(--primary);
-      background: color-mix(in srgb, var(--primary) 8%, transparent);
+      background: transparent;
+    }
+    .connect-card__link:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
     }
     .connect-card__link-icon {
       flex-shrink: 0;
@@ -535,6 +547,20 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       margin-top: 0.5rem;
       padding-top: 0.5rem;
       border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .insight-signature {
+      font-family: 'Love', cursive;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      color: color-mix(in srgb, var(--foreground) 55%, var(--primary));
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     /* ── Staggered card entrance ── */
@@ -559,19 +585,11 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
   </style>
 
   <section class="hero-section relative pt-6 pb-4 md:pt-10 md:pb-6">
-    <!-- Dot-grid background -->
-    <div 
-      class="hero-grid absolute inset-0 -z-20 h-full w-[100vw] left-1/2 -translate-x-1/2 
-             bg-[radial-gradient(circle,#00000018_1px,transparent_1px)] 
-             dark:bg-[radial-gradient(circle,#ffffff18_1px,transparent_1px)]"
-      aria-hidden="true"
-    ></div>
-
     <!-- Bento grid -->
     <div class="bento-grid">
 
       <!-- Identity card -->
-      <div class="bento-card bento-identity p-5 md:p-6 pb-4 md:pb-5" style="--delay: 0">
+      <div class="bento-card bento-identity" style="--delay: 0">
         <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/8 border border-primary/10 text-xs font-mono mb-4">
           <span class="relative flex size-2">
             <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-additive/50"></span>
@@ -606,7 +624,7 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       </div>
 
       <!-- Photo card: theme-aware datacenter image (light/dark), one visible by theme -->
-      <div class="bento-card bento-photo overflow-hidden relative group h-72 md:h-auto" style="--delay: 80">
+      <div class="bento-card bento-photo overflow-hidden relative h-72 md:h-auto" style="--delay: 80">
         <div class="relative w-full h-full">
           <Image
             src={heroImageLight}
@@ -615,7 +633,7 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
             sizes="(max-width: 768px) 100vw, 280px"
             loading="eager"
             fetchpriority="high"
-            class="w-full h-full object-cover object-[center_15%] md:object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] dark:opacity-0 dark:pointer-events-none"
+            class="w-full h-full object-cover object-[center_15%] md:object-top dark:opacity-0 dark:pointer-events-none"
           />
           <Image
             src={heroImageDark}
@@ -624,25 +642,20 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
             sizes="(max-width: 768px) 100vw, 280px"
             loading="eager"
             fetchpriority="high"
-            class="absolute inset-0 w-full h-full object-cover object-[center_15%] md:object-top transition-transform duration-700 ease-out group-hover:scale-[1.04] opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
+            class="absolute inset-0 w-full h-full object-cover object-[center_15%] md:object-top opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
           />
         </div>
       </div>
 
-      <!-- Signature card: near photo on mobile, bottom row on desktop -->
-      <div class="bento-card bento-signature" style="--delay: 100" aria-label="Signature">
-        <span class="signature-text select-none">./merox.sh --live</span>
-      </div>
-
       <!-- Quote card -->
-      <div class="bento-card bento-quote p-5 md:p-6 flex items-center" style="--delay: 160">
+      <div class="bento-card bento-quote flex items-center" style="--delay: 160">
         <blockquote class="text-lg md:text-xl italic leading-snug text-foreground/90">
           <span class="text-primary/60 not-italic">&ldquo;</span>Works in theory &mdash;<br />now let&rsquo;s see what <span class="text-foreground font-semibold not-italic">doesn&rsquo;t</span><span class="text-primary/60 not-italic">&rdquo;</span>
         </blockquote>
       </div>
 
       <!-- Connect card (2026) -->
-      <div class="bento-card bento-connect p-4 md:p-5 connect-card" style="--delay: 240">
+      <div class="bento-card bento-connect connect-card" style="--delay: 240">
         <div class="connect-card__header">
           <span class="connect-card__title">Connect</span>
           <span class="connect-card__status" aria-label="Available">
@@ -671,10 +684,10 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       </div>
 
       <!-- Latest Insight carousel (replaces Linux card) -->
-      <div class="bento-card bento-insight p-4 md:p-5" style="--delay: 300">
+      <div class="bento-card bento-insight" style="--delay: 300">
         <div class="insight-carousel">
           <div class="insight-carousel-header">
-            <span class="text-[10px] font-mono uppercase tracking-widest text-foreground/80">Latest Insight</span>
+            <span class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Latest Insight</span>
             {latestPostsEnriched.length > 1 ? (
               <nav class="insight-carousel-nav" aria-label="Navigate insights">
                 <button type="button" class="insight-carousel-nav-btn insight-prev" aria-label="Previous" disabled={latestPostsEnriched.length <= 1}>
@@ -726,6 +739,7 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
                 Explore all posts
                 <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
               </Link>
+              <span class="insight-signature" aria-hidden="true">./merox.sh --live</span>
             </div>
           ) : (
             <div class="insight-carousel-footer">
@@ -733,13 +747,14 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
                 Go to blog
                 <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
               </Link>
+              <span class="insight-signature" aria-hidden="true">./merox.sh --live</span>
             </div>
           )}
         </div>
       </div>
 
       <!-- Latest played (Last.fm) -->
-      <div class="bento-card particle-card lastfm-card bento-bike p-4 md:p-5 flex items-center gap-3 group/lastfm" style="--delay: 360">
+      <div class="bento-card particle-card lastfm-card bento-bike flex items-center gap-3 group/lastfm" style="--delay: 360">
         <div class="min-w-0 flex-1 relative z-[1]">
           <span class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Latest played</span>
           {lastFmTrack ? (
