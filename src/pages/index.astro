@@ -1,11 +1,11 @@
 ---
-import BlogCard from '@/components/BlogCard.astro'
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
 import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
-import { getRecentPosts } from '@/lib/data-utils'
+import { getRecentPosts, getCombinedReadingTime } from '@/lib/data-utils'
+import { formatDate, ensureTrailingSlash } from '@/lib/utils'
 import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
 import type { SocialLink } from '@/types'
 import { Image } from 'astro:assets'
@@ -22,6 +22,15 @@ try {
   console.error('Error fetching recent posts:', error)
   hasError = true
 }
+
+// Enrich posts with read time and formatted date for bento carousel
+const latestPostsEnriched = await Promise.all(
+  latestPosts.map(async (entry) => ({
+    entry,
+    readTime: await getCombinedReadingTime(entry.id),
+    formattedDate: formatDate(entry.data.date),
+  }))
+)
 
 // Structured data schemas (use light variant as default for crawlers/schema)
 const baseUrl = Astro.site?.href || SITE.href
@@ -134,13 +143,13 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
         gap: 10px;
       }
 
-      .bento-identity   { grid-column: 1 / 3; grid-row: 1; }  /* wide left  */
+      .bento-identity   { grid-column: 1 / 3; grid-row: 1; }   /* wide left */
       .bento-photo      { grid-column: 3;     grid-row: 1; }
       .bento-quote      { grid-column: 1;     grid-row: 2; }
-      .bento-connect    { grid-column: 2 / 4; grid-row: 2; }  /* wide right */
-      .bento-linux      { grid-column: 1 / 3; grid-row: 3; }  /* wide left  */
+      .bento-connect    { grid-column: 2 / 4; grid-row: 2; }   /* wide right */
+      .bento-insight    { grid-column: 1 / 3; grid-row: 3; min-height: 10rem; }  /* carousel */
       .bento-bike       { grid-column: 3;     grid-row: 3; }
-      .bento-signature  { grid-column: 1 / -1; grid-row: 4; }  /* full width, sign-off */
+      .bento-signature  { grid-column: 1 / -1; grid-row: 4; }  /* full width */
     }
 
     .bento-signature {
@@ -205,6 +214,188 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       color: var(--primary);
     }
 
+    /* ── Particle cards: single accent bar + typography (2026 minimal) ── */
+    .particle-card {
+      border-left: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+      transition: border-left-color 0.35s ease;
+    }
+
+    .particle-card:hover {
+      border-left-color: color-mix(in srgb, var(--primary) 70%, transparent);
+    }
+
+    .particle-card .particle-title {
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .particle-card .particle-tagline {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      letter-spacing: 0.01em;
+    }
+
+    .particle-card .particle-tagline::before {
+      content: '· ';
+      color: color-mix(in srgb, var(--primary) 50%, var(--muted-foreground));
+      font-weight: 600;
+    }
+
+    /* ── Latest Insight carousel (bento) ── */
+    .bento-insight {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .insight-carousel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .insight-carousel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .insight-carousel-nav {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .insight-carousel-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 0.5rem;
+      border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+      background: color-mix(in srgb, var(--muted) 40%, transparent);
+      color: var(--muted-foreground);
+      transition: border-color 0.2s, background 0.2s, color 0.2s;
+    }
+
+    .insight-carousel-nav-btn:hover:not(:disabled) {
+      border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+      background: color-mix(in srgb, var(--primary) 10%, transparent);
+      color: var(--foreground);
+    }
+
+    .insight-carousel-nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .insight-carousel-track {
+      position: relative;
+      flex: 1;
+      min-height: 7.5rem;
+    }
+
+    .insight-slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .insight-slide {
+        transition: opacity 0.25s ease, visibility 0.25s ease;
+      }
+    }
+
+    .insight-slide[data-visible="true"] {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    /* Decorative index (01, 02, 03) */
+    .insight-slide-number {
+      position: absolute;
+      top: -0.15rem;
+      right: 0;
+      font-size: 4rem;
+      font-weight: 800;
+      line-height: 1;
+      color: color-mix(in srgb, var(--foreground) 4%, transparent);
+      user-select: none;
+      pointer-events: none;
+    }
+
+    [data-theme='dark'] .insight-slide-number {
+      color: color-mix(in srgb, var(--foreground) 6%, transparent);
+    }
+
+    .insight-slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      padding: 0.25rem 0;
+      min-height: 5rem;
+      user-select: none;
+    }
+
+    .insight-slide-title-link {
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .insight-slide-title {
+      font-size: 0.9375rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--foreground);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .insight-slide-title-link:hover .insight-slide-title {
+      color: var(--primary);
+    }
+
+    .insight-slide-desc {
+      font-size: 0.75rem;
+      line-height: 1.4;
+      color: var(--muted-foreground);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .insight-slide-meta {
+      font-size: 0.6875rem;
+      color: var(--muted-foreground);
+      margin-top: auto;
+      padding-top: 0.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .insight-carousel-footer {
+      margin-top: 0.5rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+    }
+
     /* ── Staggered card entrance ── */
     @media (prefers-reduced-motion: no-preference) {
       .bento-card {
@@ -223,22 +414,6 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
         }
       }
 
-      /* Insight cards (blog section) */
-      .insight-card {
-        animation: insightFadeIn 0.5s ease-out both;
-        animation-delay: calc(var(--delay, 0) * 1ms);
-      }
-
-      @keyframes insightFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
     }
   </style>
 
@@ -358,76 +533,87 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
         </a>
       </div>
 
-      <!-- Linux card -->
-      <div class="bento-card bento-linux p-4 md:p-5 flex items-center gap-4 group/linux" style="--delay: 300">
-        <div class="flex-shrink-0 text-primary/20 group-hover/linux:text-primary/40 transition-colors duration-500">
-          <Icon name="lucide:terminal" class="size-10 md:size-12" aria-hidden="true" />
-        </div>
-        <div>
-          <span class="text-sm font-medium text-foreground">Powered by Linux</span>
-          <span class="block text-xs text-muted-foreground/85 mt-0.5 font-mono">uptime: since forever</span>
+      <!-- Latest Insight carousel (replaces Linux card) -->
+      <div class="bento-card bento-insight p-4 md:p-5" style="--delay: 300">
+        <div class="insight-carousel">
+          <div class="insight-carousel-header">
+            <span class="text-[10px] font-mono uppercase tracking-widest text-foreground/80">Latest Insight</span>
+            {latestPostsEnriched.length > 1 ? (
+              <nav class="insight-carousel-nav" aria-label="Navigate insights">
+                <button type="button" class="insight-carousel-nav-btn insight-prev" aria-label="Previous" disabled={latestPostsEnriched.length <= 1}>
+                  <Icon name="lucide:chevron-left" class="size-4" aria-hidden="true" />
+                </button>
+                <button type="button" class="insight-carousel-nav-btn insight-next" aria-label="Next" disabled={latestPostsEnriched.length <= 1}>
+                  <Icon name="lucide:chevron-right" class="size-4" aria-hidden="true" />
+                </button>
+              </nav>
+            ) : null}
+          </div>
+          {latestPostsEnriched.length > 0 ? (
+            <div class="insight-carousel-track" id="insight-track" aria-live="polite" aria-atomic="true">
+              {latestPostsEnriched.map(({ entry, readTime, formattedDate }, i) => (
+                <div
+                  class="insight-slide"
+                  data-visible={i === 0 ? 'true' : 'false'}
+                  data-index={i}
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-hidden={i !== 0}
+                  hidden={i !== 0}
+                >
+                  <span class="insight-slide-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  <div class="insight-slide-content">
+                    <Link href={ensureTrailingSlash(`/blog/${entry.id}`)} class="insight-slide-title-link">
+                      <span class="insight-slide-title">{entry.data.title}</span>
+                    </Link>
+                    {entry.data.description ? (
+                      <span class="insight-slide-desc">{entry.data.description}</span>
+                    ) : null}
+                    <span class="insight-slide-meta">
+                      <time datetime={entry.data.date.toISOString()}>{formattedDate}</time>
+                      <span aria-hidden="true">·</span>
+                      <span>{readTime}</span>
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div class="insight-carousel-track flex items-center justify-center min-h-[5rem]">
+              <p class="text-sm text-muted-foreground/80">No posts yet.</p>
+            </div>
+          )}
+          {latestPostsEnriched.length > 0 ? (
+            <div class="insight-carousel-footer">
+              <Link href="/blog" class="text-xs font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
+                Explore all posts
+                <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
+              </Link>
+            </div>
+          ) : (
+            <div class="insight-carousel-footer">
+              <Link href="/blog" class="text-xs font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
+                Go to blog
+                <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 
       <!-- Bike card -->
-      <div class="bento-card bento-bike p-4 md:p-5 flex items-center gap-4 group/bike" style="--delay: 360">
+      <div class="bento-card particle-card bento-bike p-4 md:p-5 flex items-center gap-4 group/bike" style="--delay: 360">
         <div class="flex-shrink-0 text-primary/20 group-hover/bike:text-primary/40 transition-colors duration-500">
           <Icon name="lucide:mountain-snow" class="size-10 md:size-12" aria-hidden="true" />
         </div>
         <div>
-          <span class="text-sm font-medium text-foreground">Trail therapy</span>
-          <span class="block text-xs text-muted-foreground/85 mt-0.5">Weekend reset protocol</span>
+          <span class="text-sm particle-title text-foreground">Trail therapy</span>
+          <span class="block particle-tagline mt-0.5">Weekend reset protocol</span>
         </div>
       </div>
     </div>
   </section>
 
-  {latestPosts && latestPosts.length > 0 && (
-    <section class="mt-4 pt-6 md:mt-8 md:pt-10 relative">
-      <div 
-        class="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-border/40 to-transparent"
-        aria-hidden="true"
-      >
-      </div>
-      
-      <div class="mb-8 md:mb-10">
-        <h2 class="text-2xl font-black tracking-tighter uppercase leading-none text-foreground">
-          Latest <span class="text-primary">Insights</span>
-        </h2>
-        <p class="mt-2.5 text-sm md:text-base text-muted-foreground/70 max-w-lg">
-          Recent writing on infrastructure, security & homelab experiments.
-        </p>
-      </div>
-      
-      <div class="flex flex-col gap-5">
-        {latestPosts[0] && (
-          <div class="insight-card" style="--delay: 0">
-            <BlogCard entry={latestPosts[0]} variant="hero" index={0} />
-          </div>
-        )}
-        
-        {latestPosts.length > 1 && (
-          <div class="grid grid-cols-1 md:grid-cols-2 md:auto-rows-fr gap-5">
-            {latestPosts.slice(1).map((post, i) => (
-              <div class="insight-card" style={`--delay: ${(i + 1) * 120}`}>
-                <BlogCard entry={post} variant="featured" index={i + 1} />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-      
-      <div class="mt-10 md:mt-14 flex justify-center">
-        <Link 
-          href="/blog" 
-          class={buttonVariants({ variant: 'outline', size: 'lg', class: 'group/cta rounded-full px-8 h-12 font-bold transition-all hover:-translate-y-0.5' })}
-        >
-          Explore all posts
-          <Icon name="lucide:arrow-right" class="ml-2 size-4 transition-transform group-hover/cta:translate-x-1" aria-hidden="true" />
-        </Link>
-      </div>
-    </section>
-  )}
 
   {hasError && (
     <section class="mt-8 pt-8">
@@ -435,5 +621,34 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
         Unable to load recent posts. Please try refreshing the page.
       </p>
     </section>
+  )}
+
+  {latestPostsEnriched.length > 1 && (
+    <script define:vars={{ slideCount: latestPostsEnriched.length }}>
+      (function () {
+        const track = document.getElementById('insight-track')
+        if (!track) return
+        const slides = track.querySelectorAll('.insight-slide')
+        const prevBtn = document.querySelector('.insight-prev')
+        const nextBtn = document.querySelector('.insight-next')
+        let current = 0
+
+        function goTo (index) {
+          current = (index + slideCount) % slideCount
+          slides.forEach((el, i) => {
+            const visible = i === current
+            el.setAttribute('data-visible', visible ? 'true' : 'false')
+            el.setAttribute('aria-hidden', visible ? 'false' : 'true')
+            if (visible) el.removeAttribute('hidden')
+            else el.setAttribute('hidden', '')
+          })
+          if (prevBtn) prevBtn.disabled = false
+          if (nextBtn) nextBtn.disabled = false
+        }
+
+        if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1))
+        if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1))
+      })()
+    </script>
   )}
 </Layout>
