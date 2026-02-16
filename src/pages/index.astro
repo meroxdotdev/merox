@@ -595,6 +595,47 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       -webkit-user-select: none;
     }
 
+    /* ── Identity role line (minimal, left-aligned with content below) ── */
+    .identity-role {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 0.6875rem;
+      letter-spacing: 0.02em;
+      color: var(--muted-foreground);
+      margin-bottom: 1rem;
+    }
+    .identity-role__dot {
+      position: relative;
+      flex-shrink: 0;
+      width: 0.5rem;
+      height: 0.5rem;
+      border-radius: 50%;
+      background: #22c55e;
+    }
+    .identity-role__dot::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: #22c55e;
+      opacity: 0.5;
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .identity-role__dot::before {
+        animation: identity-dot-pulse 1.5s ease-in-out infinite;
+      }
+    }
+    @keyframes identity-dot-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.8); opacity: 0; }
+    }
+    .identity-role__sep {
+      margin: 0 0.4em;
+      color: color-mix(in srgb, var(--muted-foreground) 50%, transparent);
+    }
+
     /* ── Staggered card entrance ── */
     @media (prefers-reduced-motion: no-preference) {
       .bento-card {
@@ -622,15 +663,10 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
 
       <!-- Identity card -->
       <div class="bento-card bento-identity" style="--delay: 0">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/8 border border-primary/10 text-xs font-mono mb-4">
-          <span class="relative flex size-2">
-            <span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-additive/50"></span>
-            <span class="relative inline-flex size-2 rounded-full bg-additive"></span>
-          </span>
-          <span class="text-foreground/70">HPC System Administrator</span>
-          <span class="text-muted-foreground/30 mx-0.5">/</span>
-          <span class="text-muted-foreground/60">Forvia</span>
-        </div>
+        <p class="identity-role" aria-label="HPC System Administrator at Forvia">
+          <span class="identity-role__dot" aria-hidden="true"></span>
+          HPC System Administrator<span class="identity-role__sep" aria-hidden="true">/</span>Forvia
+        </p>
         <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.92]">
           Building<br />infrastructure<br /><span class="text-primary">that scales</span>.
         </h1>
@@ -839,4 +875,5 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       })()
     </script>
   )}
+
 </Layout>
