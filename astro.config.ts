@@ -72,7 +72,7 @@ export default defineConfig({
     icon({
       include: {
         lucide: ['*'],
-        'simple-icons': ['reddit'],
+        'simple-icons': ['reddit', 'x', 'linkedin', 'facebook'],
       },
     }),
   ],
