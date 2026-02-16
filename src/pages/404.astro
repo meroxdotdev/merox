@@ -2,9 +2,8 @@
 import Breadcrumbs from '@/components/Breadcrumbs.astro'
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
-import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
-import { cn } from '@/lib/utils'
+import { Icon } from 'astro-icon/components'
 ---
 
 <Layout class="max-w-4xl">
@@ -18,12 +17,9 @@ import { cn } from '@/lib/utils'
       <h1 class="mb-4 text-3xl font-medium">404: Page not found</h1>
       <p class="prose">Oops! The page you're looking for doesn't exist.</p>
     </div>
-    <Link
-      href="/"
-      class={cn(buttonVariants({ variant: 'outline' }), 'flex gap-x-1.5 group')}
-    >
-      <span class="transition-transform group-hover:-translate-x-1">&larr;</span
-      > Go to home page
+    <Link href="/" class="btn-neo-outline">
+      <Icon name="lucide:arrow-left" class="btn-neo-icon" aria-hidden="true" />
+      Go to home page
     </Link>
   </section>
 </Layout>

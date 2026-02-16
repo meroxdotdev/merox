@@ -1,7 +1,6 @@
 ---
 import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
-import { buttonVariants } from '@/components/ui/button'
 import Layout from '@/layouts/Layout.astro'
 import { Icon } from 'astro-icon/components'
 import { getRecentPosts, getCombinedReadingTime } from '@/lib/data-utils'
@@ -93,9 +92,6 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
   }
 }
 
-// Reusable class configurations
-const primaryButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 active:scale-95'
-const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transition-all hover:-translate-y-0.5 active:scale-95'
 ---
 
 <Layout class="max-w-4xl" contentPadding="pb-4">
@@ -104,8 +100,6 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
     title="Merox - Insights from my tech journey" 
     fullTitle={true} 
   >
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- Preload LCP hero images (theme-aware) for fast paint -->
     <link rel="preload" as="image" href={heroImageLight.src}>
     <link rel="preload" as="image" href={heroImageDark.src}>
@@ -322,9 +316,33 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
       content: none;
     }
     .lastfm-card {
-      border-left-color: color-mix(in srgb, var(--primary) 40%, transparent);
+      --lastfm-line: color-mix(in srgb, var(--primary) 26%, transparent);
+      border-left: none;
       position: relative;
       overflow: hidden;
+    }
+    .lastfm-card:hover {
+      --lastfm-line: color-mix(in srgb, var(--primary) 42%, transparent);
+    }
+    /* Linia albastră estompată la capete – nu se vede unde începe/termină */
+    .lastfm-card::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      z-index: 0;
+      pointer-events: none;
+      border-radius: inherit;
+      background: linear-gradient(
+        to bottom,
+        transparent 0%,
+        var(--lastfm-line) 18%,
+        var(--lastfm-line) 50%,
+        var(--lastfm-line) 82%,
+        transparent 100%
+      );
     }
     /* Mesh gradient minimalist: doar nuanțe soft în colțuri, fără puncte/linii */
     .lastfm-card::before {
@@ -338,9 +356,6 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
         radial-gradient(ellipse 100% 80% at 0% 100%, color-mix(in srgb, var(--primary) 14%, transparent) 0%, transparent 60%),
         radial-gradient(ellipse 80% 100% at 100% 0%, color-mix(in srgb, var(--foreground) 8%, transparent) 0%, transparent 55%);
       background-size: 100% 100%;
-    }
-    .lastfm-card:hover {
-      border-left-color: color-mix(in srgb, var(--primary) 65%, transparent);
     }
     .lastfm-card > * {
       position: relative;
@@ -603,18 +618,13 @@ const outlineButtonClasses = 'rounded-full px-6 h-11 text-sm font-bold transitio
         <p class="mt-3 text-sm md:text-[15px] text-muted-foreground/70 max-w-md leading-relaxed">
           Technical blog on infrastructure, homelab, and automation — and the person behind it. For people who run systems.
         </p>
-        <div class="flex flex-wrap items-center gap-3 mt-5">
-          <Link 
-            href="/blog" 
-            class={buttonVariants({ variant: 'default', size: 'lg', class: primaryButtonClasses })}
-          >
+        <div class="flex flex-wrap items-center gap-5 mt-5">
+          <Link href="/blog" class="btn-neo-primary">
             Read the blog
-            <Icon name="lucide:arrow-right" class="ml-2 size-4" aria-hidden="true" />
+            <Icon name="lucide:arrow-right" class="btn-neo-icon" aria-hidden="true" />
           </Link>
-          <Link 
-            href="/about" 
-            class={buttonVariants({ variant: 'outline', size: 'lg', class: outlineButtonClasses })}
-          >
+          <Link href="/about" class="btn-neo-outline">
+            <Icon name="lucide:user" class="btn-neo-icon" aria-hidden="true" />
             About me
           </Link>
         </div>

@@ -43,6 +43,73 @@
   font-display: swap;
 }
 
+/* Neobrutalist buttons (theme-aware, used for main CTAs across the site) */
+.btn-neo-primary,
+.btn-neo-outline {
+  font-family: 'Montserrat', var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  border-radius: 6px;
+  padding: 0.3rem 0.55rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  transition: box-shadow 0.3s ease, color 0.2s ease, border-color 0.2s ease;
+  text-decoration: none;
+  cursor: pointer;
+  border: 2px solid transparent;
+  outline: none;
+}
+.btn-neo-primary:focus-visible,
+.btn-neo-outline:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.btn-neo-primary {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+  box-shadow: 4px 4px 0 color-mix(in srgb, var(--primary) 70%, black);
+}
+.btn-neo-primary:hover {
+  box-shadow: 0 0 0 color-mix(in srgb, var(--primary) 70%, black);
+  color: var(--primary-foreground);
+}
+.btn-neo-outline {
+  background-color: var(--background);
+  color: var(--foreground);
+  border-color: var(--foreground);
+  box-shadow: 4px 4px 0 var(--foreground);
+}
+.btn-neo-outline:hover {
+  box-shadow: 0 0 0 var(--foreground);
+  color: var(--foreground);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .btn-neo-primary,
+  .btn-neo-outline {
+    transition: box-shadow 0.3s ease, transform 0.3s ease, color 0.2s ease, border-color 0.2s ease;
+  }
+  .btn-neo-primary:hover,
+  .btn-neo-outline:hover {
+    transform: translateY(2px) translateX(2px);
+  }
+}
+/* Large variant for nav cards (e.g. PostNavigation) */
+.btn-neo-lg {
+  min-height: 3.25rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+}
+.btn-neo-primary .btn-neo-icon,
+.btn-neo-outline .btn-neo-icon {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  transition: transform 0.3s ease-in-out;
+}
+
 /* Default Blue Palette */
 :root,
 [data-palette='blue'] {
