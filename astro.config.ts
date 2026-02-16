@@ -69,7 +69,12 @@ export default defineConfig({
     mdx(),
     react(),
     sitemap(),
-    icon(),
+    icon({
+      include: {
+        lucide: ['*'],
+        'simple-icons': ['reddit'],
+      },
+    }),
   ],
   vite: {
     plugins: [tailwindcss() as any],

@@ -69,6 +69,10 @@ export const SOCIAL_LINKS: SocialLink[] = [
     label: 'LinkedIn',
   },
   {
+    href: 'https://www.reddit.com/user/merox57/',
+    label: 'Reddit',
+  },
+  {
     href: 'mailto:hello@merox.dev',
     label: 'Email',
   },
@@ -83,6 +87,7 @@ export const ICON_MAP: IconMap = {
   GitHub: 'lucide:github',
   LinkedIn: 'lucide:linkedin',
   Twitter: 'lucide:twitter',
+  Reddit: 'simple-icons:reddit',
   Email: 'lucide:mail',
   RSS: 'lucide:rss',
 }

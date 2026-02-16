@@ -142,7 +142,6 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       
       /* Animation delays (in milliseconds) */
       --delay-identity: 0;
-      --delay-photo: 80;
       --delay-quote: 160;
       --delay-connect: 240;
       --delay-insight: 300;
@@ -150,6 +149,21 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       
       /* Status indicator color (green) - uses additive color from theme */
       --status-indicator-color: var(--additive, hsl(142 50% 45%));
+      
+      /* Combined identity card specific sizing */
+      --identity-image-size: 340px;
+      --identity-content-flex: 1.4;
+      --identity-gap-desktop: 2.5rem;
+      --identity-image-offset: 0.5rem;
+      
+      /* Connect card sizing */
+      --connect-gap: 0.875rem;
+      --connect-link-gap: 0.625rem;
+      --connect-link-padding-y: 0.625rem;
+      --connect-link-padding-x: 0.875rem;
+      --connect-link-min-height: 2.5rem;
+      --connect-link-border-radius: 0.75rem;
+      --connect-icon-size: 1.25rem;
     }
 
     @media (min-width: 768px) {
@@ -166,7 +180,6 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
 
     /* Stagger delay for entrance animation (all viewports) */
     .bento-identity { --delay: var(--delay-identity); }
-    .bento-photo    { --delay: var(--delay-photo); }
     .bento-quote    { --delay: var(--delay-quote); }
     .bento-connect  { --delay: var(--delay-connect); }
     .bento-insight  { --delay: var(--delay-insight); }
@@ -178,8 +191,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
         grid-template-rows: auto auto auto;
       }
 
-      .bento-identity   { grid-column: 1 / 3; grid-row: 1; }
-      .bento-photo      { grid-column: 3;     grid-row: 1; }
+      .bento-identity   { grid-column: 1 / 4; grid-row: 1; }
       .bento-quote      { grid-column: 1;     grid-row: 2; }
       .bento-insight    { grid-column: 2 / 4; grid-row: 2; min-height: 10rem; }
       .bento-connect    { grid-column: 1 / 3; grid-row: 3; }
@@ -207,29 +219,73 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
     }
 
     /* Hero blocks: more breath */
-    .bento-identity,
     .bento-quote {
       padding: var(--bento-inner-lg);
     }
 
     /* Photo: full bleed, no inset — panel reads as “different” */
-    .bento-photo {
-      padding: 0;
+    /* Combined identity card: flex layout for text + image */
+    .bento-identity {
+      padding: var(--bento-inner-lg);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .bento-identity {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: var(--identity-gap-desktop);
+      }
+    }
+
+    .bento-identity__content {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (min-width: 768px) {
+      .bento-identity__content {
+        flex: var(--identity-content-flex);
+        min-width: 0;
+      }
+    }
+
+    .bento-identity__image {
+      flex-shrink: 0;
+      width: 100%;
+      max-width: var(--identity-image-size);
+      height: var(--identity-image-size);
+      position: relative;
+      margin: 0 auto;
+    }
+
+    @media (min-width: 768px) {
+      .bento-identity__image {
+        margin: 0;
+        width: var(--identity-image-size);
+        height: var(--identity-image-size);
+        align-self: flex-start;
+        margin-top: var(--identity-image-offset);
+      }
     }
     /* Hero image: explicit frame (90% size, offset 6% right / 8% down); both theme images fill it */
-    .bento-photo .hero-img-inner {
+    .bento-identity__image .hero-img-inner {
       position: relative;
       width: 100%;
       height: 100%;
     }
-    .bento-photo .hero-img-frame {
+    .bento-identity__image .hero-img-frame {
       position: absolute;
       left: 6%;
       top: 8%;
       width: 90%;
       height: 90%;
     }
-    .bento-photo .hero-img-frame img {
+    .bento-identity__image .hero-img-frame img {
       width: 100%;
       height: 100%;
       object-fit: contain;
@@ -288,76 +344,181 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       background: color-mix(in srgb, var(--background) 97%, var(--muted) 3%);
     }
 
-    /* ── Connect card (2026) ── */
+    /* ── Connect card: modern minimal design (2026) ── */
     .connect-card {
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: var(--connect-gap);
+      padding: var(--bento-inner);
     }
+
     .connect-card__header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
       gap: 0.5rem;
     }
+
     .connect-card__title {
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 0.65625rem;
+      letter-spacing: 0.02em;
+      color: var(--muted-foreground);
       text-transform: uppercase;
     }
+
     .connect-card__links {
-      display: flex;
-      flex-direction: column;
-      gap: 0.125rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: var(--connect-link-gap);
     }
+
+    @media (min-width: 768px) {
+      .connect-card__links {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     .connect-card__link {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 0.625rem; /* Increased touch target (min 44x44px) */
-      margin: 0 -0.625rem;
-      min-height: 2.75rem; /* Ensure minimum touch target */
-      font-size: 0.8125rem;
+      gap: var(--connect-link-gap);
+      padding: var(--connect-link-padding-y) var(--connect-link-padding-x);
+      min-height: var(--connect-link-min-height);
+      font-size: 0.875rem;
       font-weight: 500;
       color: var(--foreground);
       text-decoration: none;
-      border-radius: 0.5rem; /* Slightly more rounded */
-      transition: color 0.25s var(--ease-apple), 
-                  background 0.25s var(--ease-apple),
-                  transform 0.2s var(--ease-apple);
+      border-radius: var(--connect-link-border-radius);
+      border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+      background: color-mix(in srgb, var(--muted) 20%, transparent);
+      transition: all 0.25s var(--ease-apple);
       position: relative;
+      overflow: hidden;
     }
+
+    .connect-card__link::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: color-mix(in srgb, var(--primary) 8%, transparent);
+      opacity: 0;
+      transition: opacity 0.25s var(--ease-apple);
+    }
+
     .connect-card__link:hover {
       color: var(--primary);
-      background: color-mix(in srgb, var(--primary) 8%, transparent);
-      transform: translateX(2px); /* Subtle slide animation */
+      border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+      background: color-mix(in srgb, var(--primary) 6%, transparent);
+      transform: translateY(-1px);
     }
+
+    .connect-card__link:hover::before {
+      opacity: 1;
+    }
+
     .connect-card__link:active {
-      transform: translateX(0);
+      transform: translateY(0);
       transition-duration: 0.1s;
     }
+
     .connect-card__link:focus-visible {
       outline: 2px solid var(--ring);
       outline-offset: 2px;
-      background: color-mix(in srgb, var(--ring) 15%, transparent);
+      border-color: var(--ring);
     }
+
+    .connect-card__link-content {
+      display: flex;
+      align-items: center;
+      gap: var(--connect-link-gap);
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+
     .connect-card__link-icon {
       flex-shrink: 0;
-      width: 1.125rem;
-      height: 1.125rem;
+      width: var(--connect-icon-size);
+      height: var(--connect-icon-size);
       color: var(--muted-foreground);
-      transition: color 0.2s ease;
+      transition: color 0.25s var(--ease-apple), transform 0.25s var(--ease-apple);
     }
+
     .connect-card__link:hover .connect-card__link-icon {
       color: var(--primary);
+      transform: scale(1.1);
     }
+
+    .connect-card__link-label {
+      flex: 1;
+      min-width: 0;
+    }
+
     .connect-card__email {
-      margin-top: auto;
-      padding-top: 0.75rem; /* Increased spacing */
+      margin-top: 0.5rem;
+      padding-top: 1rem;
       border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
     }
-    .connect-card__email .connect-card__link {
-      font-size: 0.875rem;
+
+    .connect-card__email-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--connect-link-gap);
+      padding: var(--connect-link-padding-y) var(--connect-link-padding-x);
+      min-height: var(--connect-link-min-height);
+      font-size: 0.9375rem;
       font-weight: 600;
-      min-height: 2.75rem; /* Ensure touch target */
+      color: var(--foreground);
+      text-decoration: none;
+      border-radius: var(--connect-link-border-radius);
+      border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+      background: color-mix(in srgb, var(--primary) 8%, transparent);
+      transition: all 0.25s var(--ease-apple);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .connect-card__email-link::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: color-mix(in srgb, var(--primary) 12%, transparent);
+      opacity: 0;
+      transition: opacity 0.25s var(--ease-apple);
+    }
+
+    .connect-card__email-link:hover {
+      color: var(--primary);
+      border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+      background: color-mix(in srgb, var(--primary) 10%, transparent);
+      transform: translateY(-1px);
+    }
+
+    .connect-card__email-link:hover::before {
+      opacity: 1;
+    }
+
+    .connect-card__email-link:active {
+      transform: translateY(0);
+      transition-duration: 0.1s;
+    }
+
+    .connect-card__email-link:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+      border-color: var(--ring);
+    }
+
+    .connect-card__email-icon {
+      flex-shrink: 0;
+      width: var(--connect-icon-size);
+      height: var(--connect-icon-size);
+      color: var(--primary);
+      transition: transform 0.25s var(--ease-apple);
+    }
+
+    .connect-card__email-link:hover .connect-card__email-icon {
+      transform: scale(1.1);
     }
 
     /* ── Particle cards: single accent bar + typography (2026 minimal) ── */
@@ -403,6 +564,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       border-left: none;
       position: relative;
       overflow: hidden;
+      padding: var(--bento-inner);
     }
     .lastfm-card:hover {
       --lastfm-line: color-mix(in srgb, var(--primary) 42%, transparent);
@@ -502,6 +664,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       display: flex;
       flex-direction: column;
       min-height: 0;
+      padding: var(--bento-inner-lg);
     }
 
 
@@ -824,52 +987,53 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
     <!-- Bento grid -->
     <div class="bento-grid">
 
-      <!-- Identity card -->
+      <!-- Identity card: combined with photo -->
       <div class="bento-card bento-identity">
-        <p class="identity-role panel-title" aria-label="HPC System Administrator at Forvia">
-          <span class="identity-role__dot" aria-hidden="true"></span>
-          HPC System Administrator<span class="identity-role__sep" aria-hidden="true">/</span>Forvia
-        </p>
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.92]">
-          Building<br />infrastructure<br /><span class="text-primary transition-colors duration-300">that scales</span>.
-        </h1>
-        <p class="mt-4 text-sm md:text-[15px] text-muted-foreground/75 max-w-md leading-relaxed">
-          Technical blog on infrastructure, homelab, and automation — and the person behind it. For people who run systems.
-        </p>
-        <div class="flex flex-wrap items-center gap-4 mt-6">
-          <Link href="/blog" class="btn-neo-primary" aria-label="Read the blog">
-            Read the blog
-            <Icon name="lucide:arrow-right" class="btn-neo-icon" aria-hidden="true" />
-          </Link>
-          <Link href="/about" class="btn-neo-outline" aria-label="About me">
-            <Icon name="lucide:user" class="btn-neo-icon" aria-hidden="true" />
-            About me
-          </Link>
+        <div class="bento-identity__content">
+          <p class="identity-role panel-title" aria-label="HPC System Administrator at Forvia">
+            <span class="identity-role__dot" aria-hidden="true"></span>
+            HPC System Administrator<span class="identity-role__sep" aria-hidden="true">/</span>Forvia
+          </p>
+          <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.92] break-words">
+            Building<br />infrastructure<br /><span class="text-primary transition-colors duration-300">that scales</span>.
+          </h1>
+          <p class="mt-4 text-sm md:text-[15px] text-muted-foreground/75 max-w-md leading-relaxed">
+            Technical blog on infrastructure, homelab, and automation — and the person behind it. For people who run systems.
+          </p>
+          <div class="flex flex-wrap items-center gap-4 mt-6">
+            <Link href="/blog" class="btn-neo-primary" aria-label="Read the blog">
+              Read the blog
+              <Icon name="lucide:arrow-right" class="btn-neo-icon" aria-hidden="true" />
+            </Link>
+            <Link href="/about" class="btn-neo-outline" aria-label="About me">
+              <Icon name="lucide:user" class="btn-neo-icon" aria-hidden="true" />
+              About me
+            </Link>
+          </div>
         </div>
-      </div>
-
-      <!-- Photo card: one frame (90%, offset), both theme images fill it — same layout light/dark -->
-      <div class="bento-card bento-photo overflow-hidden relative h-72 md:h-auto">
-        <div class="hero-img-inner relative w-full h-full">
-          <div class="hero-img-frame">
-            <Image
-              src={heroImageLight}
-              alt="Robert Melcher in datacenter"
-              widths={[300, 500, heroImageLight.width]}
-              sizes="(max-width: 768px) 100vw, 280px"
-              loading="eager"
-              fetchpriority="high"
-              class="absolute inset-0 w-full h-full object-contain object-center dark:opacity-0 dark:pointer-events-none"
-            />
-            <Image
-              src={heroImageDark}
-              alt="Robert Melcher in datacenter"
-              widths={[300, 500, heroImageDark.width]}
-              sizes="(max-width: 768px) 100vw, 280px"
-              loading="eager"
-              fetchpriority="high"
-              class="absolute inset-0 w-full h-full object-contain object-center opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
-            />
+        <!-- Photo: one frame (90%, offset), both theme images fill it — same layout light/dark -->
+        <div class="bento-identity__image overflow-hidden relative">
+          <div class="hero-img-inner relative w-full h-full">
+            <div class="hero-img-frame">
+              <Image
+                src={heroImageLight}
+                alt="Robert Melcher in datacenter"
+                widths={[300, 500, 600, heroImageLight.width]}
+                sizes="(max-width: 768px) 100vw, 340px"
+                loading="eager"
+                fetchpriority="high"
+                class="absolute inset-0 w-full h-full object-contain object-center dark:opacity-0 dark:pointer-events-none"
+              />
+              <Image
+                src={heroImageDark}
+                alt="Robert Melcher in datacenter"
+                widths={[300, 500, 600, heroImageDark.width]}
+                sizes="(max-width: 768px) 100vw, 340px"
+                loading="eager"
+                fetchpriority="high"
+                class="absolute inset-0 w-full h-full object-contain object-center opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -963,26 +1127,28 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
         </div>
       </div>
 
-      <!-- Connect card (2026) -->
+      <!-- Connect card: modern minimal design -->
       <div class="bento-card bento-connect connect-card">
         <div class="connect-card__header">
-          <span class="connect-card__title panel-title">Get In Touch</span>
+          <span class="connect-card__title">Get In Touch</span>
         </div>
         <nav class="connect-card__links" aria-label="Social and contact links">
           {SOCIAL_LINKS.filter(({ label }) => label !== 'Email').map(({ href, label }: SocialLink) => (
             <Link href={href} aria-label={label} title={label} class="connect-card__link">
-              <Icon
-                name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:link'}
-                class="connect-card__link-icon"
-                aria-hidden="true"
-              />
-              <span>{label}</span>
+              <span class="connect-card__link-content">
+                <Icon
+                  name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:link'}
+                  class="connect-card__link-icon"
+                  aria-hidden="true"
+                />
+                <span class="connect-card__link-label">{label}</span>
+              </span>
             </Link>
           ))}
         </nav>
         <div class="connect-card__email">
-          <a href="mailto:hello@merox.dev" class="connect-card__link" aria-label="Email hello@merox.dev">
-            <Icon name="lucide:mail" class="connect-card__link-icon" aria-hidden="true" />
+          <a href="mailto:hello@merox.dev" class="connect-card__email-link" aria-label="Email hello@merox.dev">
+            <Icon name="lucide:mail" class="connect-card__email-icon" aria-hidden="true" />
             hello@merox.dev
           </a>
         </div>
