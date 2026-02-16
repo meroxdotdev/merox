@@ -181,8 +181,8 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       .bento-identity   { grid-column: 1 / 3; grid-row: 1; }
       .bento-photo      { grid-column: 3;     grid-row: 1; }
       .bento-quote      { grid-column: 1;     grid-row: 2; }
-      .bento-connect    { grid-column: 1 / 3; grid-row: 3; }
       .bento-insight    { grid-column: 2 / 4; grid-row: 2; min-height: 10rem; }
+      .bento-connect    { grid-column: 1 / 3; grid-row: 3; }
       .bento-bike       { grid-column: 3;     grid-row: 3; }
     }
 
@@ -301,11 +301,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       gap: 0.5rem;
     }
     .connect-card__title {
-      font-size: 0.6875rem;
-      font-weight: 600;
-      letter-spacing: 0.2em;
       text-transform: uppercase;
-      color: var(--muted-foreground);
     }
     .connect-card__links {
       display: flex;
@@ -501,12 +497,13 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       }
     }
 
-    /* ── Latest Insight carousel (bento) ── */
+    /* ── Latest Insights carousel (bento) ── */
     .bento-insight {
       display: flex;
       flex-direction: column;
       min-height: 0;
     }
+
 
     .insight-carousel {
       flex: 1;
@@ -703,19 +700,6 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       flex-wrap: wrap;
     }
 
-    .insight-signature {
-      font-family: 'Love', cursive;
-      font-size: 0.9rem;
-      letter-spacing: 0.04em;
-      color: color-mix(in srgb, var(--foreground) 55%, var(--primary));
-      user-select: none;
-      -webkit-user-select: none;
-      transition: color 0.25s var(--ease-apple);
-    }
-    
-    .bento-insight:hover .insight-signature {
-      color: color-mix(in srgb, var(--foreground) 65%, var(--primary));
-    }
 
     /* ── Skip link for accessibility ── */
     .sr-only {
@@ -748,15 +732,19 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
     }
 
     /* ── Identity role line (minimal, left-aligned with content below) ── */
+    /* ── Panel title style (shared across all cards) ── */
+    .panel-title {
+      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+      font-size: 0.65625rem;
+      letter-spacing: 0.02em;
+      color: var(--muted-foreground);
+    }
+
     .identity-role {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
-      font-size: 0.6875rem;
-      letter-spacing: 0.02em;
-      color: var(--muted-foreground);
-      margin-bottom: 1.25rem; /* Slightly increased spacing */
+      margin-bottom: 1.25rem;
     }
     .identity-role__dot {
       position: relative;
@@ -838,7 +826,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
 
       <!-- Identity card -->
       <div class="bento-card bento-identity">
-        <p class="identity-role" aria-label="HPC System Administrator at Forvia">
+        <p class="identity-role panel-title" aria-label="HPC System Administrator at Forvia">
           <span class="identity-role__dot" aria-hidden="true"></span>
           HPC System Administrator<span class="identity-role__sep" aria-hidden="true">/</span>Forvia
         </p>
@@ -893,11 +881,11 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
         </blockquote>
       </div>
 
-      <!-- Latest Insight carousel -->
+      <!-- Latest Insights carousel -->
       <div class="bento-card bento-insight">
         <div class="insight-carousel">
           <div class="insight-carousel-header">
-            <span class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Latest Insight</span>
+            <span class="panel-title uppercase">Latest Insights</span>
             {latestPostsEnriched.length > 1 ? (
               <nav class="insight-carousel-nav" aria-label="Navigate insights">
                 <button 
@@ -971,7 +959,6 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
               {latestPostsEnriched.length > 0 ? 'Explore all posts' : 'Go to blog'}
               <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
             </Link>
-            <span class="insight-signature" aria-hidden="true">./merox.sh --live</span>
           </div>
         </div>
       </div>
@@ -979,7 +966,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       <!-- Connect card (2026) -->
       <div class="bento-card bento-connect connect-card">
         <div class="connect-card__header">
-          <span class="connect-card__title">Connect</span>
+          <span class="connect-card__title panel-title">Get In Touch</span>
         </div>
         <nav class="connect-card__links" aria-label="Social and contact links">
           {SOCIAL_LINKS.filter(({ label }) => label !== 'Email').map(({ href, label }: SocialLink) => (
@@ -1004,7 +991,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       <!-- Latest played (Last.fm) -->
       <div class="bento-card particle-card lastfm-card bento-bike flex items-center gap-3 group/lastfm" tabindex="0" role="region" aria-label="Latest played track">
         <div class="min-w-0 flex-1 relative z-[1]">
-          <span class="text-[10px] font-mono uppercase tracking-widest text-muted-foreground">Latest played</span>
+          <span class="panel-title uppercase">Latest played</span>
           {lastFmTrack ? (
             <a
               href={lastFmTrack.url}

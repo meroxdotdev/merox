@@ -5,6 +5,10 @@ export interface BrowserInfo {
   viewport: string
   screen: string
   depth: string
+  platform: string
+  language: string
+  pixelRatio: string
+  online: boolean
 }
 
 const isClient = typeof window !== 'undefined'
@@ -26,6 +30,17 @@ function getColorDepth(): string {
   return `${depth}BIT`
 }
 
+function getPlatform(): string {
+  if (!isClient) return 'Unknown'
+  const ua = navigator.userAgent
+  if (ua.includes('Win')) return 'Windows'
+  if (ua.includes('Mac')) return 'macOS'
+  if (ua.includes('Linux')) return 'Linux'
+  if (ua.includes('Android')) return 'Android'
+  if (ua.includes('iOS') || ua.includes('iPhone') || ua.includes('iPad')) return 'iOS'
+  return navigator.platform || 'Unknown'
+}
+
 function getBrowserInfo(): BrowserInfo {
   if (!isClient) {
     return {
@@ -33,6 +48,10 @@ function getBrowserInfo(): BrowserInfo {
       viewport: '0x0',
       screen: '0x0',
       depth: '24BIT',
+      platform: 'Unknown',
+      language: 'en',
+      pixelRatio: '1x',
+      online: false,
     }
   }
 
@@ -41,6 +60,10 @@ function getBrowserInfo(): BrowserInfo {
     viewport: `${window.innerWidth}x${window.innerHeight}`,
     screen: `${window.screen.width}x${window.screen.height}`,
     depth: getColorDepth(),
+    platform: getPlatform(),
+    language: navigator.language || 'en',
+    pixelRatio: `${window.devicePixelRatio || 1}x`,
+    online: navigator.onLine,
   }
 }
 
@@ -61,10 +84,14 @@ export function useBrowserInfo(): BrowserInfo {
     updateBrowserInfo()
     window.addEventListener('resize', updateBrowserInfo)
     window.addEventListener('orientationchange', updateBrowserInfo)
+    window.addEventListener('online', updateBrowserInfo)
+    window.addEventListener('offline', updateBrowserInfo)
 
     return () => {
       window.removeEventListener('resize', updateBrowserInfo)
       window.removeEventListener('orientationchange', updateBrowserInfo)
+      window.removeEventListener('online', updateBrowserInfo)
+      window.removeEventListener('offline', updateBrowserInfo)
     }
   }, [])
 

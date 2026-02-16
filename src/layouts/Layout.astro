@@ -9,8 +9,6 @@ import Footer from '@/components/Footer.astro'
 import Head from '@/components/Head.astro'
 import Header from '@/components/Header.astro'
 import ThemeInit from '@/components/ThemeInit.astro'
-import BrowserInfoPanel from '@/components/react/BrowserInfoPanel'
-import TimeInfoPanel from '@/components/react/TimeInfoPanel'
 import { SITE } from '@/consts'
 import { cn } from '@/lib/utils'
 
@@ -100,7 +98,5 @@ const { class: className, hideFloatingSidebar = false, contentPadding = 'pb-20' 
     </main>
     {false && !hideFloatingSidebar && <FloatingSidebar />}
     <Footer />
-    <BrowserInfoPanel client:load />
-    <TimeInfoPanel client:load />
   </body>
 </html>
