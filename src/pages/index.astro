@@ -175,6 +175,25 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
     .bento-photo {
       padding: 0;
     }
+    /* Hero image: explicit frame (90% size, offset 6% right / 8% down); both theme images fill it */
+    .bento-photo .hero-img-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    .bento-photo .hero-img-frame {
+      position: absolute;
+      left: 6%;
+      top: 8%;
+      width: 90%;
+      height: 90%;
+    }
+    .bento-photo .hero-img-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
 
     @media (prefers-reduced-motion: no-preference) {
       .bento-card {
@@ -630,27 +649,29 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
         </div>
       </div>
 
-      <!-- Photo card: theme-aware datacenter image (light/dark), one visible by theme -->
+      <!-- Photo card: one frame (90%, offset), both theme images fill it — same layout light/dark -->
       <div class="bento-card bento-photo overflow-hidden relative h-72 md:h-auto" style="--delay: 80">
-        <div class="relative w-full h-full">
-          <Image
-            src={heroImageLight}
-            alt="Robert Melcher in datacenter"
-            widths={[300, 500, heroImageLight.width]}
-            sizes="(max-width: 768px) 100vw, 280px"
-            loading="eager"
-            fetchpriority="high"
-            class="w-full h-full object-cover object-[center_15%] md:object-top dark:opacity-0 dark:pointer-events-none"
-          />
-          <Image
-            src={heroImageDark}
-            alt="Robert Melcher in datacenter"
-            widths={[300, 500, heroImageDark.width]}
-            sizes="(max-width: 768px) 100vw, 280px"
-            loading="eager"
-            fetchpriority="high"
-            class="absolute inset-0 w-full h-full object-cover object-[center_15%] md:object-top opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
-          />
+        <div class="hero-img-inner relative w-full h-full">
+          <div class="hero-img-frame">
+            <Image
+              src={heroImageLight}
+              alt="Robert Melcher in datacenter"
+              widths={[300, 500, heroImageLight.width]}
+              sizes="(max-width: 768px) 100vw, 280px"
+              loading="eager"
+              fetchpriority="high"
+              class="absolute inset-0 w-full h-full object-contain object-center dark:opacity-0 dark:pointer-events-none"
+            />
+            <Image
+              src={heroImageDark}
+              alt="Robert Melcher in datacenter"
+              widths={[300, 500, heroImageDark.width]}
+              sizes="(max-width: 768px) 100vw, 280px"
+              loading="eager"
+              fetchpriority="high"
+              class="absolute inset-0 w-full h-full object-contain object-center opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
+            />
+          </div>
         </div>
       </div>
 
