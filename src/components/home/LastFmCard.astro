@@ -1,0 +1,39 @@
+---
+import { Icon } from 'astro-icon/components'
+import type { LastFmRecentTrack } from '@/lib/lastfm'
+
+interface Props {
+  track: LastFmRecentTrack | null
+}
+
+const { track } = Astro.props
+---
+
+<div id="lastfm-card" class="bento-card particle-card lastfm-card bento-bike flex items-center gap-3 group/lastfm" tabindex="0" role="region" aria-label="Latest played track">
+  <div class="min-w-0 flex-1 relative z-[1]">
+    <span class="panel-title uppercase">Latest played</span>
+    {track ? (
+      <a
+        href={track.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="block mt-1 group/link focus-visible:outline-2 focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:rounded"
+        aria-label={`${track.name} by ${track.artist}${track.nowPlaying ? ' - Now playing' : ''}`}
+      >
+        <span class="lastfm-track-name group-hover/link:text-primary transition-colors">{track.name}</span>
+        <span class="lastfm-artist">{track.artist}</span>
+        {track.nowPlaying ? (
+          <span class="lastfm-now" aria-label="Now playing">
+            <span class="lastfm-now-dot" aria-hidden="true"></span>
+            Now
+          </span>
+        ) : null}
+      </a>
+    ) : (
+      <p class="mt-1 text-sm text-muted-foreground">Nothing playing</p>
+    )}
+  </div>
+  {track && (
+    <Icon name="lucide:external-link" class="size-3.5 flex-shrink-0 text-muted-foreground/50 group-hover/lastfm:text-primary/70 transition-colors" aria-hidden="true" />
+  )}
+</div>

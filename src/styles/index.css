@@ -829,7 +829,7 @@
 /* ── Panel title style (shared across all cards) ── */
 .panel-title {
   font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
-  font-size: 0.65625rem;
+  font-size: 0.625rem;
   letter-spacing: 0.02em;
   color: var(--muted-foreground);
 }
@@ -839,6 +839,10 @@
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 1.25rem;
+}
+
+.identity-role.panel-title {
+  font-size: 0.5625rem;
 }
 
 .identity-role__dot {

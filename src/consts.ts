@@ -91,3 +91,16 @@ export const ICON_MAP: IconMap = {
   Email: 'lucide:mail',
   RSS: 'lucide:rss',
 }
+
+// Person information for structured data and display
+export const PERSON = {
+  name: 'Robert Melcher',
+  alternateName: 'merox',
+  jobTitle: 'HPC System Administrator',
+  worksFor: 'Forvia',
+  email: 'hello@merox.dev',
+  sameAs: [
+    'https://github.com/meroxdotdev',
+    'https://www.linkedin.com/in/robert-melcher-92a1a9157',
+  ],
+} as const

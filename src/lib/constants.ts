@@ -63,3 +63,29 @@ export const SEARCH = {
   SNIPPET_CONTEXT_LENGTH: 50,
 } as const
 
+/**
+ * Carousel constants
+ */
+export const CAROUSEL = {
+  // Swipe threshold in pixels
+  SWIPE_THRESHOLD: 50,
+} as const
+
+/**
+ * Last.fm card animation constants
+ */
+export const LASTFM_ANIMATION = {
+  // Animation duration (must match CSS)
+  DURATION: 15000, // 15 seconds in milliseconds
+  
+  // Physics simulation
+  FRICTION: 0.92, // Friction coefficient (0-1, lower = more friction)
+  MIN_VELOCITY: 0.1, // Minimum velocity to stop rotation completely
+  
+  // Sensitivity
+  SENSITIVITY: 0.8, // Scratch sensitivity factor
+  
+  // Performance
+  FRAME_RATE: 16.67, // ~60fps in milliseconds
+  RECT_CACHE_DURATION: 100, // Cache bounding rect for 100ms
+} as const

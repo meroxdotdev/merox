@@ -1,0 +1,121 @@
+---
+import Link from '@/components/Link.astro'
+import { Icon } from 'astro-icon/components'
+import { ensureTrailingSlash } from '@/lib/utils'
+import { initCarousel } from '@/lib/carousel'
+
+interface Post {
+  id: string
+  data: {
+    title: string
+    description?: string
+    date: Date
+  }
+}
+
+interface Props {
+  posts: Array<{
+    entry: Post
+    readTime: string
+    formattedDate: string
+  }>
+}
+
+const { posts } = Astro.props
+const slideCount = posts.length
+---
+
+<div class="bento-card bento-insight">
+  <div class="insight-carousel">
+    <div class="insight-carousel-header">
+      <span class="panel-title uppercase">Latest Insights</span>
+      {slideCount > 1 ? (
+        <nav class="insight-carousel-nav" aria-label="Navigate insights">
+          <button 
+            type="button" 
+            id="insight-prev" 
+            class="insight-carousel-nav-btn" 
+            aria-label="Previous insight" 
+            disabled={slideCount <= 1}
+            aria-keyshortcuts="ArrowLeft"
+          >
+            <Icon name="lucide:chevron-left" class="size-4" aria-hidden="true" />
+          </button>
+          <button 
+            type="button" 
+            id="insight-next" 
+            class="insight-carousel-nav-btn" 
+            aria-label="Next insight" 
+            disabled={slideCount <= 1}
+            aria-keyshortcuts="ArrowRight"
+          >
+            <Icon name="lucide:chevron-right" class="size-4" aria-hidden="true" />
+          </button>
+        </nav>
+      ) : null}
+    </div>
+    {slideCount > 0 ? (
+      <div 
+        class="insight-carousel-track" 
+        id="insight-track" 
+        aria-live="polite" 
+        aria-atomic="true"
+        tabindex="0"
+        role="region"
+        aria-label="Latest insights carousel"
+      >
+        {posts.map(({ entry, readTime, formattedDate }, i) => (
+          <div
+            class="insight-slide"
+            data-visible={i === 0 ? 'true' : 'false'}
+            data-index={i}
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`Insight ${i + 1} of ${slideCount}`}
+            aria-hidden={i !== 0}
+            hidden={i !== 0}
+          >
+            <span class="insight-slide-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+            <div class="insight-slide-content">
+              <Link href={ensureTrailingSlash(`/blog/${entry.id}`)} class="insight-slide-title-link">
+                <span class="insight-slide-title">{entry.data.title}</span>
+              </Link>
+              {entry.data.description ? (
+                <span class="insight-slide-desc">{entry.data.description}</span>
+              ) : null}
+              <span class="insight-slide-meta">
+                <time datetime={entry.data.date.toISOString()}>{formattedDate}</time>
+                <span aria-hidden="true">·</span>
+                <span>{readTime}</span>
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class="insight-carousel-track flex items-center justify-center min-h-[5rem]">
+        <p class="text-sm text-muted-foreground/80">No posts yet.</p>
+      </div>
+    )}
+    <div class="insight-carousel-footer">
+      <Link href="/blog" class="text-xs font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
+        {slideCount > 0 ? 'Explore all posts' : 'Go to blog'}
+        <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
+      </Link>
+    </div>
+  </div>
+</div>
+
+{slideCount > 1 && (
+  <script define:vars={{ slideCount }}>
+    import { initCarousel } from '@/lib/carousel'
+    
+    initCarousel({
+      trackId: 'insight-track',
+      prevBtnId: 'insight-prev',
+      nextBtnId: 'insight-next',
+      slideSelector: '.insight-slide',
+      slideCount,
+    })
+  </script>
+)}

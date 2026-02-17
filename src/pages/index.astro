@@ -1,17 +1,21 @@
 ---
 import '@/styles/index.css'
-import Link from '@/components/Link.astro'
 import PageHead from '@/components/PageHead.astro'
 import Layout from '@/layouts/Layout.astro'
-import { Icon } from 'astro-icon/components'
 import { getRecentPosts, getCombinedReadingTime } from '@/lib/data-utils'
 import { fetchRecentTracks, type LastFmRecentTrack } from '@/lib/lastfm'
-import { formatDate, ensureTrailingSlash } from '@/lib/utils'
-import { SOCIAL_LINKS, ICON_MAP, SITE } from '@/consts'
-import type { SocialLink } from '@/types'
+import { formatDate } from '@/lib/utils'
+import { SITE, PERSON } from '@/consts'
+import { createHomepageSchemas } from '@/lib/schemas'
+import { initLastFmEffect } from '@/lib/lastfm-effect'
 import { Image } from 'astro:assets'
 import heroImageLight from '../assets/t1.webp'
 import heroImageDark from '../assets/t2.webp'
+import IdentityCard from '@/components/home/IdentityCard.astro'
+import QuoteCard from '@/components/home/QuoteCard.astro'
+import InsightCarousel from '@/components/home/InsightCarousel.astro'
+import ConnectCard from '@/components/home/ConnectCard.astro'
+import LastFmCard from '@/components/home/LastFmCard.astro'
 
 // Data fetching with error handling
 let latestPosts: Awaited<ReturnType<typeof getRecentPosts>> = []
@@ -37,61 +41,29 @@ const latestPostsEnriched = await Promise.all(
 )
 
 // Structured data schemas (use light variant as default for crawlers/schema)
-const baseUrl = Astro.site?.href ?? SITE.href;
-const logoUrl = new URL(heroImageLight.src, baseUrl).href;
+const baseUrl = Astro.site?.href ?? SITE.href
+const logoUrl = new URL(heroImageLight.src, baseUrl).href
 
-const personSchema = {
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "Robert Melcher",
-  "alternateName": "merox",
-  "url": baseUrl,
-  "image": logoUrl,
-  "jobTitle": "HPC System Administrator",
-  "worksFor": { "@type": "Organization", "name": "Forvia" },
-  "sameAs": [
-    "https://github.com/meroxdotdev",
-    "https://www.linkedin.com/in/robert-melcher-92a1a9157"
-  ],
-  "description": SITE.description
-}
-
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": SITE.title,
-  "url": baseUrl,
-  "logo": logoUrl,
-  "description": SITE.description,
-  "founder": { "@type": "Person", "name": "Robert Melcher" }
-}
-
-const websiteSchema = {
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": SITE.title,
-  "url": baseUrl,
-  "description": SITE.description,
-  "author": { "@type": "Person", "name": "Robert Melcher" },
-  "potentialAction": {
-    "@type": "SearchAction",
-    "target": { 
-      "@type": "EntryPoint", 
-      "urlTemplate": `${baseUrl}/blog?q={search_term_string}` 
-    },
-    "query-input": "required name=search_term_string"
-  }
-}
+const schemas = createHomepageSchemas(
+  SITE,
+  baseUrl,
+  logoUrl,
+  PERSON.name,
+  PERSON.alternateName,
+  PERSON.jobTitle,
+  PERSON.worksFor,
+  PERSON.sameAs
+)
 
 // Last.fm recent track (build-time fetch)
 // Environment variables: PUBLIC_LASTFM_USERNAME + PUBLIC_LASTFM_API_KEY
 // Fallback: LASTFM_USER + LASTFM_API_KEY
 // Note: Restart dev server after changing .env
-const lastFmUser = (import.meta.env.PUBLIC_LASTFM_USERNAME ?? 
-                    import.meta.env.PUBLIC_LASTFM_USER ?? 
-                    import.meta.env.LASTFM_USER) as string | undefined
-const lastFmApiKey = (import.meta.env.PUBLIC_LASTFM_API_KEY ?? 
-                      import.meta.env.LASTFM_API_KEY) as string | undefined
+const lastFmUser = (import.meta.env.PUBLIC_LASTFM_USERNAME ??
+  import.meta.env.PUBLIC_LASTFM_USER ??
+  import.meta.env.LASTFM_USER) as string | undefined
+const lastFmApiKey = (import.meta.env.PUBLIC_LASTFM_API_KEY ??
+  import.meta.env.LASTFM_API_KEY) as string | undefined
 
 let lastFmTrack: LastFmRecentTrack | null = null
 if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
@@ -110,228 +82,48 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
 ---
 
 <Layout class="max-w-4xl" contentPadding="pb-4">
-  <PageHead 
-    slot="head" 
-    title="Merox - Insights from my tech journey" 
-    fullTitle={true} 
-  >
+  <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true}>
     <!-- Preload LCP hero images (theme-aware) for fast paint -->
-    <link rel="preload" as="image" href={heroImageLight.src}>
-    <link rel="preload" as="image" href={heroImageDark.src}>
+    <link rel="preload" as="image" href={heroImageLight.src} />
+    <link rel="preload" as="image" href={heroImageDark.src} />
   </PageHead>
 
-  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
-  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(schemas.person)} />
+  <script type="application/ld+json" set:html={JSON.stringify(schemas.organization)} />
+  <script type="application/ld+json" set:html={JSON.stringify(schemas.website)} />
 
   <!-- Skip to main content link for accessibility -->
-  <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+  <a
+    href="#main-content"
+    class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+  >
     Skip to main content
   </a>
 
   <section class="hero-section relative pt-6 pb-4 md:pt-10 md:pb-6" id="hero">
     <!-- Bento grid -->
     <div class="bento-grid">
-
       <!-- Identity card: combined with photo -->
-      <div class="bento-card bento-identity">
-        <div class="bento-identity__content">
-          <p class="identity-role panel-title" aria-label="HPC System Administrator at Forvia">
-            <span class="identity-role__dot" aria-hidden="true"></span>
-            HPC System Administrator<span class="identity-role__sep" aria-hidden="true">/</span>Forvia
-          </p>
-          <h1 class="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase leading-[0.92] break-words">
-            Building<br />infrastructure<br /><span class="text-primary transition-colors duration-300">that scales</span>.
-          </h1>
-          <p class="mt-4 text-sm md:text-[15px] text-muted-foreground/75 max-w-md leading-relaxed">
-            Technical blog on infrastructure, homelab, and automation — and the person behind it. For people who run systems.
-          </p>
-          <div class="flex flex-wrap items-center gap-4 mt-6">
-            <Link href="/blog" class="btn-neo-primary" aria-label="Read the blog">
-              Read the blog
-              <Icon name="lucide:arrow-right" class="btn-neo-icon" aria-hidden="true" />
-            </Link>
-            <Link href="/about" class="btn-neo-outline" aria-label="About me">
-              <Icon name="lucide:user" class="btn-neo-icon" aria-hidden="true" />
-              About me
-            </Link>
-          </div>
-        </div>
-        <!-- Photo: one frame (90%, offset), both theme images fill it — same layout light/dark -->
-        <div class="bento-identity__image overflow-hidden relative">
-          <div class="hero-img-inner relative w-full h-full">
-            <div class="hero-img-frame">
-              <Image
-                src={heroImageLight}
-                alt="Robert Melcher in datacenter"
-                widths={[300, 500, 600, heroImageLight.width]}
-                sizes="(max-width: 768px) 100vw, 340px"
-                loading="eager"
-                fetchpriority="high"
-                class="absolute inset-0 w-full h-full object-contain object-center dark:opacity-0 dark:pointer-events-none"
-              />
-              <Image
-                src={heroImageDark}
-                alt="Robert Melcher in datacenter"
-                widths={[300, 500, 600, heroImageDark.width]}
-                sizes="(max-width: 768px) 100vw, 340px"
-                loading="eager"
-                fetchpriority="high"
-                class="absolute inset-0 w-full h-full object-contain object-center opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
+      <IdentityCard
+        jobTitle={PERSON.jobTitle}
+        worksFor={PERSON.worksFor}
+        heroImageLight={heroImageLight}
+        heroImageDark={heroImageDark}
+      />
 
       <!-- Quote card -->
-      <div class="bento-card bento-quote flex items-center" tabindex="0" role="note" aria-label="Quote">
-        <blockquote class="text-lg md:text-xl italic leading-relaxed text-foreground/90">
-          <span class="text-primary/60 not-italic">&ldquo;</span>Works in theory &mdash;<br />now let&rsquo;s see what <span class="text-foreground font-semibold not-italic">doesn&rsquo;t</span><span class="text-primary/60 not-italic">&rdquo;</span>
-        </blockquote>
-      </div>
+      <QuoteCard />
 
       <!-- Latest Insights carousel -->
-      <div class="bento-card bento-insight">
-        <div class="insight-carousel">
-          <div class="insight-carousel-header">
-            <span class="panel-title uppercase">Latest Insights</span>
-            {latestPostsEnriched.length > 1 ? (
-              <nav class="insight-carousel-nav" aria-label="Navigate insights">
-                <button 
-                  type="button" 
-                  id="insight-prev" 
-                  class="insight-carousel-nav-btn" 
-                  aria-label="Previous insight" 
-                  disabled={latestPostsEnriched.length <= 1}
-                  aria-keyshortcuts="ArrowLeft"
-                >
-                  <Icon name="lucide:chevron-left" class="size-4" aria-hidden="true" />
-                </button>
-                <button 
-                  type="button" 
-                  id="insight-next" 
-                  class="insight-carousel-nav-btn" 
-                  aria-label="Next insight" 
-                  disabled={latestPostsEnriched.length <= 1}
-                  aria-keyshortcuts="ArrowRight"
-                >
-                  <Icon name="lucide:chevron-right" class="size-4" aria-hidden="true" />
-                </button>
-              </nav>
-            ) : null}
-          </div>
-          {latestPostsEnriched.length > 0 ? (
-            <div 
-              class="insight-carousel-track" 
-              id="insight-track" 
-              aria-live="polite" 
-              aria-atomic="true"
-              tabindex="0"
-              role="region"
-              aria-label="Latest insights carousel"
-            >
-              {latestPostsEnriched.map(({ entry, readTime, formattedDate }, i) => (
-                <div
-                  class="insight-slide"
-                  data-visible={i === 0 ? 'true' : 'false'}
-                  data-index={i}
-                  role="group"
-                  aria-roledescription="slide"
-                  aria-label={`Insight ${i + 1} of ${latestPostsEnriched.length}`}
-                  aria-hidden={i !== 0}
-                  hidden={i !== 0}
-                >
-                  <span class="insight-slide-number" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-                  <div class="insight-slide-content">
-                    <Link href={ensureTrailingSlash(`/blog/${entry.id}`)} class="insight-slide-title-link">
-                      <span class="insight-slide-title">{entry.data.title}</span>
-                    </Link>
-                    {entry.data.description ? (
-                      <span class="insight-slide-desc">{entry.data.description}</span>
-                    ) : null}
-                    <span class="insight-slide-meta">
-                      <time datetime={entry.data.date.toISOString()}>{formattedDate}</time>
-                      <span aria-hidden="true">·</span>
-                      <span>{readTime}</span>
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div class="insight-carousel-track flex items-center justify-center min-h-[5rem]">
-              <p class="text-sm text-muted-foreground/80">No posts yet.</p>
-            </div>
-          )}
-          <div class="insight-carousel-footer">
-            <Link href="/blog" class="text-xs font-medium text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1">
-              {latestPostsEnriched.length > 0 ? 'Explore all posts' : 'Go to blog'}
-              <Icon name="lucide:arrow-right" class="size-3" aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </div>
+      <InsightCarousel posts={latestPostsEnriched} />
 
       <!-- Connect card: modern minimal design -->
-      <div class="bento-card bento-connect connect-card">
-        <div class="connect-card__header">
-          <span class="connect-card__title">Get In Touch</span>
-        </div>
-        <nav class="connect-card__links" aria-label="Social and contact links">
-          {SOCIAL_LINKS.filter(({ label }) => label !== 'Email').map(({ href, label }: SocialLink) => (
-            <Link href={href} aria-label={label} title={label} class="connect-card__link">
-              <span class="connect-card__link-content">
-                <Icon
-                  name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:link'}
-                  class="connect-card__link-icon"
-                  aria-hidden="true"
-                />
-                <span class="connect-card__link-label">{label}</span>
-              </span>
-            </Link>
-          ))}
-        </nav>
-        <div class="connect-card__email">
-          <a href="mailto:hello@merox.dev" class="connect-card__email-link" aria-label="Email hello@merox.dev">
-            <Icon name="lucide:mail" class="connect-card__email-icon" aria-hidden="true" />
-            hello@merox.dev
-          </a>
-        </div>
-      </div>
+      <ConnectCard />
 
       <!-- Latest played (Last.fm) -->
-      <div id="lastfm-card" class="bento-card particle-card lastfm-card bento-bike flex items-center gap-3 group/lastfm" tabindex="0" role="region" aria-label="Latest played track">
-        <div class="min-w-0 flex-1 relative z-[1]">
-          <span class="panel-title uppercase">Latest played</span>
-          {lastFmTrack ? (
-            <a
-              href={lastFmTrack.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="block mt-1 group/link focus-visible:outline-2 focus-visible:outline focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:rounded"
-              aria-label={`${lastFmTrack.name} by ${lastFmTrack.artist}${lastFmTrack.nowPlaying ? ' - Now playing' : ''}`}
-            >
-              <span class="lastfm-track-name group-hover/link:text-primary transition-colors">{lastFmTrack.name}</span>
-              <span class="lastfm-artist">{lastFmTrack.artist}</span>
-              {lastFmTrack.nowPlaying ? (
-                <span class="lastfm-now" aria-label="Now playing">
-                  <span class="lastfm-now-dot" aria-hidden="true"></span>
-                  Now
-                </span>
-              ) : null}
-            </a>
-          ) : (
-            <p class="mt-1 text-sm text-muted-foreground">Nothing playing</p>
-          )}
-        </div>
-        {lastFmTrack && (
-          <Icon name="lucide:external-link" class="size-3.5 flex-shrink-0 text-muted-foreground/50 group-hover/lastfm:text-primary/70 transition-colors" aria-hidden="true" />
-        )}
-      </div>
+      <LastFmCard track={lastFmTrack} />
     </div>
   </section>
-
 
   {hasError && (
     <section class="mt-8 pt-8">
@@ -341,333 +133,10 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
     </section>
   )}
 
-  {latestPostsEnriched.length > 1 && (
-    <script define:vars={{ slideCount: latestPostsEnriched.length }} is:inline>
-      (function () {
-        'use strict';
-        
-        const SWIPE_THRESHOLD = 50;
-        
-        const track = document.getElementById('insight-track');
-        const prevBtn = document.getElementById('insight-prev');
-        const nextBtn = document.getElementById('insight-next');
-        
-        if (!track || !prevBtn || !nextBtn) return;
-
-        const slides = track.querySelectorAll('.insight-slide');
-        let current = 0;
-        let touchStartX = 0;
-        let touchEndX = 0;
-
-        function goTo(index, direction = 'next') {
-          const prevIndex = current;
-          current = (index + slideCount) % slideCount;
-          
-          // Update slides with smooth transition
-          slides.forEach((el, i) => {
-            const visible = i === current;
-            el.setAttribute('data-visible', visible ? 'true' : 'false');
-            el.setAttribute('aria-hidden', String(!visible));
-            el.toggleAttribute('hidden', !visible);
-            
-            // Add direction class for animation
-            if (visible && i !== prevIndex) {
-              el.setAttribute('data-direction', direction);
-            }
-          });
-          
-          // Update button states
-          prevBtn.disabled = current === 0;
-          nextBtn.disabled = current === slideCount - 1;
-          
-          // Announce change to screen readers
-          const currentSlide = slides[current];
-          if (currentSlide) {
-            const title = currentSlide.querySelector('.insight-slide-title')?.textContent || '';
-            track.setAttribute('aria-label', `Showing insight ${current + 1} of ${slideCount}: ${title}`);
-          }
-        }
-        
-        function handleSwipe() {
-          const diff = touchStartX - touchEndX;
-          if (Math.abs(diff) > SWIPE_THRESHOLD) {
-            if (diff > 0 && current < slideCount - 1) {
-              // Swipe left - next
-              goTo(current + 1, 'next');
-            } else if (diff < 0 && current > 0) {
-              // Swipe right - previous
-              goTo(current - 1, 'prev');
-            }
-          }
-        }
-        
-        // Initialize
-        goTo(0);
-
-        // Button clicks
-        prevBtn.addEventListener('click', () => goTo(current - 1, 'prev'));
-        nextBtn.addEventListener('click', () => goTo(current + 1, 'next'));
-        
-        // Keyboard navigation (Arrow keys, Home, End)
-        track.addEventListener('keydown', (e) => {
-          if (e.key === 'ArrowLeft' && current > 0) {
-            e.preventDefault();
-            goTo(current - 1, 'prev');
-            prevBtn.focus();
-          } else if (e.key === 'ArrowRight' && current < slideCount - 1) {
-            e.preventDefault();
-            goTo(current + 1, 'next');
-            nextBtn.focus();
-          } else if (e.key === 'Home') {
-            e.preventDefault();
-            goTo(0, 'prev');
-          } else if (e.key === 'End') {
-            e.preventDefault();
-            goTo(slideCount - 1, 'next');
-          }
-        });
-        
-        // Touch swipe support
-        track.addEventListener('touchstart', (e) => {
-          touchStartX = e.changedTouches[0].screenX;
-        }, { passive: true });
-        
-        track.addEventListener('touchend', (e) => {
-          touchEndX = e.changedTouches[0].screenX;
-          handleSwipe();
-        }, { passive: true });
-      })();
+  {lastFmTrack && (
+    <script>
+      import { initLastFmEffect } from '@/lib/lastfm-effect'
+      initLastFmEffect('lastfm-card')
     </script>
   )}
-
-  <!-- Last.fm card scratch effect -->
-  <script is:inline>
-    (function () {
-      'use strict';
-      
-      // Verifică dacă utilizatorul preferă mișcare redusă
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReducedMotion) return;
-      
-      // Verifică dacă dispozitivul suportă hover (mouse) - standard CSS Media Query Level 4
-      // Pe dispozitive touch (care nu suportă hover), lasă doar animația CSS automată
-      const supportsHover = window.matchMedia('(hover: hover)').matches;
-      if (!supportsHover) return; // Pe mobile/touch, doar animația automată
-      
-      const card = document.getElementById('lastfm-card');
-      if (!card) return;
-      
-      // Constante pentru configurare
-      const ANIMATION_DURATION = 15000; // 15s - trebuie să se potrivească cu CSS
-      const FRICTION = 0.92; // Frecare pentru a simula un disc real (0-1, mai mic = mai multă frecare)
-      const MIN_VELOCITY = 0.1; // Viteza minimă pentru a opri complet rotația
-      const SENSITIVITY = 0.8; // Factor de sensibilitate pentru scratch
-      const FRAME_RATE = 16.67; // ~60fps în ms
-      
-      // State management
-      let isHovering = false;
-      let currentRotation = 0;
-      let angularVelocity = 0;
-      let lastMouseAngle = 0;
-      let lastMouseTime = 0;
-      let animationStartTime = performance.now();
-      let animationFrameId = null;
-      let cachedRect = null;
-      let rectCacheTime = 0;
-      const RECT_CACHE_DURATION = 100; // Cache rect pentru 100ms
-      
-      // Cleanup function pentru a preveni memory leaks
-      function cleanup() {
-        if (animationFrameId !== null) {
-          cancelAnimationFrame(animationFrameId);
-          animationFrameId = null;
-        }
-        isHovering = false;
-        angularVelocity = 0;
-      }
-      
-      // Obține bounding rect cu cache pentru performanță
-      function getCachedRect() {
-        const now = performance.now();
-        if (!cachedRect || (now - rectCacheTime) > RECT_CACHE_DURATION) {
-          cachedRect = card.getBoundingClientRect();
-          rectCacheTime = now;
-        }
-        return cachedRect;
-      }
-      
-      // Obține rotația curentă din animația CSS bazată pe timp
-      function getCurrentAnimationRotation() {
-        const elapsed = (performance.now() - animationStartTime) % ANIMATION_DURATION;
-        const progress = elapsed / ANIMATION_DURATION;
-        return progress * 360;
-      }
-      
-      // Calculează unghiul bazat pe poziția mouse-ului față de centrul cardului
-      function getAngleFromCenter(x, y, rect) {
-        const centerX = rect.left + rect.width / 2;
-        const centerY = rect.top + rect.height / 2;
-        
-        // Calculează unghiul în radiani
-        const angle = Math.atan2(y - centerY, x - centerX);
-        // Convertește la grade (0-360) și ajustează pentru a începe de sus
-        return (angle * 180 / Math.PI + 90 + 360) % 360;
-      }
-      
-      // Normalizează unghiul în intervalul 0-360
-      function normalizeAngle(angle) {
-        return ((angle % 360) + 360) % 360;
-      }
-      
-      // Calculează diferența de unghi între două unghiuri (ținând cont de wraparound)
-      function angleDifference(a, b) {
-        let diff = normalizeAngle(a) - normalizeAngle(b);
-        if (diff > 180) diff -= 360;
-        if (diff < -180) diff += 360;
-        return diff;
-      }
-      
-      // Animație cu inerție și frecare (simulează un disc real)
-      function animate() {
-        if (!isHovering || !card.isConnected) {
-          cleanup();
-          return;
-        }
-        
-        // Aplică viteza unghiulară cu frecare
-        if (Math.abs(angularVelocity) > MIN_VELOCITY) {
-          currentRotation += angularVelocity;
-          angularVelocity *= FRICTION;
-          
-          // Normalizează rotația
-          currentRotation = normalizeAngle(currentRotation);
-          card.style.setProperty('--reflector-rotation', `${currentRotation}deg`);
-          
-          animationFrameId = requestAnimationFrame(animate);
-        } else {
-          // Oprește animația când viteza devine prea mică
-          angularVelocity = 0;
-          animationFrameId = null;
-        }
-      }
-      
-      // Event handler pentru mouse enter
-      function handleMouseEnter(e) {
-        if (!card.isConnected) {
-          cleanup();
-          return;
-        }
-        
-        try {
-          isHovering = true;
-          angularVelocity = 0;
-          
-          // Obține rotația curentă din animația CSS
-          const animationRotation = getCurrentAnimationRotation();
-          
-          // Sincronizează perfect - fără salt
-          currentRotation = normalizeAngle(animationRotation);
-          card.style.setProperty('--reflector-rotation', `${currentRotation}deg`);
-          
-          // Inițializează tracking-ul mouse-ului
-          const rect = getCachedRect();
-          lastMouseAngle = getAngleFromCenter(e.clientX, e.clientY, rect);
-          lastMouseTime = performance.now();
-        } catch (error) {
-          console.warn('Error in handleMouseEnter:', error);
-          cleanup();
-        }
-      }
-      
-      // Event handler pentru mouse move
-      function handleMouseMove(e) {
-        if (!isHovering || !card.isConnected) return;
-        
-        try {
-          const rect = getCachedRect();
-          const currentTime = performance.now();
-          const timeDelta = currentTime - lastMouseTime;
-          
-          // Skip dacă delta time este prea mic (prevenire spam)
-          if (timeDelta < 1) return;
-          
-          // Calculează unghiul curent al mouse-ului
-          const currentMouseAngle = getAngleFromCenter(e.clientX, e.clientY, rect);
-          
-          // Calculează diferența de unghi (direcția și magnitudinea mișcării)
-          const angleDelta = angleDifference(currentMouseAngle, lastMouseAngle);
-          
-          // Calculează viteza unghiulară bazată pe viteza mișcării mouse-ului
-          if (timeDelta > 0) {
-            // Viteza instantanee bazată pe mișcarea unghiulară
-            const instantVelocity = angleDelta / (timeDelta / FRAME_RATE);
-            
-            // Aplică viteza cu un factor de sensibilitate pentru scratch natural
-            angularVelocity = instantVelocity * SENSITIVITY;
-            
-            // Actualizează rotația imediat pentru feedback instant
-            currentRotation = normalizeAngle(currentRotation + angleDelta);
-            card.style.setProperty('--reflector-rotation', `${currentRotation}deg`);
-          }
-          
-          // Actualizează tracking-ul
-          lastMouseAngle = currentMouseAngle;
-          lastMouseTime = currentTime;
-          
-          // Pornește animația cu inerție dacă nu rulează deja
-          if (animationFrameId === null && Math.abs(angularVelocity) > MIN_VELOCITY) {
-            animationFrameId = requestAnimationFrame(animate);
-          }
-        } catch (error) {
-          console.warn('Error in handleMouseMove:', error);
-          cleanup();
-        }
-      }
-      
-      // Event handler pentru mouse leave
-      function handleMouseLeave() {
-        if (!isHovering) return; // Skip dacă nu suntem în hover state
-        
-        try {
-          cleanup();
-          
-          // Resetează timpul animației pentru a continua de la poziția curentă
-          const normalizedRotation = normalizeAngle(currentRotation);
-          const progress = normalizedRotation / 360;
-          animationStartTime = performance.now() - (progress * ANIMATION_DURATION);
-          
-          // Invalidează cache-ul rect
-          cachedRect = null;
-        } catch (error) {
-          console.warn('Error in handleMouseLeave:', error);
-          cleanup();
-        }
-      }
-      
-      // Adaugă event listeners cu cleanup
-      card.addEventListener('mouseenter', handleMouseEnter, { passive: true });
-      card.addEventListener('mousemove', handleMouseMove, { passive: true });
-      card.addEventListener('mouseleave', handleMouseLeave, { passive: true });
-      
-      // Cleanup când pagina se descarcă sau elementul este eliminat
-      if (typeof window !== 'undefined') {
-        window.addEventListener('beforeunload', cleanup);
-        
-        // Observă dacă elementul este eliminat din DOM
-        if (typeof MutationObserver !== 'undefined') {
-          const observer = new MutationObserver(() => {
-            if (!card.isConnected) {
-              cleanup();
-              observer.disconnect();
-            }
-          });
-          
-          if (card.parentNode) {
-            observer.observe(card.parentNode, { childList: true });
-          }
-        }
-      }
-    })();
-  </script>
-
 </Layout>

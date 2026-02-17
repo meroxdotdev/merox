@@ -1,0 +1,32 @@
+---
+import Link from '@/components/Link.astro'
+import { Icon } from 'astro-icon/components'
+import { SOCIAL_LINKS, ICON_MAP, PERSON } from '@/consts'
+import type { SocialLink } from '@/types'
+---
+
+<div class="bento-card bento-connect connect-card">
+  <div class="connect-card__header">
+    <span class="connect-card__title">Get In Touch</span>
+  </div>
+  <nav class="connect-card__links" aria-label="Social and contact links">
+    {SOCIAL_LINKS.filter(({ label }) => label !== 'Email').map(({ href, label }: SocialLink) => (
+      <Link href={href} aria-label={label} title={label} class="connect-card__link">
+        <span class="connect-card__link-content">
+          <Icon
+            name={ICON_MAP[label as keyof typeof ICON_MAP] || 'lucide:link'}
+            class="connect-card__link-icon"
+            aria-hidden="true"
+          />
+          <span class="connect-card__link-label">{label}</span>
+        </span>
+      </Link>
+    ))}
+  </nav>
+  <div class="connect-card__email">
+    <a href={`mailto:${PERSON.email}`} class="connect-card__email-link" aria-label={`Email ${PERSON.email}`}>
+      <Icon name="lucide:mail" class="connect-card__email-icon" aria-hidden="true" />
+      {PERSON.email}
+    </a>
+  </div>
+</div>
