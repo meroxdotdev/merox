@@ -1355,6 +1355,11 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (prefersReducedMotion) return;
       
+      // Verifică dacă dispozitivul suportă hover (mouse) - standard CSS Media Query Level 4
+      // Pe dispozitive touch (care nu suportă hover), lasă doar animația CSS automată
+      const supportsHover = window.matchMedia('(hover: hover)').matches;
+      if (!supportsHover) return; // Pe mobile/touch, doar animația automată
+      
       const card = document.getElementById('lastfm-card');
       if (!card) return;
       
