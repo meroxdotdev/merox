@@ -560,47 +560,80 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       content: none;
     }
     .lastfm-card {
-      --lastfm-line: color-mix(in srgb, var(--primary) 26%, transparent);
       border-left: none;
       position: relative;
       overflow: hidden;
       padding: var(--bento-inner);
     }
-    .lastfm-card:hover {
-      --lastfm-line: color-mix(in srgb, var(--primary) 42%, transparent);
-    }
-    /* Faded accent line at edges - smooth gradient fade */
-    .lastfm-card::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-      z-index: 0;
-      pointer-events: none;
-      border-radius: inherit;
-      background: linear-gradient(
-        to bottom,
-        transparent 0%,
-        var(--lastfm-line) 18%,
-        var(--lastfm-line) 50%,
-        var(--lastfm-line) 82%,
-        transparent 100%
-      );
-    }
-    /* Mesh gradient minimalist: doar nuanțe soft în colțuri, fără puncte/linii */
+    /* Reflector rotativ minimalist */
     .lastfm-card::before {
       content: '';
       position: absolute;
-      inset: 0;
+      inset: -50%;
       z-index: 0;
       border-radius: inherit;
       pointer-events: none;
-      background-image:
-        radial-gradient(ellipse 100% 80% at 0% 100%, color-mix(in srgb, var(--primary) 14%, transparent) 0%, transparent 60%),
-        radial-gradient(ellipse 80% 100% at 100% 0%, color-mix(in srgb, var(--foreground) 8%, transparent) 0%, transparent 55%);
-      background-size: 100% 100%;
+      background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        color-mix(in srgb, var(--primary) 20%, transparent) 60deg,
+        color-mix(in srgb, var(--primary) 16%, transparent) 120deg,
+        transparent 180deg,
+        color-mix(in srgb, var(--foreground) 10%, transparent) 240deg,
+        transparent 300deg,
+        transparent 360deg
+      );
+      opacity: 0.85;
+      will-change: transform;
+    }
+    
+    /* Light mode: efect mai vizibil cu nuanțe de gri */
+    :global(html:not([data-theme="dark"])) .lastfm-card::before {
+      background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        color-mix(in srgb, var(--muted-foreground) 18%, transparent) 60deg,
+        color-mix(in srgb, var(--muted-foreground) 14%, transparent) 120deg,
+        transparent 180deg,
+        color-mix(in srgb, var(--primary) 20%, transparent) 240deg,
+        transparent 300deg,
+        transparent 360deg
+      );
+      opacity: 0.85;
+    }
+    
+    /* Animație activă doar când utilizatorul nu preferă mișcare redusă */
+    @media (prefers-reduced-motion: no-preference) {
+      .lastfm-card::before {
+        animation: lastfm-reflector-rotate 15s linear infinite;
+      }
+    }
+    
+    @keyframes lastfm-reflector-rotate {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    /* Fallback static pentru preferințe de accesibilitate */
+    @media (prefers-reduced-motion: reduce) {
+      .lastfm-card::before {
+        animation: none;
+        will-change: auto;
+        background: radial-gradient(
+          ellipse 100% 80% at 0% 100%,
+          color-mix(in srgb, var(--primary) 14%, transparent) 0%,
+          transparent 60%
+        ),
+        radial-gradient(
+          ellipse 80% 100% at 100% 0%,
+          color-mix(in srgb, var(--foreground) 8%, transparent) 0%,
+          transparent 55%
+        );
+      }
     }
     .lastfm-card > * {
       position: relative;
