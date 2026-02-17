@@ -50,6 +50,7 @@ export function initLastFmEffect(cardId: string): void {
   function getCachedRect(): DOMRect {
     const now = performance.now()
     if (!cachedRect || now - rectCacheTime > LASTFM_ANIMATION.RECT_CACHE_DURATION) {
+      if (!card) throw new Error('Card element not found')
       cachedRect = card.getBoundingClientRect()
       rectCacheTime = now
     }
@@ -99,7 +100,7 @@ export function initLastFmEffect(cardId: string): void {
    * Animation with inertia and friction (simulates a real disc)
    */
   function animate(): void {
-    if (!isHovering || !card.isConnected) {
+    if (!isHovering || !card || !card.isConnected) {
       cleanup()
       return
     }
@@ -125,7 +126,7 @@ export function initLastFmEffect(cardId: string): void {
    * Event handler for mouse enter
    */
   function handleMouseEnter(e: MouseEvent): void {
-    if (!card.isConnected) {
+    if (!card || !card.isConnected) {
       cleanup()
       return
     }
@@ -155,7 +156,7 @@ export function initLastFmEffect(cardId: string): void {
    * Event handler for mouse move
    */
   function handleMouseMove(e: MouseEvent): void {
-    if (!isHovering || !card.isConnected) return
+    if (!isHovering || !card || !card.isConnected) return
 
     try {
       const rect = getCachedRect()
@@ -181,7 +182,9 @@ export function initLastFmEffect(cardId: string): void {
 
         // Update rotation immediately for instant feedback
         currentRotation = normalizeAngle(currentRotation + angleDelta)
-        card.style.setProperty('--reflector-rotation', `${currentRotation}deg`)
+        if (card) {
+          card.style.setProperty('--reflector-rotation', `${currentRotation}deg`)
+        }
       }
 
       // Update tracking
@@ -221,25 +224,27 @@ export function initLastFmEffect(cardId: string): void {
   }
 
   // Add event listeners with cleanup
-  card.addEventListener('mouseenter', handleMouseEnter, { passive: true })
-  card.addEventListener('mousemove', handleMouseMove, { passive: true })
-  card.addEventListener('mouseleave', handleMouseLeave, { passive: true })
+  if (card) {
+    card.addEventListener('mouseenter', handleMouseEnter, { passive: true })
+    card.addEventListener('mousemove', handleMouseMove, { passive: true })
+    card.addEventListener('mouseleave', handleMouseLeave, { passive: true })
 
-  // Cleanup when page unloads or element is removed
-  if (typeof window !== 'undefined') {
-    window.addEventListener('beforeunload', cleanup)
+    // Cleanup when page unloads or element is removed
+    if (typeof window !== 'undefined') {
+      window.addEventListener('beforeunload', cleanup)
 
-    // Observe if element is removed from DOM
-    if (typeof MutationObserver !== 'undefined') {
-      const observer = new MutationObserver(() => {
-        if (!card.isConnected) {
-          cleanup()
-          observer.disconnect()
+      // Observe if element is removed from DOM
+      if (typeof MutationObserver !== 'undefined') {
+        const observer = new MutationObserver(() => {
+          if (!card || !card.isConnected) {
+            cleanup()
+            observer.disconnect()
+          }
+        })
+
+        if (card.parentNode) {
+          observer.observe(card.parentNode, { childList: true })
         }
-      })
-
-      if (card.parentNode) {
-        observer.observe(card.parentNode, { childList: true })
       }
     }
   }

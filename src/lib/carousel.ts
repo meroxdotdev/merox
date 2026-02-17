@@ -38,6 +38,8 @@ export function initCarousel({
    * Navigate to a specific slide
    */
   function goTo(index: number, direction: 'prev' | 'next' = 'next'): void {
+    if (!track || !prevBtn || !nextBtn) return
+
     const prevIndex = current
     current = (index + slideCount) % slideCount
 

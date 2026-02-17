@@ -12,7 +12,7 @@ interface PersonSchemaOptions {
   image: string
   jobTitle: string
   worksFor: string
-  sameAs: string[]
+  sameAs: readonly string[]
   description: string
 }
 
@@ -45,7 +45,7 @@ export function createPersonSchema(options: PersonSchemaOptions) {
     image: options.image,
     jobTitle: options.jobTitle,
     worksFor: { '@type': 'Organization', name: options.worksFor },
-    sameAs: options.sameAs,
+    sameAs: [...options.sameAs], // Create mutable copy for JSON serialization
     description: options.description,
   }
 }
@@ -98,7 +98,7 @@ export function createHomepageSchemas(
   personAlternateName: string,
   jobTitle: string,
   worksFor: string,
-  sameAs: string[]
+  sameAs: readonly string[]
 ) {
   return {
     person: createPersonSchema({
