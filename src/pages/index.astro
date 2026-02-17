@@ -564,18 +564,16 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       position: relative;
       overflow: hidden;
       padding: var(--bento-inner);
-    }
-    /* Reflector rotativ minimalist */
-    .lastfm-card {
       --reflector-rotation: 0deg;
     }
     
+    /* Reflector rotativ minimalist */
     .lastfm-card::before {
       content: '';
       position: absolute;
-      inset: -50%;
+      inset: -200%;
       z-index: 0;
-      border-radius: inherit;
+      border-radius: 50%;
       pointer-events: none;
       background: conic-gradient(
         from 0deg at 50% 50%,
@@ -590,6 +588,13 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       opacity: 0.85;
       will-change: transform;
       transform: rotate(var(--reflector-rotation));
+    }
+    
+    /* Pe desktop, dimensiuni mai mici pentru performanță */
+    @media (min-width: 768px) {
+      .lastfm-card::before {
+        inset: -150%;
+      }
     }
     
     /* Light mode: efect mai vizibil cu nuanțe de gri */
@@ -1522,6 +1527,8 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       
       // Event handler pentru mouse leave
       function handleMouseLeave() {
+        if (!isHovering) return; // Skip dacă nu suntem în hover state
+        
         try {
           cleanup();
           
@@ -1534,6 +1541,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
           cachedRect = null;
         } catch (error) {
           console.warn('Error in handleMouseLeave:', error);
+          cleanup();
         }
       }
       
