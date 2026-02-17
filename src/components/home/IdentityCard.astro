@@ -37,11 +37,11 @@ const { jobTitle, worksFor, heroImageLight, heroImageDark } = Astro.props
       </Link>
     </div>
   </div>
-  <!-- Photo: one frame (90%, offset), both theme images fill it — same layout light/dark -->
+  <!-- Photo: one frame (90%, offset), theme-aware image loading — optimized for 2026 -->
   <div class="bento-identity__image overflow-hidden relative">
     <div class="hero-img-inner relative w-full h-full">
       <div class="hero-img-frame">
-        {/* Light theme image - LCP, eager load with high priority */}
+        {/* Light theme image - LCP optimized, eager load */}
         <Image
           src={heroImageLight}
           alt="Robert Melcher in datacenter"
@@ -49,16 +49,16 @@ const { jobTitle, worksFor, heroImageLight, heroImageDark } = Astro.props
           sizes="(max-width: 768px) 100vw, 340px"
           loading="eager"
           fetchpriority="high"
-          class="absolute inset-0 w-full h-full object-contain object-center dark:opacity-0 dark:pointer-events-none"
+          class="absolute inset-0 w-full h-full object-contain object-center dark:hidden"
         />
-        {/* Dark theme image - lazy loaded since it's not LCP */}
+        {/* Dark theme image - lazy loaded, browser won't download until dark mode is active */}
         <Image
           src={heroImageDark}
           alt="Robert Melcher in datacenter"
           widths={[300, 500, 600, heroImageDark.width]}
           sizes="(max-width: 768px) 100vw, 340px"
           loading="lazy"
-          class="absolute inset-0 w-full h-full object-contain object-center opacity-0 pointer-events-none dark:opacity-100 dark:pointer-events-auto"
+          class="absolute inset-0 w-full h-full object-contain object-center hidden dark:block"
         />
       </div>
     </div>
