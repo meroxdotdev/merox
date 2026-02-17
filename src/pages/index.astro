@@ -566,6 +566,10 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       padding: var(--bento-inner);
     }
     /* Reflector rotativ minimalist */
+    .lastfm-card {
+      --reflector-rotation: 0deg;
+    }
+    
     .lastfm-card::before {
       content: '';
       position: absolute;
@@ -585,6 +589,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       );
       opacity: 0.85;
       will-change: transform;
+      transform: rotate(var(--reflector-rotation));
     }
     
     /* Light mode: efect mai vizibil cu nuanțe de gri */
@@ -602,11 +607,18 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       opacity: 0.85;
     }
     
-    /* Animație activă doar când utilizatorul nu preferă mișcare redusă */
+    /* Animație activă doar când utilizatorul nu preferă mișcare redusă și nu e hover */
     @media (prefers-reduced-motion: no-preference) {
-      .lastfm-card::before {
+      .lastfm-card:not(:hover)::before {
         animation: lastfm-reflector-rotate 15s linear infinite;
+        transition: none;
       }
+    }
+    
+    /* Când hover, oprește animația și permite control manual complet */
+    .lastfm-card:hover::before {
+      animation: none;
+      transition: none; /* Control complet prin JavaScript pentru feedback instant */
     }
     
     @keyframes lastfm-reflector-rotate {
@@ -623,6 +635,8 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       .lastfm-card::before {
         animation: none;
         will-change: auto;
+        transform: none;
+        transition: none;
         background: radial-gradient(
           ellipse 100% 80% at 0% 100%,
           color-mix(in srgb, var(--primary) 14%, transparent) 0%,
@@ -1188,7 +1202,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       </div>
 
       <!-- Latest played (Last.fm) -->
-      <div class="bento-card particle-card lastfm-card bento-bike flex items-center gap-3 group/lastfm" tabindex="0" role="region" aria-label="Latest played track">
+      <div id="lastfm-card" class="bento-card particle-card lastfm-card bento-bike flex items-center gap-3 group/lastfm" tabindex="0" role="region" aria-label="Latest played track">
         <div class="min-w-0 flex-1 relative z-[1]">
           <span class="panel-title uppercase">Latest played</span>
           {lastFmTrack ? (
@@ -1326,5 +1340,227 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       })();
     </script>
   )}
+
+  <!-- Last.fm card scratch effect -->
+  <script is:inline>
+    (function () {
+      'use strict';
+      
+      // Verifică dacă utilizatorul preferă mișcare redusă
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) return;
+      
+      const card = document.getElementById('lastfm-card');
+      if (!card) return;
+      
+      // Constante pentru configurare
+      const ANIMATION_DURATION = 15000; // 15s - trebuie să se potrivească cu CSS
+      const FRICTION = 0.92; // Frecare pentru a simula un disc real (0-1, mai mic = mai multă frecare)
+      const MIN_VELOCITY = 0.1; // Viteza minimă pentru a opri complet rotația
+      const SENSITIVITY = 0.8; // Factor de sensibilitate pentru scratch
+      const FRAME_RATE = 16.67; // ~60fps în ms
+      
+      // State management
+      let isHovering = false;
+      let currentRotation = 0;
+      let angularVelocity = 0;
+      let lastMouseAngle = 0;
+      let lastMouseTime = 0;
+      let animationStartTime = performance.now();
+      let animationFrameId = null;
+      let cachedRect = null;
+      let rectCacheTime = 0;
+      const RECT_CACHE_DURATION = 100; // Cache rect pentru 100ms
+      
+      // Cleanup function pentru a preveni memory leaks
+      function cleanup() {
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+        isHovering = false;
+        angularVelocity = 0;
+      }
+      
+      // Obține bounding rect cu cache pentru performanță
+      function getCachedRect() {
+        const now = performance.now();
+        if (!cachedRect || (now - rectCacheTime) > RECT_CACHE_DURATION) {
+          cachedRect = card.getBoundingClientRect();
+          rectCacheTime = now;
+        }
+        return cachedRect;
+      }
+      
+      // Obține rotația curentă din animația CSS bazată pe timp
+      function getCurrentAnimationRotation() {
+        const elapsed = (performance.now() - animationStartTime) % ANIMATION_DURATION;
+        const progress = elapsed / ANIMATION_DURATION;
+        return progress * 360;
+      }
+      
+      // Calculează unghiul bazat pe poziția mouse-ului față de centrul cardului
+      function getAngleFromCenter(x, y, rect) {
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        // Calculează unghiul în radiani
+        const angle = Math.atan2(y - centerY, x - centerX);
+        // Convertește la grade (0-360) și ajustează pentru a începe de sus
+        return (angle * 180 / Math.PI + 90 + 360) % 360;
+      }
+      
+      // Normalizează unghiul în intervalul 0-360
+      function normalizeAngle(angle) {
+        return ((angle % 360) + 360) % 360;
+      }
+      
+      // Calculează diferența de unghi între două unghiuri (ținând cont de wraparound)
+      function angleDifference(a, b) {
+        let diff = normalizeAngle(a) - normalizeAngle(b);
+        if (diff > 180) diff -= 360;
+        if (diff < -180) diff += 360;
+        return diff;
+      }
+      
+      // Animație cu inerție și frecare (simulează un disc real)
+      function animate() {
+        if (!isHovering || !card.isConnected) {
+          cleanup();
+          return;
+        }
+        
+        // Aplică viteza unghiulară cu frecare
+        if (Math.abs(angularVelocity) > MIN_VELOCITY) {
+          currentRotation += angularVelocity;
+          angularVelocity *= FRICTION;
+          
+          // Normalizează rotația
+          currentRotation = normalizeAngle(currentRotation);
+          card.style.setProperty('--reflector-rotation', `${currentRotation}deg`);
+          
+          animationFrameId = requestAnimationFrame(animate);
+        } else {
+          // Oprește animația când viteza devine prea mică
+          angularVelocity = 0;
+          animationFrameId = null;
+        }
+      }
+      
+      // Event handler pentru mouse enter
+      function handleMouseEnter(e) {
+        if (!card.isConnected) {
+          cleanup();
+          return;
+        }
+        
+        try {
+          isHovering = true;
+          angularVelocity = 0;
+          
+          // Obține rotația curentă din animația CSS
+          const animationRotation = getCurrentAnimationRotation();
+          
+          // Sincronizează perfect - fără salt
+          currentRotation = normalizeAngle(animationRotation);
+          card.style.setProperty('--reflector-rotation', `${currentRotation}deg`);
+          
+          // Inițializează tracking-ul mouse-ului
+          const rect = getCachedRect();
+          lastMouseAngle = getAngleFromCenter(e.clientX, e.clientY, rect);
+          lastMouseTime = performance.now();
+        } catch (error) {
+          console.warn('Error in handleMouseEnter:', error);
+          cleanup();
+        }
+      }
+      
+      // Event handler pentru mouse move
+      function handleMouseMove(e) {
+        if (!isHovering || !card.isConnected) return;
+        
+        try {
+          const rect = getCachedRect();
+          const currentTime = performance.now();
+          const timeDelta = currentTime - lastMouseTime;
+          
+          // Skip dacă delta time este prea mic (prevenire spam)
+          if (timeDelta < 1) return;
+          
+          // Calculează unghiul curent al mouse-ului
+          const currentMouseAngle = getAngleFromCenter(e.clientX, e.clientY, rect);
+          
+          // Calculează diferența de unghi (direcția și magnitudinea mișcării)
+          const angleDelta = angleDifference(currentMouseAngle, lastMouseAngle);
+          
+          // Calculează viteza unghiulară bazată pe viteza mișcării mouse-ului
+          if (timeDelta > 0) {
+            // Viteza instantanee bazată pe mișcarea unghiulară
+            const instantVelocity = angleDelta / (timeDelta / FRAME_RATE);
+            
+            // Aplică viteza cu un factor de sensibilitate pentru scratch natural
+            angularVelocity = instantVelocity * SENSITIVITY;
+            
+            // Actualizează rotația imediat pentru feedback instant
+            currentRotation = normalizeAngle(currentRotation + angleDelta);
+            card.style.setProperty('--reflector-rotation', `${currentRotation}deg`);
+          }
+          
+          // Actualizează tracking-ul
+          lastMouseAngle = currentMouseAngle;
+          lastMouseTime = currentTime;
+          
+          // Pornește animația cu inerție dacă nu rulează deja
+          if (animationFrameId === null && Math.abs(angularVelocity) > MIN_VELOCITY) {
+            animationFrameId = requestAnimationFrame(animate);
+          }
+        } catch (error) {
+          console.warn('Error in handleMouseMove:', error);
+          cleanup();
+        }
+      }
+      
+      // Event handler pentru mouse leave
+      function handleMouseLeave() {
+        try {
+          cleanup();
+          
+          // Resetează timpul animației pentru a continua de la poziția curentă
+          const normalizedRotation = normalizeAngle(currentRotation);
+          const progress = normalizedRotation / 360;
+          animationStartTime = performance.now() - (progress * ANIMATION_DURATION);
+          
+          // Invalidează cache-ul rect
+          cachedRect = null;
+        } catch (error) {
+          console.warn('Error in handleMouseLeave:', error);
+        }
+      }
+      
+      // Adaugă event listeners cu cleanup
+      card.addEventListener('mouseenter', handleMouseEnter, { passive: true });
+      card.addEventListener('mousemove', handleMouseMove, { passive: true });
+      card.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+      
+      // Cleanup când pagina se descarcă sau elementul este eliminat
+      if (typeof window !== 'undefined') {
+        window.addEventListener('beforeunload', cleanup);
+        
+        // Observă dacă elementul este eliminat din DOM
+        if (typeof MutationObserver !== 'undefined') {
+          const observer = new MutationObserver(() => {
+            if (!card.isConnected) {
+              cleanup();
+              observer.disconnect();
+            }
+          });
+          
+          if (card.parentNode) {
+            observer.observe(card.parentNode, { childList: true });
+          }
+        }
+      }
+    })();
+  </script>
 
 </Layout>
