@@ -43,6 +43,14 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Love';
+  src: url('/fonts/GABRWFFR.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* Neobrutalist buttons (theme-aware, used for main CTAs across the site) */
 .btn-neo-primary,
 .btn-neo-outline {

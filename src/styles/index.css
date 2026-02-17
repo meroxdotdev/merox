@@ -1,0 +1,915 @@
+/* ── Homepage Bento Grid Styles (2026) ── */
+
+/* Apple-level typography scale */
+.hero-section {
+  --bento-gap: 1.25rem;           /* mobile: compact but clear */
+  --bento-inner: 1.25rem;          /* default content inset */
+  --bento-inner-lg: 1.5rem;        /* hero blocks (identity, quote) */
+  --ease-apple: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Apple's signature easing */
+  --ease-apple-smooth: cubic-bezier(0.4, 0.0, 0.2, 1); /* Material Design inspired, Apple refined */
+  
+  /* Animation delays (in milliseconds) */
+  --delay-identity: 0;
+  --delay-quote: 160;
+  --delay-connect: 240;
+  --delay-insight: 300;
+  --delay-bike: 360;
+  
+  /* Status indicator color (green) - uses additive color from theme */
+  --status-indicator-color: var(--additive, hsl(142 50% 45%));
+  
+  /* Combined identity card specific sizing */
+  --identity-image-size: 340px;
+  --identity-content-flex: 1.4;
+  --identity-gap-desktop: 2.5rem;
+  --identity-image-offset: 0.5rem;
+  
+  /* Connect card sizing */
+  --connect-gap: 0.875rem;
+  --connect-link-gap: 0.625rem;
+  --connect-link-padding-y: 0.625rem;
+  --connect-link-padding-x: 0.875rem;
+  --connect-link-min-height: 2.5rem;
+  --connect-link-border-radius: 0.75rem;
+  --connect-icon-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .hero-section {
+    --bento-gap: 1.75rem;       /* desktop: more air between panels (2026 trend) */
+  }
+}
+
+.bento-grid {
+  display: grid;
+  gap: var(--bento-gap);
+  grid-template-columns: 1fr;
+}
+
+/* Stagger delay for entrance animation (all viewports) */
+.bento-identity { --delay: var(--delay-identity); }
+.bento-quote    { --delay: var(--delay-quote); }
+.bento-connect  { --delay: var(--delay-connect); }
+.bento-insight  { --delay: var(--delay-insight); }
+.bento-bike     { --delay: var(--delay-bike); }
+
+@media (min-width: 768px) {
+  .bento-grid {
+    grid-template-columns: 5fr 3fr 4fr;
+    grid-template-rows: auto auto auto;
+  }
+
+  .bento-identity   { grid-column: 1 / 4; grid-row: 1; }
+  .bento-quote      { grid-column: 1;     grid-row: 2; }
+  .bento-insight    { grid-column: 2 / 4; grid-row: 2; min-height: 10rem; }
+  .bento-connect    { grid-column: 1 / 3; grid-row: 3; }
+  .bento-bike       { grid-column: 3;     grid-row: 3; }
+}
+
+/* ── Card: Apple-level polish (2026) ── */
+.bento-card {
+  padding: var(--bento-inner);
+  border-radius: 16px; /* Slightly more rounded for modern feel */
+  border: 1px solid color-mix(in srgb, var(--border) 55%, transparent);
+  background: color-mix(in srgb, var(--background) 95%, var(--muted) 5%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  /* Refined shadow system: subtle depth with Apple-like precision */
+  box-shadow:
+    inset 1px 1px 0 0 color-mix(in srgb, white 8%, transparent),
+    0 1px 3px rgba(0, 0, 0, 0.04),
+    0 0.5px 1px rgba(0, 0, 0, 0.02);
+  /* Smooth transitions with Apple easing */
+  transition: box-shadow 0.3s var(--ease-apple), 
+               border-color 0.25s var(--ease-apple),
+               transform 0.3s var(--ease-apple),
+               background 0.3s var(--ease-apple);
+}
+
+/* Hero blocks: more breath */
+.bento-quote {
+  padding: var(--bento-inner-lg);
+}
+
+/* Photo: full bleed, no inset — panel reads as "different" */
+/* Combined identity card: flex layout for text + image */
+.bento-identity {
+  padding: var(--bento-inner-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .bento-identity {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--identity-gap-desktop);
+  }
+}
+
+.bento-identity__content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .bento-identity__content {
+    flex: var(--identity-content-flex);
+    min-width: 0;
+  }
+}
+
+.bento-identity__image {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: var(--identity-image-size);
+  height: var(--identity-image-size);
+  position: relative;
+  margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .bento-identity__image {
+    margin: 0;
+    width: var(--identity-image-size);
+    height: var(--identity-image-size);
+    align-self: flex-start;
+    margin-top: var(--identity-image-offset);
+  }
+}
+
+/* Hero image: explicit frame (90% size, offset 6% right / 8% down); both theme images fill it */
+.bento-identity__image .hero-img-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.bento-identity__image .hero-img-frame {
+  position: absolute;
+  left: 6%;
+  top: 8%;
+  width: 90%;
+  height: 90%;
+}
+
+.bento-identity__image .hero-img-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Enhanced hover state with Apple-like micro-interaction */
+@media (prefers-reduced-motion: no-preference) {
+  .bento-card:hover {
+    transform: translateY(-1px); /* Subtle lift */
+    box-shadow:
+      inset 1px 1px 0 0 color-mix(in srgb, white 12%, transparent),
+      0 4px 16px rgba(0, 0, 0, 0.08),
+      0 2px 4px rgba(0, 0, 0, 0.04);
+    border-color: color-mix(in srgb, var(--border) 75%, transparent);
+  }
+  
+  .bento-card:active {
+    transform: translateY(0);
+    transition-duration: 0.15s;
+  }
+}
+
+/* Focus state for keyboard navigation */
+.bento-card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  box-shadow:
+    inset 1px 1px 0 0 color-mix(in srgb, white 8%, transparent),
+    0 0 0 4px color-mix(in srgb, var(--ring) 20%, transparent),
+    0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* Dark mode: neutral colors without blue tint - Apple-like elegance */
+:global(html[data-theme="dark"]) .bento-card {
+  background: color-mix(in srgb, var(--background) 98%, var(--muted) 2%);
+  border-color: color-mix(in srgb, var(--border) 60%, transparent);
+  backdrop-filter: blur(20px) saturate(100%); /* Reduced saturation for neutral look */
+  -webkit-backdrop-filter: blur(20px) saturate(100%);
+  box-shadow:
+    inset 1px 1px 0 0 rgba(255, 255, 255, 0.04),
+    0 1px 3px rgba(0, 0, 0, 0.4),
+    0 0.5px 1px rgba(0, 0, 0, 0.3);
+}
+
+:global(html[data-theme="dark"]) .bento-card:hover {
+  background: color-mix(in srgb, var(--background) 96%, var(--muted) 4%);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 1px 1px 0 0 rgba(255, 255, 255, 0.06),
+    0 4px 16px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.35);
+  border-color: color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+:global(html[data-theme="dark"]) .bento-card:active {
+  transform: translateY(0);
+  background: color-mix(in srgb, var(--background) 97%, var(--muted) 3%);
+}
+
+/* ── Connect card: modern minimal design (2026) ── */
+.connect-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--connect-gap);
+  padding: var(--bento-inner);
+}
+
+.connect-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.connect-card__title {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.65625rem;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+  text-transform: uppercase;
+}
+
+.connect-card__links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--connect-link-gap);
+}
+
+@media (min-width: 768px) {
+  .connect-card__links {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.connect-card__link {
+  display: flex;
+  align-items: center;
+  gap: var(--connect-link-gap);
+  padding: var(--connect-link-padding-y) var(--connect-link-padding-x);
+  min-height: var(--connect-link-min-height);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--foreground);
+  text-decoration: none;
+  border-radius: var(--connect-link-border-radius);
+  border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  background: color-mix(in srgb, var(--muted) 20%, transparent);
+  transition: all 0.25s var(--ease-apple);
+  position: relative;
+  overflow: hidden;
+}
+
+.connect-card__link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-apple);
+}
+
+.connect-card__link:hover {
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 40%, transparent);
+  background: color-mix(in srgb, var(--primary) 6%, transparent);
+  transform: translateY(-1px);
+}
+
+.connect-card__link:hover::before {
+  opacity: 1;
+}
+
+.connect-card__link:active {
+  transform: translateY(0);
+  transition-duration: 0.1s;
+}
+
+.connect-card__link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-color: var(--ring);
+}
+
+.connect-card__link-content {
+  display: flex;
+  align-items: center;
+  gap: var(--connect-link-gap);
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.connect-card__link-icon {
+  flex-shrink: 0;
+  width: var(--connect-icon-size);
+  height: var(--connect-icon-size);
+  color: var(--muted-foreground);
+  transition: color 0.25s var(--ease-apple), transform 0.25s var(--ease-apple);
+}
+
+.connect-card__link:hover .connect-card__link-icon {
+  color: var(--primary);
+  transform: scale(1.1);
+}
+
+.connect-card__link-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.connect-card__email {
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+}
+
+.connect-card__email-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--connect-link-gap);
+  padding: var(--connect-link-padding-y) var(--connect-link-padding-x);
+  min-height: var(--connect-link-min-height);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--foreground);
+  text-decoration: none;
+  border-radius: var(--connect-link-border-radius);
+  border: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  background: color-mix(in srgb, var(--primary) 8%, transparent);
+  transition: all 0.25s var(--ease-apple);
+  position: relative;
+  overflow: hidden;
+}
+
+.connect-card__email-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-apple);
+}
+
+.connect-card__email-link:hover {
+  color: var(--primary);
+  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+  background: color-mix(in srgb, var(--primary) 10%, transparent);
+  transform: translateY(-1px);
+}
+
+.connect-card__email-link:hover::before {
+  opacity: 1;
+}
+
+.connect-card__email-link:active {
+  transform: translateY(0);
+  transition-duration: 0.1s;
+}
+
+.connect-card__email-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-color: var(--ring);
+}
+
+.connect-card__email-icon {
+  flex-shrink: 0;
+  width: var(--connect-icon-size);
+  height: var(--connect-icon-size);
+  color: var(--primary);
+  transition: transform 0.25s var(--ease-apple);
+}
+
+.connect-card__email-link:hover .connect-card__email-icon {
+  transform: scale(1.1);
+}
+
+/* ── Particle cards: single accent bar + typography (2026 minimal) ── */
+.particle-card {
+  border-left: 3px solid color-mix(in srgb, var(--primary) 35%, transparent);
+  transition: border-left-color 0.4s var(--ease-apple),
+              transform 0.3s var(--ease-apple);
+}
+
+.particle-card:hover {
+  border-left-color: color-mix(in srgb, var(--primary) 70%, transparent);
+  transform: translateX(2px); /* Subtle slide on hover */
+}
+
+.particle-card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.particle-card .particle-title {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.particle-card .particle-tagline {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  letter-spacing: 0.01em;
+}
+
+.particle-card .particle-tagline::before {
+  content: '· ';
+  color: color-mix(in srgb, var(--primary) 50%, var(--muted-foreground));
+  font-weight: 600;
+}
+
+/* ── Latest played (Last.fm) card: full-card texture ── */
+.lastfm-card .particle-tagline::before {
+  content: none;
+}
+
+.lastfm-card {
+  border-left: none;
+  position: relative;
+  overflow: hidden;
+  padding: var(--bento-inner);
+  --reflector-rotation: 0deg;
+}
+
+/* Reflector rotativ minimalist */
+.lastfm-card::before {
+  content: '';
+  position: absolute;
+  inset: -200%;
+  z-index: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    color-mix(in srgb, var(--primary) 20%, transparent) 60deg,
+    color-mix(in srgb, var(--primary) 16%, transparent) 120deg,
+    transparent 180deg,
+    color-mix(in srgb, var(--foreground) 10%, transparent) 240deg,
+    transparent 300deg,
+    transparent 360deg
+  );
+  opacity: 0.85;
+  will-change: transform;
+  transform: rotate(var(--reflector-rotation));
+}
+
+/* Pe desktop, dimensiuni mai mici pentru performanță */
+@media (min-width: 768px) {
+  .lastfm-card::before {
+    inset: -150%;
+  }
+}
+
+/* Light mode: efect mai vizibil cu nuanțe de gri */
+:global(html:not([data-theme="dark"])) .lastfm-card::before {
+  background: conic-gradient(
+    from 0deg at 50% 50%,
+    transparent 0deg,
+    color-mix(in srgb, var(--muted-foreground) 18%, transparent) 60deg,
+    color-mix(in srgb, var(--muted-foreground) 14%, transparent) 120deg,
+    transparent 180deg,
+    color-mix(in srgb, var(--primary) 20%, transparent) 240deg,
+    transparent 300deg,
+    transparent 360deg
+  );
+  opacity: 0.85;
+}
+
+/* Animație activă doar când utilizatorul nu preferă mișcare redusă și nu e hover */
+@media (prefers-reduced-motion: no-preference) {
+  .lastfm-card:not(:hover)::before {
+    animation: lastfm-reflector-rotate 15s linear infinite;
+    transition: none;
+  }
+}
+
+/* Când hover, oprește animația și permite control manual complet */
+.lastfm-card:hover::before {
+  animation: none;
+  transition: none; /* Control complet prin JavaScript pentru feedback instant */
+}
+
+@keyframes lastfm-reflector-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fallback static pentru preferințe de accesibilitate */
+@media (prefers-reduced-motion: reduce) {
+  .lastfm-card::before {
+    animation: none;
+    will-change: auto;
+    transform: none;
+    transition: none;
+    background: radial-gradient(
+      ellipse 100% 80% at 0% 100%,
+      color-mix(in srgb, var(--primary) 14%, transparent) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 80% 100% at 100% 0%,
+      color-mix(in srgb, var(--foreground) 8%, transparent) 0%,
+      transparent 55%
+    );
+  }
+}
+
+.lastfm-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.lastfm-track-name {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--foreground);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.lastfm-artist {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+  margin-top: 0.125rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lastfm-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--primary);
+  margin-left: 0.375rem;
+}
+
+.lastfm-now-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 40%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lastfm-now-dot {
+    animation: lastfm-pulse 1.8s var(--ease-apple) infinite;
+  }
+}
+
+@keyframes lastfm-pulse {
+  0%, 100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.5; 
+    transform: scale(1.2);
+  }
+}
+
+/* ── Latest Insights carousel (bento) ── */
+.bento-insight {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: var(--bento-inner-lg);
+}
+
+.insight-carousel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.insight-carousel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.insight-carousel-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.insight-carousel-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem; /* Increased for better touch target */
+  height: 2.5rem;
+  min-width: 2.5rem; /* Ensure minimum size */
+  min-height: 2.5rem;
+  border-radius: 0.625rem; /* More rounded */
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  background: color-mix(in srgb, var(--muted) 40%, transparent);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: border-color 0.25s var(--ease-apple), 
+              background 0.25s var(--ease-apple), 
+              color 0.25s var(--ease-apple),
+              transform 0.2s var(--ease-apple);
+  position: relative;
+}
+
+.insight-carousel-nav-btn:hover:not(:disabled) {
+  border-color: color-mix(in srgb, var(--primary) 50%, transparent);
+  background: color-mix(in srgb, var(--primary) 12%, transparent);
+  color: var(--foreground);
+  transform: scale(1.05); /* Subtle scale on hover */
+}
+
+.insight-carousel-nav-btn:active:not(:disabled) {
+  transform: scale(0.98);
+  transition-duration: 0.1s;
+}
+
+.insight-carousel-nav-btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  background: color-mix(in srgb, var(--ring) 15%, transparent);
+}
+
+.insight-carousel-nav-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.insight-carousel-track {
+  position: relative;
+  flex: 1;
+  min-height: 7.5rem;
+  /* Smooth scrolling for touch devices */
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+.insight-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .insight-slide {
+    transition: opacity 0.35s var(--ease-apple-smooth), 
+                visibility 0.35s var(--ease-apple-smooth),
+                transform 0.35s var(--ease-apple-smooth);
+    transform: translateX(8px);
+  }
+  
+  .insight-slide[data-visible="true"] {
+    transform: translateX(0);
+  }
+}
+
+.insight-slide[data-visible="true"] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Decorative index (01, 02, 03) */
+.insight-slide-number {
+  position: absolute;
+  top: -0.15rem;
+  right: 0;
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1;
+  color: color-mix(in srgb, var(--foreground) 4%, transparent);
+  user-select: none;
+  pointer-events: none;
+}
+
+[data-theme='dark'] .insight-slide-number {
+  color: color-mix(in srgb, var(--foreground) 6%, transparent);
+}
+
+.insight-slide-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 0.25rem 0;
+  min-height: 5rem;
+  user-select: none;
+}
+
+.insight-slide-title-link {
+  text-decoration: none;
+  transition: color 0.25s var(--ease-apple);
+  display: block;
+  border-radius: 0.375rem;
+  padding: 0.25rem 0;
+  margin: -0.25rem 0;
+}
+
+.insight-slide-title {
+  font-size: clamp(0.875rem, 0.8125rem + 0.25vw, 0.9375rem); /* Responsive font size */
+  font-weight: 600;
+  line-height: 1.4; /* Slightly increased for better readability */
+  letter-spacing: -0.01em; /* Tighter letter spacing for modern feel */
+  color: var(--foreground);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.25s var(--ease-apple);
+}
+
+.insight-slide-title-link:hover .insight-slide-title {
+  color: var(--primary);
+}
+
+.insight-slide-title-link:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+  border-radius: 0.5rem;
+}
+
+.insight-slide-desc {
+  font-size: 0.75rem;
+  line-height: 1.4;
+  color: var(--muted-foreground);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.insight-slide-meta {
+  font-size: 0.6875rem;
+  color: var(--muted-foreground);
+  margin-top: auto;
+  padding-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.insight-carousel-footer {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ── Skip link for accessibility ── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only:focus {
+  position: fixed;
+  width: auto;
+  height: auto;
+  padding: 0.75rem 1rem;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 0.5rem;
+  z-index: 9999;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Identity role line (minimal, left-aligned with content below) ── */
+/* ── Panel title style (shared across all cards) ── */
+.panel-title {
+  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.65625rem;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+}
+
+.identity-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.identity-role__dot {
+  position: relative;
+  flex-shrink: 0;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--status-indicator-color);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--status-indicator-color) 40%, transparent);
+}
+
+.identity-role__dot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--identity-dot-color);
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .identity-role__dot::before {
+    animation: identity-dot-pulse 2s var(--ease-apple) infinite;
+  }
+  .identity-role__dot {
+    animation: identity-dot-glow 2s var(--ease-apple) infinite;
+  }
+}
+
+@keyframes identity-dot-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes identity-dot-glow {
+  0%, 100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--status-indicator-color) 40%, transparent); }
+  50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--status-indicator-color) 0%, transparent); }
+}
+
+.identity-role__sep {
+  margin: 0 0.4em;
+  color: color-mix(in srgb, var(--muted-foreground) 50%, transparent);
+}
+
+/* ── Staggered card entrance with Apple-like animation ── */
+@media (prefers-reduced-motion: no-preference) {
+  .bento-card {
+    animation: bentoFadeIn 0.7s var(--ease-apple-smooth) both;
+    animation-delay: calc(var(--delay, 0) * 1ms);
+    opacity: 0; /* Start hidden for animation */
+  }
+
+  @keyframes bentoFadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px) scale(0.96);
+      filter: blur(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+  }
+}
+
+/* Ensure cards are visible if animations are disabled */
+@media (prefers-reduced-motion: reduce) {
+  .bento-card {
+    opacity: 1;
+    animation: none;
+  }
+}
