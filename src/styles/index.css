@@ -24,6 +24,9 @@
   --identity-gap-desktop: 2.5rem;
   --identity-image-offset: 0.5rem;
   
+  /* Touch target minimum (WCAG 2.5.5); reuse for CTAs in hero */
+  --touch-target-min: 2.75rem;
+
   /* Connect card sizing */
   --connect-gap: 0.875rem;
   --connect-link-gap: 0.625rem;
@@ -889,6 +892,14 @@
 .identity-role__sep {
   margin: 0 0.4em;
   color: color-mix(in srgb, var(--muted-foreground) 50%, transparent);
+}
+
+/* Hero title: fluid type (2026), no mid-word wrap on any viewport */
+.identity-title {
+  font-size: clamp(1.875rem, 1rem + 2.5vw, 3rem); /* ~30px → 48px by viewport */
+}
+.identity-title__line {
+  white-space: nowrap;
 }
 
 /* ── Staggered card entrance with Apple-like animation ── */
