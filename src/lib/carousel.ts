@@ -1,130 +1,151 @@
 /**
  * Carousel functionality for insights carousel
+ * Uses event delegation for button clicks so it works regardless of script load order.
  * Provides keyboard navigation, touch swipe, and button controls
  */
 
 import { CAROUSEL } from './constants'
 
-interface CarouselOptions {
+export interface CarouselOptions {
   trackId: string
   prevBtnId: string
   nextBtnId: string
   slideSelector: string
-  slideCount: number
+  /** Fallback when track has no data-slide-count; prefer reading from DOM */
+  slideCount?: number
+}
+
+function applySlideState(
+  track: HTMLElement,
+  slides: NodeListOf<HTMLElement>,
+  prevBtn: HTMLButtonElement | null,
+  nextBtn: HTMLButtonElement | null,
+  currentIndex: number,
+  slideCount: number,
+  direction: 'prev' | 'next' = 'next'
+): void {
+  slides.forEach((el, i) => {
+    const visible = i === currentIndex
+    el.setAttribute('data-visible', visible ? 'true' : 'false')
+    el.setAttribute('aria-hidden', String(!visible))
+    el.toggleAttribute('hidden', !visible)
+    if (visible) {
+      el.setAttribute('data-direction', direction)
+    }
+  })
+  track.dataset.currentIndex = String(currentIndex)
+  if (prevBtn) prevBtn.disabled = currentIndex === 0
+  if (nextBtn) nextBtn.disabled = currentIndex === slideCount - 1
+  const currentSlide = slides[currentIndex]
+  if (currentSlide) {
+    const title = currentSlide.querySelector('.insight-slide-title')?.textContent || ''
+    track.setAttribute('aria-label', `Showing insight ${currentIndex + 1} of ${slideCount}: ${title}`)
+  }
 }
 
 /**
- * Initialize carousel with all interactions
+ * Initialize carousel: event delegation for clicks, then attach keyboard/touch to track when found
  */
 export function initCarousel({
   trackId,
   prevBtnId,
   nextBtnId,
   slideSelector,
-  slideCount,
+  slideCount = 0,
 }: CarouselOptions): void {
-  const track = document.getElementById(trackId)
-  const prevBtn = document.getElementById(prevBtnId) as HTMLButtonElement | null
-  const nextBtn = document.getElementById(nextBtnId) as HTMLButtonElement | null
+  const fallbackCount = slideCount
 
-  if (!track || !prevBtn || !nextBtn) return
+  // 1) Click delegation – works even if script runs before carousel DOM exists
+  document.addEventListener('click', (e) => {
+    const button = (e.target as HTMLElement).closest?.('button')
+    if (!button || (button.id !== prevBtnId && button.id !== nextBtnId)) return
 
-  const slides = track.querySelectorAll<HTMLElement>(slideSelector)
-  let current = 0
-  let touchStartX = 0
-  let touchEndX = 0
-
-  /**
-   * Navigate to a specific slide
-   */
-  function goTo(index: number, direction: 'prev' | 'next' = 'next'): void {
+    const track = document.getElementById(trackId)
+    const prevBtn = document.getElementById(prevBtnId) as HTMLButtonElement | null
+    const nextBtn = document.getElementById(nextBtnId) as HTMLButtonElement | null
     if (!track || !prevBtn || !nextBtn) return
 
-    const prevIndex = current
-    current = (index + slideCount) % slideCount
+    const slides = track.querySelectorAll<HTMLElement>(slideSelector)
+    const count = parseInt(track.dataset.slideCount ?? String(fallbackCount), 10)
+    if (slides.length === 0 || count <= 1) return
 
-    // Update slides with smooth transition
-    slides.forEach((el, i) => {
-      const visible = i === current
-      el.setAttribute('data-visible', visible ? 'true' : 'false')
-      el.setAttribute('aria-hidden', String(!visible))
-      el.toggleAttribute('hidden', !visible)
+    const current = parseInt(track.dataset.currentIndex ?? '0', 10)
+    const isPrev = button.id === prevBtnId
+    const newIndex = isPrev
+      ? Math.max(0, current - 1)
+      : Math.min(count - 1, current + 1)
+    if (newIndex === current) return
 
-      // Add direction class for animation
-      if (visible && i !== prevIndex) {
-        el.setAttribute('data-direction', direction)
+    applySlideState(track, slides, prevBtn, nextBtn, newIndex, count, isPrev ? 'prev' : 'next')
+  })
+
+  // 2) Find track and attach keyboard + touch (defer so DOM is ready)
+  function attachTrackListeners(): void {
+    const track = document.getElementById(trackId)
+    if (!track) return
+
+    const slides = track.querySelectorAll<HTMLElement>(slideSelector)
+    const prevBtn = document.getElementById(prevBtnId) as HTMLButtonElement | null
+    const nextBtn = document.getElementById(nextBtnId) as HTMLButtonElement | null
+    const count = parseInt(track.dataset.slideCount ?? String(fallbackCount), 10)
+    if (slides.length === 0) return
+
+    // Sync initial state
+    const current = parseInt(track.dataset.currentIndex ?? '0', 10)
+    applySlideState(track, slides, prevBtn, nextBtn, current, count, 'next')
+
+    let touchStartX = 0
+    let touchEndX = 0
+
+    track.addEventListener('keydown', (e) => {
+      const cur = parseInt(track.dataset.currentIndex ?? '0', 10)
+      if (e.key === 'ArrowLeft' && cur > 0) {
+        e.preventDefault()
+        applySlideState(track, slides, prevBtn, nextBtn, cur - 1, count, 'prev')
+        prevBtn?.focus()
+      } else if (e.key === 'ArrowRight' && cur < count - 1) {
+        e.preventDefault()
+        applySlideState(track, slides, prevBtn, nextBtn, cur + 1, count, 'next')
+        nextBtn?.focus()
+      } else if (e.key === 'Home') {
+        e.preventDefault()
+        applySlideState(track, slides, prevBtn, nextBtn, 0, count, 'prev')
+      } else if (e.key === 'End') {
+        e.preventDefault()
+        applySlideState(track, slides, prevBtn, nextBtn, count - 1, count, 'next')
       }
     })
 
-    // Update button states
-    prevBtn.disabled = current === 0
-    nextBtn.disabled = current === slideCount - 1
-
-    // Announce change to screen readers
-    const currentSlide = slides[current]
-    if (currentSlide) {
-      const title = currentSlide.querySelector('.insight-slide-title')?.textContent || ''
-      track.setAttribute('aria-label', `Showing insight ${current + 1} of ${slideCount}: ${title}`)
-    }
+    track.addEventListener(
+      'touchstart',
+      (e) => {
+        touchStartX = e.changedTouches[0].screenX
+      },
+      { passive: true }
+    )
+    track.addEventListener(
+      'touchend',
+      (e) => {
+        touchEndX = e.changedTouches[0].screenX
+        const diff = touchStartX - touchEndX
+        if (Math.abs(diff) > CAROUSEL.SWIPE_THRESHOLD) {
+          const cur = parseInt(track.dataset.currentIndex ?? '0', 10)
+          if (diff > 0 && cur < count - 1) {
+            applySlideState(track, slides, prevBtn, nextBtn, cur + 1, count, 'next')
+          } else if (diff < 0 && cur > 0) {
+            applySlideState(track, slides, prevBtn, nextBtn, cur - 1, count, 'prev')
+          }
+        }
+      },
+      { passive: true }
+    )
   }
 
-  /**
-   * Handle swipe gesture
-   */
-  function handleSwipe(): void {
-    const diff = touchStartX - touchEndX
-    if (Math.abs(diff) > CAROUSEL.SWIPE_THRESHOLD) {
-      if (diff > 0 && current < slideCount - 1) {
-        // Swipe left - next
-        goTo(current + 1, 'next')
-      } else if (diff < 0 && current > 0) {
-        // Swipe right - previous
-        goTo(current - 1, 'prev')
-      }
-    }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(attachTrackListeners, 0)
+    })
+  } else {
+    setTimeout(attachTrackListeners, 0)
   }
-
-  // Initialize
-  goTo(0)
-
-  // Button clicks
-  prevBtn.addEventListener('click', () => goTo(current - 1, 'prev'))
-  nextBtn.addEventListener('click', () => goTo(current + 1, 'next'))
-
-  // Keyboard navigation (Arrow keys, Home, End)
-  track.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft' && current > 0) {
-      e.preventDefault()
-      goTo(current - 1, 'prev')
-      prevBtn.focus()
-    } else if (e.key === 'ArrowRight' && current < slideCount - 1) {
-      e.preventDefault()
-      goTo(current + 1, 'next')
-      nextBtn.focus()
-    } else if (e.key === 'Home') {
-      e.preventDefault()
-      goTo(0, 'prev')
-    } else if (e.key === 'End') {
-      e.preventDefault()
-      goTo(slideCount - 1, 'next')
-    }
-  })
-
-  // Touch swipe support
-  track.addEventListener(
-    'touchstart',
-    (e) => {
-      touchStartX = e.changedTouches[0].screenX
-    },
-    { passive: true }
-  )
-
-  track.addEventListener(
-    'touchend',
-    (e) => {
-      touchEndX = e.changedTouches[0].screenX
-      handleSwipe()
-    },
-    { passive: true }
-  )
 }

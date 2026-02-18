@@ -613,6 +613,8 @@
   justify-content: space-between;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
+  position: relative;
+  z-index: 1;
 }
 
 .insight-carousel-nav {
@@ -667,6 +669,7 @@
 
 .insight-carousel-track {
   position: relative;
+  z-index: 0;
   flex: 1;
   min-height: 7.5rem;
   /* Smooth scrolling for touch devices */
