@@ -9,7 +9,7 @@ import { SITE, PERSON } from '@/consts'
 import { createHomepageSchemas } from '@/lib/schemas'
 import { initLastFmEffect } from '@/lib/lastfm-effect'
 import heroImageLight from '../assets/t1.webp'
-import heroImageDark from '../assets/t2.webp'
+import lottieHeroSrc from '../assets/meroxindatacenter.json?url'
 import IdentityCard from '@/components/home/IdentityCard.astro'
 import QuoteCard from '@/components/home/QuoteCard.astro'
 import InsightCarousel from '@/components/home/InsightCarousel.astro'
@@ -81,11 +81,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
 ---
 
 <Layout class="max-w-4xl" contentPadding="pb-4">
-  <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true}>
-    <!-- Preload LCP hero image (light theme) for fast paint -->
-    <!-- Dark theme image is lazy-loaded since it's not LCP -->
-    <link rel="preload" as="image" href={heroImageLight.src} />
-  </PageHead>
+  <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true} />
 
   <script type="application/ld+json" set:html={JSON.stringify(schemas.person)} />
   <script type="application/ld+json" set:html={JSON.stringify(schemas.organization)} />
@@ -106,8 +102,7 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       <IdentityCard
         jobTitle={PERSON.jobTitle}
         worksFor={PERSON.worksFor}
-        heroImageLight={heroImageLight}
-        heroImageDark={heroImageDark}
+        lottieSrc={lottieHeroSrc}
       />
 
       <!-- Quote card -->

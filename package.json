@@ -41,6 +41,7 @@
     "flexsearch": "^0.8.212",
     "framer-motion": "^12.23.24",
     "js-yaml": "^4.1.1",
+    "lottie-web": "^5.13.0",
     "lucide-react": "^0.563.0",
     "patch-package": "^8.0.0",
     "radix-ui": "^1.4.3",

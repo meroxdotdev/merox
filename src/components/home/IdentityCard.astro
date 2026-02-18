@@ -1,17 +1,15 @@
 ---
 import Link from '@/components/Link.astro'
 import { Icon } from 'astro-icon/components'
-import { Image } from 'astro:assets'
-import type { ImageMetadata } from 'astro'
 
 interface Props {
   jobTitle: string
   worksFor: string
-  heroImageLight: ImageMetadata
-  heroImageDark: ImageMetadata
+  /** URL to Lottie JSON (e.g. from import with ?url). Loaded by lottie-web, cacheable. */
+  lottieSrc: string
 }
 
-const { jobTitle, worksFor, heroImageLight, heroImageDark } = Astro.props
+const { jobTitle, worksFor, lottieSrc } = Astro.props
 ---
 
 <div class="bento-card bento-identity">
@@ -37,30 +35,33 @@ const { jobTitle, worksFor, heroImageLight, heroImageDark } = Astro.props
       </Link>
     </div>
   </div>
-  <!-- Photo: one frame (90%, offset), theme-aware image loading — optimized for 2026 -->
+  <!-- Lottie: loaded by URL (cacheable, no inline JSON) -->
   <div class="bento-identity__image overflow-hidden relative">
     <div class="hero-img-inner relative w-full h-full">
-      <div class="hero-img-frame">
-        {/* Light theme image - LCP optimized, eager load */}
-        <Image
-          src={heroImageLight}
-          alt="Robert Melcher in datacenter"
-          widths={[300, 500, 600, heroImageLight.width]}
-          sizes="(max-width: 768px) 100vw, 340px"
-          loading="eager"
-          fetchpriority="high"
-          class="absolute inset-0 w-full h-full object-contain object-center dark:hidden"
-        />
-        {/* Dark theme image - lazy loaded, browser won't download until dark mode is active */}
-        <Image
-          src={heroImageDark}
-          alt="Robert Melcher in datacenter"
-          widths={[300, 500, 600, heroImageDark.width]}
-          sizes="(max-width: 768px) 100vw, 340px"
-          loading="lazy"
-          class="absolute inset-0 w-full h-full object-contain object-center hidden dark:block"
-        />
-      </div>
+      <div
+        class="hero-img-frame"
+        id="hero-lottie"
+        data-lottie-src={lottieSrc}
+        aria-label="Robert Melcher in datacenter"
+      />
     </div>
   </div>
 </div>
+
+<script>
+  import lottie from 'lottie-web'
+
+  const el = document.getElementById('hero-lottie')
+  const src = el?.getAttribute('data-lottie-src')
+  if (el && src) {
+    const anim = lottie.loadAnimation({
+      container: el,
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: src,
+      initialSegment: [1, 22],
+    })
+    anim.setSpeed(1)
+  }
+</script>
