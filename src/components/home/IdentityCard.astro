@@ -5,11 +5,13 @@ import { Icon } from 'astro-icon/components'
 interface Props {
   jobTitle: string
   worksFor: string
-  /** URL to Lottie JSON (e.g. from import with ?url). Loaded by lottie-web, cacheable. */
-  lottieSrc: string
+  /** Lottie JSON URL for light theme (original colors). */
+  lottieSrcLight: string
+  /** Lottie JSON URL for dark theme (inverted colors). */
+  lottieSrcDark: string
 }
 
-const { jobTitle, worksFor, lottieSrc } = Astro.props
+const { jobTitle, worksFor, lottieSrcLight, lottieSrcDark } = Astro.props
 ---
 
 <div class="bento-card bento-identity">
@@ -35,33 +37,78 @@ const { jobTitle, worksFor, lottieSrc } = Astro.props
       </Link>
     </div>
   </div>
-  <!-- Lottie: loaded by URL (cacheable, no inline JSON) -->
+  <!--
+    Hero Lottie: theme-aware. Two layers (light + dark) both loaded once.
+    Visibility = CSS only (instant). Only the visible instance runs (pause/play on theme-change).
+  -->
   <div class="bento-identity__image overflow-hidden relative">
     <div class="hero-img-inner relative w-full h-full">
-      <div
-        class="hero-img-frame"
-        id="hero-lottie"
-        data-lottie-src={lottieSrc}
-        aria-label="Robert Melcher in datacenter"
-      />
+      <div class="hero-img-frame hero-lottie-wrap relative" aria-label="Robert Melcher in datacenter">
+        <div
+          class="hero-lottie-layer hero-lottie-light absolute inset-0"
+          id="hero-lottie-light"
+          data-lottie-src={lottieSrcLight}
+          aria-hidden="true"
+        />
+        <div
+          class="hero-lottie-layer hero-lottie-dark absolute inset-0"
+          id="hero-lottie-dark"
+          data-lottie-src={lottieSrcDark}
+          aria-hidden="true"
+        />
+      </div>
     </div>
   </div>
 </div>
 
+<style>
+  .hero-lottie-light {
+    display: block;
+  }
+  .hero-lottie-dark {
+    display: none;
+  }
+  :global(html[data-theme="dark"]) .hero-lottie-light {
+    display: none;
+  }
+  :global(html[data-theme="dark"]) .hero-lottie-dark {
+    display: block;
+  }
+</style>
+
 <script>
   import lottie from 'lottie-web'
 
-  const el = document.getElementById('hero-lottie')
-  const src = el?.getAttribute('data-lottie-src')
-  if (el && src) {
-    const anim = lottie.loadAnimation({
-      container: el,
-      renderer: 'svg',
-      loop: true,
-      autoplay: true,
-      path: src,
-      initialSegment: [1, 22],
-    })
-    anim.setSpeed(1)
+  const LOTTIE_OPTS = {
+    renderer: 'svg',
+    loop: true,
+    autoplay: true,
+    initialSegment: [1, 90],
+  } as const
+
+  const elLight = document.getElementById('hero-lottie-light')
+  const elDark = document.getElementById('hero-lottie-dark')
+  const srcLight = elLight?.getAttribute('data-lottie-src')
+  const srcDark = elDark?.getAttribute('data-lottie-src')
+
+  if (elLight && srcLight && elDark && srcDark) {
+    const animLight = lottie.loadAnimation({ container: elLight, path: srcLight, ...LOTTIE_OPTS })
+    const animDark = lottie.loadAnimation({ container: elDark, path: srcDark, ...LOTTIE_OPTS })
+    animLight.setSpeed(1)
+    animDark.setSpeed(1)
+
+    function syncPlaybackToTheme() {
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark'
+      if (isDark) {
+        animLight.pause()
+        animDark.play()
+      } else {
+        animLight.play()
+        animDark.pause()
+      }
+    }
+
+    syncPlaybackToTheme()
+    window.addEventListener('theme-change', syncPlaybackToTheme)
   }
 </script>

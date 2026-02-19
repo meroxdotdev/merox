@@ -9,7 +9,8 @@ import { SITE, PERSON } from '@/consts'
 import { createHomepageSchemas } from '@/lib/schemas'
 import { initLastFmEffect } from '@/lib/lastfm-effect'
 import heroImageLight from '../assets/t1.webp'
-import lottieHeroSrc from '../assets/meroxindatacenter.json?url'
+import lottieHeroLight from '../assets/meroxindatacenter.json?url'
+import lottieHeroDark from '../assets/meroxindatacenter-dark.json?url'
 import IdentityCard from '@/components/home/IdentityCard.astro'
 import QuoteCard from '@/components/home/QuoteCard.astro'
 import InsightCarousel from '@/components/home/InsightCarousel.astro'
@@ -102,7 +103,8 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
       <IdentityCard
         jobTitle={PERSON.jobTitle}
         worksFor={PERSON.worksFor}
-        lottieSrc={lottieHeroSrc}
+        lottieSrcLight={lottieHeroLight}
+        lottieSrcDark={lottieHeroDark}
       />
 
       <!-- Quote card -->
