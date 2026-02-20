@@ -25,9 +25,12 @@ const { jobTitle, worksFor, heroImageLight, heroImageDark } = Astro.props
       <span class="identity-title__line">infrastructure</span><br />
       <span class="identity-title__line text-primary transition-colors duration-300">that scales.</span>
     </h1>
-    <p class="mt-4 text-sm md:text-[15px] text-muted-foreground/75 max-w-md leading-relaxed">
-      10 years of Linux and self-hosting. Background in cybersecurity. I build for resilience and logic, because clarity is what makes systems scale.
-    </p>
+    <div class="mt-4 text-sm md:text-[15px] text-muted-foreground/75 max-w-md leading-relaxed space-y-1">
+      <p>
+        <span class="text-foreground/90 font-medium">10+ years</span> of <span class="text-foreground/90 font-medium">Linux</span>, self-hosting, and infrastructure. <span class="text-foreground/90 font-medium">Cybersecurity</span> background.
+      </p>
+      <p class="italic">Still satisfying when it all just works.</p>
+    </div>
     <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 mt-6">
       <Link
         href="/blog"
