@@ -844,11 +844,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem; /* Reduced from 1.25rem for better visual rhythm with title */
+  margin-top: 0; /* Ensure consistent top alignment */
 }
 
 .identity-role.panel-title {
-  font-size: 0.5625rem;
+  font-size: 0.6875rem; /* 11px - improved readability while maintaining subtlety */
+  font-weight: 500; /* Slightly bolder for better visibility */
+  letter-spacing: 0.03em; /* Better spacing for readability */
 }
 
 .identity-role__dot {
