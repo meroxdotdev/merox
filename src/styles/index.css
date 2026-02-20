@@ -489,18 +489,12 @@
   opacity: 0.85;
 }
 
-/* Animație activă doar când utilizatorul nu preferă mișcare redusă și nu e hover */
+/* Animație continuă când utilizatorul nu preferă mișcare redusă */
 @media (prefers-reduced-motion: no-preference) {
-  .lastfm-card:not(:hover)::before {
+  .lastfm-card::before {
     animation: lastfm-reflector-rotate 15s linear infinite;
     transition: none;
   }
-}
-
-/* Când hover, oprește animația și permite control manual complet */
-.lastfm-card:hover::before {
-  animation: none;
-  transition: none; /* Control complet prin JavaScript pentru feedback instant */
 }
 
 @keyframes lastfm-reflector-rotate {

@@ -31,6 +31,13 @@ const { class: className, hideFloatingSidebar = false, contentPadding = 'pb-20' 
   </Head>
   <ThemeInit />
   <body class="flex h-fit min-h-screen flex-col gap-y-6 font-sans" transition:persist>
+    <!-- Skip to main content link for accessibility -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+    >
+      Skip to main content
+    </a>
     <!-- Prevent same-page navigation to avoid unnecessary transitions -->
     <script is:inline>
       (function() {

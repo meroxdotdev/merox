@@ -44,7 +44,7 @@ function applySlideState(
 }
 
 /**
- * Initialize carousel: event delegation for clicks, then attach keyboard/touch to track when found
+ * Initialize carousel: attach event listeners to buttons and track
  */
 export function initCarousel({
   trackId,
@@ -55,58 +55,47 @@ export function initCarousel({
 }: CarouselOptions): void {
   const fallbackCount = slideCount
 
-  // 1) Click delegation – works even if script runs before carousel DOM exists
-  document.addEventListener('click', (e) => {
-    const button = (e.target as HTMLElement).closest?.('button')
-    if (!button || (button.id !== prevBtnId && button.id !== nextBtnId)) return
-
+  function setupCarousel(): void {
     const track = document.getElementById(trackId)
     const prevBtn = document.getElementById(prevBtnId) as HTMLButtonElement | null
     const nextBtn = document.getElementById(nextBtnId) as HTMLButtonElement | null
+    
     if (!track || !prevBtn || !nextBtn) return
 
     const slides = track.querySelectorAll<HTMLElement>(slideSelector)
     const count = parseInt(track.dataset.slideCount ?? String(fallbackCount), 10)
     if (slides.length === 0 || count <= 1) return
 
-    const current = parseInt(track.dataset.currentIndex ?? '0', 10)
-    const isPrev = button.id === prevBtnId
-    const newIndex = isPrev
-      ? Math.max(0, current - 1)
-      : Math.min(count - 1, current + 1)
-    if (newIndex === current) return
-
-    applySlideState(track, slides, prevBtn, nextBtn, newIndex, count, isPrev ? 'prev' : 'next')
-  })
-
-  // 2) Find track and attach keyboard + touch (defer so DOM is ready)
-  function attachTrackListeners(): void {
-    const track = document.getElementById(trackId)
-    if (!track) return
-
-    const slides = track.querySelectorAll<HTMLElement>(slideSelector)
-    const prevBtn = document.getElementById(prevBtnId) as HTMLButtonElement | null
-    const nextBtn = document.getElementById(nextBtnId) as HTMLButtonElement | null
-    const count = parseInt(track.dataset.slideCount ?? String(fallbackCount), 10)
-    if (slides.length === 0) return
-
     // Sync initial state
     const current = parseInt(track.dataset.currentIndex ?? '0', 10)
     applySlideState(track, slides, prevBtn, nextBtn, current, count, 'next')
 
-    let touchStartX = 0
-    let touchEndX = 0
+    // Button click handlers
+    prevBtn.addEventListener('click', () => {
+      const cur = parseInt(track.dataset.currentIndex ?? '0', 10)
+      if (cur > 0) {
+        applySlideState(track, slides, prevBtn, nextBtn, cur - 1, count, 'prev')
+      }
+    })
 
+    nextBtn.addEventListener('click', () => {
+      const cur = parseInt(track.dataset.currentIndex ?? '0', 10)
+      if (cur < count - 1) {
+        applySlideState(track, slides, prevBtn, nextBtn, cur + 1, count, 'next')
+      }
+    })
+
+    // Keyboard navigation
     track.addEventListener('keydown', (e) => {
       const cur = parseInt(track.dataset.currentIndex ?? '0', 10)
       if (e.key === 'ArrowLeft' && cur > 0) {
         e.preventDefault()
         applySlideState(track, slides, prevBtn, nextBtn, cur - 1, count, 'prev')
-        prevBtn?.focus()
+        prevBtn.focus()
       } else if (e.key === 'ArrowRight' && cur < count - 1) {
         e.preventDefault()
         applySlideState(track, slides, prevBtn, nextBtn, cur + 1, count, 'next')
-        nextBtn?.focus()
+        nextBtn.focus()
       } else if (e.key === 'Home') {
         e.preventDefault()
         applySlideState(track, slides, prevBtn, nextBtn, 0, count, 'prev')
@@ -116,36 +105,30 @@ export function initCarousel({
       }
     })
 
-    track.addEventListener(
-      'touchstart',
-      (e) => {
-        touchStartX = e.changedTouches[0].screenX
-      },
-      { passive: true }
-    )
-    track.addEventListener(
-      'touchend',
-      (e) => {
-        touchEndX = e.changedTouches[0].screenX
-        const diff = touchStartX - touchEndX
-        if (Math.abs(diff) > CAROUSEL.SWIPE_THRESHOLD) {
-          const cur = parseInt(track.dataset.currentIndex ?? '0', 10)
-          if (diff > 0 && cur < count - 1) {
-            applySlideState(track, slides, prevBtn, nextBtn, cur + 1, count, 'next')
-          } else if (diff < 0 && cur > 0) {
-            applySlideState(track, slides, prevBtn, nextBtn, cur - 1, count, 'prev')
-          }
+    // Touch swipe
+    let touchStartX = 0
+    track.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX
+    }, { passive: true })
+    
+    track.addEventListener('touchend', (e) => {
+      const touchEndX = e.changedTouches[0].screenX
+      const diff = touchStartX - touchEndX
+      if (Math.abs(diff) > CAROUSEL.SWIPE_THRESHOLD) {
+        const cur = parseInt(track.dataset.currentIndex ?? '0', 10)
+        if (diff > 0 && cur < count - 1) {
+          applySlideState(track, slides, prevBtn, nextBtn, cur + 1, count, 'next')
+        } else if (diff < 0 && cur > 0) {
+          applySlideState(track, slides, prevBtn, nextBtn, cur - 1, count, 'prev')
         }
-      },
-      { passive: true }
-    )
+      }
+    }, { passive: true })
   }
 
+  // Wait for DOM
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(attachTrackListeners, 0)
-    })
+    document.addEventListener('DOMContentLoaded', setupCarousel)
   } else {
-    setTimeout(attachTrackListeners, 0)
+    setupCarousel()
   }
 }

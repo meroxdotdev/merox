@@ -35,7 +35,7 @@ const slideCount = posts.length
             id="insight-prev" 
             class="insight-carousel-nav-btn" 
             aria-label="Previous insight" 
-            disabled={slideCount <= 1}
+            disabled
             aria-keyshortcuts="ArrowLeft"
           >
             <Icon name="lucide:chevron-left" class="size-4" aria-hidden="true" />
@@ -45,7 +45,6 @@ const slideCount = posts.length
             id="insight-next" 
             class="insight-carousel-nav-btn" 
             aria-label="Next insight" 
-            disabled={slideCount <= 1}
             aria-keyshortcuts="ArrowRight"
           >
             <Icon name="lucide:chevron-right" class="size-4" aria-hidden="true" />
@@ -108,14 +107,104 @@ const slideCount = posts.length
 </div>
 
 {slideCount > 1 && (
-  <script>
-    import { initCarousel } from '@/lib/carousel'
-    // slideCount comes from DOM (data-slide-count on track); no define:vars so Astro emits type="module"
-    initCarousel({
-      trackId: 'insight-track',
-      prevBtnId: 'insight-prev',
-      nextBtnId: 'insight-next',
-      slideSelector: '.insight-slide',
-    })
+  <script is:inline>
+    (function() {
+      'use strict'
+      
+      const trackId = 'insight-track'
+      const prevBtnId = 'insight-prev'
+      const nextBtnId = 'insight-next'
+      const slideSelector = '.insight-slide'
+      const SWIPE_THRESHOLD = 50
+
+      const applySlideState = (track, slides, prevBtn, nextBtn, currentIndex, slideCount) => {
+        slides.forEach((el, i) => {
+          const visible = i === currentIndex
+          el.setAttribute('data-visible', visible ? 'true' : 'false')
+          el.setAttribute('aria-hidden', String(!visible))
+          el.toggleAttribute('hidden', !visible)
+        })
+        track.dataset.currentIndex = String(currentIndex)
+        if (prevBtn) prevBtn.disabled = currentIndex === 0
+        if (nextBtn) nextBtn.disabled = currentIndex === slideCount - 1
+        const currentSlide = slides[currentIndex]
+        if (currentSlide) {
+          const title = currentSlide.querySelector('.insight-slide-title')?.textContent || ''
+          track.setAttribute('aria-label', `Showing insight ${currentIndex + 1} of ${slideCount}: ${title}`)
+        }
+      }
+
+      const setupCarousel = () => {
+        const track = document.getElementById(trackId)
+        const prevBtn = document.getElementById(prevBtnId)
+        const nextBtn = document.getElementById(nextBtnId)
+        
+        if (!track || !prevBtn || !nextBtn) return
+
+        const slides = track.querySelectorAll(slideSelector)
+        const count = parseInt(track.dataset.slideCount || '0', 10)
+        if (slides.length === 0 || count <= 1) return
+
+        const current = parseInt(track.dataset.currentIndex || '0', 10)
+        applySlideState(track, slides, prevBtn, nextBtn, current, count)
+
+        prevBtn.addEventListener('click', () => {
+          const cur = parseInt(track.dataset.currentIndex || '0', 10)
+          if (cur > 0) {
+            applySlideState(track, slides, prevBtn, nextBtn, cur - 1, count)
+          }
+        })
+
+        nextBtn.addEventListener('click', () => {
+          const cur = parseInt(track.dataset.currentIndex || '0', 10)
+          if (cur < count - 1) {
+            applySlideState(track, slides, prevBtn, nextBtn, cur + 1, count)
+          }
+        })
+
+        track.addEventListener('keydown', (e) => {
+          const cur = parseInt(track.dataset.currentIndex || '0', 10)
+          if (e.key === 'ArrowLeft' && cur > 0) {
+            e.preventDefault()
+            applySlideState(track, slides, prevBtn, nextBtn, cur - 1, count)
+            prevBtn.focus()
+          } else if (e.key === 'ArrowRight' && cur < count - 1) {
+            e.preventDefault()
+            applySlideState(track, slides, prevBtn, nextBtn, cur + 1, count)
+            nextBtn.focus()
+          } else if (e.key === 'Home') {
+            e.preventDefault()
+            applySlideState(track, slides, prevBtn, nextBtn, 0, count)
+          } else if (e.key === 'End') {
+            e.preventDefault()
+            applySlideState(track, slides, prevBtn, nextBtn, count - 1, count)
+          }
+        })
+
+        let touchStartX = 0
+        track.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX
+        }, { passive: true })
+        
+        track.addEventListener('touchend', (e) => {
+          const touchEndX = e.changedTouches[0].screenX
+          const diff = touchStartX - touchEndX
+          if (Math.abs(diff) > SWIPE_THRESHOLD) {
+            const cur = parseInt(track.dataset.currentIndex || '0', 10)
+            if (diff > 0 && cur < count - 1) {
+              applySlideState(track, slides, prevBtn, nextBtn, cur + 1, count)
+            } else if (diff < 0 && cur > 0) {
+              applySlideState(track, slides, prevBtn, nextBtn, cur - 1, count)
+            }
+          }
+        }, { passive: true })
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', setupCarousel)
+      } else {
+        setupCarousel()
+      }
+    })()
   </script>
 )}

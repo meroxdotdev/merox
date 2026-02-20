@@ -7,7 +7,6 @@ import { fetchRecentTracks, type LastFmRecentTrack } from '@/lib/lastfm'
 import { formatDate } from '@/lib/utils'
 import { SITE, PERSON } from '@/consts'
 import { createHomepageSchemas } from '@/lib/schemas'
-import { initLastFmEffect } from '@/lib/lastfm-effect'
 import heroImageLight from '../assets/t1.webp'
 import heroImageDark from '../assets/t2.webp'
 import IdentityCard from '@/components/home/IdentityCard.astro'
@@ -41,6 +40,7 @@ const latestPostsEnriched = await Promise.all(
 
 // Structured data schemas (use light variant as default for crawlers/schema)
 const baseUrl = Astro.site?.href ?? SITE.href
+// Use the image src directly for logo (Astro will optimize it)
 const logoUrl = new URL(heroImageLight.src, baseUrl).href
 
 const schemas = createHomepageSchemas(
@@ -56,18 +56,14 @@ const schemas = createHomepageSchemas(
 
 // Last.fm recent track (build-time fetch)
 // Environment variables: PUBLIC_LASTFM_USERNAME + PUBLIC_LASTFM_API_KEY
-// Fallback: LASTFM_USER + LASTFM_API_KEY
 // Note: Restart dev server after changing .env
-const lastFmUser = (import.meta.env.PUBLIC_LASTFM_USERNAME ??
-  import.meta.env.PUBLIC_LASTFM_USER ??
-  import.meta.env.LASTFM_USER) as string | undefined
-const lastFmApiKey = (import.meta.env.PUBLIC_LASTFM_API_KEY ??
-  import.meta.env.LASTFM_API_KEY) as string | undefined
+const lastFmUser = import.meta.env.PUBLIC_LASTFM_USERNAME?.trim()
+const lastFmApiKey = import.meta.env.PUBLIC_LASTFM_API_KEY?.trim()
 
 let lastFmTrack: LastFmRecentTrack | null = null
-if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
+if (lastFmUser && lastFmApiKey) {
   try {
-    const tracks = await fetchRecentTracks(lastFmUser.trim(), lastFmApiKey.trim(), 1)
+    const tracks = await fetchRecentTracks(lastFmUser, lastFmApiKey, 1)
     lastFmTrack = tracks?.[0] ?? null
   } catch (error) {
     // Silent fail - Last.fm is optional feature
@@ -82,22 +78,12 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
 
 <Layout class="max-w-4xl" contentPadding="pb-4">
   <PageHead slot="head" title="Merox - Insights from my tech journey" fullTitle={true}>
-    <!-- Preload LCP hero image (light theme) for fast paint -->
-    <!-- Dark theme image is lazy-loaded since it's not LCP -->
-    <link rel="preload" as="image" href={heroImageLight.src} />
+    <!-- Hero image is preloaded via Astro Image component with loading="eager" -->
   </PageHead>
 
   <script type="application/ld+json" set:html={JSON.stringify(schemas.person)} />
   <script type="application/ld+json" set:html={JSON.stringify(schemas.organization)} />
   <script type="application/ld+json" set:html={JSON.stringify(schemas.website)} />
-
-  <!-- Skip to main content link for accessibility -->
-  <a
-    href="#main-content"
-    class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-  >
-    Skip to main content
-  </a>
 
   <section class="hero-section relative pt-6 pb-4 md:pt-10 md:pb-6" id="hero">
     <!-- Bento grid -->
@@ -130,12 +116,5 @@ if (lastFmUser?.trim() && lastFmApiKey?.trim()) {
         Unable to load recent posts. Please try refreshing the page.
       </p>
     </section>
-  )}
-
-  {lastFmTrack && (
-    <script>
-      import { initLastFmEffect } from '@/lib/lastfm-effect'
-      initLastFmEffect('lastfm-card')
-    </script>
   )}
 </Layout>
