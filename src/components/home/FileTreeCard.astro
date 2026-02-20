@@ -1,13 +1,12 @@
 ---
 import { Icon } from 'astro-icon/components'
-import { fetchMultipleRepos } from '@/lib/github'
 import { GITHUB_REPOS } from '@/consts'
-import type { GitHubRepo } from '@/lib/github'
 
-const repos = await fetchMultipleRepos([...GITHUB_REPOS])
-const validRepos = repos
-  .filter((repo): repo is GitHubRepo => repo !== null)
-  .sort((a, b) => b.stargazers_count - a.stargazers_count)
+// Single source of truth: config. No API dependency for the tree; list always renders.
+const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
+  name: repo,
+  html_url: `https://github.com/${owner}/${repo}`,
+}))
 ---
 
 <div class="bento-card bento-stats file-tree-card" role="region" aria-label="Projects">
@@ -33,17 +32,16 @@ const validRepos = repos
                     <span>projects</span>
                   </summary>
                   <ul class="tree-children">
-                    {validRepos.map((repo) => (
+                    {projects.map((project) => (
                       <li class="tree-item">
                         <a
-                          href={repo.html_url}
+                          href={project.html_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           class="tree-file tree-file--link"
                         >
                           <Icon name="lucide:folder-git" class="tree-icon tree-icon--file" aria-hidden="true" />
-                          <span class="tree-file-name">{repo.name}</span>
-                          <span class="tree-file-meta" aria-hidden="true">★ {repo.stargazers_count}</span>
+                          <span class="tree-file-name">{project.name}</span>
                         </a>
                       </li>
                     ))}
@@ -196,11 +194,6 @@ const validRepos = repos
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-  }
-
-  .tree-file-meta {
-    font-size: 0.75rem;
-    color: var(--muted-foreground);
   }
 
   .tree-icon {

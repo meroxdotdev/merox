@@ -93,11 +93,12 @@ export const ICON_MAP: IconMap = {
 }
 
 // GitHub repositories shown on Projects page and homepage file tree
-export const GITHUB_REPOS = [
-  { owner: 'meroxdotdev', repo: 'merox-erudite' },
-  { owner: 'meroxdotdev', repo: 'infrastructure' },
-  { owner: 'meroxdotdev', repo: 'homelab-as-code' },
-] as const
+// Optional `stack` = infra/tools used in the project (shown in homepage legend)
+export const GITHUB_REPOS: Array<{ owner: string; repo: string; stack?: string[] }> = [
+  { owner: 'meroxdotdev', repo: 'merox-erudite', stack: ['Astro'] },
+  { owner: 'meroxdotdev', repo: 'infrastructure', stack: ['Talos', 'Kubernetes'] },
+  { owner: 'meroxdotdev', repo: 'homelab-as-code', stack: ['Packer', 'Docker', 'Terraform', 'Ansible', 'Kubernetes'] },
+]
 
 // Person information for structured data and display
 export const PERSON = {
