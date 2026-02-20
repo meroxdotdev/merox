@@ -1,0 +1,198 @@
+---
+import Link from '@/components/Link.astro'
+import { Icon } from 'astro-icon/components'
+import { fetchMultipleRepos } from '@/lib/github'
+import { GITHUB_REPOS, SOCIAL_LINKS } from '@/consts'
+
+const repos = await fetchMultipleRepos([...GITHUB_REPOS])
+const validRepos = repos.filter((repo): repo is NonNullable<typeof repo> => repo !== null)
+
+// Calculate stats
+const totalStars = validRepos.reduce((sum, repo) => sum + repo.stargazers_count, 0)
+const totalForks = validRepos.reduce((sum, repo) => sum + repo.forks_count, 0)
+const repoCount = validRepos.length
+
+// Get GitHub link
+const githubLink = SOCIAL_LINKS.find(link => link.label === 'GitHub')?.href || 'https://github.com/meroxdotdev'
+---
+
+<div class="bento-card bento-stats github-stats-card" role="region" aria-label="GitHub statistics">
+  <!-- Header -->
+  <div class="github-stats-card__header">
+    <div class="github-stats-card__header-left">
+      <Icon name="lucide:github" class="github-stats-card__header-icon" aria-hidden="true" />
+      <span class="github-stats-card__title">GITHUB</span>
+    </div>
+    {repoCount > 0 && (
+      <Link
+        href={githubLink}
+        class="github-stats-card__external-link"
+        aria-label="View GitHub profile"
+        external
+      >
+        <Icon name="lucide:arrow-up-right" class="size-4" aria-hidden="true" />
+      </Link>
+    )}
+  </div>
+  
+  <!-- Stats Grid -->
+  {repoCount > 0 ? (
+    <div class="github-stats-card__stats-grid">
+      <!-- Stars -->
+      <div class="github-stats-card__stat">
+        <div class="github-stats-card__stat-icon">
+          <Icon name="lucide:star" aria-hidden="true" />
+        </div>
+        <div class="github-stats-card__stat-number">{totalStars.toLocaleString()}</div>
+        <div class="github-stats-card__stat-label">Stars</div>
+      </div>
+      
+      <!-- Forks -->
+      <div class="github-stats-card__stat">
+        <div class="github-stats-card__stat-icon">
+          <Icon name="lucide:git-fork" aria-hidden="true" />
+        </div>
+        <div class="github-stats-card__stat-number">{totalForks.toLocaleString()}</div>
+        <div class="github-stats-card__stat-label">Forks</div>
+      </div>
+      
+      <!-- Repositories -->
+      <div class="github-stats-card__stat">
+        <div class="github-stats-card__stat-icon">
+          <Icon name="lucide:folder-git" aria-hidden="true" />
+        </div>
+        <div class="github-stats-card__stat-number">{repoCount}</div>
+        <div class="github-stats-card__stat-label">Repos</div>
+      </div>
+    </div>
+  ) : (
+    <div class="github-stats-card__empty">
+      <p class="text-sm text-muted-foreground">No repositories found</p>
+    </div>
+  )}
+</div>
+
+<style>
+  .github-stats-card {
+    padding: var(--bento-inner-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* Header */
+  .github-stats-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .github-stats-card__header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  .github-stats-card__header-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    color: var(--primary);
+    stroke-width: 2;
+  }
+
+  .github-stats-card__title {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--foreground);
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  }
+
+  .github-stats-card__external-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 0.375rem;
+    color: var(--muted-foreground);
+    opacity: 0.6;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+
+  .github-stats-card__external-link:hover {
+    opacity: 1;
+    color: var(--primary);
+  }
+
+  .github-stats-card__external-link:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    opacity: 1;
+  }
+
+  /* Stats Grid - Clean 3 column layout */
+  .github-stats-card__stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  @media (max-width: 640px) {
+    .github-stats-card__stats-grid {
+      grid-template-columns: 1fr;
+      gap: 0.875rem;
+    }
+  }
+
+  /* Individual Stat */
+  .github-stats-card__stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 0.5rem;
+    text-align: center;
+  }
+
+  .github-stats-card__stat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    color: var(--primary);
+    opacity: 0.8;
+  }
+
+  .github-stats-card__stat-icon :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke-width: 2;
+  }
+
+  .github-stats-card__stat-number {
+    font-size: 1.875rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--foreground);
+    letter-spacing: -0.03em;
+  }
+
+  .github-stats-card__stat-label {
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  }
+
+  .github-stats-card__empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+  }
+</style>

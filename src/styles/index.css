@@ -10,7 +10,7 @@
   
   /* Animation delays (in milliseconds) */
   --delay-identity: 0;
-  --delay-quote: 160;
+  --delay-stats: 160;
   --delay-connect: 240;
   --delay-insight: 300;
   --delay-bike: 360;
@@ -51,7 +51,7 @@
 
 /* Stagger delay for entrance animation (all viewports) */
 .bento-identity { --delay: var(--delay-identity); }
-.bento-quote    { --delay: var(--delay-quote); }
+.bento-stats    { --delay: var(--delay-stats); }
 .bento-connect  { --delay: var(--delay-connect); }
 .bento-insight  { --delay: var(--delay-insight); }
 .bento-bike     { --delay: var(--delay-bike); }
@@ -63,7 +63,7 @@
   }
 
   .bento-identity   { grid-column: 1 / 4; grid-row: 1; }
-  .bento-quote      { grid-column: 1;     grid-row: 2; }
+  .bento-stats      { grid-column: 1;     grid-row: 2; }
   .bento-insight    { grid-column: 2 / 4; grid-row: 2; min-height: 10rem; }
   .bento-connect    { grid-column: 1 / 3; grid-row: 3; }
   .bento-bike       { grid-column: 3;     grid-row: 3; }
@@ -90,7 +90,7 @@
 }
 
 /* Hero blocks: more breath */
-.bento-quote {
+.bento-stats {
   padding: var(--bento-inner-lg);
 }
 

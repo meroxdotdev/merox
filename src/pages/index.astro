@@ -10,7 +10,7 @@ import { createHomepageSchemas } from '@/lib/schemas'
 import heroImageLight from '../assets/t1.webp'
 import heroImageDark from '../assets/t2.webp'
 import IdentityCard from '@/components/home/IdentityCard.astro'
-import QuoteCard from '@/components/home/QuoteCard.astro'
+import FileTreeCard from '@/components/home/FileTreeCard.astro'
 import InsightCarousel from '@/components/home/InsightCarousel.astro'
 import ConnectCard from '@/components/home/ConnectCard.astro'
 import LastFmCard from '@/components/home/LastFmCard.astro'
@@ -96,8 +96,8 @@ if (lastFmUser && lastFmApiKey) {
         heroImageDark={heroImageDark}
       />
 
-      <!-- Quote card -->
-      <QuoteCard />
+      <!-- File tree card -->
+      <FileTreeCard />
 
       <!-- Latest Insights carousel -->
       <InsightCarousel posts={latestPostsEnriched} />

@@ -92,6 +92,13 @@ export const ICON_MAP: IconMap = {
   RSS: 'lucide:rss',
 }
 
+// GitHub repositories shown on Projects page and homepage file tree
+export const GITHUB_REPOS = [
+  { owner: 'meroxdotdev', repo: 'merox-erudite' },
+  { owner: 'meroxdotdev', repo: 'infrastructure' },
+  { owner: 'meroxdotdev', repo: 'homelab-as-code' },
+] as const
+
 // Person information for structured data and display
 export const PERSON = {
   name: 'Robert Melcher',

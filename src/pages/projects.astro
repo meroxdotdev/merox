@@ -4,17 +4,10 @@ import GitHubProjectCard from '@/components/GitHubProjectCard.astro'
 import PageHead from '@/components/PageHead.astro'
 import Layout from '@/layouts/Layout.astro'
 import { fetchMultipleRepos } from '@/lib/github'
+import { GITHUB_REPOS } from '@/consts'
 import { Icon } from 'astro-icon/components'
 
-// Define the repositories to fetch
-const repositories = [
-  { owner: 'meroxdotdev', repo: 'merox-erudite' },
-  { owner: 'meroxdotdev', repo: 'infrastructure' },
-  { owner: 'meroxdotdev', repo: 'homelab-as-code' },
-]
-
-// Fetch all repository data
-const repos = await fetchMultipleRepos(repositories)
+const repos = await fetchMultipleRepos([...GITHUB_REPOS])
 
 // Filter out null values and sort by stars (descending)
 const validRepos = repos

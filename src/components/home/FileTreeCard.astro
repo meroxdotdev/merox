@@ -1,0 +1,216 @@
+---
+import { Icon } from 'astro-icon/components'
+import { fetchMultipleRepos } from '@/lib/github'
+import { GITHUB_REPOS } from '@/consts'
+import type { GitHubRepo } from '@/lib/github'
+
+const repos = await fetchMultipleRepos([...GITHUB_REPOS])
+const validRepos = repos
+  .filter((repo): repo is GitHubRepo => repo !== null)
+  .sort((a, b) => b.stargazers_count - a.stargazers_count)
+---
+
+<div class="bento-card bento-stats file-tree-card" role="region" aria-label="Projects">
+  <div class="file-tree-card__header">
+    <span class="panel-title uppercase">Projects</span>
+  </div>
+  <div class="file-tree-card__tree-wrapper">
+    <nav class="tree-container" aria-label="Project repositories">
+      <ul class="tree-list">
+        <li class="tree-item">
+          <details class="tree-details" open>
+            <summary class="tree-summary">
+              <Icon name="lucide:folder" class="tree-icon tree-icon--closed" aria-hidden="true" />
+              <Icon name="lucide:folder-open" class="tree-icon tree-icon--open" aria-hidden="true" />
+              <span>src</span>
+            </summary>
+            <ul class="tree-children">
+              <li class="tree-item">
+                <details class="tree-details" open>
+                  <summary class="tree-summary">
+                    <Icon name="lucide:folder" class="tree-icon tree-icon--closed" aria-hidden="true" />
+                    <Icon name="lucide:folder-open" class="tree-icon tree-icon--open" aria-hidden="true" />
+                    <span>projects</span>
+                  </summary>
+                  <ul class="tree-children">
+                    {validRepos.map((repo) => (
+                      <li class="tree-item">
+                        <a
+                          href={repo.html_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          class="tree-file tree-file--link"
+                        >
+                          <Icon name="lucide:folder-git" class="tree-icon tree-icon--file" aria-hidden="true" />
+                          <span class="tree-file-name">{repo.name}</span>
+                          <span class="tree-file-meta" aria-hidden="true">★ {repo.stargazers_count}</span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              </li>
+            </ul>
+          </details>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
+
+<style>
+  .file-tree-card {
+    padding: var(--bento-inner-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-height: 0;
+    --file-tree-line: color-mix(in srgb, var(--border) 80%, transparent);
+    --file-tree-hover: color-mix(in srgb, var(--muted) 40%, transparent);
+  }
+
+  :global(html[data-theme="dark"]) .file-tree-card {
+    --file-tree-line: color-mix(in srgb, var(--border) 70%, transparent);
+    --file-tree-hover: color-mix(in srgb, var(--muted) 35%, transparent);
+  }
+
+  .file-tree-card__header {
+    flex-shrink: 0;
+  }
+
+  .file-tree-card__tree-wrapper {
+    min-height: 0;
+    max-height: 10rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .tree-container {
+    padding: 0;
+  }
+
+  .tree-list,
+  .tree-children {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tree-children {
+    margin-left: 0.75rem;
+    padding-left: 0.75rem;
+    border-left: 1px solid var(--file-tree-line);
+  }
+
+  .tree-item {
+    position: relative;
+    margin-top: 2px;
+  }
+
+  .tree-children .tree-item::before {
+    content: "";
+    position: absolute;
+    left: -0.75rem;
+    top: 12px;
+    width: 0.75rem;
+    height: 1px;
+    background-color: var(--file-tree-line);
+  }
+
+  .tree-details {
+    margin: 0;
+  }
+
+  .tree-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    color: var(--foreground);
+    cursor: pointer;
+    user-select: none;
+    min-height: 24px;
+    list-style: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .tree-summary::-webkit-details-marker,
+  .tree-summary::marker {
+    display: none;
+  }
+
+  .tree-summary:hover {
+    background-color: var(--file-tree-hover);
+  }
+
+  .tree-summary:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .tree-details[open] .tree-summary .tree-icon--closed {
+    display: none;
+  }
+
+  .tree-details[open] .tree-summary .tree-icon--open {
+    display: block;
+    color: var(--primary);
+  }
+
+  .tree-details:not([open]) .tree-summary .tree-icon--open {
+    display: none;
+  }
+
+  .tree-details:not([open]) .tree-summary .tree-icon--closed {
+    display: block;
+  }
+
+  .tree-file {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.8125rem;
+    color: var(--foreground);
+    text-decoration: none;
+    min-height: 24px;
+    transition: background-color 0.15s ease;
+  }
+
+  .tree-file--link:hover {
+    background-color: var(--file-tree-hover);
+    color: var(--primary);
+  }
+
+  .tree-file--link:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  .tree-file-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .tree-file-meta {
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+  }
+
+  .tree-icon {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    color: var(--muted-foreground);
+  }
+
+  .tree-icon--file {
+    color: var(--muted-foreground);
+  }
+</style>
