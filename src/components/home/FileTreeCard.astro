@@ -7,6 +7,11 @@ const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
   name: repo,
   html_url: `https://github.com/${owner}/${repo}`,
 }))
+
+const directoriesCount = 2 // src, projects (fixed structure)
+const filesCount = projects.length
+const directoriesLabel = directoriesCount === 1 ? 'directory' : 'directories'
+const filesLabel = filesCount === 1 ? 'file' : 'files'
 ---
 
 <div class="bento-card bento-stats file-tree-card" role="region" aria-label="Projects">
@@ -14,6 +19,7 @@ const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
     <span class="panel-title uppercase">Projects</span>
   </div>
   <div class="file-tree-card__tree-wrapper">
+    <span class="tree-command" aria-hidden="true">$ tree src/projects</span>
     <nav class="tree-container" aria-label="Project repositories">
       <ul class="tree-list">
         <li class="tree-item">
@@ -53,6 +59,7 @@ const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
         </li>
       </ul>
     </nav>
+    <p class="tree-footer">{directoriesCount} {directoriesLabel}, {filesCount} {filesLabel}</p>
   </div>
 </div>
 
@@ -65,6 +72,7 @@ const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
     min-height: 0;
     --file-tree-line: color-mix(in srgb, var(--border) 80%, transparent);
     --file-tree-hover: color-mix(in srgb, var(--muted) 40%, transparent);
+    --tree-font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
   }
 
   :global(html[data-theme="dark"]) .file-tree-card {
@@ -78,9 +86,25 @@ const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
 
   .file-tree-card__tree-wrapper {
     min-height: 0;
-    max-height: 10rem;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .tree-command {
+    font-family: var(--tree-font-mono);
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    flex-shrink: 0;
+  }
+
+  .tree-footer {
+    margin: 0;
+    font-family: var(--tree-font-mono);
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+    flex-shrink: 0;
   }
 
   .tree-container {
@@ -95,22 +119,22 @@ const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
   }
 
   .tree-children {
-    margin-left: 0.75rem;
-    padding-left: 0.75rem;
+    margin-left: 0.5rem;
+    padding-left: 0.5rem;
     border-left: 1px solid var(--file-tree-line);
   }
 
   .tree-item {
     position: relative;
-    margin-top: 2px;
+    margin-top: 0;
   }
 
   .tree-children .tree-item::before {
     content: "";
     position: absolute;
-    left: -0.75rem;
-    top: 12px;
-    width: 0.75rem;
+    left: -0.5rem;
+    top: 10px;
+    width: 0.5rem;
     height: 1px;
     background-color: var(--file-tree-line);
   }
@@ -122,16 +146,23 @@ const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
   .tree-summary {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 2px 6px;
+    gap: 0.375rem;
+    padding: 1px 4px;
     border-radius: 4px;
     font-size: 0.8125rem;
     color: var(--foreground);
     cursor: pointer;
     user-select: none;
-    min-height: 24px;
+    min-height: 20px;
     list-style: none;
     transition: background-color 0.15s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tree-summary,
+    .tree-file {
+      transition: none;
+    }
   }
 
   .tree-summary::-webkit-details-marker,
@@ -168,13 +199,13 @@ const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
   .tree-file {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 2px 6px;
+    gap: 0.375rem;
+    padding: 1px 4px;
     border-radius: 4px;
     font-size: 0.8125rem;
     color: var(--foreground);
     text-decoration: none;
-    min-height: 24px;
+    min-height: 20px;
     transition: background-color 0.15s ease;
   }
 
@@ -197,8 +228,8 @@ const projects = GITHUB_REPOS.map(({ owner, repo }) => ({
   }
 
   .tree-icon {
-    width: 1rem;
-    height: 1rem;
+    width: 0.875rem;
+    height: 0.875rem;
     flex-shrink: 0;
     color: var(--muted-foreground);
   }
