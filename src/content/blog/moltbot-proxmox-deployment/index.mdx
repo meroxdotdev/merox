@@ -108,7 +108,7 @@ Before we start, make sure you have:
 - **Proxmox** installed and accessible
 - **Basic networking** configured (static IP recommended)
 - **An AI model provider** (OpenAI API, Anthropic Claude, or self-hosted Ollama; new support for KIMI K2.5 & Xiaomi MiMo-V2-Flash)
-- **Node.js 22+** (recommended; the official installer uses npm and can install Node if missing). Bun is supported as an alternative but not required.
+- **Node.js 22+** (the official installer uses npm and can install Node if missing)
 
 <Callout variant="note">
 **Model Provider Options**: OpenClaw supports multiple AI providers. You can use OpenAI's API, Anthropic's Claude API, or connect to a self-hosted Ollama instance. For homelab setups, Ollama is the most cost-effective option since it runs entirely on your hardware.
@@ -130,7 +130,7 @@ Start the container and SSH into it.
 
 ### Step 2: Install Node.js (recommended)
 
-The official OpenClaw installer uses **npm** and expects **Node.js 22+**. You don't need Bun—the installer will work with Node alone:
+The official OpenClaw installer uses **npm** and expects **Node.js 22+**:
 
 ```bash
 # Update system
@@ -145,10 +145,6 @@ apt install -y nodejs
 node -v   # should be v22.x
 npm -v
 ```
-
-<Callout variant="tip">
-**Optional: Bun**. OpenClaw also supports the Bun runtime (see [docs](https://docs.openclaw.ai/install)). Some docs label Bun as experimental for production (e.g. WhatsApp/Telegram). For a standard Proxmox deployment, Node.js + npm is the documented and recommended path.
-</Callout>
 
 <AdSense />
 
@@ -180,7 +176,7 @@ openclaw onboard
 ```
 
 <Callout variant="tip">
-**Alternative Installation Methods**: OpenClaw also supports installation via Docker, Ansible, Nix, Bun, and cloud platforms (Railway, Render, Northflank). See the [official installation documentation](https://docs.openclaw.ai/install) for all available methods.
+**Alternative Installation Methods**: OpenClaw also supports installation via Docker, Ansible, Nix, and cloud platforms (Railway, Render, Northflank). See the [official installation documentation](https://docs.openclaw.ai/install) for all available methods.
 </Callout>
 
 <AdSense />
@@ -431,5 +427,5 @@ For security best practices, review:
 - [Setup Guide](https://docs.openclaw.ai/start/setup) - Post-installation configuration
 - [OpenClaw Website](https://openclaw.ai) - Official website
 - [Proxmox Documentation](https://pve.proxmox.com/pve-docs/) - Proxmox VE documentation
-- [Node.js](https://nodejs.org/) - Recommended runtime; installer uses npm. [Bun](https://bun.sh/docs) is an optional alternative.
+- [Node.js](https://nodejs.org/) - Runtime used by the official installer (npm)
 - [Moltbook Security Analysis (404 Media)](https://www.404media.co/exposed-moltbook-database-let-anyone-take-control-of-any-ai-agent-on-the-site/) - Critical vulnerability report
