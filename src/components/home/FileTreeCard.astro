@@ -19,7 +19,7 @@ const filesLabel = filesCount === 1 ? 'file' : 'links'
     <span class="panel-title uppercase">Projects</span>
   </div>
   <div class="file-tree-card__tree-wrapper">
-    <span class="tree-command" aria-hidden="true"><span class="tree-command__prompt">merox@webserver:</span><span class="tree-command__tilde">~</span><span class="tree-command__suffix">$ </span>tree <span class="tree-command__path">src/projects</span><span class="tree-cursor" aria-hidden="true"></span></span>
+    <span class="tree-command" aria-hidden="true"><span class="tree-command__prompt">merox@webserver:</span><span class="tree-command__tilde">~</span><span class="tree-command__suffix">$</span><span class="tree-command__cmd">tree</span><span class="tree-command__path">src/projects</span><span class="tree-cursor" aria-hidden="true"></span></span>
     <nav class="tree-container" aria-label="Project repositories">
       <ul class="tree-list">
         <li class="tree-item">
@@ -154,8 +154,13 @@ const filesLabel = filesCount === 1 ? 'file' : 'links'
     color: var(--muted-foreground);
   }
 
+  .tree-command__cmd {
+    margin-left: 0.25em; /* space after $ */
+  }
+
   .tree-command__path {
     color: color-mix(in srgb, var(--primary) 45%, var(--muted-foreground));
+    margin-left: 0.25em; /* space before path (flex eats text-node space) */
   }
 
   .tree-footer {
