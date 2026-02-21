@@ -108,7 +108,7 @@ Before we start, make sure you have:
 - **Proxmox** installed and accessible
 - **Basic networking** configured (static IP recommended)
 - **An AI model provider** (OpenAI API, Anthropic Claude, or self-hosted Ollama; new support for KIMI K2.5 & Xiaomi MiMo-V2-Flash)
-- **Node.js/Bun runtime** (OpenClaw runs on Bun or Node.js)
+- **Node.js 22+** (recommended; the official installer uses npm and can install Node if missing). Bun is supported as an alternative but not required.
 
 <Callout variant="note">
 **Model Provider Options**: OpenClaw supports multiple AI providers. You can use OpenAI's API, Anthropic's Claude API, or connect to a self-hosted Ollama instance. For homelab setups, Ollama is the most cost-effective option since it runs entirely on your hardware.
@@ -124,30 +124,30 @@ Create an Ubuntu 22.04 LXC container in Proxmox with:
 
 Start the container and SSH into it.
 
-### Step 2: Install Bun Runtime
+<Callout variant="warning">
+**LXC and systemd**: There are well-known issues with systemd inside LXC (e.g. services not starting after reboot, permission/namespace errors, or "Failed to connect to bus" in unprivileged containers). If you hit these: enable **nesting** in the container options in Proxmox; or add `lxc.cap.drop: sys_rawio` if you see mount-related failures. For maximum compatibility, consider a **small VM instead of LXC** (e.g. Ubuntu cloud image)—you trade a bit of overhead for fewer surprises with systemd and daemons.
+</Callout>
 
-OpenClaw runs on Bun (a fast JavaScript runtime). Install it in your container:
+### Step 2: Install Node.js (recommended)
+
+The official OpenClaw installer uses **npm** and expects **Node.js 22+**. You don't need Bun—the installer will work with Node alone:
 
 ```bash
 # Update system
 apt update && apt upgrade -y
 
-# Install required dependencies
-apt install -y curl unzip
+# Install Node.js 22.x (via NodeSource or your distro)
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+apt install -y nodejs
 
-# Install Bun
-curl -fsSL https://bun.sh/install | bash
-
-# Add Bun to PATH (add to ~/.bashrc or ~/.zshrc)
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# Verify installation
-bun --version
+# Or use the installer script as-is; it can install Node for you if missing
+# Verify
+node -v   # should be v22.x
+npm -v
 ```
 
 <Callout variant="tip">
-**Alternative: Node.js**: If you prefer Node.js over Bun, you can install Node.js 20+ instead. However, Bun is recommended by the OpenClaw team for better performance.
+**Optional: Bun**. OpenClaw also supports the Bun runtime (see [docs](https://docs.openclaw.ai/install)). Some docs label Bun as experimental for production (e.g. WhatsApp/Telegram). For a standard Proxmox deployment, Node.js + npm is the documented and recommended path.
 </Callout>
 
 <AdSense />
@@ -159,7 +159,7 @@ bun --version
 The official installer is the recommended method. Run the installer script:
 
 ```bash
-curl -fsSL https://openclaw.bot/install.sh | bash
+curl -fsSL https://openclaw.ai/install.sh | bash
 ```
 
 This installer will:
@@ -170,7 +170,7 @@ This installer will:
 **For non-root installations**, use the CLI-only installer:
 
 ```bash
-curl -fsSL https://openclaw.bot/install-cli.sh | bash
+curl -fsSL https://openclaw.ai/install-cli.sh | bash
 ```
 
 After installation, the onboarding wizard starts automatically. If it doesn't, run:
@@ -335,6 +335,9 @@ The beauty of OpenClaw is that you can interact with it through WhatsApp, Telegr
 
 ## Troubleshooting
 
+**systemd / LXC issues (services not starting, "Failed to connect to bus"):**  
+See the LXC+systemd callout in "Setting Up the Container" above: enable nesting, adjust capabilities, or use a VM instead of LXC.
+
 **Gateway won't start:**
 ```bash
 # Check logs
@@ -428,5 +431,5 @@ For security best practices, review:
 - [Setup Guide](https://docs.openclaw.ai/start/setup) - Post-installation configuration
 - [OpenClaw Website](https://openclaw.ai) - Official website
 - [Proxmox Documentation](https://pve.proxmox.com/pve-docs/) - Proxmox VE documentation
-- [Bun Runtime Documentation](https://bun.sh/docs) - Bun runtime documentation
+- [Node.js](https://nodejs.org/) - Recommended runtime; installer uses npm. [Bun](https://bun.sh/docs) is an optional alternative.
 - [Moltbook Security Analysis (404 Media)](https://www.404media.co/exposed-moltbook-database-let-anyone-take-control-of-any-ai-agent-on-the-site/) - Critical vulnerability report
